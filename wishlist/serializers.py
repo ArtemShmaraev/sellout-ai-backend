@@ -13,5 +13,6 @@ class WishlistUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = WishlistUnit
         fields = '__all__'
+        depth = 1
         # глубина позволяет возвращать не только id бренда, но и его поля (name)
 

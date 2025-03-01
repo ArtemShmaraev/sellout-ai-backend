@@ -4,7 +4,10 @@ from rest_framework.response import Response
 from .serializers import ProductUnitSerializer
 from .models import ProductUnit
 from wishlist.models import Wishlist, WishlistUnit
+from products.models import Product
+from products.serializers import ProductSerializer
 import json
+from sellout.permissions import IsOwnerOrReadOnly
 
 
 class ProductUnitProductView(APIView):
@@ -19,19 +22,18 @@ class ProductUnitProductMainView(APIView):
         data = ProductUnitSerializer(s, many=True).data
         if len(data) == 0:
             return Response([])
-        ans = dict()
-        ans["id"] = data[0]['product']['id']
-        ans['brands'] = data[0]['product']['brands']
-        ans['name'] = data[0]['product']['name']
-        ans['bucket_link'] = data[0]['product']['bucket_link']
-
+        ans = ProductSerializer(Product.objects.get(id=product_id)).data
         min_price = data[0]["final_price"]
         for d in data:
             min_price = min(min_price, d["final_price"])
         ans['min_price'] = min_price
-        wishlist = Wishlist.objects.get(user_id=user_id)
-        data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
-        ans['in_wishlist'] = len(data) > 0
-        return Response(ans)
+
+        if request.user.id == user_id or request.user.is_staff:
+            wishlist = Wishlist.objects.get(user_id=user_id)
+            data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
+            ans['in_wishlist'] = len(data) > 0
+        else:
+            return Response(ans)
+
 # Create your views here.
 

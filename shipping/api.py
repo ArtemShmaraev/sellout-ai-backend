@@ -5,7 +5,7 @@ from .serializers import ProductUnitSerializer
 
 class ProductUnitViewSet(viewsets.ModelViewSet):
     queryset = ProductUnit.objects.all()
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = ProductUnitSerializer
 
 

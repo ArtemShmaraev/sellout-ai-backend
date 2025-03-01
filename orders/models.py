@@ -3,10 +3,15 @@ from django.conf import settings
 
 
 class Status(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)  # TODO add choices
+    name = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
         return self.name
+
+
+def get_default_status():
+    default_object = Status.objects.get_or_create(name="pending")[0]
+    return default_object.pk
 
 
 class Order(models.Model):
@@ -23,7 +28,7 @@ class Order(models.Model):
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
-                               related_name="orders")  # TODO add default value
+                               related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
 
     def __str__(self):

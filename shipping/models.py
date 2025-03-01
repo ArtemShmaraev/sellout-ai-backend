@@ -1,4 +1,5 @@
 from django.db import models
+from utils.models import Currency
 
 
 class DeliveryType(models.Model):
@@ -32,6 +33,16 @@ class Platform(models.Model):
     site = models.CharField(max_length=10, null=True, blank=True)
 
 
+def get_default_currency():
+    default_object = Currency.objects.get_or_create(name="pending")[0]
+    return default_object.pk
+
+
+def get_default_delivery_type():
+    default_object = DeliveryType.objects.get_or_create(name="pending")[0]
+    return default_object.pk
+
+
 class ProductUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="product_units",
                                 null=False, blank=False)
@@ -39,10 +50,10 @@ class ProductUnit(models.Model):
                              null=False, blank=False)
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
-                                 null=False, blank=False)  # TODO add default value
+                                 null=False, blank=False, default=get_default_currency)
     final_price = models.IntegerField(null=False, blank=False)
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
-                                      null=False, blank=False)  # TODO add default value
+                                      null=False, blank=False, default=get_default_delivery_type)
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
     availability = models.BooleanField(default=True)

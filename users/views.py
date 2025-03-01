@@ -17,7 +17,7 @@ import requests
 class UserLastSeenView(APIView):
     def get(self, request, id):
         def s_id(product):
-            return requests.get(f"{url}/api/v1/product_unit/product_main/{product['id']}").json()
+            return requests.get(f"{url}/api/v1/product_unit/product_main/{product['id']}/{id}").json()
 
         s = list(map(s_id, list(ProductSerializer(User.objects.filter(id=id)[0].last_viewed_products, many=True).data[-7:])))
         return Response(s)

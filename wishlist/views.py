@@ -22,7 +22,7 @@ class UserWishlist(APIView):
 
         ans = []
         for el in data:
-            main = requests.get(f"{url}/api/v1/product_unit/product_main/{el['product']}").json()
+            main = requests.get(f"{url}/api/v1/product_unit/product_main/{el['product']}/{user_id}").json()
             ans.append({'product': main, "size": SizeSerializer(Size.objects.filter(id=el['size'])[0]).data,
                         'product_unit': requests.get(f"{url}/api/v1/product_unit/product/{el['product']}").json()[0]})
         return Response(ans)

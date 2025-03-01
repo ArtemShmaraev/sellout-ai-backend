@@ -10,3 +10,4 @@ urlpatterns = router.urls
 urlpatterns.append(path('product/<int:product_id>/', ProductUnitProductView.as_view()))
 urlpatterns.append(path('product_main/<int:product_id>/<int:user_id>/', ProductUnitProductMainView.as_view()))
 
+

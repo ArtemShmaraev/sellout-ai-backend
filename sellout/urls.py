@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/v1/product_unit/', include('shipping.urls')),
     path('api/v1/user/', include('users.urls')),
     path('api/v1/wishlist/', include('wishlist.urls')),
+    path('api/v1/promo/', include('promotions.urls')),
     path('api/v1/cart/', include('orders.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

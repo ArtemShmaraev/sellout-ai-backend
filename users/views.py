@@ -10,6 +10,7 @@ from products.serializers import ProductSerializer, SizeSerializer
 from .models import User, Gender
 from products.models import Product
 from sellout.settings import url
+from shipping.views import product_unit_product_main
 import json
 from shipping.views import ProductUnitProductMainView
 
@@ -26,13 +27,13 @@ class RegisterUser(APIView):
         new_user.save()
         # params =
         # json_param = json.dumps(params)
-        return Response(requests.post(f"{url}api/token/", data={'username': new_user.username,
+        return Response(requests.post(f"{url}/api/token/", data={'username': new_user.username,
                                                                 'password': data['password']}).json())
 
 class LoginUser(APIView):
     def post(self, request):
         data = request.data
-        return Response(requests.post(f"{url}api/token/", data={'username': data['username'],
+        return Response(requests.post(f"{url}/api/token/", data={'username': data['username'],
                                                                 'password': data['password']}).json())
 
 
@@ -40,7 +41,7 @@ class LoginUser(APIView):
 class UserLastSeenView(APIView):
     def get(self, request, id):
         def s_id(product):
-            return requests.get(f"{url}/api/v1/product_unit/product_main/{product['id']}/{id}").json()
+            return product_unit_product_main(product['id'], id)
 
         if request.user.id == id or request.user.is_staff:
             s = list(map(s_id, list(ProductSerializer(User.objects.filter(id=id)[0].last_viewed_products, many=True).data[-7:])))

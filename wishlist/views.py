@@ -11,6 +11,7 @@ from products.models import Product
 from products.models import Size
 from sellout.settings import url
 from rest_framework import status
+from shipping.views import product_unit_product_main
 
 import requests
 
@@ -23,7 +24,7 @@ class UserWishlist(APIView):
             data = WishlistUnit.objects.filter(wishlist=wishlist)
             ans = []
             for el in data:
-                main = requests.get(f"{url}/api/v1/product_unit/product_main/{el.product.id}/{user_id}").json()
+                main = product_unit_product_main(el.product.id, user_id)
                 ans.append({'id': el.id, 'product': main,
                             "size": SizeSerializer(Size.objects.get(id=el.size.id)).data,
                             'product_unit': requests.get(f"{url}/api/v1/product_unit/product/{el.product.id}").json()[0]})

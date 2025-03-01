@@ -17,8 +17,7 @@ def get_default_status():
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False, blank=False,
                              related_name="orders")
-    product_unit = models.ForeignKey("shipping.ProductUnit", on_delete=models.PROTECT, null=False, blank=False,
-                                     related_name="orders")
+    product_unit = models.ManyToManyField("shipping.ProductUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)
     email = models.EmailField(null=False, blank=False)
     tel = models.CharField(max_length=20, null=False, blank=False)
@@ -31,8 +30,7 @@ class Order(models.Model):
                                related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.user} order: {self.product_unit}'
+
 
 
 class ShoppingCart(models.Model):

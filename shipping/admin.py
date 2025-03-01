@@ -9,6 +9,9 @@ from .models import ProductUnit, Platform, Formula, AddressInfo, DeliveryType
 class ProductUnitAdmin(admin.ModelAdmin):
     list_display = ('product', )
 
+class AddressInfoAdmin(admin.ModelAdmin):
+    list_display = ('address', )
+
 
 class DeliveryTypeAdmin(admin.ModelAdmin):
     list_display = ('name', )
@@ -24,4 +27,5 @@ class UnitBundleAdmin(admin.ModelAdmin):
 admin.site.register(ProductUnit, ProductUnitAdmin)
 admin.site.register(Platform, PlatformAdmin)
 admin.site.register(DeliveryType, DeliveryTypeAdmin)
+admin.site.register(AddressInfo, AddressInfoAdmin)
 # admin.site.register(UnitBundle, UnitBundleAdmin)

@@ -1,0 +1,21 @@
+from django.db import models
+
+
+class WishlistUnit(models.Model):
+    product = models.ForeignKey("products.Product", on_delete=models.PROTECT, null=False, blank=False,
+                                related_name="wishlist_units")
+    size = models.ForeignKey("products.Size", on_delete=models.PROTECT, null=False, blank=False,
+                             related_name="wishlist_units")
+    wishlist = models.ForeignKey("Wishlist", on_delete=models.PROTECT, null=False, blank=False,
+                                 related_name="wishlist_units")
+
+    def __str__(self):
+        return f'{self.product} ({self.size}) in wishlist'
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey("users.User", on_delete=models.PROTECT, null=False, blank=False,
+                             related_name="wishlist")
+
+    def __str__(self):
+        return f'{self.user} cart: {", ".join([str(pu) for pu in self.wishlist_units.all()])}'

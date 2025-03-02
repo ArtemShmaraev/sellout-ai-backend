@@ -12,6 +12,9 @@ from products.models import Product
 from sellout.settings import url
 from shipping.views import product_unit_product_main
 import json
+
+from wishlist.models import Wishlist
+from orders.models import ShoppingCart
 from shipping.views import ProductUnitProductMainView
 
 import requests
@@ -25,8 +28,11 @@ class RegisterUser(APIView):
                         last_name=data['last_name'], gender_id=genders[data['gender']])
         new_user.set_password(data['password'])
         new_user.save()
-        # params =
-        # json_param = json.dumps(params)
+        # создание корзины и вл для пользователя
+        cart = ShoppingCart(user_id=new_user.id)
+        wl = Wishlist(user_id=new_user.id)
+        cart.save()
+        wl.save()
         return Response(requests.post(f"{url}/api/token/", data={'username': new_user.username,
                                                                 'password': data['password']}).json())
 

@@ -41,7 +41,8 @@ class CheckOutView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             data = request.data
-            order = Order(user = User.objects.get(id=user_id),
+            order = Order(user=User.objects.get(id=user_id),
+                          # product_unit=pr_unit,
                           total_amount=data['total_amount'],
                           email=data['email'],
                           tel=data['tel'],
@@ -53,12 +54,10 @@ class CheckOutView(APIView):
             check, promo = check_promo(data["promo_code"], user_id)
             if check:
                 order.promo_code = PromoCode.objects.get(string_representation=data["promo_code"])
-            units = data['product_units']
-            print(units)
+            order.save()
+            units = data['product_unit']
             for unit in units:
                 order.product_unit.add(ProductUnit.objects.get(id=unit))
-
-
             order.save()
             return Response(OrderSerializer(order).data)
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

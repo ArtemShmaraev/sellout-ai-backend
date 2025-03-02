@@ -1,8 +1,36 @@
 <a name="up"></a>
 # SellOut API
+
+## User API
+#### 1. `[GET][Admin] user` информация обо всех пользователях, списком [User API](#users)
+
+#### 2. `[GET][Admin] user/<user_id>` данные пользователя
+#### 3. `[POST][Anon] user/register` регистрация пользователя
+#### 4. `[POST][Anon] user/login` вход в систему
+#### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
+
+## Product API
+#### 1. `[GET][Admin] product` все товары
+#### 2. `[GET][Admin] product/<product_id>` данные одного товара
+#### 3. `[GET][Anon] product/all/<num_page>` страница товаров 
+
+## WishList API
+#### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
+#### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист
+#### 3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
+#### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера"
+#### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте
+
+## Orders API
+#### 1. `[GET][User] cart/user/<user_id>` корзина пользователя
+#### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину
+#### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины
+#### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
+
 <a name="user"></a>
 ## User API
 [:arrow_up:SellOut API](#up)
+<a name="users"></a>
 ### 1. `[GET][Admin] user` информация обо всех пользователях, списком
 
 Response:
@@ -58,6 +86,7 @@ Response:
 ]
 ```
 [:arrow_up:User API](#user)
+<a name="user_id"></a>
 ### 2. `[GET][Admin] user/<user_id>` данные пользователя
 
 Response:
@@ -133,6 +162,7 @@ Response:
 }
 ```
 [:arrow_up:User API](#user)
+<a name="reg"></a>
 ### 3. `[POST][Anon] user/register` регистрация пользователя
 
 Body:
@@ -589,6 +619,7 @@ Response:
 [:arrow_up:Shipping API](#shipping)
 
 <a name="wishlist"></a>
+
 ## WishList API
 [:arrow_up:SellOut API](#up)
 ### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
@@ -1060,9 +1091,247 @@ Response:
 ### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
 Body:
 ```json
-
+{
+    "product_unit": [1,2],
+    "email": "mail@mail.ru",
+    "tel": 77777777777,
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "address_id": 1,
+    "promo_code": "SALE",
+    "total_amount": 10000
+}
 ```
-
+Response:
+```json
+{
+    "id": 13,
+    "total_amount": 10000,
+    "email": "mail@mail.ru",
+    "tel": "77777777777",
+    "name": "Имя",
+    "surname": "Фамилия",
+    "fact_of_payment": false,
+    "user": {
+        "id": 1,
+        "password": "pbkdf2_sha256$390000$UADInQibzAcqaOZFSEcvAS$A7F5JXyyClktLYYkVZ+mjF7xfF97ArSC/mJW7GEzDA8=",
+        "last_login": "2023-04-12T15:14:50.148633Z",
+        "is_superuser": true,
+        "username": "artem",
+        "first_name": "",
+        "last_name": "",
+        "email": "arten@mail.ru",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2023-04-07T15:26:38Z",
+        "all_purchase_amount": 0,
+        "personal_discount_percentage": 0,
+        "referral_link": null,
+        "preferred_size_grid": null,
+        "gender": null,
+        "ref_user": null,
+        "groups": [],
+        "user_permissions": [],
+        "my_groups": [],
+        "address": [],
+        "last_viewed_products": [
+            {
+                "id": 1,
+                "name": "Air Force 1",
+                "bucket_link": "/buck",
+                "description": "desc",
+                "sku": "air_force_1",
+                "available_flag": true,
+                "last_upd": "2023-04-07T15:28:17Z",
+                "add_date": "2023-04-07",
+                "fit": 1,
+                "rel_num": 1,
+                "gender": 1,
+                "brands": [
+                    1
+                ],
+                "categories": [
+                    1
+                ],
+                "tags": [
+                    1
+                ]
+            },
+            {
+                "id": 2,
+                "name": "Dunk",
+                "bucket_link": "/buck",
+                "description": "desc",
+                "sku": "sku",
+                "available_flag": true,
+                "last_upd": "2023-04-07T15:59:39Z",
+                "add_date": "2023-04-07",
+                "fit": 0,
+                "rel_num": 0,
+                "gender": 1,
+                "brands": [
+                    1
+                ],
+                "categories": [
+                    1
+                ],
+                "tags": [
+                    1
+                ]
+            }
+        ]
+    },
+    "address": {
+        "id": 1,
+        "address": "Проспект Мира 111",
+        "post_index": "308033"
+    },
+    "promo_code": {
+        "id": 1,
+        "string_representation": "SALE",
+        "discount_percentage": 15,
+        "discount_absolute": 0,
+        "activation_count": 6,
+        "max_activation_count": 10,
+        "active_status": true,
+        "active_until_date": "2023-04-18",
+        "owner": {
+            "id": 1,
+            "password": "pbkdf2_sha256$390000$UADInQibzAcqaOZFSEcvAS$A7F5JXyyClktLYYkVZ+mjF7xfF97ArSC/mJW7GEzDA8=",
+            "last_login": "2023-04-12T15:14:50.148633Z",
+            "is_superuser": true,
+            "username": "artem",
+            "first_name": "",
+            "last_name": "",
+            "email": "arten@mail.ru",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-04-07T15:26:38Z",
+            "all_purchase_amount": 0,
+            "personal_discount_percentage": 0,
+            "referral_link": null,
+            "preferred_size_grid": null,
+            "gender": null,
+            "ref_user": null,
+            "groups": [],
+            "user_permissions": [],
+            "my_groups": [],
+            "address": [],
+            "last_viewed_products": [
+                1,
+                2
+            ]
+        }
+    },
+    "status": {
+        "id": 1,
+        "name": "pending"
+    },
+    "product_unit": [
+        {
+            "id": 1,
+            "final_price": 7,
+            "availability": true,
+            "product": {
+                "id": 1,
+                "name": "Air Force 1",
+                "bucket_link": "/buck",
+                "description": "desc",
+                "sku": "air_force_1",
+                "available_flag": true,
+                "last_upd": "2023-04-07T15:28:17Z",
+                "add_date": "2023-04-07",
+                "fit": 1,
+                "rel_num": 1,
+                "gender": 1,
+                "brands": [
+                    1
+                ],
+                "categories": [
+                    1
+                ],
+                "tags": [
+                    1
+                ]
+            },
+            "size": {
+                "id": 1,
+                "INT": "12",
+                "US": "12",
+                "UK": "12",
+                "EU": "12",
+                "IT": "12",
+                "RU": "12",
+                "product": 1
+            },
+            "currency": {
+                "id": 2,
+                "name": "pending"
+            },
+            "delivery_type": {
+                "id": 1,
+                "name": "Самолёт"
+            },
+            "platform": {
+                "id": 1,
+                "platform": "Poizon",
+                "site": "/poizon"
+            }
+        },
+        {
+            "id": 2,
+            "final_price": 100,
+            "availability": true,
+            "product": {
+                "id": 2,
+                "name": "Dunk",
+                "bucket_link": "/buck",
+                "description": "desc",
+                "sku": "sku",
+                "available_flag": true,
+                "last_upd": "2023-04-07T15:59:39Z",
+                "add_date": "2023-04-07",
+                "fit": 0,
+                "rel_num": 0,
+                "gender": 1,
+                "brands": [
+                    1
+                ],
+                "categories": [
+                    1
+                ],
+                "tags": [
+                    1
+                ]
+            },
+            "size": {
+                "id": 1,
+                "INT": "12",
+                "US": "12",
+                "UK": "12",
+                "EU": "12",
+                "IT": "12",
+                "RU": "12",
+                "product": 1
+            },
+            "currency": {
+                "id": 2,
+                "name": "pending"
+            },
+            "delivery_type": {
+                "id": 1,
+                "name": "Самолёт"
+            },
+            "platform": {
+                "id": 1,
+                "platform": "Poizon",
+                "site": "/poizon"
+            }
+        }
+    ]
+}
+```
+[:arrow_up:Orders API](#orders)
 
 
 

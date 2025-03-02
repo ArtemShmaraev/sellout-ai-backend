@@ -11,7 +11,7 @@ from .serializers import PromoCodeSerializer
 
 def check_promo(text, user_id):
     try:
-        promo = PromoCode.objects.get(string_representation=text)
+        promo = PromoCode.objects.get(string_representation=text.upper())
         if promo.activation_count >= promo.max_activation_count:
             return 0, Response("Промокод закончился")
         if promo.active_status and promo.active_until_date >= datetime.date.today():

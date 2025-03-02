@@ -8,15 +8,16 @@
 #### 4. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
 #### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
 
+
 ## Product API
-#### 1. `[GET][Admin] product` все товары [Вниз к запросу](#products)
+1. `[GET][Admin] product` все товары [Вниз к запросу](#products)
 #### 2. `[GET][Admin] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
 #### 3. `[GET][Anon] product/all/<num_page>` страница товаров [Вниз к запросу](#product_all)
+
 
 ## Shipping API
 #### 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
 #### 2. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "картока товара" [Вниз к запросу](#product_main)
-
 ## WishList API
 #### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя [Вниз к запросу](#wl)
 #### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [Вниз к запросу](#add_wl)

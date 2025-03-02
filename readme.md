@@ -2,30 +2,29 @@
 # SellOut API
 
 ## User API
-#### 1. `[GET][Admin] user` информация обо всех пользователях, списком [User API](#users)
-
-#### 2. `[GET][Admin] user/<user_id>` данные пользователя
-#### 3. `[POST][Anon] user/register` регистрация пользователя
-#### 4. `[POST][Anon] user/login` вход в систему
-#### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
+#### 1. `[GET][Admin] user` информация обо всех пользователях, списком [Вниз к запросу](#users)
+#### 2. `[GET][Admin] user/<user_id>` данные пользователя [Вниз к запросу](#user_id)
+#### 3. `[POST][Anon] user/register` регистрация пользователя [Вниз к запросу](#reg)
+#### 4. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
+#### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
 
 ## Product API
-#### 1. `[GET][Admin] product` все товары
-#### 2. `[GET][Admin] product/<product_id>` данные одного товара
-#### 3. `[GET][Anon] product/all/<num_page>` страница товаров 
+#### 1. `[GET][Admin] product` все товары [Вниз к запросу](#products)
+#### 2. `[GET][Admin] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
+#### 3. `[GET][Anon] product/all/<num_page>` страница товаров [Вниз к запросу](#product_main)
 
 ## WishList API
-#### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
-#### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист
-#### 3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
-#### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера"
-#### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте
+#### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя [Вниз к запросу](#wl)
+#### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [Вниз к запросу](#add_wl)
+#### 3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста [Вниз к запросу](#del_wl)
+#### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера" [Вниз к запросу](#add_no_size_wl)
+#### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте [Вниз к запросу](#change_wl)
 
 ## Orders API
-#### 1. `[GET][User] cart/user/<user_id>` корзина пользователя
-#### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину
-#### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины
-#### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
+#### 1. `[GET][User] cart/user/<user_id>` корзина пользователя [Вниз к запросу](#cart)
+#### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину [Вниз к запросу](#add_to_cart)
+#### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины [Вниз к запросу](#del_from_cart)
+#### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ [Вниз к запросу](#check_out)
 
 <a name="user"></a>
 ## User API
@@ -185,7 +184,7 @@ Response:
 ```
 [:arrow_up:User API](#user)
 ### 4. `[POST][Anon] user/login` вход в систему
-
+<a name="log"></a>
 Body:
 ```json
 {
@@ -202,7 +201,7 @@ Response:
 ```
 [:arrow_up:User APIд](#user)
 ### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
-
+<a name="last"></a>
 Response:
 ```json
 [
@@ -287,6 +286,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 ### 1. `[GET][Admin] product` все товары
+<a name="products"></a>
 Response:
 ```json
 [
@@ -362,6 +362,7 @@ Response:
 ```
 [:arrow_up:Product API](#product)
 ### 2. `[GET][Admin] product/<product_id>` данные одного товара
+<a name="product_id"></a>
 Response:
 ```json
 {
@@ -401,6 +402,7 @@ Response:
 ```
 [:arrow_up:Product API](#product)
 ### 3. `[GET][Anon] product/all/<num_page>` страница товаров 
+<a name="product_main"></a>
 Response:
 ```json
 {
@@ -619,10 +621,10 @@ Response:
 [:arrow_up:Shipping API](#shipping)
 
 <a name="wishlist"></a>
-
 ## WishList API
 [:arrow_up:SellOut API](#up)
 ### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
+<a name="wl"></a>
 Response:
 ```json
 [
@@ -763,15 +765,19 @@ Response:
 [:arrow_up:WishList API](#wishlist)
 
 ### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист
+<a name="add_wl"></a>
 Response: карточку вишлиста
 
 ### 3. `[delete][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
+<a name="del_wl"></a>
 Response: карточку вишлиста
 
 ### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера"
+<a name="add_no_size_wl"></a>
 Response: карточку вишлиста
 
 ### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте
+<a name="change_wl"></a>
 Response: карточку вишлиста
 [:arrow_up:WishList API](#wishlist)
 
@@ -781,6 +787,7 @@ Response: карточку вишлиста
 [:arrow_up:SellOut API](#up)
 
 ### 1. `[GET][User] cart/user/<user_id>` корзина пользователя
+<a name="cart"></a>
 Response:
 ```json
 {
@@ -911,6 +918,7 @@ Response:
 [:arrow_up:Orders API](#orders)
 
 ### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину
+<a name="add_to_cart"></a>
 Response:
 ```json
 {
@@ -1000,6 +1008,7 @@ Response:
 [:arrow_up:Orders API](#orders)
 
 ### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины
+<a name="del_from_cart"></a>
 Response:
 ```json
 {
@@ -1089,6 +1098,7 @@ Response:
 [:arrow_up:Orders API](#orders)
 
 ### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
+<a name="checkout"></a>
 Body:
 ```json
 {

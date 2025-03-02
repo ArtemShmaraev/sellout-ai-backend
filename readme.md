@@ -11,7 +11,11 @@
 ## Product API
 #### 1. `[GET][Admin] product` все товары [Вниз к запросу](#products)
 #### 2. `[GET][Admin] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-#### 3. `[GET][Anon] product/all/<num_page>` страница товаров [Вниз к запросу](#product_main)
+#### 3. `[GET][Anon] product/all/<num_page>` страница товаров [Вниз к запросу](#product_all)
+
+## Shipping API
+#### 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
+#### 2. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "картока товара" [Вниз к запросу](#product_main)
 
 ## WishList API
 #### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя [Вниз к запросу](#wl)
@@ -85,6 +89,7 @@ Response:
 ]
 ```
 [:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
 <a name="user_id"></a>
 ### 2. `[GET][Admin] user/<user_id>` данные пользователя
 
@@ -161,6 +166,7 @@ Response:
 }
 ```
 [:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
 <a name="reg"></a>
 ### 3. `[POST][Anon] user/register` регистрация пользователя
 
@@ -183,8 +189,10 @@ Response:
 }
 ```
 [:arrow_up:User API](#user)
-### 4. `[POST][Anon] user/login` вход в систему
+[:arrow_up:SellOut API](#up)
 <a name="log"></a>
+### 4. `[POST][Anon] user/login` вход в систему
+
 Body:
 ```json
 {
@@ -199,9 +207,11 @@ Response:
     "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgxNTYzNzI5LCJpYXQiOjE2ODE0NzczMjksImp0aSI6IjJjY2ZiZjNiZTJhYzQ3YTQ4NWRkNTY4ZGQzNWFiNzRhIiwidXNlcl9pZCI6MTd9.l-PcMX4WeUWmD5-egu1PNlgH_EdQb3tm2uIWUp57MzE"
 }
 ```
-[:arrow_up:User APIд](#user)
-### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
+[:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
 <a name="last"></a>
+### 5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
+
 Response:
 ```json
 [
@@ -280,13 +290,14 @@ Response:
 ]
 ```
 [:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
 
 <a name="product"></a>
 ## Product APi
 [:arrow_up:SellOut API](#up)
-
-### 1. `[GET][Admin] product` все товары
 <a name="products"></a>
+### 1. `[GET][Admin] product` все товары
+
 Response:
 ```json
 [
@@ -361,8 +372,10 @@ Response:
 ]
 ```
 [:arrow_up:Product API](#product)
-### 2. `[GET][Admin] product/<product_id>` данные одного товара
+[:arrow_up:SellOut API](#up)
 <a name="product_id"></a>
+### 2. `[GET][Admin] product/<product_id>` данные одного товара
+
 Response:
 ```json
 {
@@ -401,8 +414,10 @@ Response:
 }
 ```
 [:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
+<a name="product_all"></a>
 ### 3. `[GET][Anon] product/all/<num_page>` страница товаров 
-<a name="product_main"></a>
+
 Response:
 ```json
 {
@@ -484,9 +499,11 @@ Response:
 }
 ```
 [:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
 <a name="shipping"></a>
 [:arrow_up:SellOut API](#up)
 ## Shipping API
+<a name="product_unit"></a>
 ### 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара
 Response:
 ```json
@@ -577,6 +594,8 @@ Response:
 ]
 ```
 [:arrow_up:Shipping API](#shipping)
+[:arrow_up:SellOut API](#up)
+<a name="product_main"></a>
 ### 2. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "картока товара" (если пользователь не авторизован user_id = 0)
 Response:
 ```json
@@ -619,12 +638,14 @@ Response:
 
 ```
 [:arrow_up:Shipping API](#shipping)
+[:arrow_up:SellOut API](#up)
 
 <a name="wishlist"></a>
 ## WishList API
 [:arrow_up:SellOut API](#up)
-### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
 <a name="wl"></a>
+### 1. `[GET][User] wishlist/<user_id>` вишлист пользователя
+
 Response:
 ```json
 [
@@ -763,31 +784,33 @@ Response:
 ]
 ```
 [:arrow_up:WishList API](#wishlist)
-
-### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист
+[:arrow_up:SellOut API](#up)
 <a name="add_wl"></a>
-Response: карточку вишлиста
+### 2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист
 
-### 3. `[delete][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
+Response: карточку вишлиста
 <a name="del_wl"></a>
-Response: карточку вишлиста
+### 3. `[delete][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
 
-### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера"
+Response: карточку вишлиста
 <a name="add_no_size_wl"></a>
-Response: карточку вишлиста
+### 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без размера"
 
-### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте
+Response: карточку вишлиста
 <a name="change_wl"></a>
+### 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в вишлисте
+
 Response: карточку вишлиста
 [:arrow_up:WishList API](#wishlist)
+[:arrow_up:SellOut API](#up)
 
 
 <a name="orders"></a>
 ## Orders API
 [:arrow_up:SellOut API](#up)
-
-### 1. `[GET][User] cart/user/<user_id>` корзина пользователя
 <a name="cart"></a>
+### 1. `[GET][User] cart/user/<user_id>` корзина пользователя
+
 Response:
 ```json
 {
@@ -916,9 +939,10 @@ Response:
 }
 ```
 [:arrow_up:Orders API](#orders)
-
-### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину
+[:arrow_up:SellOut API](#up)
 <a name="add_to_cart"></a>
+### 2. `[POST][User] cart/add/<user_id>/<product_unit_id>` добавить юнит в корзину
+
 Response:
 ```json
 {
@@ -1006,9 +1030,10 @@ Response:
 }
 ```
 [:arrow_up:Orders API](#orders)
-
-### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины
+[:arrow_up:SellOut API](#up)
 <a name="del_from_cart"></a>
+### 3. `[DELETE][User] cart/delete/<user_id>/<product_unit_id>` удалить юнит из корзины
+
 Response:
 ```json
 {
@@ -1096,9 +1121,10 @@ Response:
 }
 ```
 [:arrow_up:Orders API](#orders)
-
-### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
+[:arrow_up:SellOut API](#up)
 <a name="checkout"></a>
+### 4. `[POST][User] cart/checkout/<user_id>` оформить заказ
+
 Body:
 ```json
 {
@@ -1342,6 +1368,7 @@ Response:
 }
 ```
 [:arrow_up:Orders API](#orders)
+[:arrow_up:SellOut API](#up)
 
 
 

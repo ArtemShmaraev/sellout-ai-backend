@@ -4,10 +4,9 @@ from django.contrib import admin
 from .models import ProductUnit, Platform, Formula, AddressInfo, DeliveryType
 
 
-
-
 class ProductUnitAdmin(admin.ModelAdmin):
-    list_display = ('product', )
+    list_display = ('product', "size", "platform", "delivery_type", "final_price", )
+
 
 class AddressInfoAdmin(admin.ModelAdmin):
     list_display = ('address', )
@@ -19,6 +18,7 @@ class DeliveryTypeAdmin(admin.ModelAdmin):
 
 class PlatformAdmin(admin.ModelAdmin):
     list_display = ('platform', )
+
 
 class UnitBundleAdmin(admin.ModelAdmin):
     list_display = ('size', )

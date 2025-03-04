@@ -11,6 +11,7 @@ from promotions.models import PromoCode
 from promotions.views import check_promo
 from users.models import User
 
+
 class ShoppingCartUser(APIView):
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
@@ -61,4 +62,28 @@ class CheckOutView(APIView):
             order.save()
             return Response(OrderSerializer(order).data)
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
+
+class AllOrdersView(APIView):
+    def get(self, request):
+        if request.user.is_staff:
+            return Response(OrderSerializer(Order.objects.all(), many=True).data)
+        return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
+
+class UserOrdersView(APIView):
+    def get(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            return Response(OrderSerializer(Order.objects.filter(user_id=user_id), many=True).data)
+        return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
+
+class OrderView(APIView):
+    def get(self, request, order_id):
+        id = Order.objects.get(id=order_id).user.id
+        if request.user.id == id or request.user.is_staff:
+            return Response(OrderSerializer(Order.objects.filter(id=order_id), many=True).data)
+        return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
+
 

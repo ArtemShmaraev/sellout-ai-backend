@@ -20,6 +20,13 @@ from shipping.views import ProductUnitProductMainView
 import requests
 
 
+class UserInfo(APIView):
+    def get(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            return Response(UserSerializer(User.objects.get(id=user_id)).data)
+        return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+
 class RegisterUser(APIView):
     def post(self, request):
         data = request.data

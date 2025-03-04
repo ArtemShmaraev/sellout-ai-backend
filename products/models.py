@@ -6,9 +6,15 @@ from datetime import date
 class Brand(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class Size(models.Model):
@@ -22,9 +28,15 @@ class Size(models.Model):
     product = models.ForeignKey("Product", related_name="sizes", on_delete=models.CASCADE,
                                 null=True, blank=True)
 
+    def __str__(self):
+        return self.INT
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class Gender(models.Model):
@@ -55,6 +67,9 @@ class Product(models.Model):
     add_date = models.DateField(default=date.today)
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
 
 
 class SizeTranslationRows(models.Model):

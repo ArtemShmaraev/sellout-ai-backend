@@ -6,6 +6,7 @@ from .models import Product, Category, Tag, Brand, Gender, Size
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', '_brand', )
+    search_fields = ("name",)
 
 
     def _brand(self, row):

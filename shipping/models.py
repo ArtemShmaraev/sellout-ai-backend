@@ -32,6 +32,9 @@ class Platform(models.Model):
     platform = models.CharField(max_length=255, null=False, blank=False)
     site = models.CharField(max_length=10, null=True, blank=True)
 
+    def __str__(self):
+        return self.platform
+
 
 def get_default_currency():
     default_object = Currency.objects.get_or_create(name="pending")[0]
@@ -57,3 +60,6 @@ class ProductUnit(models.Model):
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
     availability = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.product.name} {self.size} {self.platform} {self.delivery_type}"

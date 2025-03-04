@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/v1/user/', include('users.urls')),
     path('api/v1/wishlist/', include('wishlist.urls')),
     path('api/v1/promo/', include('promotions.urls')),
-    path('api/v1/cart/', include('orders.urls')),
+    path('api/v1/order/', include('orders.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),

@@ -3,11 +3,11 @@
 Небольшое пояснение: первые квадратные скобки перед запросом это тип запроса, вторые это уровень доступа  (Admin > User > Anon)
 ## User API
 1. `[GET][Admin] user` информация обо всех пользователях, списком [Вниз к запросу](#users)
-2.1 `[GET][Admin] user/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-2.2 `[GET][User] user_info/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-3. `[POST][Anon] user/register` регистрация пользователя [Вниз к запросу](#reg)
-4. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
-5. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
+2. `[GET][Admin] user/<user_id>` данные пользователя [Вниз к запросу](#user_id)
+3. `[GET][User] user_info/<user_id>` данные пользователя [Вниз к запросу](#user_id)
+4. `[POST][Anon] user/register` регистрация пользователя [Вниз к запросу](#reg)
+5. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
+6. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
 
 ## Product API
 1. `[GET][Admin] product` все товары [Вниз к запросу](#products)

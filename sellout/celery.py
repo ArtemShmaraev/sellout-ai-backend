@@ -3,9 +3,9 @@ import os
 from celery import Celery
 from django.conf import settings
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sellout.settings')
 
-app = Celery('your_project_name')
+app = Celery('sellout')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 

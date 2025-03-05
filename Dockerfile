@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir gunicorn
 
 # Copy the Django project files
 COPY . /app/
+RUN mkdir /app/staticfiles
 
 RUN python manage.py collectstatic --noinput
 
@@ -30,4 +31,4 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8000
 
 # Run the application using Gunicorn
-CMD service nginx start && gunicorn myproject.wsgi:application --bind 127.0.0.1:8000
+CMD service nginx start && gunicorn sellout.wsgi:application --bind 127.0.0.1:8000

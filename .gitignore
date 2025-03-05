@@ -31,3 +31,4 @@ dist/
 
 # Ignore docker images
 *.tar
+!/docker_script.sh

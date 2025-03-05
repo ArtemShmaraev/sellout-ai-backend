@@ -12,15 +12,17 @@ from products.models import Product
 from sellout.settings import url
 from shipping.views import product_unit_product_main
 import json
-
+from shipping.models import AddressInfo
+from shipping.serializers import AddressInfoSerializer
 from wishlist.models import Wishlist
 from orders.models import ShoppingCart
+
 from shipping.views import ProductUnitProductMainView
 
 import requests
 
 
-class UserInfo(APIView):
+class UserInfoView(APIView):
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(UserSerializer(User.objects.get(id=user_id)).data)
@@ -41,24 +43,33 @@ class RegisterUser(APIView):
         cart.save()
         wl.save()
         return Response(requests.post(f"{url}/api/token/", data={'username': new_user.username,
-                                                                'password': data['password']}).json())
+                                                                 'password': data['password']}).json())
+
 
 class LoginUser(APIView):
     def post(self, request):
         data = request.data
         return Response(requests.post(f"{url}/api/token/", data={'username': data['username'],
-                                                                'password': data['password']}).json())
+                                                                 'password': data['password']}).json())
 
 
 # последние 7 просмотренных товаров пользователя
 class UserLastSeenView(APIView):
-    def get(self, request, id):
+    def get(self, request, user_id):
         def s_id(product):
-            return product_unit_product_main(product['id'], id)
+            return product_unit_product_main(product['id'], user_id)
 
-        if request.user.id == id or request.user.is_staff:
-            s = list(map(s_id, list(ProductSerializer(User.objects.filter(id=id)[0].last_viewed_products, many=True).data[-7:])))
+        if request.user.id == user_id or request.user.is_staff:
+            s = list(map(s_id, list(ProductSerializer(User.objects.filter(id=user_id)[0].last_viewed_products, many=True).data[-7:])))
             return Response(s)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+
+class AddressUserView(APIView):
+    def get(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 

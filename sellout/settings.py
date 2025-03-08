@@ -14,7 +14,7 @@ from pathlib import Path
 from kombu import Queue, Exchange
 from datetime import timedelta
 
-url = " http://127.0.0.1:8000"
+URL = " http://127.0.0.1:8000"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'wishlist',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_slugify_processor',
+    'django_filters',
 ]
 
 # Set the AUTH_USER_MODEL setting to point to your custom user model
@@ -142,6 +144,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 25
 }
@@ -212,7 +220,7 @@ SIMPLE_JWT = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sellout_db',  # Update the case here
+        'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2023',
         'HOST': '51.250.2.233',

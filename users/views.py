@@ -6,7 +6,7 @@ from .serializers import UserSerializer
 from products.serializers import ProductSerializer, SizeSerializer
 from .models import User, Gender
 from products.models import Product
-from sellout.settings import url
+from sellout.settings import URL
 from shipping.views import product_unit_product_main
 import json
 from shipping.models import AddressInfo

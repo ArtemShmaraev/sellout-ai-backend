@@ -9,7 +9,7 @@ from users.models import User
 from .serializers import WishlistSerializer, WishlistUnitSerializer
 from products.models import Product
 from products.models import Size
-from sellout.settings import url
+from sellout.settings import URL
 from rest_framework import status
 from shipping.views import product_unit_product_main
 

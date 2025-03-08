@@ -5,10 +5,8 @@ from .serializers import ProductUnitSerializer
 from .models import ProductUnit
 from wishlist.models import Wishlist, WishlistUnit
 from products.models import Product
-from products.serializers import ProductSerializer
+from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
-
-
 
 
 class ProductUnitProductView(APIView):
@@ -24,23 +22,17 @@ class ProductUnitProductSlugView(APIView):
         return Response(ProductUnitSerializer(s, many=True).data)
 
 
-
 def product_unit_product_main(product_id, user_id):
-    s = ProductUnit.objects.filter(product_id=product_id)
-    data = ProductUnitSerializer(s, many=True).data
-    if len(data) == 0:
-        return Response([])
-    ans = ProductSerializer(Product.objects.get(id=product_id)).data
-    min_price = data[0]["final_price"]
-    for d in data:
-        min_price = min(min_price, d["final_price"])
-    ans['min_price'] = min_price
-
-    if user_id > 0:
-        wishlist = Wishlist.objects.get(user_id=user_id)
-        data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
-        ans['in_wishlist'] = len(data) > 0
-    return ans
+    if Product.objects.filter(id=product_id).exists():
+        product = Product.objects.get(id=product_id)
+        ans = ProductSerializer(product).data
+        ans['min_price'] = product.min_price
+        if user_id > 0:
+            wishlist = Wishlist.objects.get(user_id=user_id)
+            data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
+            ans['in_wishlist'] = len(data) > 0
+        return ans
+    return "Товар не найден"
 
 
 class ProductUnitProductMainView(APIView):

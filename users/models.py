@@ -25,10 +25,10 @@ class User(AbstractUser):
     gender = models.ForeignKey("Gender", on_delete=models.PROTECT, null=True, blank=True,
                                related_name="users")
 
-    address = models.ManyToManyField("shipping.AddressInfo", null=True, blank=True,
+    address = models.ManyToManyField("shipping.AddressInfo", blank=True,
                                      related_name="users")
-    favorite_brands = models.ManyToManyField("products.Brand", null=True, blank=True,
-                                     related_name="users")
+    favorite_brands = models.ManyToManyField("products.Brand", blank=True,
+                                             related_name="users")
     all_purchase_amount = models.IntegerField(default=0)
 
     personal_discount_percentage = models.IntegerField(default=0)

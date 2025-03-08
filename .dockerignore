@@ -1,0 +1,7 @@
+__pycache__
+*.log
+*.pyc
+*.pyo
+*.tar
+.git
+/docker_script.sh

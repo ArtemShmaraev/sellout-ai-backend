@@ -60,6 +60,7 @@ class ProductUnit(models.Model):
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
     availability = models.BooleanField(default=True)
+    warehouse = models.BooleanField(default=True) #на руках ли товар
 
     def __str__(self):
         return f"{self.product.name} {self.size} {self.platform} {self.delivery_type}"

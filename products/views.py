@@ -7,8 +7,9 @@ from rest_framework import status
 from django.core.paginator import Paginator
 from sellout.settings import url
 from shipping.views import product_unit_product_main
-# Create your views here.
 
+
+# Create your views here.
 
 
 # возвращает список продуктов для главной странички всех товаров
@@ -33,3 +34,4 @@ class ProductsView(APIView):
         ans = {"page number": page_number,
                'items': list_products}
         return Response(ans, status=status.HTTP_200_OK)
+

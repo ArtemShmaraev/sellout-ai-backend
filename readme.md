@@ -24,7 +24,8 @@ Anon)
 ## Shipping API
 
 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
-2. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [Вниз к запросу](#product_main)
+2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [Вниз к запросу](#product_unit)
+3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [Вниз к запросу](#product_main)
 
 ## WishList API
 
@@ -47,6 +48,76 @@ Anon)
 6. `[GET][User] order/user_orders` все заказы пользователя [Вниз к запросу](#user_orders)
 7. `[GET][User] order/<order_id>` информация о заказе [Вниз к запросу](#order)
    <a name="user"></a>
+
+
+# Поиск
+Запросы отправляются на сервер с elastic 
+### 1. `[GET][Anon] <elastichost>/sellout/_search` информация обо всех пользователях, списком
+
+Body:
+```json
+{
+  "query": {
+    "multi_match": {
+       "query": "Тут запрос например <Nike>",
+       "fields": ["name", "brands.name", "categories.name", "tags.name", "description"],
+       "fuzziness": 2
+    }
+  }
+}
+```
+
+Response:
+```json
+{
+   "took": 9,
+   "timed_out": false,
+   "_shards": {
+      "total": 1,
+      "successful": 1,
+      "failed": 0
+   },
+   "hits": {
+      "total": 2,
+      "max_score": 1.0,
+      "hits": [
+         {
+            "_index": "sellout",
+            "_type": "doc",
+            "_id": "1",
+            "_score": 1.0,
+            "_source": {
+               "name": "Air Force 1",
+               "description": "desc",
+               "brands": [
+                  {
+                     "id": 1,
+                     "name": "Nike"
+                  }
+               ],
+               "categories": [
+                  {
+                     "id": 1,
+                     "name": "Sport"
+                  }
+               ],
+               "tags": [
+                  {
+                     "id": 1,
+                     "name": "Style"
+                  }
+               ],
+               "id": 1
+            }
+         }
+      ]
+   }
+}
+
+```
+
+
+
 
 ## User API
 

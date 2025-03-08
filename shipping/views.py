@@ -17,6 +17,13 @@ class ProductUnitProductView(APIView):
         return Response(ProductUnitSerializer(s, many=True).data)
 
 
+class ProductUnitProductSlugView(APIView):
+    def get(self, request, slug):
+        print(slug)
+        s = ProductUnit.objects.filter(product__slug=slug)
+        return Response(ProductUnitSerializer(s, many=True).data)
+
+
 
 def product_unit_product_main(product_id, user_id):
     s = ProductUnit.objects.filter(product_id=product_id)

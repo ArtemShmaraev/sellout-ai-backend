@@ -32,7 +32,7 @@ class UserInfoView(APIView):
         return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
 
-class RegisterUser(generics.GenericAPIView):
+class UserRegister(generics.GenericAPIView):
     permission_classes = ()
     authentication_classes = ()
 
@@ -100,7 +100,7 @@ class UserLastSeenView(APIView):
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
 
-class AddressUserView(APIView):
+class UserAddressView(APIView):
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)

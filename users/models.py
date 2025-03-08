@@ -27,6 +27,8 @@ class User(AbstractUser):
 
     address = models.ManyToManyField("shipping.AddressInfo", null=True, blank=True,
                                      related_name="users")
+    favorite_brands = models.ManyToManyField("products.Brand", null=True, blank=True,
+                                     related_name="users")
     all_purchase_amount = models.IntegerField(default=0)
 
     personal_discount_percentage = models.IntegerField(default=0)
@@ -39,6 +41,9 @@ class User(AbstractUser):
     last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
                                                   blank=True)
 
+    def __str__(self):
+        return self.username
+
 
 class Gender(models.Model):
     GENDER_CHOICES = (
@@ -47,6 +52,9 @@ class Gender(models.Model):
     )
 
     name = models.CharField(max_length=255, choices=GENDER_CHOICES)
+
+    def __str__(self):
+        return self.name
 
 
 class Status(models.Model):

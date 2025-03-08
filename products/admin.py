@@ -7,7 +7,7 @@ from .models import Product, Category, Tag, Brand, Gender, Size
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', '_brand', )
     search_fields = ("name",)
-
+    prepopulated_fields = {'slug': ('name',)}
 
     def _brand(self, row):
         return ','.join([x.name for x in row.brands.all()])

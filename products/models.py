@@ -39,6 +39,13 @@ class Tag(models.Model):
         return self.name
 
 
+class Collection(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Gender(models.Model):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -54,7 +61,11 @@ class Product(models.Model):
                                     blank=False)
     categories = models.ManyToManyField("Category", related_name='products',
                                         blank=False)
+    collections = models.ManyToManyField("Collection", related_name='products',
+                                         blank=False)
     name = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    russian_name = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
     tags = models.ManyToManyField("Tag", related_name='products', blank=True)
     bucket_link = models.CharField(max_length=255)
     # sizes are initialized in Size model by ForeignKey
@@ -65,6 +76,7 @@ class Product(models.Model):
     available_flag = models.BooleanField(default=True)
     last_upd = models.DateTimeField(default=timezone.now)
     add_date = models.DateField(default=date.today)
+    release_date = models.DateField(default=date.today)
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
 

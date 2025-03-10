@@ -13,13 +13,41 @@ class ProductFilter(django_filters.FilterSet):
     brands = CharFilterInFilter(field_name='brands__name', lookup_expr='in')
     gender = django_filters.CharFilter(field_name='gender__name')
     colors = django_filters.CharFilter(field_name='colors__name')
-    min_price = django_filters.RangeFilter()
+    price = django_filters.RangeFilter(field_name="product_units__final_price")
+    # price_max = django_filters.NumberFilter()
     lines = CharFilterInFilter(field_name='lines__name', lookup_expr='in')
+    size_us = CharFilterInFilter(field_name='product_units__size__US', lookup_expr='in')
 
     class Meta:
         model = Product
         fields = ['categories', 'brands', 'gender', 'colors', 'min_price', 'lines']
 
     def get_queryset(self):
+        # print(price_max)
         queryset = super().get_queryset()
-        return queryset.filter(**self.filters)
+        queryset = queryset.values('id').distinct()
+        return queryset.distinct()
+        # return queryset.filter(**self.filters)
+
+
+
+        # # return queryset.filter(**self.filters).distinct()
+        # price_min = self.request.query_params.get('price_min')
+        # price_max = self.request.query_params.get('price_max')
+        # size = self.request.query_params.get('size')
+        #
+        # if price_min and size:
+        #     queryset = queryset.filter(
+        #         product_units__size_US=size,
+        #         product_units__price__gte=price_min
+        #     ).distinct()
+        #
+        # elif price_max and size:
+        #
+        #     queryset = queryset.filter(
+        #         product_units__size_US=size,
+        #         product_units__price__lte=price_max
+        #     ).distinct()
+        #
+        # return queryset
+

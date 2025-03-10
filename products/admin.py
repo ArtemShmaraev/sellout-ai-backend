@@ -1,11 +1,11 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Product, Category, Tag, Brand, Gender, Size, Collection, Color, Line
+from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Line, SizeTable, SizeTranslationRows
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('model', '_brand',)
+    list_display = ('model', '_brand', 'colorway')
     search_fields = ("brands__name", "model", "colorway")
 
     # prepopulated_fields = {'slug': ('name',)}
@@ -42,16 +42,24 @@ class CollectionAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
-class SizeAdmin(admin.ModelAdmin):
-    list_display = ('INT',)
+# class SizeAdmin(admin.ModelAdmin):
+#     list_display = ('INT',)
+
+class SizeRowsAdmin(admin.ModelAdmin):
+    list_display = ('US',)
+
+
+class SizeTableAdmin(admin.ModelAdmin):
+    list_display = ('name', 'brand', 'category', 'gender')
 
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Brand, BrandAdmin)
-admin.site.register(Size, SizeAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Gender, GenderAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Collection, CollectionAdmin)
 admin.site.register(Color, ColorAdmin)
 admin.site.register(Line, LineAdmin)
+admin.site.register(SizeTable, SizeTableAdmin)
+admin.site.register(SizeTranslationRows, SizeRowsAdmin)

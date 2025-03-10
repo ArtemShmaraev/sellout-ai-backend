@@ -17,14 +17,15 @@ Anon)
 
 ## Product API
 
-1. `[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-2. `[GET][Anon] product/?page=n` страница товаров [Вниз к запросу](#product_all)
+1`[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
+2`[GET][Anon] product/&page=n` страница товаров [Вниз к запросу](#product_all)
 
 ## Shipping API
 
 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
 2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [Вниз к запросу](#product_unit)
 3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [Вниз к запросу](#product_main)
+4. `[GET][Anon] /product` фильтрация товаров [Вниз к запросу](#product_filter)
 
 ## WishList API
 
@@ -423,6 +424,7 @@ Response:
 
 [:arrow_up:SellOut API](#up)
 
+
 <a name="product_id"></a>
 
 ### 1. `[GET][Admin] product/<product_id>` данные одного товара
@@ -431,38 +433,40 @@ Response:
 
 ```json
 {
-  "id": 1,
-  "name": "Air Force 1",
-  "bucket_link": "/buck",
-  "description": "desc",
-  "sku": "air_force_1",
-  "available_flag": true,
-  "last_upd": "2023-04-07T15:28:17Z",
-  "add_date": "2023-04-07",
-  "fit": 1,
-  "rel_num": 1,
-  "gender": {
-    "id": 1,
-    "name": "M"
-  },
-  "brands": [
-    {
-      "id": 1,
-      "name": "Nike"
-    }
-  ],
-  "categories": [
-    {
-      "id": 1,
-      "name": "Sport"
-    }
-  ],
-  "tags": [
-    {
-      "id": 1,
-      "name": "Style"
-    }
-  ]
+    "id": 722,
+    "is_favorite": false,
+    "model": "850",
+    "colorway": "",
+    "russian_name": "850",
+    "slug": "new-balance-850-722",
+    "manufacturer_sku": "MS850TRG",
+    "description": "",
+    "bucket_link": "",
+    "designer_color": "",
+    "min_price": null,
+    "available_flag": true,
+    "last_upd": "2023-05-18T15:34:18.638248Z",
+    "add_date": "2023-05-18",
+    "release_date": "2023-05-18",
+    "fit": 0,
+    "rel_num": 0,
+    "main_color": 29,
+    "recommended_gender": 1,
+    "brands": [
+        6
+    ],
+    "categories": [
+        2
+    ],
+    "lines": [],
+    "collections": [],
+    "tags": [],
+    "colors": [
+        29
+    ],
+    "gender": [
+        1
+    ]
 }
 ```
 
@@ -470,96 +474,88 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="product_all"></a>
 
-### 2. `[GET][Anon] product/?page=n` страница товаров
-page - номер страницы
-
+### 2. `[GET][Anon] product/&page=n` страница товаров
 
 Response:
 
 ```json
 {
-  "page number": 1,
-  "items": [
-    {
-      "id": 1,
-      "name": "Air Force 1",
-      "bucket_link": "/buck",
-      "description": "desc",
-      "sku": "air_force_1",
-      "available_flag": true,
-      "last_upd": "2023-04-07T15:28:17Z",
-      "add_date": "2023-04-07",
-      "fit": 1,
-      "rel_num": 1,
-      "gender": {
-        "id": 1,
-        "name": "M"
-      },
-      "brands": [
+    "count": 16400,
+    "next": "http://127.0.0.1:8000/api/v1/product/?page=2",
+    "previous": null,
+    "results": [
         {
-          "id": 1,
-          "name": "Nike"
-        }
-      ],
-      "categories": [
-        {
-          "id": 1,
-          "name": "Sport"
-        }
-      ],
-      "tags": [
-        {
-          "id": 1,
-          "name": "Style"
-        }
-      ],
-      "min_price": 7,
-      "in_wishlist": true
-    },
-    {
-      "id": 2,
-      "name": "Dunk",
-      "bucket_link": "/buck",
-      "description": "desc",
-      "sku": "sku",
-      "available_flag": true,
-      "last_upd": "2023-04-07T15:59:39Z",
-      "add_date": "2023-04-07",
-      "fit": 0,
-      "rel_num": 0,
-      "gender": {
-        "id": 1,
-        "name": "M"
-      },
-      "brands": [
-        {
-          "id": 1,
-          "name": "Nike"
-        }
-      ],
-      "categories": [
-        {
-          "id": 1,
-          "name": "Sport"
-        }
-      ],
-      "tags": [
-        {
-          "id": 1,
-          "name": "Style"
-        }
-      ],
-      "min_price": 100,
-      "in_wishlist": false
-    }
-  ]
+            "id": 722,
+            "is_favorite": false,
+            "model": "0 To 60 STMT Human Race",
+            "colorway": "Triple Black",
+            "russian_name": "0 To 60 STMT Human Race",
+            "slug": "adidas-0-to-60-stmt-human-race-triple-black-722",
+            "manufacturer_sku": "GX2486",
+            "description": "",
+            "bucket_link": "",
+            "designer_color": "",
+            "min_price": null,
+            "available_flag": true,
+            "last_upd": "2023-05-29T14:37:02.605662Z",
+            "add_date": "2023-05-29",
+            "release_date": "2023-05-29",
+            "fit": 0,
+            "rel_num": 0,
+            "main_color": {
+                "id": 5,
+                "name": "black"
+            },
+            "recommended_gender": {
+                "id": 1,
+                "name": "M"
+            },
+            "size_table": null,
+            "brands": [
+                {
+                    "id": 1,
+                    "name": "Adidas"
+                }
+            ],
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Обувь",
+                    "parent_categories": []
+                }
+            ],
+            "lines": [],
+            "collections": [],
+            "tags": [],
+            "colors": [
+                {
+                    "id": 5,
+                    "name": "black"
+                },
+                {
+                    "id": 103,
+                    "name": "black-black"
+                }
+            ],
+            "gender": [
+                {
+                    "id": 1,
+                    "name": "M"
+                },
+                {
+                    "id": 2,
+                    "name": "F"
+                }
+            ]
+        },
+       ...
+    ]
 }
 ```
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
 <a name="shipping"></a>
-[:arrow_up:SellOut API](#up)
 
 ## Shipping API
 
@@ -661,7 +657,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="product_main"></a>
 
-### 2. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "картока товара" (если пользователь не авторизован user_id = 0)
+### 2-3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "картока товара" (если пользователь не авторизован user_id = 0)
 
 Response:
 
@@ -707,6 +703,105 @@ Response:
 
 [:arrow_up:Shipping API](#shipping)
 [:arrow_up:SellOut API](#up)
+
+
+<a name="product_filter"></a>
+### 3. `[GET][Anon] product` фильтрация товаров
+параметры пример: `product/?brands=Nike&gender=F&colors=white&categories=Обувь&brands=Supreme`
+
+    categories = Фильтр по категориям
+    brands = Фильтр по брендам
+    gender = Пол (M, F, K) male, female, kids
+    colors = Фильтр по цветам
+    min_price = Фильтр по цене
+    lines = Линейки
+    page = Номер страницы, (на странице 50 товаров)
+
+Response:
+```json
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1164,
+            "is_favorite": false,
+            "model": "Air Bakin SP",
+            "colorway": "Supreme - Black",
+            "russian_name": "Air Bakin SP",
+            "slug": "nike-supreme-air-bakin-sp-supreme-black-1164",
+            "manufacturer_sku": "DX3292001",
+            "description": "",
+            "bucket_link": "",
+            "designer_color": "",
+            "min_price": null,
+            "available_flag": true,
+            "last_upd": "2023-05-18T15:37:08.902726Z",
+            "add_date": "2023-05-18",
+            "release_date": "2023-05-18",
+            "fit": 0,
+            "rel_num": 0,
+            "main_color": {
+                "id": 2,
+                "name": "black"
+            },
+            "recommended_gender": {
+                "id": 1,
+                "name": "M"
+            },
+            "brands": [
+                {
+                    "id": 8,
+                    "name": "Supreme"
+                },
+                {
+                    "id": 3,
+                    "name": "Nike"
+                }
+            ],
+            "categories": [
+                {
+                    "id": 2,
+                    "name": "Обувь",
+                    "parent_categories": []
+                }
+            ],
+            "lines": [],
+            "collections": [
+                {
+                    "id": 1,
+                    "name": "Nike x Supreme"
+                }
+            ],
+            "tags": [],
+            "colors": [
+                {
+                    "id": 2,
+                    "name": "black"
+                },
+                {
+                    "id": 612,
+                    "name": "speed red-multi-color"
+                }
+            ],
+            "gender": [
+                {
+                    "id": 1,
+                    "name": "M"
+                },
+                {
+                    "id": 2,
+                    "name": "F"
+                }
+            ]
+        }
+    ]
+}
+```
+
+
+
 
 <a name="wishlist"></a>
 

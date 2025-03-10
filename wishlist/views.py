@@ -4,11 +4,10 @@ from .models import Wishlist, WishlistUnit
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from products.serializers import ProductSerializer, SizeSerializer
+from products.serializers import ProductSerializer
 from users.models import User
 from .serializers import WishlistSerializer, WishlistUnitSerializer
-from products.models import Product
-from products.models import Size
+from products.models import Product, SizeTranslationRows
 from sellout.settings import URL
 from rest_framework import status
 from shipping.views import product_unit_product_main
@@ -20,15 +19,8 @@ import requests
 class UserWishlist(APIView):
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            wishlist = Wishlist.objects.get(user_id=user_id)
-            data = WishlistUnit.objects.filter(wishlist=wishlist)
-            ans = []
-            for el in data:
-                main = product_unit_product_main(el.product.id, user_id)
-                ans.append({'id': el.id, 'product': main,
-                            "size": SizeSerializer(Size.objects.get(id=el.size.id)).data,
-                            'product_unit': requests.get(f"{url}/api/v1/product_unit/product/{el.product.id}").json()[0]})
-            return Response(ans)
+            wishlist_units = Wishlist.objects.get(user_id=user_id).wishlist_units
+            return Response(WishlistUnitSerializer(wishlist_units, many=True).data)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
@@ -40,7 +32,7 @@ class UserAddWishlist(APIView):
             wishlist_id = WishlistSerializer(Wishlist.objects.get(user=user_id)).data['id']
             wishlist = Wishlist.objects.get(id=wishlist_id)
             product = Product.objects.get(id=product_id)
-            size = Size.objects.get(id=size_id)
+            size = SizeTranslationRows.objects.get(id=size_id)
             wl = WishlistUnit(product=product, size=size, wishlist=wishlist)
             wl.save()
             return Response(WishlistUnitSerializer(wl).data)
@@ -68,8 +60,7 @@ class UserAddWishlistNoSize(APIView):
             wishlist_id = WishlistSerializer(Wishlist.objects.get(user=user_id)).data['id']
             wishlist = Wishlist.objects.get(id=wishlist_id)
             product = Product.objects.get(id=product_id)
-            size = Size.objects.get(product_id=product_id, INT=0)
-            wl = WishlistUnit(product=product, size=size, wishlist=wishlist)
+            wl = WishlistUnit(product=product, wishlist=wishlist)
             wl.save()
             return Response(WishlistUnitSerializer(wl).data)
         else:
@@ -81,7 +72,7 @@ class UserChangeSizeWishlist(APIView):
     def post(self, request, user_id, wishlist_unit_id, size_id):
         if user_id == request.user.id or request.user.is_staff:
             wishlist_unit = WishlistUnit.objects.get(id=wishlist_unit_id)
-            wishlist_unit.size = Size.objects.get(id=size_id)
+            wishlist_unit.size = SizeTranslationRows.objects.get(id=size_id)
             return Response(WishlistUnitSerializer(wishlist_unit).data)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

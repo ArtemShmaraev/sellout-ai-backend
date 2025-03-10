@@ -17,9 +17,8 @@ Anon)
 
 ## Product API
 
-1. `[GET][Admin] product` все товары [Вниз к запросу](#products)
-2. `[GET][Admin] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-3. `[GET][Anon] product/all/<num_page>` страница товаров [Вниз к запросу](#product_all)
+1. `[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
+2. `[GET][Anon] product/?page=n` страница товаров [Вниз к запросу](#product_all)
 
 ## Shipping API
 
@@ -423,90 +422,10 @@ Response:
 ## Product APi
 
 [:arrow_up:SellOut API](#up)
-<a name="products"></a>
 
-### 1. `[GET][Admin] product` все товары
-
-Response:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Air Force 1",
-    "bucket_link": "/buck",
-    "description": "desc",
-    "sku": "air_force_1",
-    "available_flag": true,
-    "last_upd": "2023-04-07T15:28:17Z",
-    "add_date": "2023-04-07",
-    "fit": 1,
-    "rel_num": 1,
-    "gender": {
-      "id": 1,
-      "name": "M"
-    },
-    "brands": [
-      {
-        "id": 1,
-        "name": "Nike"
-      }
-    ],
-    "categories": [
-      {
-        "id": 1,
-        "name": "Sport"
-      }
-    ],
-    "tags": [
-      {
-        "id": 1,
-        "name": "Style"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "name": "Dunk",
-    "bucket_link": "/buck",
-    "description": "desc",
-    "sku": "sku",
-    "available_flag": true,
-    "last_upd": "2023-04-07T15:59:39Z",
-    "add_date": "2023-04-07",
-    "fit": 0,
-    "rel_num": 0,
-    "gender": {
-      "id": 1,
-      "name": "M"
-    },
-    "brands": [
-      {
-        "id": 1,
-        "name": "Nike"
-      }
-    ],
-    "categories": [
-      {
-        "id": 1,
-        "name": "Sport"
-      }
-    ],
-    "tags": [
-      {
-        "id": 1,
-        "name": "Style"
-      }
-    ]
-  }
-]
-```
-
-[:arrow_up:Product API](#product)
-[:arrow_up:SellOut API](#up)
 <a name="product_id"></a>
 
-### 2. `[GET][Admin] product/<product_id>` данные одного товара
+### 1. `[GET][Admin] product/<product_id>` данные одного товара
 
 Response:
 
@@ -551,7 +470,9 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="product_all"></a>
 
-### 3. `[GET][Anon] product/all/<num_page>` страница товаров
+### 2. `[GET][Anon] product/?page=n` страница товаров
+page - номер страницы
+
 
 Response:
 

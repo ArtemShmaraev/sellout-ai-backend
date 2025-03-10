@@ -55,7 +55,7 @@ class ProductUnit(models.Model):
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)
-    stat_price = models.IntegerField(null=False, blank=False, default=0)  # Старая цена
+    start_price = models.IntegerField(null=False, blank=False, default=0)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False)  # Новая цена
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
                                       null=False, blank=False, default=get_default_delivery_type)

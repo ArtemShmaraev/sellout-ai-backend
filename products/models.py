@@ -156,24 +156,23 @@ class Product(models.Model):
 
 
 class SizeTable(models.Model):
-    name = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
     brand = models.ForeignKey("Brand", on_delete=models.PROTECT, blank=True, null=True)
     category = models.ForeignKey("Category", on_delete=models.PROTECT, blank=True, null=True)
     # gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
-    gender = models.CharField(max_length=255, blank=True)
-    size_row = models.ManyToManyField("SizeTranslationRows", related_name='rows', blank=True)
+    gender = models.CharField(max_length=255, blank=True, null=True)
+    size_row = models.ManyToManyField("SizeTranslationRows", related_name='rows', blank=True, null=True)
 
     def __str__(self):
         return f"{self.brand} {self.gender}"
 
 class SizeTranslationRows(models.Model):
-    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT, default=None)
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT)
     US = models.CharField(max_length=16, blank=True, null=True)
     UK = models.CharField(max_length=16, blank=True, null=True)
     EU = models.CharField(max_length=16, blank=True, null=True)
     RU = models.CharField(max_length=16, blank=True, null=True)
     CM = models.CharField(max_length=16, blank=True, null=True)
-
 
 
     def __str__(self):

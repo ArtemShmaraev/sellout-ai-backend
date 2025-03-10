@@ -7,8 +7,14 @@ from django.core.exceptions import ObjectDoesNotExist
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        s = SizeTable.objects.all()
+        s.delete()
+        s = SizeTranslationRows.objects.all()
+        s.delete()
+
         all_data = json.load(open("size_table.json", encoding="utf-8"))
         for data in all_data:
+
             brand, created = Brand.objects.get_or_create(name=data['brand'])
             brand.save()
             category = Category.objects.get(name=data['category'])

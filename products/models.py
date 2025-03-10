@@ -30,19 +30,19 @@ class Line(models.Model):
             return self.name
 
 
-class Size(models.Model):
-    INT = models.CharField(max_length=15)
-    US = models.CharField(max_length=15)
-    UK = models.CharField(max_length=15)
-    EU = models.CharField(max_length=15)
-    IT = models.CharField(max_length=15)
-    RU = models.CharField(max_length=15)
-
-    product = models.ForeignKey("Product", related_name="sizes", on_delete=models.CASCADE,
-                                null=True, blank=True)
-
-    def __str__(self):
-        return self.INT
+# class Size(models.Model):
+#     INT = models.CharField(max_length=15)
+#     US = models.CharField(max_length=15)
+#     UK = models.CharField(max_length=15)
+#     EU = models.CharField(max_length=15)
+#     IT = models.CharField(max_length=15)
+#     RU = models.CharField(max_length=15)
+#
+#     product = models.ForeignKey("Product", related_name="sizes", on_delete=models.CASCADE,
+#                                 null=True, blank=True)
+#
+#     def __str__(self):
+#         return self.INT
 
 
 class Tag(models.Model):
@@ -95,7 +95,8 @@ class Product(models.Model):
                                    blank=True)
     collections = models.ManyToManyField("Collection", related_name='products',
                                          blank=True)
-    tags = models.ManyToManyField("Tag", related_name='products', blank=True)
+    tags = models.ManyToManyField("Tag", related_name='products',
+                                         blank=True)
 
     model = models.CharField(max_length=255, null=False, blank=True)
     colorway = models.CharField(max_length=255, null=False, blank=True)
@@ -111,6 +112,7 @@ class Product(models.Model):
 
     gender = models.ManyToManyField("Gender", related_name='products', blank=True)
     recommended_gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
+    size_table = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True)
 
     min_price = models.IntegerField(blank=True, null=True)
 
@@ -124,8 +126,6 @@ class Product(models.Model):
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
     objects = ProductManager()
-
-
 
     def save(self, *args, **kwargs):
         def add_categories_to_product(category):
@@ -155,11 +155,26 @@ class Product(models.Model):
         return self.model
 
 
-class SizeTranslationRows(models.Model):
-    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, related_name="translations_rows")
-    category = models.ForeignKey("Category", on_delete=models.PROTECT)
+class SizeTable(models.Model):
+    name = models.CharField(max_length=255, blank=True)
+    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, blank=True, null=True)
+    category = models.ForeignKey("Category", on_delete=models.PROTECT, blank=True, null=True)
+    # gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
+    gender = models.CharField(max_length=255, blank=True)
+    size_row = models.ManyToManyField("SizeTranslationRows", related_name='rows', blank=True)
 
-    US = models.FloatField()
-    UK = models.FloatField()
-    EU = models.FloatField()
-    RU = models.FloatField()
+    def __str__(self):
+        return f"{self.brand} {self.gender}"
+
+class SizeTranslationRows(models.Model):
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT, default=None)
+    US = models.CharField(max_length=16, blank=True, null=True)
+    UK = models.CharField(max_length=16, blank=True, null=True)
+    EU = models.CharField(max_length=16, blank=True, null=True)
+    RU = models.CharField(max_length=16, blank=True, null=True)
+    CM = models.CharField(max_length=16, blank=True, null=True)
+
+
+
+    def __str__(self):
+        return f"{self.table} {self.US}"

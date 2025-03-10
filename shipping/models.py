@@ -1,5 +1,6 @@
 from django.db import models
 from utils.models import Currency
+from products.models import SizeTranslationRows
 
 
 class DeliveryType(models.Model):
@@ -49,18 +50,20 @@ def get_default_delivery_type():
 class ProductUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="product_units",
                                 null=False, blank=False)
-    size = models.ForeignKey("products.Size", on_delete=models.CASCADE, related_name='product_units',
-                             null=False, blank=False)
+    size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name='product_units',
+                             null=True, blank=True)
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)
-    final_price = models.IntegerField(null=False, blank=False)
+    stat_price = models.IntegerField(null=False, blank=False, default=0)  # Старая цена
+    final_price = models.IntegerField(null=False, blank=False)  # Новая цена
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
                                       null=False, blank=False, default=get_default_delivery_type)
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
+    url = models.CharField(max_length=255, null=True, blank=True, default="")
     availability = models.BooleanField(default=True)
-    warehouse = models.BooleanField(default=False) #на руках ли товар
+    warehouse = models.BooleanField(default=False)  # на руках ли товар
 
     def __str__(self):
-        return f"{self.product.name} {self.size} {self.platform} {self.delivery_type}"
+        return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"

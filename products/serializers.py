@@ -1,5 +1,5 @@
 from wishlist.models import Wishlist, WishlistUnit
-from .models import Product, Size
+from .models import Product
 from rest_framework import serializers
 
 
@@ -16,6 +16,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+        depth = 2
 
     def get_is_favorite(self, product):
         user_id = self.context.get('user_id')
@@ -41,7 +42,3 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
     #     return data
 
 
-class SizeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Size
-        fields = "__all__"

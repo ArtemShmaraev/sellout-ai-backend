@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer
-from products.serializers import ProductSerializer, SizeSerializer
+from products.serializers import ProductSerializer
 from .models import User, Gender
 from products.models import Product
 from sellout.settings import URL
@@ -106,3 +106,11 @@ class UserAddressView(APIView):
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+
+class UserChangePassword(APIView):
+    def post(self, request):
+        user = User.objects.get(id=request.user.id)
+
+        user.set_password(request.data['password'])
+        user.save()

@@ -27,11 +27,14 @@ SECRET_KEY = 'django-insecure-hr+%so83!fts7gey%sb3%#_n%e&2=v9g2mmsg(zy$q*w@g05j@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "51.250.2.233"
-]
-
+ALLOWED_HOSTS = ["*"]
 # Application definition
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://62.84.118.213:8080',
+    'http://51.250.2.233:8080',
+    'http://158.160.36.51:8080'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -86,7 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sellout.wsgi.application'
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -130,7 +132,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-
 CELERY_TASK_QUEUES = (
     Queue('high', Exchange('high'), routing_key='high', queue_arguments={'x-max-priority': 10}),
     Queue('low', Exchange('low'), routing_key='low', queue_arguments={'x-max-priority': 10}),
@@ -141,7 +142,6 @@ CELERY_TASK_ROUTES = {
     'myapp.tasks.my_async_task': {'queue': 'high', 'routing_key': 'high'},
     # Add more tasks and their routing here
 }
-
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -156,7 +156,6 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 25
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
@@ -198,14 +197,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-
 # PASSWORD_HASHERS = [
 #     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 #     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
 #     'django.contrib.auth.hashers.Argon2PasswordHasher',
 #     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 # ]
-
 
 
 # Не удаляй

@@ -239,7 +239,7 @@ DATABASES = {
         'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2023',
-        'HOST': '62.84.118.213',
+        'HOST': '158.160.36.51',
         'PORT': '5432',
     }
 }

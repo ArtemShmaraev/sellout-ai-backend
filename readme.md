@@ -5,48 +5,52 @@
 Небольшое пояснение: первые квадратные скобки перед запросом это тип запроса, вторые это уровень доступа (Admin > User >
 Anon)
 
+### Запрос на сервер `http://сервер:порт/api/v1/...`
+
 ## User API
 
-1. `[GET][Admin] user` информация обо всех пользователях, списком [Вниз к запросу](#users)
-2. `[GET][Admin] user/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-3. `[GET][User] user_info/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-4. `[POST][Anon] user/register` регистрация пользователя [Вниз к запросу](#reg)
-5. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
-6. `[POST][User] user/address/<user_id>` адреса пользователя [Вниз к запросу](#address)
-7. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
+1. `[GET][Admin] user` информация обо всех пользователях, списком [⬇️](#users)
+2. `[GET][Admin] user/<user_id>` данные пользователя [⬇️](#user_id)
+3. `[GET][User] user_info/<user_id>` данные пользователя [⬇️](#user_id)
+4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
+5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
+6. `[POST][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
+7. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 
 ## Product API
 
-1`[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-2`[GET][Anon] product/&page=n` страница товаров [Вниз к запросу](#product_all)
+1. `[GET][Anon] product/<product_id>` данные одного товара [⬇️](#product_id)
+2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
+3. `[GET][Anon] product/&page=n` страница товаров [⬇️](#product_all)
+
 
 ## Shipping API
 
-1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
-2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [Вниз к запросу](#product_unit)
-3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [Вниз к запросу](#product_main)
-4. `[GET][Anon] /product` фильтрация товаров [Вниз к запросу](#product_filter)
+1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [⬇️](#product_unit)
+2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [⬇️](#product_unit)
+3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [⬇️](#product_main)
+4. `[GET][Anon] /product` фильтрация товаров [⬇️](#product_filter)
 
 ## WishList API
 
-1. `[GET][User] wishlist/<user_id>` вишлист пользователя [Вниз к запросу](#wl)
-2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [Вниз к запросу](#add_wl)
-3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста [Вниз к запросу](#del_wl)
+1. `[GET][User] wishlist/<user_id>` вишлист пользователя [⬇️](#wl)
+2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [⬇️](#add_wl)
+3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста [⬇️](#del_wl)
 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без
-   размера" [Вниз к запросу](#add_no_size_wl)
+   размера" [⬇️](#add_no_size_wl)
 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в
-   вишлисте [Вниз к запросу](#change_wl)
+   вишлисте [⬇️](#change_wl)
 
 ## Orders API
 
-1. `[GET][User] order/cart/<user_id>` корзина пользователя [Вниз к запросу](#cart)
-2. `[POST][User]  order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину [Вниз к запросу](#add_to_cart)
+1. `[GET][User] order/cart/<user_id>` корзина пользователя [⬇️](#cart)
+2. `[POST][User]  order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину [⬇️](#add_to_cart)
 3. `[DELETE][User] cart/cart_delete/<user_id>/<product_unit_id>` удалить юнит из
-   корзины [Вниз к запросу](#del_from_cart)
-4. `[POST][User] cart/checkout/<user_id>` оформить заказ [Вниз к запросу](#checkout)
-5. `[GET][Admin] order/orders` все заказы [Вниз к запросу](#orderss)
-6. `[GET][User] order/user_orders` все заказы пользователя [Вниз к запросу](#user_orders)
-7. `[GET][User] order/<order_id>` информация о заказе [Вниз к запросу](#order)
+   корзины [⬇️](#del_from_cart)
+4. `[POST][User] cart/checkout/<user_id>` оформить заказ [⬇️](#checkout)
+5. `[GET][Admin] order/orders` все заказы [⬇️](#orderss)
+6. `[GET][User] order/user_orders` все заказы пользователя [⬇️](#user_orders)
+7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
 
 
@@ -183,7 +187,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="user_id"></a>
 
-### 2 - 3. `[GET][Admin] user/<user_id>` данные пользователя
+### 2 - 3. `[GET][Admin] user/<user_id> и [GET][Anon] user/user_info/<user_id>` данные пользователя
 
 Response:
 
@@ -421,60 +425,163 @@ Response:
 <a name="product"></a>
 
 ## Product APi
-
 [:arrow_up:SellOut API](#up)
 
 
 <a name="product_id"></a>
 
-### 1. `[GET][Admin] product/<product_id>` данные одного товара
+### 1. `[GET][Anon] product/<product_id>` данные одного товара
 
 Response:
 
 ```json
 {
-    "id": 722,
+    "id": 712,
     "is_favorite": false,
-    "model": "850",
-    "colorway": "",
-    "russian_name": "850",
-    "slug": "new-balance-850-722",
-    "manufacturer_sku": "MS850TRG",
+    "model": "Flight Legacy",
+    "colorway": "Lakers",
+    "russian_name": "Flight Legacy",
+    "slug": "nike-flight-legacy-lakers-712",
+    "manufacturer_sku": "BQ4212102",
     "description": "",
     "bucket_link": "",
     "designer_color": "",
     "min_price": null,
     "available_flag": true,
-    "last_upd": "2023-05-18T15:34:18.638248Z",
-    "add_date": "2023-05-18",
-    "release_date": "2023-05-18",
+    "last_upd": "2023-06-07T13:35:34.003607Z",
+    "add_date": "2023-06-07",
+    "release_date": "2023-06-07",
     "fit": 0,
     "rel_num": 0,
-    "main_color": 29,
-    "recommended_gender": 1,
+    "main_color": {
+        "id": 7,
+        "name": "white"
+    },
+    "recommended_gender": {
+        "id": 1,
+        "name": "M"
+    },
+    "size_table": null,
     "brands": [
-        6
+        {
+            "id": 8,
+            "name": "Nike"
+        }
     ],
     "categories": [
-        2
+        {
+            "id": 1,
+            "name": "Обувь",
+            "parent_categories": []
+        }
     ],
     "lines": [],
     "collections": [],
     "tags": [],
     "colors": [
-        29
+        {
+            "id": 91,
+            "name": "102 white"
+        },
+        {
+            "id": 718,
+            "name": "regency purple"
+        }
     ],
     "gender": [
-        1
+        {
+            "id": 1,
+            "name": "M"
+        },
+        {
+            "id": 2,
+            "name": "F"
+        }
     ]
 }
 ```
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
+
+<a name="product_slug"></a>
+
+### 2. `[GET][Anon] product/slug/<slug>` данные одного товара по slug
+
+Response:
+
+```json
+{
+    "id": 712,
+    "is_favorite": false,
+    "model": "Flight Legacy",
+    "colorway": "Lakers",
+    "russian_name": "Flight Legacy",
+    "slug": "nike-flight-legacy-lakers-712",
+    "manufacturer_sku": "BQ4212102",
+    "description": "",
+    "bucket_link": "",
+    "designer_color": "",
+    "min_price": null,
+    "available_flag": true,
+    "last_upd": "2023-06-07T13:35:34.003607Z",
+    "add_date": "2023-06-07",
+    "release_date": "2023-06-07",
+    "fit": 0,
+    "rel_num": 0,
+    "main_color": {
+        "id": 7,
+        "name": "white"
+    },
+    "recommended_gender": {
+        "id": 1,
+        "name": "M"
+    },
+    "size_table": null,
+    "brands": [
+        {
+            "id": 8,
+            "name": "Nike"
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Обувь",
+            "parent_categories": []
+        }
+    ],
+    "lines": [],
+    "collections": [],
+    "tags": [],
+    "colors": [
+        {
+            "id": 91,
+            "name": "102 white"
+        },
+        {
+            "id": 718,
+            "name": "regency purple"
+        }
+    ],
+    "gender": [
+        {
+            "id": 1,
+            "name": "M"
+        },
+        {
+            "id": 2,
+            "name": "F"
+        }
+    ]
+}
+```
+[:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
+
 <a name="product_all"></a>
 
-### 2. `[GET][Anon] product/&page=n` страница товаров
+### 3. `[GET][Anon] product/&page=n` страница товаров
 
 Response:
 
@@ -555,7 +662,7 @@ Response:
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
-<a name="shipping"></a>
+<a name="shipping">
 
 ## Shipping API
 
@@ -713,7 +820,8 @@ Response:
     brands = Фильтр по брендам
     gender = Пол (M, F, K) male, female, kids
     colors = Фильтр по цветам
-    min_price = Фильтр по цене
+    price_min = Фильтр по цене мин
+    price_max = Фильтр по цене макс
     lines = Линейки
     page = Номер страницы, (на странице 50 товаров)
 
@@ -1559,7 +1667,7 @@ Response:
 
 <a name="orderss"></a>
 
-5. `[GET][Admin] order/orders` все заказы [Вниз к запросу](#orders)
+5. `[GET][Admin] order/orders` все заказы
 
 Response:
 

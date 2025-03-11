@@ -30,10 +30,8 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         size_us = self.request.query_params.get('size_us')
         price_max = self.request.query_params.get('price_max')
-        print(price_max)
-
+        price_min = self.request.query_params.get('price_min')
         if size_us and price_max:
-            print(111)
             # вариант №0
             queryset = queryset.filter(
                 Q(product_units__size__US=size_us) & Q(product_units__final_price__lte=price_max)
@@ -56,7 +54,14 @@ class ProductViewSet(viewsets.ModelViewSet):
         elif size_us:
             queryset = queryset.filter(product_units__size__US=size_us)
         elif price_max:
-            queryset = queryset.filter(product_units__final_price__lte=price_max)
+            queryset = queryset.filter(min_price__lte=price_max)
+
+        if size_us and price_min:
+            queryset = queryset.filter(
+                Q(product_units__size__US=size_us) & Q(product_units__final_price__gte=price_min)
+            )
+        elif price_min:
+            queryset = queryset.filter(min_price__gte=price_min)
 
         return queryset.distinct()
 

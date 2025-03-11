@@ -42,6 +42,7 @@ class Command(BaseCommand):
                     size_row.RU = row['RU']
                 if "CM" in row:
                     size_row.SM = row['CM']
+                size_row.table = size_table
 
                 size_row.save()
                 size_table.size_row.add(size_row)

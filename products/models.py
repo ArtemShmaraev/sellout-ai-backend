@@ -166,6 +166,7 @@ class SizeTable(models.Model):
     def __str__(self):
         return f"{self.brand} {self.gender}"
 
+
 class SizeTranslationRows(models.Model):
     table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT)
     US = models.CharField(max_length=16, blank=True, null=True)

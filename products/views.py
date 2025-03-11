@@ -15,12 +15,22 @@ from rest_framework.permissions import AllowAny
 # Create your views here.
 
 
+
 class ProductSlugView(APIView):
     def get(self, request, slug):
         if Product.objects.filter(slug=slug).exists():
             product = Product.objects.get(slug=slug)
+            return Response(ProductMainPageSerializer(product).data)
+        return Response("Товар не найден")
+
+
+class ProductIdView(APIView):
+    def get(self, request, id):
+        if Product.objects.filter(id=id).exists():
+            product = Product.objects.get(id=id)
             return Response(ProductSerializer(product).data)
         return Response("Товар не найден")
+
 
 
 # class ProductMainPageView(rest_framework.generics.ListAPIView):

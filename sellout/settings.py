@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from kombu import Queue, Exchange
 from datetime import timedelta
+from corsheaders.defaults import default_headers
 
 URL = " http://127.0.0.1:8000"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'orders',
     'products',
     'promotions',
@@ -67,7 +69,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
+
+CORS_ALLOW_HEADERS = default_headers + (
+    'Access-Control-Allow-Origin',
+)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://localhost:8080",
+    "null",
+]
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'sellout.urls'
 
@@ -222,7 +239,7 @@ DATABASES = {
         'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2023',
-        'HOST': '51.250.2.233',
+        'HOST': '62.84.118.213',
         'PORT': '5432',
     }
 }

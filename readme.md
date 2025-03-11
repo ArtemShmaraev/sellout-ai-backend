@@ -5,6 +5,8 @@
 Небольшое пояснение: первые квадратные скобки перед запросом это тип запроса, вторые это уровень доступа (Admin > User >
 Anon)
 
+### Запрос на сервер `http://сервер:порт/api/v1/...`
+
 ## User API
 
 1. `[GET][Admin] user` информация обо всех пользователях, списком [Вниз к запросу](#users)
@@ -17,8 +19,10 @@ Anon)
 
 ## Product API
 
-1`[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-2`[GET][Anon] product/&page=n` страница товаров [Вниз к запросу](#product_all)
+1. `[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
+2. `[GET][Anon] product/slug/<slug>` данные товара по slug [Вниз к запросу](#product_slug)
+3. `[GET][Anon] product/&page=n` страница товаров [Вниз к запросу](#product_all)
+
 
 ## Shipping API
 
@@ -183,7 +187,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="user_id"></a>
 
-### 2 - 3. `[GET][Admin] user/<user_id>` данные пользователя
+### 2 - 3. `[GET][Admin] user/<user_id> и [GET][Anon] user/user_info/<user_id>` данные пользователя
 
 Response:
 
@@ -421,60 +425,163 @@ Response:
 <a name="product"></a>
 
 ## Product APi
-
 [:arrow_up:SellOut API](#up)
 
 
 <a name="product_id"></a>
 
-### 1. `[GET][Admin] product/<product_id>` данные одного товара
+### 1. `[GET][Anon] product/<product_id>` данные одного товара
 
 Response:
 
 ```json
 {
-    "id": 722,
+    "id": 712,
     "is_favorite": false,
-    "model": "850",
-    "colorway": "",
-    "russian_name": "850",
-    "slug": "new-balance-850-722",
-    "manufacturer_sku": "MS850TRG",
+    "model": "Flight Legacy",
+    "colorway": "Lakers",
+    "russian_name": "Flight Legacy",
+    "slug": "nike-flight-legacy-lakers-712",
+    "manufacturer_sku": "BQ4212102",
     "description": "",
     "bucket_link": "",
     "designer_color": "",
     "min_price": null,
     "available_flag": true,
-    "last_upd": "2023-05-18T15:34:18.638248Z",
-    "add_date": "2023-05-18",
-    "release_date": "2023-05-18",
+    "last_upd": "2023-06-07T13:35:34.003607Z",
+    "add_date": "2023-06-07",
+    "release_date": "2023-06-07",
     "fit": 0,
     "rel_num": 0,
-    "main_color": 29,
-    "recommended_gender": 1,
+    "main_color": {
+        "id": 7,
+        "name": "white"
+    },
+    "recommended_gender": {
+        "id": 1,
+        "name": "M"
+    },
+    "size_table": null,
     "brands": [
-        6
+        {
+            "id": 8,
+            "name": "Nike"
+        }
     ],
     "categories": [
-        2
+        {
+            "id": 1,
+            "name": "Обувь",
+            "parent_categories": []
+        }
     ],
     "lines": [],
     "collections": [],
     "tags": [],
     "colors": [
-        29
+        {
+            "id": 91,
+            "name": "102 white"
+        },
+        {
+            "id": 718,
+            "name": "regency purple"
+        }
     ],
     "gender": [
-        1
+        {
+            "id": 1,
+            "name": "M"
+        },
+        {
+            "id": 2,
+            "name": "F"
+        }
     ]
 }
 ```
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
+
+<a name="product_slug"></a>
+
+### 2. `[GET][Anon] product/slug/<slug>` данные одного товара по slug
+
+Response:
+
+```json
+{
+    "id": 712,
+    "is_favorite": false,
+    "model": "Flight Legacy",
+    "colorway": "Lakers",
+    "russian_name": "Flight Legacy",
+    "slug": "nike-flight-legacy-lakers-712",
+    "manufacturer_sku": "BQ4212102",
+    "description": "",
+    "bucket_link": "",
+    "designer_color": "",
+    "min_price": null,
+    "available_flag": true,
+    "last_upd": "2023-06-07T13:35:34.003607Z",
+    "add_date": "2023-06-07",
+    "release_date": "2023-06-07",
+    "fit": 0,
+    "rel_num": 0,
+    "main_color": {
+        "id": 7,
+        "name": "white"
+    },
+    "recommended_gender": {
+        "id": 1,
+        "name": "M"
+    },
+    "size_table": null,
+    "brands": [
+        {
+            "id": 8,
+            "name": "Nike"
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Обувь",
+            "parent_categories": []
+        }
+    ],
+    "lines": [],
+    "collections": [],
+    "tags": [],
+    "colors": [
+        {
+            "id": 91,
+            "name": "102 white"
+        },
+        {
+            "id": 718,
+            "name": "regency purple"
+        }
+    ],
+    "gender": [
+        {
+            "id": 1,
+            "name": "M"
+        },
+        {
+            "id": 2,
+            "name": "F"
+        }
+    ]
+}
+```
+[:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
+
 <a name="product_all"></a>
 
-### 2. `[GET][Anon] product/&page=n` страница товаров
+### 3. `[GET][Anon] product/&page=n` страница товаров
 
 Response:
 
@@ -555,7 +662,7 @@ Response:
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
-<a name="shipping"></a>
+<a name="shipping">
 
 ## Shipping API
 

@@ -9,48 +9,48 @@ Anon)
 
 ## User API
 
-1. `[GET][Admin] user` информация обо всех пользователях, списком [Вниз к запросу](#users)
-2. `[GET][Admin] user/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-3. `[GET][User] user_info/<user_id>` данные пользователя [Вниз к запросу](#user_id)
-4. `[POST][Anon] user/register` регистрация пользователя [Вниз к запросу](#reg)
-5. `[POST][Anon] user/login` вход в систему [Вниз к запросу](#log)
-6. `[POST][User] user/address/<user_id>` адреса пользователя [Вниз к запросу](#address)
-7. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [Вниз к запросу](#last)
+1. `[GET][Admin] user` информация обо всех пользователях, списком [⬇️](#users)
+2. `[GET][Admin] user/<user_id>` данные пользователя [⬇️](#user_id)
+3. `[GET][User] user_info/<user_id>` данные пользователя [⬇️](#user_id)
+4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
+5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
+6. `[POST][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
+7. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 
 ## Product API
 
-1. `[GET][Anon] product/<product_id>` данные одного товара [Вниз к запросу](#product_id)
-2. `[GET][Anon] product/slug/<slug>` данные товара по slug [Вниз к запросу](#product_slug)
-3. `[GET][Anon] product/&page=n` страница товаров [Вниз к запросу](#product_all)
+1. `[GET][Anon] product/<product_id>` данные одного товара [⬇️](#product_id)
+2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
+3. `[GET][Anon] product/&page=n` страница товаров [⬇️](#product_all)
 
 
 ## Shipping API
 
-1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [Вниз к запросу](#product_unit)
-2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [Вниз к запросу](#product_unit)
-3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [Вниз к запросу](#product_main)
+1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [⬇️](#product_unit)
+2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [⬇️](#product_unit)
+3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [⬇️](#product_main)
 4. `[GET][Anon] /product` фильтрация товаров [Вниз к запросу](#product_filter)
 
 ## WishList API
 
-1. `[GET][User] wishlist/<user_id>` вишлист пользователя [Вниз к запросу](#wl)
-2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [Вниз к запросу](#add_wl)
-3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста [Вниз к запросу](#del_wl)
+1. `[GET][User] wishlist/<user_id>` вишлист пользователя [⬇️](#wl)
+2. `[POST][User] wishlist/add/<user_id>/<product_id>/<size_id>` добавление в вишлист [⬇️](#add_wl)
+3. `[DELETE][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста [⬇️](#del_wl)
 4. `[POST][User] wishlist/add_no_size/<user_id>/<product_id>` добавить товара "без
-   размера" [Вниз к запросу](#add_no_size_wl)
+   размера" [⬇️](#add_no_size_wl)
 5. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в
-   вишлисте [Вниз к запросу](#change_wl)
+   вишлисте [⬇️](#change_wl)
 
 ## Orders API
 
-1. `[GET][User] order/cart/<user_id>` корзина пользователя [Вниз к запросу](#cart)
-2. `[POST][User]  order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину [Вниз к запросу](#add_to_cart)
+1. `[GET][User] order/cart/<user_id>` корзина пользователя [⬇️](#cart)
+2. `[POST][User]  order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину [⬇️](#add_to_cart)
 3. `[DELETE][User] cart/cart_delete/<user_id>/<product_unit_id>` удалить юнит из
-   корзины [Вниз к запросу](#del_from_cart)
-4. `[POST][User] cart/checkout/<user_id>` оформить заказ [Вниз к запросу](#checkout)
-5. `[GET][Admin] order/orders` все заказы [Вниз к запросу](#orderss)
-6. `[GET][User] order/user_orders` все заказы пользователя [Вниз к запросу](#user_orders)
-7. `[GET][User] order/<order_id>` информация о заказе [Вниз к запросу](#order)
+   корзины [⬇️](#del_from_cart)
+4. `[POST][User] cart/checkout/<user_id>` оформить заказ [⬇️](#checkout)
+5. `[GET][Admin] order/orders` все заказы [⬇️](#orderss)
+6. `[GET][User] order/user_orders` все заказы пользователя [⬇️](#user_orders)
+7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
 
 

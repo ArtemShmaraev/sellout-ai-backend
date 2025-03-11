@@ -29,7 +29,7 @@ Anon)
 1. `[GET][Anon] product_unit/product/<product_id>` все product_unit для данного товара [⬇️](#product_unit)
 2. `[GET][Anon] product_unit/product/<slug>` все product_unit для данного товара [⬇️](#product_unit)
 3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [⬇️](#product_main)
-4. `[GET][Anon] /product` фильтрация товаров [Вниз к запросу](#product_filter)
+4. `[GET][Anon] /product` фильтрация товаров [⬇️](#product_filter)
 
 ## WishList API
 
@@ -820,7 +820,8 @@ Response:
     brands = Фильтр по брендам
     gender = Пол (M, F, K) male, female, kids
     colors = Фильтр по цветам
-    min_price = Фильтр по цене
+    price_min = Фильтр по цене мин
+    price_max = Фильтр по цене макс
     lines = Линейки
     page = Номер страницы, (на странице 50 товаров)
 
@@ -1666,7 +1667,7 @@ Response:
 
 <a name="orderss"></a>
 
-5. `[GET][Admin] order/orders` все заказы [Вниз к запросу](#orders)
+5. `[GET][Admin] order/orders` все заказы
 
 Response:
 

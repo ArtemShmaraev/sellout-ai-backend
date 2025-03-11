@@ -13,14 +13,14 @@ class ProductFilter(django_filters.FilterSet):
     brands = CharFilterInFilter(field_name='brands__name', lookup_expr='in')
     gender = django_filters.CharFilter(field_name='gender__name')
     colors = django_filters.CharFilter(field_name='colors__name')
-    price = django_filters.RangeFilter(field_name="product_units__final_price")
-    # price_max = django_filters.NumberFilter()
     lines = CharFilterInFilter(field_name='lines__name', lookup_expr='in')
-    size_us = CharFilterInFilter(field_name='product_units__size__US', lookup_expr='in')
+    # price = django_filters.RangeFilter(field_name="product_units__final_price")
+    # price_max = django_filters.NumberFilter()
+    # size_us = CharFilterInFilter(field_name='product_units__size__US', lookup_expr='in')
 
     class Meta:
         model = Product
-        fields = ['categories', 'brands', 'gender', 'colors', 'min_price', 'lines']
+        fields = ['categories', 'brands', 'gender', 'colors', 'lines']
 
     def get_queryset(self):
         # print(price_max)

@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet
+from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet
 from django.urls import include, path
 from .views import ProductSlugView, ProductIdView
 
@@ -22,7 +22,7 @@ router_line = routers.DefaultRouter()
 router_line.register("lines", LinesViewSet, basename="lines")
 
 router_brand = routers.DefaultRouter()
-router_brand.register("brands", LinesViewSet, basename="brands")
+router_brand.register("brands", BrandViewSet, basename="brands")
 
 router_color = routers.DefaultRouter()
 router_color.register("colors", ColorViewSet, basename="colors")

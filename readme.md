@@ -14,14 +14,12 @@ Anon)
 3. `[GET][User] user_info/<user_id>` данные пользователя [⬇️](#user_id)
 4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
 5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
-
-
+-
 6. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 7. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
-8. `[PUT][User] user/address/<user_id>/<address_id>` редактирование пользователя [⬇️](#edit_address)
+8. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя [⬇️](#edit_address)
 9. `[DELETE][User] user/address/<user_id>/<address_id>`удаление адреса пользователя [⬇️](#del_address)
-
-
+-
 10. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 11. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
 

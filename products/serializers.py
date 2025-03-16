@@ -11,14 +11,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductMainPageSerializer(serializers.ModelSerializer):
-    is_favorite = serializers.SerializerMethodField()
+    in_wishlist = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = "__all__"
         depth = 2
 
-    def get_is_favorite(self, product):
+    def get_in_wishlist(self, product):
         user_id = self.context.get('user_id')
         if user_id is not None and user_id > 0:
             try:

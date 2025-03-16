@@ -23,62 +23,50 @@ class Command(BaseCommand):
                 "query": {
                     "multi_match": {
                         "query": search,
-                        "fields": ["brand", "model", "colorway"],
+                        "fields": ["brand", "model", "colorway", "manufacturer_sku"],
                         "fuzziness": 0
                     }
                 }
             }
 
-            actions = [
-                {
-                    '_index': 'products',  # Замените 'products' на имя вашего индекса Elasticsearch
-                    '_id': product.id,
-                    '_source': {
-                        'brand': ' x '.join([x.name for x in product.brands.all()]),
-                        'model': product.model,
-                        'colorway': product.colorway
-                        # Добавьте другие поля продукта, которые вы хотите индексировать
-                    }
-                }
-            ]
 
-            # Индексируйте продукты в Elasticsearch
-            bulk(es, actions)
-
-
+            #
             # Отправьте запрос поиска
             response = es.search(index='products',
                                  body=data)  # Замените 'products' на имя вашего индекса Elasticsearch
-
-            f = False
-            for hit in response['hits']['hits'][:7]:
-                if search != f"{hit['_source']['brand']} {hit['_source']['model']} {hit['_source']['colorway']}":
-                    f = True
-                    break
-            if not f:
-                print(search)
-                k += 1
-            print(k, kk, round(k/kk * 100, 3))
+            print(response)
+            #
+            # f = False
+            # for hit in response['hits']['hits'][:7]:
+            #     if search != f"{hit['_source']['brand']} {hit['_source']['model']} {hit['_source']['colorway']}":
+            #         f = True
+            #         break
+            # if not f:
+            #     print(search)
+            #     k += 1
+            # print(k, kk, round(k/kk * 100, 3))
 
 
 
         # # Соберите данные продуктов для индексации в Elasticsearch
-        # actions = [
-        #     {
-        #         '_index': 'products',  # Замените 'products' на имя вашего индекса Elasticsearch
-        #         '_id': product.id,
-        #         '_source': {
-        #             'brand': ' x '.join([x.name for x in product.brands.all()]),
-        #             'model': product.model,
-        #             'colorway': product.colorway
-        #             # Добавьте другие поля продукта, которые вы хотите индексировать
-        #         }
-        #     }
-        #     for product in products
-        # ]
-        # print(len(actions))
-        #
-        # # Индексируйте продукты в Elasticsearch
-        # bulk(es, actions)
+        actions = [
+            {
+                '_index': 'products',  # Замените 'products' на имя вашего индекса Elasticsearch
+                '_id': product.id,
+                '_source': {
+                    'brand': ' x '.join([x.name for x in product.brands.all()]),
+                    'model': product.model,
+                    'colorway': product.colorway,
+                    'manufacturer_sku': product.manufacturer_sku
+
+                    # Добавьте другие поля продукта, которые вы хотите индексировать
+                }
+            }
+            for product in products[:10]
+        ]
+        print(len(actions))
+
+        # Индексируйте продукты в Elasticsearch
+        bulk(es, actions)
 
         self.stdout.write(self.style.SUCCESS('Products indexed successfully!'))

@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer
-from products.serializers import ProductSerializer
+from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
 from products.models import Product
 from sellout.settings import URL
@@ -89,13 +89,39 @@ class UserRegister(generics.GenericAPIView):
 # последние 7 просмотренных товаров пользователя
 class UserLastSeenView(APIView):
     def get(self, request, user_id):
-        def s_id(product):
-            return product_unit_product_main(product['id'], user_id)
+        try:
+            user = User.objects.get(id=user_id)
+            if request.user.id == user_id or request.user.is_staff:
+                last_viewed_products = user.last_viewed_products.all()
+                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[-7:])
+            else:
+                return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            s = list(map(s_id, list(
-                ProductSerializer(User.objects.filter(id=user_id)[0].last_viewed_products, many=True).data[-7:])))
-            return Response(s)
+            data = request.data
+            product_id = data.get('product_id')
+            if product_id is not None:
+                try:
+                    user = User.objects.get(id=user_id)
+                    product = Product.objects.get(id=product_id)
+                    user.last_viewed_products.add(product)
+                    if user.last_viewed_products.count() > 20:
+                        # Получаем наиболее старый просмотренный товар
+                        oldest_product = user.last_viewed_products.first()
+                        # Удаляем его из списка
+                        user.last_viewed_products.remove(oldest_product)
+                    return Response("Продукт успешно добавлен в список последних просмотров")
+                except User.DoesNotExist:
+                    return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+                except Product.DoesNotExist:
+                    return Response("Продукт не существует", status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response("Не указан идентификатор продукта", status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
@@ -104,6 +130,45 @@ class UserAddressView(APIView):
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+    def post(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            data = request.data
+            address = AddressInfo(address=data['address'], post_index=data['post_index'])
+            address.save()
+            request.user.address.add(address)
+            return Response(AddressInfoSerializer(address).data)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+    def put(self, request, user_id, address_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                address = AddressInfo.objects.get(id=address_id)
+            except AddressInfo.DoesNotExist:
+                return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)
+
+            data = request.data
+            address.address = data.get('address', address.address)
+            address.post_index = data.get('post_index', address.post_index)
+            address.save()
+
+            return Response(AddressInfoSerializer(address).data)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, user_id, address_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                address = AddressInfo.objects.get(id=address_id)
+            except AddressInfo.DoesNotExist:
+                return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)
+
+            address.delete()
+
+            return Response("Адрес успешно удален")
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 

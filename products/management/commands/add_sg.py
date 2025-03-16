@@ -7,8 +7,14 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        all_data = json.load(open("final.json"))
         k = 0
+        gender = Gender(name="M")
+        gender.save()
+        gender = Gender(name="F")
+        gender.save()
+        gender = Gender(name="K")
+        gender.save()
+        all_data = json.load(open("final.json"))
         for data in all_data:
             # print(k, data)
             k += 1

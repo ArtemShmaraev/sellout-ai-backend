@@ -14,6 +14,7 @@ import requests
 
 
 # информация о вишлисте пользователя
+# информация о вишлисте пользователя
 class UserWishlist(APIView):
     def get(self, request, user_id):
         try:
@@ -32,7 +33,6 @@ class UserWishlist(APIView):
         if request.user.id == user_id or request.user.is_staff:
             data = request.data
             product_id = data.get('product_id')
-            size_id = data.get('size_id')
 
             if product_id is not None:
                 try:
@@ -43,14 +43,8 @@ class UserWishlist(APIView):
                     if WishlistUnit.objects.filter(wishlist__user=user, product=product).exists():
                         return Response("Элемент уже существует в списке желаний", status=status.HTTP_400_BAD_REQUEST)
 
-                    if size_id is not None:
-                        size = SizeTranslationRows.objects.get(id=size_id)
-
-                        # Создаем новый элемент списка желаний с указанным размером
-                        wishlist_unit = WishlistUnit(wishlist=user.wishlist.first(), product=product, size=size)
-                    else:
-                        # Создаем новый элемент списка желаний без указания размера
-                        wishlist_unit = WishlistUnit(wishlist=user.wishlist.first(), product=product)
+                    # Создаем новый элемент списка желаний
+                    wishlist_unit = WishlistUnit(wishlist=user.wishlist.first(), product=product)
                     wishlist_unit.save()
 
                     return Response(WishlistUnitSerializer(wishlist_unit).data)
@@ -58,8 +52,6 @@ class UserWishlist(APIView):
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
                 except Product.DoesNotExist:
                     return Response("Продукт не существует", status=status.HTTP_404_NOT_FOUND)
-                except SizeTranslationRows.DoesNotExist:
-                    return Response("Размер не существует", status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response("Не указан идентификатор продукта", status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -129,11 +121,11 @@ class UserWishlist(APIView):
 
 
 # Изменить размер товара, который уже в вишлитсе
-class UserChangeSizeWishlist(APIView):
-    def post(self, request, user_id, wishlist_unit_id, size_id):
-        if user_id == request.user.id or request.user.is_staff:
-            wishlist_unit = WishlistUnit.objects.get(id=wishlist_unit_id)
-            wishlist_unit.size = SizeTranslationRows.objects.get(id=size_id)
-            return Response(WishlistUnitSerializer(wishlist_unit).data)
-        else:
-            return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+# class UserChangeSizeWishlist(APIView):
+#     def post(self, request, user_id, wishlist_unit_id, size_id):
+#         if user_id == request.user.id or request.user.is_staff:
+#             wishlist_unit = WishlistUnit.objects.get(id=wishlist_unit_id)
+#             wishlist_unit.size = SizeTranslationRows.objects.get(id=size_id)
+#             return Response(WishlistUnitSerializer(wishlist_unit).data)
+#         else:
+#             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

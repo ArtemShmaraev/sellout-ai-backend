@@ -8,6 +8,12 @@ from django.core.exceptions import ObjectDoesNotExist
 class Command(BaseCommand):
 
     def create_categories(self, json_data, parent=None):
+        gender = Gender(name="M")
+        gender.save()
+        gender = Gender(name="F")
+        gender.save()
+        gender = Gender(name="K")
+        gender.save()
         for category_data in json_data:
             category_name = category_data['name']
             subcategories = category_data['subcategories']

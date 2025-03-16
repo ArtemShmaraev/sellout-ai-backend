@@ -1,23 +1,23 @@
 from itertools import count
 from django.core.management.base import BaseCommand
 import json
+from datetime import datetime
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        k = 0
-        gender = Gender(name="M")
-        gender.save()
-        gender = Gender(name="F")
-        gender.save()
-        gender = Gender(name="K")
-        gender.save()
+
         all_data = json.load(open("final.json"))
+        k = 1050
+        kk = 0
+        time0 = datetime.now()
+        mk = len(all_data)
         for data in all_data:
             # print(k, data)
             k += 1
+            kk += 1
             if Product.objects.filter(manufacturer_sku=data['manufacturer_sku']).exists():
                 product = Product.objects.get(manufacturer_sku=data['manufacturer_sku'])
                 product.delete()
@@ -80,7 +80,8 @@ class Command(BaseCommand):
 
             # добавление линеек
             if len(data['lines']) > 1:
-                line, created = Line.objects.get_or_create(name=data['lines'][0])
+
+                line, created = Line.objects.get_or_create(name=data['lines'][0], brand=data['lines'][0])
                 if created:
                     line.save()
                 last_line = line
@@ -89,7 +90,7 @@ class Command(BaseCommand):
                     exists = Line.objects.filter(name=data['lines'][i],
                                                  parent_line=last_line).exists()
                     if not exists:
-                        line = Line(name=data['lines'][i])
+                        line = Line(name=data['lines'][i], brand=data['lines'][0])
                         line.save()
                         line.parent_line = last_line
                         line.save()
@@ -98,11 +99,13 @@ class Command(BaseCommand):
                     last_line = line
                 product.lines.add(last_line)
             product.slug = ""
-            print()
-            print(product.lines.all())
             product.save()
-            print(product.lines.all())
-            print(k)
+            if k % 10 == 0:
+                time2 = datetime.now()
+                t = time2 - time0
+                # time0 = time2
+                itogo = ((mk - k) / kk) * t.seconds
+                print(f"{k}/{mk} {round((k/mk) * 100, 3)}% осталось {round(itogo, 2)} сек | эта десятка за {round(t.seconds / (kk / 10), 2)} сек")
             # print()
 
         print('finished')

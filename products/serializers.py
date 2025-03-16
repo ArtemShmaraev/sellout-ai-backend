@@ -1,6 +1,35 @@
 from wishlist.models import Wishlist, WishlistUnit
-from .models import Product
+from .models import Product, Category, Line, Brand, Color
 from rest_framework import serializers
+
+
+class ColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Color
+        fields = '__all__'
+        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
+class LineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Line
+        fields = '__all__'
+        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = '__all__'
+        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
 class ProductSerializer(serializers.ModelSerializer):

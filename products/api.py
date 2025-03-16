@@ -1,10 +1,38 @@
-from .models import Product
+from .models import Product, Category, Line, Brand, Color
 from rest_framework import viewsets, permissions, generics, pagination
-from .serializers import ProductMainPageSerializer, ProductSerializer
+from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, BrandSerializer, ColorSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from .service import ProductFilter
 from django.db.models import Q, F
 from django.db.models import Q, Case, When, Value, BooleanField
+
+
+class LinesViewSet(viewsets.ModelViewSet):
+    queryset = Line.objects.all()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = LineSerializer
+
+
+class ColorViewSet(viewsets.ModelViewSet):
+    queryset = Color.objects.all()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = ColorSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = CategorySerializer
+
+
+class BrandViewSet(viewsets.ModelViewSet):
+    queryset = Brand.objects.all()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = BrandSerializer
 
 
 class ProductPagination(pagination.PageNumberPagination):

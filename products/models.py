@@ -22,6 +22,8 @@ class Category(models.Model):
 class Line(models.Model):
     name = models.CharField(max_length=255)
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.PROTECT, null=True)
+    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True,
+                             related_name="lines")
 
     def __str__(self):
         if self.parent_line:

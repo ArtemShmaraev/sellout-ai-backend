@@ -25,9 +25,13 @@ Anon)
 
 ## Product API
 
-1. `[GET][Anon] product/<product_id>` данные одного товара [⬇️](#product_id)
+1. `[GET][Anon] product/products/<product_id>` данные одного товара [⬇️](#product_id)
 2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
-3. `[GET][Anon] product/&page=n` страница товаров [⬇️](#product_all)
+3. `[GET][Anon] product/products/&page=n` страница товаров [⬇️](#product_all)
+
+## Category, Line, Color, Brand API
+у каждой сущности есть все виды запросов [GET]
+1. `[GET][Anon] product/[categories|lines|colors|brands]` вернет все сущности
 
 
 ## Shipping API
@@ -2464,3 +2468,5 @@ Response:
 
 [:arrow_up:Orders API](#orders)
 [:arrow_up:SellOut API](#up)
+
+

@@ -833,8 +833,9 @@ Response:
     }
 ]
 ```
-### также есть дерево ленеек
+### Есть дерево ленеек
 `[GET][Anon] product/tree_line`
+Response:
 ```json
 [
     {
@@ -906,6 +907,7 @@ Response:
 
 ### Бренды
 `[GET][Anon] product/brands`
+Response:
 ```json
 [
     {

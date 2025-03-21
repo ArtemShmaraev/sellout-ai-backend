@@ -5,13 +5,16 @@ from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Li
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('model', '_brand', 'colorway')
-    search_fields = ("brands__name", "model", "colorway")
+    list_display = ('model', '_brand', 'colorway', '_line')
+    search_fields = ("brands__name", "model", "colorway", "lines__name")
 
     # prepopulated_fields = {'slug': ('name',)}
 
     def _brand(self, row):
         return ','.join([x.name for x in row.brands.all()])
+
+    def _line(self, row):
+        return ','.join([x.name for x in row.lines.all()])
 
 
 class CategoryAdmin(admin.ModelAdmin):

@@ -2,7 +2,11 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 from django_slugify_processor.text import slugify
-
+from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from elasticsearch_dsl import Document, Keyword, Text
+from elasticsearch_dsl.connections import connections
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
@@ -14,6 +18,7 @@ class Brand(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=255)
     parent_categories = models.ManyToManyField("Category", related_name='subcategories', blank=True, null=True)
+    eng_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return f"{','.join([x.name for x in self.parent_categories.all()])} | {self.name}"
@@ -30,6 +35,8 @@ class Line(models.Model):
             return f"{self.parent_line.name} | {self.name}"
         else:
             return self.name
+
+
 
 
 # class Size(models.Model):
@@ -87,6 +94,7 @@ class ProductManager(models.Manager):
         for product in products:
             product.slug = slugify(product.name)
             product.save()
+
 
 
 class Product(models.Model):
@@ -152,11 +160,17 @@ class Product(models.Model):
                 add_lines_to_product(line)
             for cat in self.categories.all():
                 add_categories_to_product(cat)
+            if not self.main_color.is_main_color:
+                self.main_color.is_main_color = True
+                self.main_color.save()
 
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.model
+
+
+
 
 
 class SizeTable(models.Model):

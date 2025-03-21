@@ -8,7 +8,9 @@ from rest_framework import status
 import json
 from django.core.paginator import Paginator
 from rest_framework.pagination import PageNumberPagination
+from elasticsearch_dsl import Search
 from .serializers import ProductSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer
+
 
 # Create your views here.
 
@@ -31,8 +33,6 @@ class ProductIdView(APIView):
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
-
-
 
 
 def build_category_tree(categories):
@@ -80,7 +80,6 @@ def build_line_tree(lines):
             if parent_line:
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
-    print(root_lines)
     return root_lines
 
 
@@ -88,6 +87,52 @@ class LineTreeView(APIView):
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
         return Response(build_line_tree(lines))
+
+
+class ProductUpdateView(APIView):
+    def put(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        data = request.data
+        if 'categories' in data:
+            categories = data.get('categories', [])
+            product.categories.add(*categories)
+
+        if 'lines' in data:
+            lines = data.get('lines', [])
+            product.lines.add(*lines)
+
+        if 'colors' in data:
+            colors = data.get('colors', [])
+            product.lines.add(*colors)
+
+        if 'brands' in data:
+            brands = data.get('brands', [])
+            product.brands.add(*brands)
+
+        if 'tags' in data:
+            tags = data.get('tags', [])
+            product.tags.add(*tags)
+
+        # Обработайте остальные поля по аналогии
+        if 'model' in data:
+            product.model = data.get('model', product.model)
+        if 'colorway' in data:
+            product.colorway = data.get('colorway', product.colorway)
+        if 'russian_name' in data:
+            product.russian_name = data.get('russian_name', product.russian_name)
+        if 'manufacturer_sku' in data:
+            product.manufacturer_sku = data.get('manufacturer_sku', product.manufacturer_sku)
+        if 'description' in data:
+            product.description = data.get('description', product.description)
+        if 'bucket_link' in data:
+            product.bucket_link = data.get('bucket_link', product.bucket_link)
+        if 'main_color' in data:
+            product.main_color_id = data.get('main_color', product.main_color_id)
+        # Добавьте обработку для других полей ManyToMany, например, brands, lines, collections, tags
+        product.slug = ""
+        product.save()
+
+        return Response(ProductMainPageSerializer(product).data, status=status.HTTP_200_OK)
 
 
 
@@ -127,4 +172,3 @@ class LineTreeView(APIView):
 #         ans = {"page number": page_number,
 #                'items': list_products}
 #         return Response(ans, status=status.HTTP_200_OK)
-

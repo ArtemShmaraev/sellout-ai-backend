@@ -36,9 +36,9 @@ class BrandViewSet(viewsets.ModelViewSet):
 
 
 class ProductPagination(pagination.PageNumberPagination):
-    page_size = 50
+    page_size = 60
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = 120
 
 
 class ProductViewSet(viewsets.ModelViewSet):

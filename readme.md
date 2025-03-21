@@ -1136,13 +1136,13 @@ Response:
 ### 3. `[GET][Anon] product` фильтрация товаров
 параметры пример: `product/?brands=Nike&gender=F&colors=white&categories=Обувь&brands=Supreme`
 
-    categories = Фильтр по категориям
-    brands = Фильтр по брендам
+    category = Фильтр по категориям
+    brand = Фильтр по брендам
     gender = Пол (M, F, K) male, female, kids
-    colors = Фильтр по цветам
+    color = Фильтр по цветам
     price_min = Фильтр по цене мин
     price_max = Фильтр по цене макс
-    lines = Линейки
+    line = Линейки
     page = Номер страницы, (на странице 50 товаров)
 
 Response:

@@ -75,7 +75,8 @@ class Command(BaseCommand):
                 parent_category = None
                 for category_name in categories:
                     category, _ = Category.objects.get_or_create(name=category_name)
-                    category.parent_categories.add(parent_category)
+                    if parent_category is not None:
+                        category.parent_categories.add(parent_category)
                     parent_category = category
                     product.categories.add(category)
 

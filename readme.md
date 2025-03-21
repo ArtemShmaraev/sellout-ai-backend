@@ -31,7 +31,7 @@ Anon)
 
 ## Category, Line, Color, Brand API
 у каждой сущности есть все виды запросов [GET]
-1. `[GET][Anon] product/[categories|lines|colors|brands]` вернет все сущности
+1. `[GET][Anon] product/[categories|lines|colors|brands]` вернет все сущности [⬇️](#clcb)
 
 
 ## Shipping API
@@ -743,7 +743,244 @@ Response:
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
-<a name="shipping">
+
+<a name="clcb"></a>
+## Категории, Линейки, Цвета, Бренды
+### Категории
+`[GET][Anon] product/categories`
+Response Категория
+```json
+[
+    {
+        "id": 1,
+        "name": "Обувь",
+        "parent_categories": []
+    },
+    {
+        "id": 2,
+        "name": "Вся обувь",
+        "parent_categories": [
+            1
+        ]
+    }
+]
+```
+### также есть запрос для отображения "красивого дерева" категорий
+`[GET][Anon] product/tree_cat`
+```json
+[
+   {
+      "id": 1,
+      "name": "Обувь",
+      "parent_categories": [],
+      "subcategories": [
+         {
+            "id": 2,
+            "name": "Вся обувь",
+            "parent_categories": [
+               1
+            ]
+         },
+         {
+            "id": 3,
+            "name": "Кроссовки",
+            "parent_categories": [
+               1
+            ],
+            "subcategories": [
+               {
+                  "id": 4,
+                  "name": "Все кроссовки",
+                  "parent_categories": [
+                     3
+                  ]
+               }
+            ]
+         }
+      ]
+   }
+]
+
+```
+
+### Линейки
+`[GET][Anon] product/lines`
+Response:
+```json
+[
+    {
+        "id": 1,
+        "name": "Jordan",
+        "parent_line": null,
+        "brand": {
+            "id": 5,
+            "name": "Jordan"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Другие Jordan",
+        "parent_line": {
+            "id": 1,
+            "name": "Jordan",
+            "parent_line": null,
+            "brand": 5
+        },
+        "brand": {
+            "id": 5,
+            "name": "Jordan"
+        }
+    }
+]
+```
+### также есть дерево ленеек
+`[GET][Anon] product/tree_line`
+```json
+[
+    {
+        "id": 1,
+        "name": "Jordan",
+        "parent_line": null,
+        "brand": {
+            "id": 5,
+            "name": "Jordan"
+        },
+        "children": [
+            {
+                "id": 2,
+                "name": "Другие Jordan",
+                "parent_line": {
+                    "id": 1,
+                    "name": "Jordan",
+                    "parent_line": null,
+                    "brand": 5
+                },
+                "brand": {
+                    "id": 5,
+                    "name": "Jordan"
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "New Balance",
+        "parent_line": null,
+        "brand": {
+            "id": 7,
+            "name": "New Balance"
+        },
+        "children": [
+            {
+                "id": 4,
+                "name": "1906R",
+                "parent_line": {
+                    "id": 3,
+                    "name": "New Balance",
+                    "parent_line": null,
+                    "brand": 7
+                },
+                "brand": {
+                    "id": 7,
+                    "name": "New Balance"
+                }
+            },
+            {
+                "id": 5,
+                "name": "2002R",
+                "parent_line": {
+                    "id": 3,
+                    "name": "New Balance",
+                    "parent_line": null,
+                    "brand": 7
+                },
+                "brand": {
+                    "id": 7,
+                    "name": "New Balance"
+                }
+            }
+        ]
+    }
+]
+```
+
+### Бренды
+`[GET][Anon] product/brands`
+```json
+[
+    {
+        "id": 1,
+        "name": "Adidas"
+    },
+    {
+        "id": 2,
+        "name": "Asics"
+    },
+    {
+        "id": 3,
+        "name": "Converse"
+    },
+    {
+        "id": 4,
+        "name": "Fila"
+    },
+    {
+        "id": 5,
+        "name": "Jordan"
+    },
+    {
+        "id": 6,
+        "name": "Karhu"
+    },
+    {
+        "id": 7,
+        "name": "New Balance"
+    }
+]
+```
+
+### Цвета
+`[GET][Anon] product/colors` 
+Response:
+```json
+[
+    {
+        "id": 1,
+        "name": "black",
+        "is_main_color": true
+    },
+    {
+        "id": 5,
+        "name": "orange",
+        "is_main_color": true
+    },
+    {
+        "id": 8,
+        "name": "blue",
+        "is_main_color": true
+    },
+    {
+        "id": 10,
+        "name": "grey",
+        "is_main_color": true
+    },
+    {
+        "id": 13,
+        "name": "neutrals",
+        "is_main_color": true
+    },
+    {
+        "id": 18,
+        "name": "white",
+        "is_main_color": true
+    }
+]
+```
+[:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
+
+
+<a name="shipping"></a>
 
 ## Shipping API
 

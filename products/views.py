@@ -3,14 +3,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from wishlist.models import Wishlist, WishlistUnit
-from products.models import Product
+from products.models import Product, Category, Line
 from rest_framework import status
+import json
 from django.core.paginator import Paginator
 from rest_framework.pagination import PageNumberPagination
-from .serializers import ProductSerializer, ProductMainPageSerializer
-from shipping.views import product_unit_product_main
-from products.service import ProductFilter
-from rest_framework.permissions import AllowAny
+from .serializers import ProductSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer
 
 # Create your views here.
 
@@ -33,6 +31,63 @@ class ProductIdView(APIView):
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+def build_category_tree(categories):
+    category_dict = {}
+    root_categories = []
+
+    # Создаем словарь для быстрого доступа к категориям по их идентификатору
+    for category in categories:
+        category_dict[category["id"]] = category
+
+    # Строим иерархическую структуру категорий
+    for category in categories:
+        parent_ids = category["parent_categories"]
+        if parent_ids:
+            parent_category = category_dict[parent_ids[0]]
+            parent_category.setdefault("subcategories", []).append(category)
+        else:
+            root_categories.append(category)
+    return root_categories
+
+
+class CategoryTreeView(APIView):
+    def get(self, request):
+        cats = CategorySerializer(Category.objects.all(), many=True).data
+        return Response(build_category_tree(cats))
+
+
+def build_line_tree(lines):
+    line_dict = {}
+    root_lines = []
+
+    # Создание словаря линеек с использованием их идентификаторов в качестве ключей
+    for line in lines:
+        line_dict[line['id']] = line
+
+    # Построение дерева линеек
+    for line in lines:
+        parent_line = line['parent_line']
+        if parent_line is None:
+            # Если у линейки нет родительской линейки, она считается корневой линейкой
+            root_lines.append(line)
+        else:
+            parent_id = parent_line['id']
+            parent_line = line_dict.get(parent_id)
+            if parent_line:
+                # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
+                parent_line.setdefault('children', []).append(line)
+    print(root_lines)
+    return root_lines
+
+
+class LineTreeView(APIView):
+    def get(self, request):
+        lines = LineSerializer(Line.objects.all(), many=True).data
+        return Response(build_line_tree(lines))
 
 
 

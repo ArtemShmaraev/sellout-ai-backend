@@ -6,106 +6,98 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
-
         all_data = json.load(open("final.json"))
-        k = 1050
+        k = 0
         kk = 0
-        time0 = datetime.now()
         mk = len(all_data)
-        for data in all_data:
-            # print(k, data)
+        time0 = datetime.now()
+        for data in all_data[k:]:
             k += 1
             kk += 1
-            if Product.objects.filter(manufacturer_sku=data['manufacturer_sku']).exists():
-                product = Product.objects.get(manufacturer_sku=data['manufacturer_sku'])
-                product.delete()
-            product = Product(model=data['model'],
-                              colorway=data['colorway'],
-                              manufacturer_sku=data['manufacturer_sku'],
-                              russian_name=data['model'],
-                              slug=data['manufacturer_sku']
-                              )
-            product.save()
-            for brand_name in data['brands']:
-                brand, created = Brand.objects.get_or_create(name=brand_name)
-                brand.save()
+            manufacturer_sku = data.get('manufacturer_sku')
+
+            # Удаление существующего продукта с указанным manufacturer_sku
+            Product.objects.filter(manufacturer_sku=manufacturer_sku).delete()
+
+            # Создание нового продукта
+            product = Product.objects.create(
+                model=data.get('model'),
+                colorway=data.get('colorway'),
+                manufacturer_sku=manufacturer_sku,
+                russian_name=data.get('model'),
+                slug=manufacturer_sku
+            )
+
+            # Обработка брендов
+            brands = data.get('brands', [])
+            for brand_name in brands:
+                brand, _ = Brand.objects.get_or_create(name=brand_name)
                 product.brands.add(brand)
 
-            for tag_name in data['tags']:
-                tag, created = Tag.objects.get_or_create(name=tag_name)
-                tag.save()
+            # Обработка тегов
+            tags = data.get('tags', [])
+            for tag_name in tags:
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
                 product.tags.add(tag)
 
-            for col_name in data['collections']:
-                col, created = Collection.objects.get_or_create(name=col_name)
-                col.save()
+            # Обработка коллекций
+            collections = data.get('collections', [])
+            for col_name in collections:
+                col, _ = Collection.objects.get_or_create(name=col_name)
                 product.collections.add(col)
 
-            for color_name in data['colors']:
-                color, created = Color.objects.get_or_create(name=color_name)
-                color.save()
+            # Обработка цветов
+            colors = data.get('colors', [])
+            for color_name in colors:
+                color, _ = Color.objects.get_or_create(name=color_name)
                 product.colors.add(color)
 
-            if "main_color" in data:
-                main_color, created = Color.objects.get_or_create(name=data['main_color'])
+            # Обработка основного цвета
+            main_color = data.get('main_color')
+            if main_color:
+                main_color, _ = Color.objects.get_or_create(name=main_color)
+                main_color.is_main_color = True
                 main_color.save()
                 product.main_color = main_color
 
-            for gen in data['gender']:
-                product.gender.add(Gender.objects.get(name=gen))
+            # Обработка пола
+            genders = data.get('gender', [])
+            product.gender.set(Gender.objects.filter(name__in=genders))
 
-            product.recommended_gender = Gender.objects.get(name=data['recommended_gender'])
+            # Обработка рекомендованного пола
+            recommended_gender = data.get('recommended_gender')
+            product.recommended_gender = Gender.objects.get(name=recommended_gender)
 
-            # добавление категорий
-            if len(data['categories']) > 0:
-                cat, created = Category.objects.get_or_create(name=data['categories'][0])
-                if created:
-                    cat.save()
-                last_cat = cat
+            # Обработка категорий
+            categories = data.get('categories', [])
+            if categories:
+                parent_category = None
+                for category_name in categories:
+                    category, _ = Category.objects.get_or_create(name=category_name)
+                    category.parent_categories.add(parent_category)
+                    parent_category = category
+                    product.categories.add(category)
 
-                for i in range(1, len(data['categories'])):
-                    exists = Category.objects.filter(name=data['categories'][i],
-                                                     parrent_categories=last_cat).exists()
-                    if not exists:
-                        cat = Category(name=data['categories'][i])
-                        cat.save()
-                        cat.parent_categories.add(last_cat)
-                        cat.save()
-                    cat = Category.objects.get(name=data['categories'][i],
-                                               parrent_categories__name=data['categories'][i - 1])
-                    last_cat = cat
-                product.categories.add(last_cat)
+            # Обработка линий
+            lines = data.get('lines', [])
+            if len(lines) > 1:
+                parent_line = None
+                for line_name in lines:
+                    line, _ = Line.objects.get_or_create(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]))
+                    parent_line = line
+                    product.lines.add(line)
 
-            # добавление линеек
-            if len(data['lines']) > 1:
-
-                line, created = Line.objects.get_or_create(name=data['lines'][0], brand=data['lines'][0])
-                if created:
-                    line.save()
-                last_line = line
-
-                for i in range(1, len(data['lines'])):
-                    exists = Line.objects.filter(name=data['lines'][i],
-                                                 parent_line=last_line).exists()
-                    if not exists:
-                        line = Line(name=data['lines'][i], brand=data['lines'][0])
-                        line.save()
-                        line.parent_line = last_line
-                        line.save()
-                    line = Line.objects.get(name=data['lines'][i],
-                                            parent_line=last_line)
-                    last_line = line
-                product.lines.add(last_line)
             product.slug = ""
             product.save()
+
             if k % 10 == 0:
                 time2 = datetime.now()
                 t = time2 - time0
                 # time0 = time2
                 itogo = ((mk - k) / kk) * t.seconds
-                print(f"{k}/{mk} {round((k/mk) * 100, 3)}% осталось {round(itogo, 2)} сек | эта десятка за {round(t.seconds / (kk / 10), 2)} сек")
+                print(
+                    f"{k}/{mk} {round((k / mk) * 100, 3)}% осталось {round(itogo, 2)} сек | эта десятка за {round(t.seconds / (kk / 10), 2)} сек")
             # print()
 
         print('finished')

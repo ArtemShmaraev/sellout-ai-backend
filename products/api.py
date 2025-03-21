@@ -15,7 +15,7 @@ class LinesViewSet(viewsets.ModelViewSet):
 
 
 class ColorViewSet(viewsets.ModelViewSet):
-    queryset = Color.objects.all()
+    queryset = Color.objects.filter(is_main_color=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = ColorSerializer

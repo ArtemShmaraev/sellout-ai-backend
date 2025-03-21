@@ -14,7 +14,7 @@ class LineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
         fields = '__all__'
-        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+        depth = 1    # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -29,7 +29,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-        # depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+        # depth = 3  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -37,6 +38,8 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
 
 
 class ProductMainPageSerializer(serializers.ModelSerializer):

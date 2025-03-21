@@ -63,6 +63,7 @@ class Collection(models.Model):
 
 class Color(models.Model):
     name = models.CharField(max_length=255)
+    is_main_color = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -108,7 +109,7 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True)
     bucket_link = models.CharField(max_length=255, blank=True)
 
-    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True)
+    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True, related_name="main")
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
@@ -139,6 +140,7 @@ class Product(models.Model):
                     add_categories_to_product(parent_category)
 
         def add_lines_to_product(line):
+            line.brand = self.brands.first()
             self.lines.add(line)
             if line.parent_line:
                 add_lines_to_product(line.parent_line)

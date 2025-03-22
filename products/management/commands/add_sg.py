@@ -86,7 +86,6 @@ class Command(BaseCommand):
             if len(lines) > 1:
                 parent_line = None
                 for line_name in lines:
-                    print(line_name)
                     if Line.objects.filter(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0])).exists():
                         line = Line.objects.get(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]))
                     else:

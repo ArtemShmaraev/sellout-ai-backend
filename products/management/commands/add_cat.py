@@ -15,13 +15,15 @@ class Command(BaseCommand):
             subcategories = category_data['subcategories']
 
             try:
-                category = Category.objects.get(name=category_name, eng_name=category_eng_name)
+                category = Category.objects.get(name=category_name, eng_name=category_eng_name, full_name=category_name)
             except ObjectDoesNotExist:
-                category = Category(name=category_name, eng_name=category_eng_name)
+                category = Category(name=category_name, eng_name=category_eng_name, full_name=category_name)
                 category.save()
 
             if parent is not None:
-                category.parent_categories.add(parent)
+                category.parent_category = parent
+                category.save()
+                print(category)
 
             self.create_categories(subcategories, parent=category)
 

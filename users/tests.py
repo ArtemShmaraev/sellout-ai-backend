@@ -20,7 +20,7 @@ class YourAPITests(APITestCase):
         self.category.save()
         self.category2 = Category(name='Кроссовки')
         self.category2.save()
-        self.category2.parent_categories.add(self.category)
+        self.category2.parent_category = self.category
         self.category2.save()
 
         self.brand = Brand(name="Nike")

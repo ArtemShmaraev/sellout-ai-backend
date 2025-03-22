@@ -45,9 +45,9 @@ def build_category_tree(categories):
 
     # Строим иерархическую структуру категорий
     for category in categories:
-        parent_ids = category["parent_categories"]
+        parent_ids = category["parent_category"]
         if parent_ids:
-            parent_category = category_dict[parent_ids[0]]
+            parent_category = category_dict[parent_ids]
             parent_category.setdefault("subcategories", []).append(category)
         else:
             root_categories.append(category)

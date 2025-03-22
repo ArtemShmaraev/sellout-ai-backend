@@ -18,11 +18,11 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('full_name',)
 
 
 class LineAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('full_name',)
 
 
 class ColorAdmin(admin.ModelAdmin):

@@ -71,21 +71,27 @@ class Command(BaseCommand):
 
             # Обработка категорий
             categories = data.get('categories', [])
+
             if categories:
                 parent_category = None
                 for category_name in categories:
                     category, _ = Category.objects.get_or_create(name=category_name)
                     if parent_category is not None:
-                        category.parent_categories.add(parent_category)
+                        category.parent_category = parent_category
                     parent_category = category
-                    product.categories.add(category)
+                    product.categories.add(parent_category)
 
             # Обработка линий
             lines = data.get('lines', [])
             if len(lines) > 1:
                 parent_line = None
                 for line_name in lines:
-                    line, _ = Line.objects.get_or_create(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]))
+                    print(line_name)
+                    if Line.objects.filter(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0])).exists():
+                        line = Line.objects.get(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]))
+                    else:
+                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]), full_name=line_name)
+                        line.save()
                     parent_line = line
                     product.lines.add(line)
 

@@ -8,7 +8,6 @@ from rest_framework import status
 import json
 from django.core.paginator import Paginator
 from rest_framework.pagination import PageNumberPagination
-from elasticsearch_dsl import Search
 from .serializers import ProductSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer
 
 

@@ -68,3 +68,9 @@ class ProductUnit(models.Model):
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"
+
+    def save(self, *args, **kwargs):
+        if not self.product.min_price or self.final_price < self.product.min_price:
+            self.product.min_price = self.final_price
+            self.product.save()
+        super().save(*args, **kwargs)

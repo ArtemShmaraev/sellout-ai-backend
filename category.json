@@ -2,274 +2,356 @@
   "categories": [
     {
       "name": "Обувь",
+      "eng_name": "shoes_category",
       "subcategories": [
         {
           "name": "Вся обувь",
+          "eng_name": "all_shoes",
           "subcategories": []
         },
         {
           "name": "Кроссовки",
+          "eng_name": "sneakers",
           "subcategories": [
             {
               "name": "Все кроссовки",
+              "eng_name": "all_sneakers",
               "subcategories": []
             },
             {
               "name": "Высокие кроссовки",
+              "eng_name": "high_top_sneakers",
               "subcategories": []
             },
             {
               "name": "Низкие кроссовки",
+              "eng_name": "low_top_sneakers",
               "subcategories": []
             }
           ]
         },
         {
           "name": "Кеды",
+          "eng_name": "canvas_shoes",
           "subcategories": []
         },
         {
           "name": "Баскетбольные кроссовки",
+          "eng_name": "basketball_sneakers",
           "subcategories": []
         },
         {
           "name": "Футбольные бутсы",
+          "eng_name": "football_boots",
           "subcategories": []
         },
         {
           "name": "Другие кроссовки для спорта",
+          "eng_name": "other_sport_shoes",
           "subcategories": []
         },
         {
           "name": "Шлёпки",
+          "eng_name": "slippers",
           "subcategories": []
         },
         {
           "name": "Челси",
+          "eng_name": "chelsea_boots",
           "subcategories": []
         },
         {
           "name": "Лоферы",
+          "eng_name": "loafer",
           "subcategories": []
         },
         {
           "name": "Сандалии",
+          "eng_name": "sandals",
           "subcategories": []
         },
         {
           "name": "Ботинки",
+          "eng_name": "boots",
           "subcategories": []
         },
         {
           "name": "Туфли",
+          "eng_name": "shoes",
           "subcategories": []
         },
         {
           "name": "Зимняя обувь",
+          "eng_name": "winter_shoes",
           "subcategories": []
         },
         {
           "name": "Мужская обувь",
+          "eng_name": "mens_shoes",
           "subcategories": []
         }
       ]
     },
     {
       "name": "Одежда",
+      "eng_name": "clothes",
       "subcategories": [
         {
           "name": "Вся одежда",
+          "eng_name": "all_clothes",
           "subcategories": []
         },
         {
           "name": "Футболки",
+          "eng_name": "tshirts",
           "subcategories": []
         },
         {
           "name": "Поло",
+          "eng_name": "polo",
           "subcategories": []
         },
         {
           "name": "Майки",
+          "eng_name": "vest_shirt",
           "subcategories": []
         },
         {
           "name": "Худи и Толстовки",
+          "eng_name": "hoodie_sweatshirts",
           "subcategories": []
         },
         {
           "name": "Свитеры и трикотаж",
+          "eng_name": "knitwear",
           "subcategories": []
         },
         {
           "name": "Рубашки",
+          "eng_name": "shirts",
           "subcategories": []
         },
         {
           "name": "Брюки",
+          "eng_name": "trousers",
           "subcategories": []
         },
         {
           "name": "Джинсы",
+          "eng_name": "jeans",
           "subcategories": []
         },
         {
           "name": "Деним",
+          "eng_name": "denim",
           "subcategories": []
         },
         {
           "name": "Шорты",
+          "eng_name": "shorts",
           "subcategories": []
         },
         {
           "name": "Треники",
+          "eng_name": "sweatpants",
           "subcategories": []
         },
         {
           "name": "Спортивная одежда",
+          "eng_name": "sport_clothes",
           "subcategories": [
             {
+              "name": "Вся спортивная одежда",
+              "eng_name": "all_sport_clothes",
+              "subcategories": []
+            },
+            {
               "name": "Баскетбольные джерси",
+              "eng_name": "basketball_jerseys",
               "subcategories": []
             },
             {
               "name": "Баскетбольные шорты",
+              "eng_name": "basketball_shorts",
               "subcategories": []
             },
             {
               "name": "Спортивные майки",
+              "eng_name": "sport_vests",
               "subcategories": []
             },
             {
               "name": "Топы",
+              "eng_name": "sport_tops",
               "subcategories": []
             },
             {
               "name": "Спортивные костюмы",
+              "eng_name": "tracksuits",
               "subcategories": []
             },
             {
               "name": "Легинсы и термобелье",
+              "eng_name": "leggings_thermal_underwear",
               "subcategories": []
             }
           ]
         },
         {
           "name": "Верхняя одежда",
+          "eng_name": "outerwear",
           "subcategories": [
             {
+              "name": "Вся верхняя одежда",
+              "eng_name": "all_outerwear",
+              "subcategories": []
+            },
+            {
               "name": "Куртки",
+              "eng_name": "coats_jackets",
               "subcategories": []
             },
             {
               "name": "Кожаные куртки",
+              "eng_name": "leather_jackets",
               "subcategories": []
             },
             {
               "name": "Плащи",
+              "eng_name": "trench",
               "subcategories": []
             },
             {
               "name": "Пуховики",
+              "eng_name": "down_jackets",
               "subcategories": []
             },
             {
               "name": "Пальто и ветровки",
+              "eng_name": "windbreakers",
               "subcategories": []
             },
             {
               "name": "Жилетки",
+              "eng_name": "vests",
               "subcategories": []
             }
           ]
         },
         {
           "name": "Костюмы",
+          "eng_name": "suits",
           "subcategories": []
         },
         {
           "name": "Комбинезоны",
+          "eng_name": "overalls",
           "subcategories": []
         },
         {
           "name": "Платья",
+          "eng_name": "dresses",
           "subcategories": []
         },
         {
           "name": "Юбки",
+          "eng_name": "skirts",
           "subcategories": []
         },
         {
           "name": "Топы",
+          "eng_name": "tops",
           "subcategories": []
         },
         {
           "name": "Пляжная одежда",
+          "eng_name": "beach_wear",
           "subcategories": []
         },
         {
           "name": "Нижнее бельё и домашняя одежда",
+          "eng_name": "underwear_home_wear",
           "subcategories": []
         }
       ]
     },
     {
       "name": "Аксессуары",
+      "eng_name": "accessories",
       "subcategories": [
         {
+          "name": "Все аксессуары",
+          "eng_name": "all_accessories",
+          "subcategories": []
+        },
+        {
           "name": "Часы",
+          "eng_name": "watches",
           "subcategories": []
         },
         {
           "name": "Визитницы",
+          "eng_name": "cardholders",
           "subcategories": []
         },
         {
           "name": "Ремни",
+          "eng_name": "belts",
           "subcategories": []
         },
         {
           "name": "Украшения",
+          "eng_name": "jewelries",
           "subcategories": []
         },
         {
           "name": "Шарфы",
+          "eng_name": "scarfs",
           "subcategories": []
         },
         {
           "name": "Шапки",
+          "eng_name": "hats",
           "subcategories": []
         },
         {
-          "name": "Шляпы",
+          "name": "Панамы",
+          "eng_name": "panamas",
           "subcategories": []
         },
         {
           "name": "Кепки",
+          "eng_name": "caps",
           "subcategories": []
         },
         {
           "name": "Перчатки",
+          "eng_name": "gloves",
           "subcategories": []
         },
         {
           "name": "Кошельки",
+          "eng_name": "wallets",
           "subcategories": []
         },
         {
           "name": "Сумки",
+          "eng_name": "baga",
           "subcategories": []
         },
         {
           "name": "Рюкзаки",
+          "eng_name": "backpacks",
           "subcategories": []
         },
         {
           "name": "Солнцезащитные очки",
+          "eng_name": "sunglasses",
           "subcategories": []
         },
         {
           "name": "Брелоки",
+          "eng_name": "keychains",
           "subcategories": []
         }
       ]

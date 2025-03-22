@@ -553,7 +553,7 @@ Response:
         {
             "id": 1,
             "name": "Обувь",
-            "parent_categories": []
+            "parent_category": null
         }
     ],
     "lines": [],
@@ -629,7 +629,7 @@ Response:
         {
             "id": 1,
             "name": "Обувь",
-            "parent_categories": []
+            "parent_category": null
         }
     ],
     "lines": [],
@@ -709,7 +709,7 @@ Response:
                 {
                     "id": 1,
                     "name": "Обувь",
-                    "parent_categories": []
+                    "parent_category": null
                 }
             ],
             "lines": [],
@@ -754,14 +754,12 @@ Response Категория
     {
         "id": 1,
         "name": "Обувь",
-        "parent_categories": []
+        "parent_category":null
     },
     {
         "id": 2,
         "name": "Вся обувь",
-        "parent_categories": [
-            1
-        ]
+        "parent_category": 1
     }
 ]
 ```
@@ -772,28 +770,22 @@ Response Категория
    {
       "id": 1,
       "name": "Обувь",
-      "parent_categories": [],
+      "parent_category": null,
       "subcategories": [
          {
             "id": 2,
             "name": "Вся обувь",
-            "parent_categories": [
-               1
-            ]
+            "parent_category": 1
          },
          {
             "id": 3,
             "name": "Кроссовки",
-            "parent_categories": [
-               1
-            ],
+            "parent_category": 1,
             "subcategories": [
                {
                   "id": 4,
                   "name": "Все кроссовки",
-                  "parent_categories": [
-                     3
-                  ]
+                  "parent_category": 3
                }
             ]
          }
@@ -1136,13 +1128,13 @@ Response:
 ### 3. `[GET][Anon] product` фильтрация товаров
 параметры пример: `product/?brands=Nike&gender=F&colors=white&categories=Обувь&brands=Supreme`
 
-    categories = Фильтр по категориям
-    brands = Фильтр по брендам
+    category = Фильтр по категориям
+    brand = Фильтр по брендам
     gender = Пол (M, F, K) male, female, kids
-    colors = Фильтр по цветам
+    color = Фильтр по цветам
     price_min = Фильтр по цене мин
     price_max = Фильтр по цене макс
-    lines = Линейки
+    line = Линейки
     page = Номер страницы, (на странице 50 товаров)
 
 Response:
@@ -1192,7 +1184,7 @@ Response:
                 {
                     "id": 2,
                     "name": "Обувь",
-                    "parent_categories": []
+                    "parent_category": null
                 }
             ],
             "lines": [],

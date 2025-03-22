@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 from django_slugify_processor.text import slugify
+from django.db import models
+from django.dispatch import receiver
 
 
 class Brand(models.Model):
@@ -13,23 +15,34 @@ class Brand(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    parent_categories = models.ManyToManyField("Category", related_name='subcategories', blank=True, null=True)
+    parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE, null=True)
+    eng_name = models.CharField(max_length=255, default="")
+    full_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
-        return f"{','.join([x.name for x in self.parent_categories.all()])} | {self.name}"
+        return self.full_name
+
+    def save(self, *args, **kwargs):
+        if self.parent_category:
+            self.full_name = f"{self.parent_category.full_name} | {self.name}"
+
+        super().save(*args, **kwargs)
 
 
 class Line(models.Model):
     name = models.CharField(max_length=255)
-    parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.PROTECT, null=True)
-    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True,
-                             related_name="lines")
+    parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
+    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True, related_name="lines")
+    full_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
+        return self.full_name
+
+    def save(self, *args, **kwargs):
         if self.parent_line:
-            return f"{self.parent_line.name} | {self.name}"
-        else:
-            return self.name
+            self.full_name = f"{self.parent_line.full_name} | {self.name}"
+
+        super().save(*args, **kwargs)
 
 
 # class Size(models.Model):
@@ -134,10 +147,8 @@ class Product(models.Model):
         def add_categories_to_product(category):
             self.categories.add(category)
             # Добавляем текущую категорию к товару
-            if category.parent_categories:
-                parent_categories = category.parent_categories.all()
-                for parent_category in parent_categories:
-                    add_categories_to_product(parent_category)
+            if category.parent_category:
+                add_categories_to_product(category.parent_category)
 
         def add_lines_to_product(line):
             line.brand = self.brands.first()
@@ -150,8 +161,14 @@ class Product(models.Model):
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
             for line in self.lines.all():
                 add_lines_to_product(line)
+
             for cat in self.categories.all():
                 add_categories_to_product(cat)
+
+            if self.main_color:
+                if not self.main_color.is_main_color:
+                    self.main_color.is_main_color = True
+                    self.main_color.save()
 
         super().save(*args, **kwargs)
 

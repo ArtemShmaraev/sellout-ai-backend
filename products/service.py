@@ -1,6 +1,6 @@
 import django_filters
 from rest_framework.permissions import AllowAny
-
+from django_filters.rest_framework import OrderingFilter
 from products.models import Product
 
 
@@ -9,24 +9,21 @@ class CharFilterInFilter(django_filters.BaseInFilter, django_filters.CharFilter)
 
 
 class ProductFilter(django_filters.FilterSet):
-    categories = CharFilterInFilter(field_name='categories__name', lookup_expr='in')
-    brands = CharFilterInFilter(field_name='brands__name', lookup_expr='in')
+    category = CharFilterInFilter(field_name='categories__eng_name', lookup_expr='in')
+    brand = CharFilterInFilter(field_name='brands__name', lookup_expr='in')
     gender = django_filters.CharFilter(field_name='gender__name')
-    colors = django_filters.CharFilter(field_name='colors__name')
-    lines = CharFilterInFilter(field_name='lines__name', lookup_expr='in')
-    # price = django_filters.RangeFilter(field_name="product_units__final_price")
-    # price_max = django_filters.NumberFilter()
-    # size_us = CharFilterInFilter(field_name='product_units__size__US', lookup_expr='in')
+    color = django_filters.CharFilter(field_name='colors__name')
+    line = CharFilterInFilter(field_name='lines__name', lookup_expr='in')
 
     class Meta:
         model = Product
         fields = ['categories', 'brands', 'gender', 'colors', 'lines']
 
-    def get_queryset(self):
-        # print(price_max)
-        queryset = super().get_queryset()
-        queryset = queryset.values('id').distinct()
-        return queryset.distinct()
+    # def get_queryset(self):
+    #     # print(price_max)
+    #     queryset = super().get_queryset()
+    #     queryset = queryset.values('id').distinct()
+    #     return queryset.distinct()
         # return queryset.filter(**self.filters)
 
 

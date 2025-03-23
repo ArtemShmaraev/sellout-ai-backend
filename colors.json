@@ -82,7 +82,7 @@
         "name": "multicolour",
         "is_main_color": true,
         "russian_name": "Разноцветный",
-        "hex": "#ffffff"
+        "hex": "conic-gradient(red, orange, yellow, green, skyblue, blue, red)"
     },
     {
         "id": 188,

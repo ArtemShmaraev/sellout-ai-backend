@@ -5,7 +5,7 @@ from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Li
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('model', '_brand', 'colorway', '_line')
+    list_display = ('model', '_brand', 'colorway', '_line', 'min_price')
     search_fields = ("brands__name", "model", "colorway", "lines__name")
 
     # prepopulated_fields = {'slug': ('name',)}
@@ -22,7 +22,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class LineAdmin(admin.ModelAdmin):
-    list_display = ('full_name',)
+    list_display = ('full_name', "full_eng_name")
 
 
 class ColorAdmin(admin.ModelAdmin):

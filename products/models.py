@@ -15,7 +15,8 @@ class Brand(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
-    parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE, null=True)
+    parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
+                                        null=True)
     eng_name = models.CharField(max_length=255, default="")
     full_name = models.CharField(max_length=255, default="")
 
@@ -34,6 +35,7 @@ class Line(models.Model):
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
     brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True, related_name="lines")
     full_name = models.CharField(max_length=255, default="")
+    full_eng_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.full_name
@@ -41,7 +43,13 @@ class Line(models.Model):
     def save(self, *args, **kwargs):
         if self.parent_line:
             self.full_name = f"{self.parent_line.full_name} | {self.name}"
+        if "все" in self.full_name.lower():
+            self.full_eng_name = "_".join(
+                self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
+                                                                                                              "").split())
 
+        else:
+            self.full_eng_name = "_".join(self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все", "").split())
         super().save(*args, **kwargs)
 
 
@@ -77,6 +85,8 @@ class Collection(models.Model):
 class Color(models.Model):
     name = models.CharField(max_length=255)
     is_main_color = models.BooleanField(default=False)
+    russian_name = models.CharField(max_length=255, default="")
+    hex = models.CharField(max_length=8, default="")
 
     def __str__(self):
         return self.name
@@ -112,7 +122,7 @@ class Product(models.Model):
     collections = models.ManyToManyField("Collection", related_name='products',
                                          blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
-                                         blank=True)
+                                  blank=True)
 
     model = models.CharField(max_length=255, null=False, blank=True)
     colorway = models.CharField(max_length=255, null=False, blank=True)
@@ -195,7 +205,6 @@ class SizeTranslationRows(models.Model):
     EU = models.CharField(max_length=16, blank=True, null=True)
     RU = models.CharField(max_length=16, blank=True, null=True)
     CM = models.CharField(max_length=16, blank=True, null=True)
-
 
     def __str__(self):
         return f"{self.table} {self.US}"

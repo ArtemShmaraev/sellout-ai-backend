@@ -6,7 +6,7 @@
       "subcategories": [
         {
           "name": "Вся обувь",
-          "eng_name": "all_shoes",
+          "eng_name": "shoes_category",
           "subcategories": []
         },
         {
@@ -15,7 +15,7 @@
           "subcategories": [
             {
               "name": "Все кроссовки",
-              "eng_name": "all_sneakers",
+              "eng_name": "sneakers",
               "subcategories": []
             },
             {
@@ -98,7 +98,7 @@
       "subcategories": [
         {
           "name": "Вся одежда",
-          "eng_name": "all_clothes",
+          "eng_name": "clothes",
           "subcategories": []
         },
         {
@@ -162,7 +162,7 @@
           "subcategories": [
             {
               "name": "Вся спортивная одежда",
-              "eng_name": "all_sport_clothes",
+              "eng_name": "sport_clothes",
               "subcategories": []
             },
             {
@@ -203,7 +203,7 @@
           "subcategories": [
             {
               "name": "Вся верхняя одежда",
-              "eng_name": "all_outerwear",
+              "eng_name": "outerwear",
               "subcategories": []
             },
             {
@@ -281,7 +281,7 @@
       "subcategories": [
         {
           "name": "Все аксессуары",
-          "eng_name": "all_accessories",
+          "eng_name": "accessories",
           "subcategories": []
         },
         {

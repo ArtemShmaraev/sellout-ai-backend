@@ -1,3 +1,4 @@
+import random
 from itertools import count
 from django.core.management.base import BaseCommand
 import json
@@ -7,8 +8,16 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+
+        def check_color_in_list(color_name):
+            for color in colors_data:
+                if color['name'] == color_name:
+                    return color
+            return False
+
         all_data = json.load(open("final.json"))
-        k = 0
+        colors_data = json.load(open("colors.json"))
+        k = 8590
         kk = 0
         mk = len(all_data)
         time0 = datetime.now()
@@ -56,7 +65,13 @@ class Command(BaseCommand):
             # Обработка основного цвета
             main_color = data.get('main_color')
             if main_color:
-                main_color, _ = Color.objects.get_or_create(name=main_color)
+                color_in = check_color_in_list(main_color)
+                if color_in:
+                    main_color, _ = Color.objects.get_or_create(name=main_color)
+                    main_color.hex = color_in['hex']
+                    main_color.russian_name = color_in['russian_name']
+                else:
+                    main_color, _ = Color.objects.get_or_create(name=main_color)
                 main_color.is_main_color = True
                 main_color.save()
                 product.main_color = main_color
@@ -83,17 +98,34 @@ class Command(BaseCommand):
 
             # Обработка линий
             lines = data.get('lines', [])
-            if len(lines) > 1:
+            print(lines)
+            if lines:
                 parent_line = None
                 for line_name in lines:
-                    if Line.objects.filter(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0])).exists():
-                        line = Line.objects.get(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]))
+                    if Line.objects.filter(name=line_name, parent_line=parent_line,
+                                           brand=Brand.objects.get(name=lines[0])).exists():
+                        line = Line.objects.get(name=line_name, parent_line=parent_line,
+                                                brand=Brand.objects.get(name=lines[0]))
                     else:
-                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]), full_name=line_name)
+                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
+                                    full_name=line_name)
                         line.save()
+                    if parent_line is not None:
+                        if Line.objects.filter(name=f"Все {parent_line.name}", brand=Brand.objects.get(name=lines[0]),
+                                               parent_line=parent_line).exists():
+                            line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
+                                                        brand=Brand.objects.get(name=lines[0]))
+                        else:
+                            line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
+                                            brand=Brand.objects.get(name=lines[0]),
+                                            full_name=line_name)
+                            line_all.save()
+                        product.lines.add(line_all)
+
                     parent_line = line
                     product.lines.add(line)
 
+            product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""
             product.save()
 

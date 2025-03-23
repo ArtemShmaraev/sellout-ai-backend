@@ -67,17 +67,16 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                                             final_price__gte=price_min).aggregate(min_price=Min('final_price'))[
                 'min_price']
         elif size_us and price_max:
-
-            # Верните поле final_price
             return obj.product_units.filter(size__US__in=size_us, final_price__lte=price_max).aggregate(
                 min_price=Min('final_price'))['min_price']
 
         elif size_us and price_min:
-
-            # Верните поле final_price
             return obj.product_units.filter(size__US__in=size_us, final_price__gte=price_min).aggregate(
                 min_price=Min('final_price'))['min_price']
 
+        elif size_us:
+            return obj.product_units.filter(size__US__in=size_us).aggregate(
+                min_price=Min('final_price'))['min_price']
         else:
             return obj.min_price
 

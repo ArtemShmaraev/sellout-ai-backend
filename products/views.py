@@ -79,7 +79,40 @@ def build_line_tree(lines):
             if parent_line:
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
-    return root_lines
+
+    def sort_children(data):
+        order = {'low': 0, 'mid': 1, 'high': 2}
+
+        def sort_key(child):
+            name = child['name'].lower()
+            if 'все' in name:
+                return 0, '', ''
+            elif name.isdigit():
+                return 1, int(name), ''
+            return 1, order.get(name, float('inf')), name
+
+        for item in data:
+            children = item.get('children')
+            if children:
+                item['children'] = sorted(children, key=sort_key)
+                sort_children(item['children'])
+        return data
+
+    root_lines = sort_children(root_lines)
+
+    with_children = [x for x in root_lines if x.get('children')]
+    without_children = [x for x in root_lines if not x.get('children')]
+
+    sorted_data_with_children = sorted(with_children, key=lambda x: x['name'].lower())
+
+    # Сортируем оставшиеся элементы
+    sorted_data_without_children = sorted(without_children, key=lambda x: x['name'].lower())
+
+    # Объединяем отсортированные части
+    sorted_data = sorted_data_with_children + sorted_data_without_children
+
+    return sorted_data
+
 
 
 class LineTreeView(APIView):
@@ -132,8 +165,6 @@ class ProductUpdateView(APIView):
         product.save()
 
         return Response(ProductMainPageSerializer(product).data, status=status.HTTP_200_OK)
-
-
 
 # class ProductMainPageView(rest_framework.generics.ListAPIView):
 #     queryset = Product.objects.all()

@@ -13,7 +13,7 @@ class ProductFilter(django_filters.FilterSet):
     brand = CharFilterInFilter(field_name='brands__name', lookup_expr='in')
     gender = django_filters.CharFilter(field_name='gender__name')
     color = django_filters.CharFilter(field_name='colors__name')
-    line = CharFilterInFilter(field_name='lines__name', lookup_expr='in')
+    line = CharFilterInFilter(field_name='lines__full_eng_name', lookup_expr='in')
 
     class Meta:
         model = Product

@@ -3,7 +3,6 @@ from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
     BrandSerializer, ColorSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from .service import ProductFilter
 from rest_framework.filters import OrderingFilter
 from shipping.models import ProductUnit
 from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef
@@ -70,7 +69,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductMainPageSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_class = ProductFilter
+    # filterset_class = ProductFilter
     pagination_class = ProductPagination
     ordering_fields = ['release_date']
 
@@ -95,6 +94,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         size_us = self.request.query_params.getlist('size_us')
+
+
 
         # Применение сортировки к queryset
         ordering = self.request.query_params.get('ordering')
@@ -134,7 +135,22 @@ class ProductViewSet(viewsets.ModelViewSet):
         size_us = self.request.query_params.getlist('size_us')
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
-        if size_us and price_max and price_min:
+        line = self.request.query_params.getlist('line')
+        color = self.request.query_params.getlist('color')
+        category = self.request.query_params.getlist("category")
+        gender = self.request.query_params.getlist("gender")
+        if line:
+            queryset = queryset.filter(Q(lines__full_eng_name__in=line))
+        if color:
+            queryset = queryset.filter(Q(main_color__name__in=color))
+        if category:
+            queryset = queryset.filter(Q(categories__eng_name__in=category))
+        if gender:
+            queryset = queryset.filter(Q(gender__name__in=gender))
+
+
+        # color = self.request.query_params.getlist('line')
+        if size_us != [] and price_max and price_min:
             # вариант №0
             queryset = queryset.filter(
                 Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max) & Q(product_units__final_price__gte=price_min)

@@ -34,6 +34,8 @@ class Line(models.Model):
     name = models.CharField(max_length=255)
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
     brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True, related_name="lines")
+    is_all = models.BooleanField(default=False)
+    view_name = models.CharField(max_length=255, default="")
     full_name = models.CharField(max_length=255, default="")
     full_eng_name = models.CharField(max_length=255, default="")
 
@@ -47,9 +49,19 @@ class Line(models.Model):
             self.full_eng_name = "_".join(
                 self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
                                                                                                               "").split())
-
         else:
             self.full_eng_name = "_".join(self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все", "").split())
+        if "все" in self.name.lower() or "другие" in self.name.lower():
+            self.view_name = self.name
+        else:
+            st = self.full_name.replace("|", "").split()
+            new_st = []
+            for s in st:
+                if "все" not in s.lower():
+                    new_st.append(s)
+            self.view_name = " ".join(st)
+        if "все" in self.name.lower():
+            self.is_all = True
         super().save(*args, **kwargs)
 
 

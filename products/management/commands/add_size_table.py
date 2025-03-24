@@ -46,5 +46,5 @@ class Command(BaseCommand):
 
                 size_row.save()
                 size_table.size_row.add(size_row)
-                print(size_table.size_row)
+            print(str(size_table))
         print('finished')

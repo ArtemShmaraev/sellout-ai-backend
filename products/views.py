@@ -81,14 +81,17 @@ def build_line_tree(lines):
                 parent_line.setdefault('children', []).append(line)
 
     def sort_children(data):
-        order = {'low': 0, 'mid': 1, 'high': 2}
+        order = {'low': 0, 'mid': 1, 'high': 2, "air jordan 1": 3,
+                 "air jordan 2": 4, "air jordan 3": 5, "air jordan 4": 6,
+                 "air jordan 5": 7, "air jordan 6": 8, "air jordan 7": 9,
+                 "air jordan 8": 10, "air jordan 9": 11, "air jordan 10": 12,
+                 "air jordan 11": 13, "air jordan 12": 14, "air jordan 13": 15,
+                 "air jordan 14": 16, "air jordan 15": 17}
 
         def sort_key(child):
             name = child['name'].lower()
             if 'все' in name:
                 return 0, '', ''
-            elif name.isdigit():
-                return 1, int(name), ''
             return 1, order.get(name, float('inf')), name
 
         for item in data:

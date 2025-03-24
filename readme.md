@@ -517,26 +517,31 @@ Response:
 
 ```json
 {
-    "id": 712,
-    "is_favorite": false,
-    "model": "Flight Legacy",
-    "colorway": "Lakers",
-    "russian_name": "Flight Legacy",
-    "slug": "nike-flight-legacy-lakers-712",
-    "manufacturer_sku": "BQ4212102",
+    "id": 516,
+    "in_wishlist": false,
+    "min_price_product_unit": 83490,
+    "main_line": "Nike | Air Force 1 | Low",
+    "model": "Louis Vuitton Air Force 1 Low",
+    "colorway": "Virgil Abloh - BLACK/BLACK",
+    "russian_name": "Louis Vuitton Air Force 1 Low",
+    "slug": "nike-louis-vuitton-louis-vuitton-air-force-1-low-virgil-abloh-blackblack-516",
+    "manufacturer_sku": "1A9VD6",
     "description": "",
     "bucket_link": "",
     "designer_color": "",
-    "min_price": null,
+    "min_price": 83490,
     "available_flag": true,
-    "last_upd": "2023-06-07T13:35:34.003607Z",
-    "add_date": "2023-06-07",
-    "release_date": "2023-06-07",
+    "last_upd": "2023-06-16T11:41:11.705314Z",
+    "add_date": "2023-06-16",
+    "release_date": "2023-06-16",
     "fit": 0,
     "rel_num": 0,
     "main_color": {
-        "id": 7,
-        "name": "white"
+        "id": 5,
+        "name": "black",
+        "is_main_color": true,
+        "russian_name": "Р§РµСЂРЅС‹Р№",
+        "hex": "#000000"
     },
     "recommended_gender": {
         "id": 1,
@@ -547,26 +552,120 @@ Response:
         {
             "id": 8,
             "name": "Nike"
+        },
+        {
+            "id": 23,
+            "name": "Louis Vuitton"
         }
     ],
     "categories": [
         {
             "id": 1,
             "name": "Обувь",
+            "eng_name": "shoes_category",
+            "full_name": "Обувь",
             "parent_category": null
         }
     ],
-    "lines": [],
-    "collections": [],
+    "lines": [
+        {
+            "id": 3,
+            "name": "Nike",
+            "full_name": "Nike",
+            "full_eng_name": "nike",
+            "parent_line": null,
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        },
+        {
+            "id": 5,
+            "name": "Все Nike",
+            "full_name": "Nike | Все Nike",
+            "full_eng_name": "nike",
+            "parent_line": {
+                "id": 3,
+                "name": "Nike",
+                "full_name": "Nike",
+                "full_eng_name": "nike",
+                "parent_line": null,
+                "brand": 8
+            },
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        },
+        {
+            "id": 18,
+            "name": "Air Force 1",
+            "full_name": "Nike | Air Force 1",
+            "full_eng_name": "nike_air_force_1",
+            "parent_line": {
+                "id": 3,
+                "name": "Nike",
+                "full_name": "Nike",
+                "full_eng_name": "nike",
+                "parent_line": null,
+                "brand": 8
+            },
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        },
+        {
+            "id": 19,
+            "name": "Low",
+            "full_name": "Nike | Air Force 1 | Low",
+            "full_eng_name": "nike_air_force_1_low",
+            "parent_line": {
+                "id": 18,
+                "name": "Air Force 1",
+                "full_name": "Nike | Air Force 1",
+                "full_eng_name": "nike_air_force_1",
+                "parent_line": 3,
+                "brand": 8
+            },
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        },
+        {
+            "id": 20,
+            "name": "Все Air Force 1",
+            "full_name": "Nike | Air Force 1 | Все Air Force 1",
+            "full_eng_name": "nike_air_force_1",
+            "parent_line": {
+                "id": 18,
+                "name": "Air Force 1",
+                "full_name": "Nike | Air Force 1",
+                "full_eng_name": "nike_air_force_1",
+                "parent_line": 3,
+                "brand": 8
+            },
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        }
+    ],
+    "collections": [
+        {
+            "id": 3,
+            "name": "Nike x Louis Vuitton"
+        }
+    ],
     "tags": [],
     "colors": [
         {
-            "id": 91,
-            "name": "102 white"
-        },
-        {
-            "id": 718,
-            "name": "regency purple"
+            "id": 531,
+            "name": "noir",
+            "is_main_color": false,
+            "russian_name": "",
+            "hex": ""
         }
     ],
     "gender": [
@@ -1380,6 +1479,7 @@ Response:
 Body:
 ```json
 {
+   
    "product_id": id,
    "size_id": id
 }

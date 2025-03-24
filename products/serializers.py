@@ -49,11 +49,19 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
+    main_line = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = "__all__"
         depth = 2
+
+    def get_main_line(self, obj):
+        lines = obj.lines.exclude(name__icontains='Все')
+        if lines:
+            main_line = lines.order_by('-id').first()
+            return main_line.full_name
+        return None
 
     def get_min_price_product_unit(self, obj):
         size_us = self.context.get('size_us')

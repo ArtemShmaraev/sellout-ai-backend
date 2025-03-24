@@ -45,6 +45,26 @@ class ProductPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 120
 
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+
+        min_price = 9999999999
+        max_price = 0
+
+        # Calculate min_price and max_price from the data
+        for item in data:
+            min_price_product_unit = item['min_price_product_unit']
+            if min_price_product_unit is not None:
+                if min_price is not None and min_price_product_unit < min_price:
+                    min_price = min_price_product_unit
+                if max_price is not None and min_price_product_unit > max_price:
+                    max_price = min_price_product_unit
+
+        response.data['min_price'] = min_price
+        response.data['max_price'] = max_price
+
+        return response
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()

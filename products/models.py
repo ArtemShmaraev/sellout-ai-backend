@@ -86,7 +86,7 @@ class Color(models.Model):
     name = models.CharField(max_length=255)
     is_main_color = models.BooleanField(default=False)
     russian_name = models.CharField(max_length=255, default="")
-    hex = models.CharField(max_length=8, default="")
+    hex = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.name

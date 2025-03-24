@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
         all_data = json.load(open("final.json"))
         colors_data = json.load(open("colors.json"))
-        k = 8590
+        k = 0
         kk = 0
         mk = len(all_data)
         time0 = datetime.now()
@@ -98,7 +98,6 @@ class Command(BaseCommand):
 
             # Обработка линий
             lines = data.get('lines', [])
-            print(lines)
             if lines:
                 parent_line = None
                 for line_name in lines:

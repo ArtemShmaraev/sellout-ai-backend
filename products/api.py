@@ -101,7 +101,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if ordering in self.ordering_fields:
             queryset = queryset.order_by(ordering)
         elif ordering == "min_price" or ordering == "-min_price":
-            if size_us is not None:
+            if size_us != []:
 
                 if price_max is not None:
                     queryset = queryset.annotate(

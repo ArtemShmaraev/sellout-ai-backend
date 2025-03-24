@@ -28,6 +28,8 @@ Anon)
 1. `[GET][Anon] product/products/<product_id>` данные одного товара [⬇️](#product_id)
 2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
 3. `[GET][Anon] product/products/&page=n` страница товаров [⬇️](#product_all)
+4. `[PUT][Anon] product/update/<product_id>` редактирование товара [⬇️](#product_update)
+5. `[DELETE][Anon] product/update/<product_id>` удаление товара по id
 
 ## Category, Line, Color, Brand API
 у каждой сущности есть все виды запросов [GET]
@@ -840,6 +842,131 @@ Response:
 }
 ```
 
+[:arrow_up:Product API](#product)
+[:arrow_up:SellOut API](#up)
+<a name="product_update"></a>
+
+4. `[PUT] product/update/<product_id>` редактироване товара
+можно передавать
+```json
+{
+    "categories": ["список id категорий"],
+    "lines": ["список id линеек"],
+    "brands": ["список id брендов"],
+    "model": "название",
+    "colorway": "название",
+    "russian_name": "название",
+    "description": "описание",
+    "main_color": "id нового main_color",
+}
+```
+все параметры необязательные, можно предавть только те, которые меняютс
+
+Запрос http://127.0.0.1:8000/api/v1/product/update/2
+Body
+```json
+{
+    "model": "название",
+    "colorway": "название",
+    "russian_name": "название",
+    "description": "описание",
+    "main_color": 5
+}
+```
+Response
+```json
+{
+    "id": 2,
+    "in_wishlist": false,
+    "min_price_product_unit": 91990,
+    "main_line": "Nike",
+    "model": "название",
+    "colorway": "название",
+    "russian_name": "название",
+    "slug": "nike-2",
+    "manufacturer_sku": "CZ8100600",
+    "description": "описание",
+    "bucket_link": "",
+    "designer_color": "",
+    "min_price": 91990,
+    "available_flag": true,
+    "last_upd": "2023-06-17T09:51:38.737920Z",
+    "add_date": "2023-06-17",
+    "release_date": "2023-06-17",
+    "fit": 0,
+    "rel_num": 0,
+    "main_color": {
+        "id": 5,
+        "name": "orange",
+        "is_main_color": true,
+        "russian_name": "РћСЂР°РЅР¶РµРІС‹Р№",
+        "hex": "#ff9e39"
+    },
+    "recommended_gender": {
+        "id": 1,
+        "name": "M"
+    },
+    "size_table": null,
+    "brands": [
+        {
+            "id": 8,
+            "name": "Nike"
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "name": "Обувь",
+            "eng_name": "shoes_category",
+            "full_name": "Обувь",
+            "parent_category": null
+        }
+    ],
+    "lines": [
+        {
+            "id": 2,
+            "name": "Nike",
+            "is_all": false,
+            "view_name": "Nike",
+            "full_name": "Nike",
+            "full_eng_name": "nike",
+            "parent_line": null,
+            "brand": {
+                "id": 8,
+                "name": "Nike"
+            }
+        }
+    ],
+    "collections": [],
+    "tags": [],
+    "colors": [
+        {
+            "id": 3,
+            "name": "600 bright crimson",
+            "is_main_color": false,
+            "russian_name": "",
+            "hex": ""
+        },
+        {
+            "id": 4,
+            "name": "obsidian",
+            "is_main_color": false,
+            "russian_name": "",
+            "hex": ""
+        }
+    ],
+    "gender": [
+        {
+            "id": 1,
+            "name": "M"
+        },
+        {
+            "id": 2,
+            "name": "F"
+        }
+    ]
+}
+```
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
 

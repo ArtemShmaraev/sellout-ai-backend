@@ -125,6 +125,10 @@ class LineTreeView(APIView):
 
 
 class ProductUpdateView(APIView):
+    def delete(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        product.delete()
+        return Response("Товар успешно удален")
     def put(self, request, product_id):
         product = Product.objects.get(id=product_id)
         data = request.data

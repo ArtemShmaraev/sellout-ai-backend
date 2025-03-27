@@ -14,6 +14,7 @@ Anon)
 3. `[GET][User] user_info/<user_id>` данные пользователя [⬇️](#user_id)
 4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
 5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
+6. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
 -
 6. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 7. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
@@ -56,8 +57,8 @@ Anon)
 ## Orders API
 
 1. `[GET][User] order/cart/<user_id>` корзина пользователя [⬇️](#cart)
-2. `[POST][User]  order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину [⬇️](#add_to_cart)
-3. `[DELETE][User] cart/cart_delete/<user_id>/<product_unit_id>` удалить юнит из
+2. `[POST][User]  order/cart/<user_id>/<product_unit_id>` добавить юнит в корзину [⬇️](#add_to_cart)
+3. `[DELETE][User] cart/cart/<user_id>/<product_unit_id>` удалить юнит из
    корзины [⬇️](#del_from_cart)
 4. `[POST][User] cart/checkout/<user_id>` оформить заказ [⬇️](#checkout)
 5. `[GET][Admin] order/orders` все заказы [⬇️](#orderss)
@@ -328,6 +329,26 @@ Response:
 
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
+
+<a name="refresh"></a>
+### 6. `[POST][User] user/token/refresh/` обновление токена
+Body:
+```json
+{
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4NzcxMzc4NywiaWF0IjoxNjg3MTA4OTg3LCJqdGkiOiJhNzBiN2YxMDg5OTI0ZTMyYmM2YmRiZWU4YWQ2YzY1ZiIsInVzZXJfaWQiOjF9.zyIWDnxf3qU9P5A-JXcTI_XXDJP41hu12VvofqTwJRA",
+}
+```
+Response:
+````json
+{
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTk1NDg0LCJpYXQiOjE2ODcxMDg5ODcsImp0aSI6IjkzNTEyMzFiNjA4MjRjZWJhOWY3ZDExNDc1OGE4YjYxIiwidXNlcl9pZCI6MX0.RmAOgVudnrfclAapeLEpQSK7Ji-93ECBnCJnz2TzvEQ"
+}
+````
+
+
+[:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
+
 
 <a name="address"></a>
 
@@ -1772,7 +1793,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="add_to_cart"></a>
 
-### 2. `[POST][User] order/cart_add/<user_id>/<product_unit_id>` добавить юнит в корзину
+### 2. `[POST][User] order/cart/<user_id>/<product_unit_id>` добавить юнит в корзину
 
 Response:
 
@@ -1866,7 +1887,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="del_from_cart"></a>
 
-### 3. `[DELETE][User] order/cart_delete/<user_id>/<product_unit_id>` удалить юнит из корзины
+### 3. `[DELETE][User] order/cart/<user_id>/<product_unit_id>` удалить юнит из корзины
 
 Response:
 

@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+
 from .serializers import UserSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
@@ -16,7 +15,7 @@ from orders.models import ShoppingCart
 from django.utils.module_loading import import_string
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import AUTH_HEADER_TYPES
+from rest_framework_simplejwt.authentication import AUTH_HEADER_TYPES, JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.settings import api_settings
 
@@ -26,10 +25,19 @@ import requests
 
 
 class UserInfoView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, user_id):
-        if request.user.id == user_id or request.user.is_staff:
-            return Response(UserSerializer(User.objects.get(id=user_id)).data)
-        return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+        try:
+            if request.user.id == user_id or request.user.is_staff:
+                user = User.objects.get(id=user_id)
+                return Response(UserSerializer(user).data)
+            else:
+                return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UserRegister(generics.GenericAPIView):
@@ -62,10 +70,10 @@ class UserRegister(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         # _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
-        data = request.data
+        data = json.loads(request.body)
         genders = {'male': 1, "female": 2}
         new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
-                        last_name=data['last_name'], gender_id=genders[data['gender']])
+                        last_name=data['last_name'], gender_id=genders[data['gender']], is_malling_list=data['is_malling_list'])
         new_user.set_password(data['password'])
         new_user.save()
         # создание корзины и вл для пользователя
@@ -88,6 +96,8 @@ class UserRegister(generics.GenericAPIView):
 
 # последние 7 просмотренных товаров пользователя
 class UserLastSeenView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
@@ -103,7 +113,7 @@ class UserLastSeenView(APIView):
 
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            data = request.data
+            data = json.loads(request.body)
             product_id = data.get('product_id')
             if product_id is not None:
                 try:
@@ -127,6 +137,8 @@ class UserLastSeenView(APIView):
 
 
 class UserAddressView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
@@ -135,7 +147,7 @@ class UserAddressView(APIView):
 
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            data = request.data
+            data = json.loads(request.body)
             address = AddressInfo(address=data['address'], post_index=data['post_index'])
             address.save()
             request.user.address.add(address)
@@ -150,7 +162,7 @@ class UserAddressView(APIView):
             except AddressInfo.DoesNotExist:
                 return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)
 
-            data = request.data
+            data = json.loads(request.body)
             address.address = data.get('address', address.address)
             address.post_index = data.get('post_index', address.post_index)
             address.save()
@@ -174,8 +186,18 @@ class UserAddressView(APIView):
 
 
 class UserChangePassword(APIView):
-    def post(self, request):
-        user = User.objects.get(id=request.user.id)
+    authentication_classes = [JWTAuthentication]
 
-        user.set_password(request.data['password'])
-        user.save()
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            user = User.objects.get(id=request.user.id)
+
+            user.set_password(data['password'])
+            user.save()
+
+            return Response("Пароль успешно изменен")
+        except KeyError as e:
+            return Response(f"Отсутствует обязательное поле: {str(e)}", status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -33,6 +33,8 @@ class User(AbstractUser):
 
     personal_discount_percentage = models.IntegerField(default=0)
 
+    is_malling_list = models.BooleanField(default=False)
+
     # wishlist and shopping cart are described in Wishlist and ShoppingCart models
 
     referral_link = models.CharField(max_length=100, null=True, blank=True)

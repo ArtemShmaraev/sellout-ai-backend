@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .serializers import ProductUnitSerializer
 from wishlist.models import Wishlist, WishlistUnit
 from products.models import Product
@@ -9,6 +11,8 @@ import json
 
 
 class ProductUnitProductView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
@@ -19,6 +23,8 @@ class ProductUnitProductView(APIView):
 
 
 class ProductUnitProductSlugView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
@@ -29,6 +35,7 @@ class ProductUnitProductSlugView(APIView):
 
 
 def product_unit_product_main(product_id, user_id):
+    authentication_classes = [JWTAuthentication]
     try:
         product = Product.objects.get(id=product_id)
         ans = ProductSerializer(product).data
@@ -45,6 +52,8 @@ def product_unit_product_main(product_id, user_id):
 
 
 class ProductUnitProductMainView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, product_id, user_id):
         try:
             if Product.objects.filter(id=product_id).exists():

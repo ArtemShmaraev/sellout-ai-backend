@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import Wishlist, WishlistUnit
 # Create your views here.
 
@@ -16,6 +18,7 @@ import requests
 # информация о вишлисте пользователя
 # информация о вишлисте пользователя
 class UserWishlist(APIView):
+    authentication_classes = [JWTAuthentication]
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)

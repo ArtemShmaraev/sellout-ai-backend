@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import Product, Category, Line, Brand, Color
 from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
@@ -12,6 +14,7 @@ from rest_framework.filters import OrderingFilter
 
 
 class LinesViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
     queryset = Line.objects.all()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -19,6 +22,7 @@ class LinesViewSet(viewsets.ModelViewSet):
 
 
 class ColorViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
     queryset = Color.objects.filter(is_main_color=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -26,6 +30,7 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
     queryset = Category.objects.all()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -33,7 +38,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class BrandViewSet(viewsets.ModelViewSet):
-    queryset = Brand.objects.all()
+    authentication_classes = [JWTAuthentication]
+    queryset = Brand.objects.all().order_by("name")
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = BrandSerializer
@@ -66,6 +72,7 @@ class ProductPagination(pagination.PageNumberPagination):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
     queryset = Product.objects.all()
     serializer_class = ProductMainPageSerializer
     filter_backends = [DjangoFilterBackend]
@@ -95,28 +102,30 @@ class ProductViewSet(viewsets.ModelViewSet):
         price_min = self.request.query_params.get('price_min')
         size_us = self.request.query_params.getlist('size_us')
 
-
-
         # Применение сортировки к queryset
         ordering = self.request.query_params.get('ordering')
         if ordering in self.ordering_fields:
             queryset = queryset.order_by(ordering)
         elif ordering == "min_price" or ordering == "-min_price":
-            if size_us != []:
+            if size_us:
 
                 if price_max is not None:
                     queryset = queryset.annotate(
-                            min_price_product_unit=Subquery(
-                                Product.objects.filter(pk=OuterRef('pk'))
-                                .annotate(unit_min_price=Min('product_units__final_price', filter=(Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max))))
-                                .values('unit_min_price')[:1]
-                            )
+                        min_price_product_unit=Subquery(
+                            Product.objects.filter(pk=OuterRef('pk'))
+                            .annotate(unit_min_price=Min('product_units__final_price', filter=(
+                                    Q(product_units__size__US__in=size_us) & Q(
+                                product_units__final_price__lte=price_max))))
+                            .values('unit_min_price')[:1]
                         )
+                    )
                 if price_min is not None:
                     queryset = queryset.annotate(
                         min_price_product_unit=Subquery(
                             Product.objects.filter(pk=OuterRef('pk'))
-                            .annotate(unit_min_price=Min('product_units__final_price', filter=(Q(product_units__size__US__in=size_us) & Q(product_units__final_price__gte=price_min))))
+                            .annotate(unit_min_price=Min('product_units__final_price', filter=(
+                                    Q(product_units__size__US__in=size_us) & Q(
+                                product_units__final_price__gte=price_min))))
                             .values('unit_min_price')[:1]
                         )
                     )
@@ -137,6 +146,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         price_min = self.request.query_params.get('price_min')
         line = self.request.query_params.getlist('line')
         color = self.request.query_params.getlist('color')
+        is_fast_shipping = self.request.query_params.get("is_fast_shipping")
+        is_sale = self.request.query_params.get("is_sale")
+        is_return = self.request.query_params.get("is_return")
         category = self.request.query_params.getlist("category")
         gender = self.request.query_params.getlist("gender")
         if line:
@@ -147,13 +159,19 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(Q(categories__eng_name__in=category))
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
-
+        if is_fast_shipping:
+            queryset = queryset.filter(product_units_is_fast_shipping=(is_fast_shipping == "is_fast_shipping"))
+        if is_sale:
+            queryset = queryset.filter(product_units__is_sale=(is_sale == "is_sale"))
+        if is_return:
+            queryset = queryset.filter(product_units__is_sale=(is_sale == "is_return"))
 
         # color = self.request.query_params.getlist('line')
         if size_us != [] and price_max and price_min:
             # вариант №0
             queryset = queryset.filter(
-                Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max) & Q(product_units__final_price__gte=price_min)
+                Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max) & Q(
+                    product_units__final_price__gte=price_min)
             )
 
             # надо затестить что быстрее это №1
@@ -184,3 +202,61 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         queryset = queryset.distinct()
         return queryset
+
+# def filter_queryset(self, queryset):
+#     queryset = super().filter_queryset(queryset)
+#
+#     size_us = self.request.query_params.getlist('size_us')
+#     price_max = self.request.query_params.get('price_max')
+#     price_min = self.request.query_params.get('price_min')
+#     line = self.request.query_params.getlist('line')
+#     color = self.request.query_params.getlist('color')
+#     is_fast_shipping = self.request.query_params.get("is_fast_shipping")
+#     is_sale = self.request.query_params.get("is_sale")
+#     category = self.request.query_params.getlist("category")
+#     gender = self.request.query_params.getlist("gender")
+#
+#     annotations = {}
+#     filters = Q()
+#
+#     if line:
+#         annotations['lines__full_eng_name'] = 'lines__full_eng_name'
+#         filters &= Q(lines__full_eng_name__in=line)
+#
+#     if color:
+#         annotations['main_color__name'] = 'main_color__name'
+#         filters &= Q(main_color__name__in=color)
+#
+#     if category:
+#         filters &= Q(categories__eng_name__in=category)
+#
+#     if gender:
+#         filters &= Q(gender__name__in=gender)
+#
+#     if is_fast_shipping:
+#         filters &= Q(is_fast_shipping=is_fast_shipping)
+#
+#     if is_sale:
+#         filters &= Q(is_sale=is_sale)
+#
+#     if size_us and price_max and price_min:
+#         filters &= Q(
+#             product_units__size__US__in=size_us,
+#             product_units__final_price__lte=price_max,
+#             product_units__final_price__gte=price_min
+#         )
+#     elif size_us and price_min:
+#         filters &= Q(
+#             product_units__size__US__in=size_us,
+#             product_units__final_price__gte=price_min
+#         )
+#     elif size_us and price_max:
+#         filters &= Q(
+#             product_units__size__US__in=size_us,
+#             product_units__final_price__lte=price_max
+#         )
+#     elif size_us:
+#         filters &= Q(product_units__size__US__in=size_us)
+#
+#     queryset = queryset.annotate(**annotations).filter(filters).distinct()
+#     return queryset

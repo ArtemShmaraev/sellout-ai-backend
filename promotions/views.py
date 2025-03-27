@@ -1,11 +1,16 @@
 import datetime
+import json
 
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import PromoCode
 from .serializers import PromoCodeSerializer
+
+
 # Create your views here.
 
 
@@ -23,10 +28,13 @@ def check_promo(text, user_id):
     except:
         return 0, Response("Промокод не найден")
 
+
 class PromocodeView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            data = request.data
+            data = json.loads(request.body)
             text = data['promo_code']
 
             return check_promo(text, user_id)[1]

@@ -66,7 +66,8 @@ class Line(models.Model):
             for s in st:
                 if "все" not in s.lower():
                     new_st.append(s)
-            self.view_name = " ".join(st)
+
+            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan")
         if "все" in self.name.lower():
             self.is_all = True
         super().save(*args, **kwargs)

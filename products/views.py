@@ -2,6 +2,8 @@ import rest_framework.generics
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from wishlist.models import Wishlist, WishlistUnit
 import json
 from products.models import Product, Category, Line
@@ -13,6 +15,8 @@ from .serializers import ProductSerializer, ProductMainPageSerializer, CategoryS
 
 
 class ProductSlugView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
@@ -23,6 +27,8 @@ class ProductSlugView(APIView):
 
 
 class ProductIdView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, id):
         try:
             product = Product.objects.get(id=id)
@@ -64,12 +70,16 @@ def category_no_child(cats):
 
 
 class CategoryTreeView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
         return Response(build_category_tree(cats))
 
 
 class CategoryNoChildView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
         return Response(category_no_child(build_category_tree(cats)))
@@ -168,20 +178,25 @@ def line_no_child(lines):
     return get_lines_without_children(root_lines)
 
 
-
 class LineTreeView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
         return Response(build_line_tree(lines))
 
 
 class LineNoChildView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
         return Response(line_no_child(lines))
 
 
 class ProductUpdateView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def delete(self, request, product_id):
         product = Product.objects.get(id=product_id)
         product.delete()

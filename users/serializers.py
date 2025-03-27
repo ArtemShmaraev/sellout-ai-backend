@@ -1,5 +1,26 @@
 from .models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Добавить дополнительную информацию в полезную нагрузку токена
+        token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+
+        return token
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Добавить дополнительную информацию в ответ при успешной аутентификации
+        data['username'] = self.user.username
+
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):

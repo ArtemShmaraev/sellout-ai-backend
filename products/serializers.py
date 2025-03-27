@@ -4,6 +4,19 @@ from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min
 
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Добавить дополнительную информацию в полезную нагрузку токена
+        token['username'] = user.username
+
+        return token
+
 
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,7 +85,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         lines = obj.lines.exclude(name__icontains='Все')
         if lines:
             main_line = lines.order_by('-id').first()
-            return main_line.full_name
+            return main_line.view_name
         return None
 
     def get_min_price_product_unit(self, obj):

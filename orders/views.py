@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import ShoppingCart, Order
 # Create your views here.
 from django.shortcuts import get_object_or_404
@@ -14,6 +16,8 @@ from users.models import User
 
 
 class ShoppingCartUser(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
@@ -25,8 +29,6 @@ class ShoppingCartUser(APIView):
         except ShoppingCart.DoesNotExist:
             return Response("Корзина не найдена", status=status.HTTP_404_NOT_FOUND)
 
-
-class ShoppingCartAddProductUnit(APIView):
     def post(self, request, user_id, product_unit_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
@@ -40,8 +42,6 @@ class ShoppingCartAddProductUnit(APIView):
         except ProductUnit.DoesNotExist:
             return Response("ProductUnit не найден", status=status.HTTP_404_NOT_FOUND)
 
-
-class ShoppingCartDelProductUnit(APIView):
     def delete(self, request, user_id, product_unit_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
@@ -57,6 +57,8 @@ class ShoppingCartDelProductUnit(APIView):
 
 
 class CheckOutView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def post(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
@@ -92,6 +94,8 @@ class CheckOutView(APIView):
 
 
 class AllOrdersView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request):
         if request.user.is_staff:
             orders = Order.objects.all()
@@ -102,6 +106,8 @@ class AllOrdersView(APIView):
 
 
 class UserOrdersView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
@@ -113,7 +119,10 @@ class UserOrdersView(APIView):
         except User.DoesNotExist:
             return Response("Пользователь не найден", status=status.HTTP_404_NOT_FOUND)
 
+
 class OrderView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request, order_id):
         try:
             order = Order.objects.get(id=order_id)

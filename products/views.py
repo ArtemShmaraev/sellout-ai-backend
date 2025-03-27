@@ -172,7 +172,6 @@ class ProductUpdateView(APIView):
             product.bucket_link = data.get('bucket_link', product.bucket_link)
         if 'main_color' in data:
             product.main_color_id = data.get('main_color', product.main_color_id)
-        # Добавьте обработку для других полей ManyToMany, например, brands, lines, collections, tags
         product.slug = ""
         product.save()
 

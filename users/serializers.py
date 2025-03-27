@@ -19,6 +19,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Добавить дополнительную информацию в ответ при успешной аутентификации
         data['username'] = self.user.username
+        data['first_name'] = self.user.first_name
+        data['last_name'] = self.user.last_name
 
         return data
 

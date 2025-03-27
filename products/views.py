@@ -129,15 +129,18 @@ class ProductUpdateView(APIView):
         product = Product.objects.get(id=product_id)
         product.delete()
         return Response("Товар успешно удален")
+
     def put(self, request, product_id):
         product = Product.objects.get(id=product_id)
         data = request.data
         if 'categories' in data:
             categories = data.get('categories', [])
+            product.categories.clear()
             product.categories.add(*categories)
 
         if 'lines' in data:
             lines = data.get('lines', [])
+            product.lines.clear()
             product.lines.add(*lines)
 
         if 'colors' in data:
@@ -146,10 +149,12 @@ class ProductUpdateView(APIView):
 
         if 'brands' in data:
             brands = data.get('brands', [])
+            product.brands.clear()
             product.brands.add(*brands)
 
         if 'tags' in data:
             tags = data.get('tags', [])
+            product.tags.clear()
             product.tags.add(*tags)
 
         # Обработайте остальные поля по аналогии

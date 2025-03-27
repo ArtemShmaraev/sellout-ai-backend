@@ -98,6 +98,7 @@ class Command(BaseCommand):
 
             # Обработка линий
             lines = data.get('lines', [])
+            print(lines)
             if lines:
                 parent_line = None
                 for line_name in lines:

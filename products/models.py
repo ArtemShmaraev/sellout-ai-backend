@@ -18,6 +18,7 @@ class Category(models.Model):
     parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
                                         null=True)
     eng_name = models.CharField(max_length=255, default="")
+    is_all = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
@@ -26,6 +27,8 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if self.parent_category:
             self.full_name = f"{self.parent_category.full_name} | {self.name}"
+        if "все" in self.name.lower() or "вся" in self.name.lower() or "всё" in self.name.lower():
+            self.is_all = True
 
         super().save(*args, **kwargs)
 
@@ -170,12 +173,21 @@ class Product(models.Model):
             self.categories.add(category)
             # Добавляем текущую категорию к товару
             if category.parent_category:
+                if Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
+                    category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}")
+                    self.categories.add(category_is_all)
+                elif Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
+                    category_is_all = Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}")
+                    self.categories.add(category_is_all)
                 add_categories_to_product(category.parent_category)
 
         def add_lines_to_product(line):
             line.brand = self.brands.first()
             self.lines.add(line)
             if line.parent_line:
+                if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
+                    line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}")
+                    self.lines.add(line_is_all)
                 add_lines_to_product(line.parent_line)
 
         if not self.slug:

@@ -7,14 +7,14 @@ from .serializers import ProductMainPageSerializer, ProductSerializer, CategoryS
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from shipping.models import ProductUnit
-from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef
+from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef, Max
 from django.db.models import Q, Case, When, Value, BooleanField
 
 from rest_framework.filters import OrderingFilter
 
 
 class LinesViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     queryset = Line.objects.all()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -22,7 +22,7 @@ class LinesViewSet(viewsets.ModelViewSet):
 
 
 class ColorViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     queryset = Color.objects.filter(is_main_color=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -30,7 +30,7 @@ class ColorViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     queryset = Category.objects.all()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -38,7 +38,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class BrandViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     queryset = Brand.objects.all().order_by("name")
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
@@ -65,14 +65,12 @@ class ProductPagination(pagination.PageNumberPagination):
                 if max_price is not None and min_price_product_unit > max_price:
                     max_price = min_price_product_unit
 
-        response.data['min_price'] = min_price
-        response.data['max_price'] = max_price
-
+        response.data['min_price'] = Product.objects.aggregate(min_price=Min('min_price'))['min_price']
+        response.data['max_price'] = Product.objects.aggregate(min_price=Max('min_price'))['min_price']
         return response
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     queryset = Product.objects.all()
     serializer_class = ProductMainPageSerializer
     filter_backends = [DjangoFilterBackend]

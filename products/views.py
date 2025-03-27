@@ -15,7 +15,7 @@ from .serializers import ProductSerializer, ProductMainPageSerializer, CategoryS
 
 
 class ProductSlugView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, slug):
         try:
@@ -27,7 +27,7 @@ class ProductSlugView(APIView):
 
 
 class ProductIdView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, id):
         try:
@@ -70,7 +70,7 @@ def category_no_child(cats):
 
 
 class CategoryTreeView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
@@ -179,7 +179,7 @@ def line_no_child(lines):
 
 
 class LineTreeView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
@@ -187,7 +187,7 @@ class LineTreeView(APIView):
 
 
 class LineNoChildView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
@@ -195,7 +195,7 @@ class LineNoChildView(APIView):
 
 
 class ProductUpdateView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def delete(self, request, product_id):
         product = Product.objects.get(id=product_id)

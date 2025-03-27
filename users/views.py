@@ -73,7 +73,7 @@ class UserRegister(generics.GenericAPIView):
         data = json.loads(request.body)
         genders = {'male': 1, "female": 2}
         new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
-                        last_name=data['last_name'], gender_id=genders[data['gender']], is_malling_list=data['is_malling_list'])
+                        last_name=data['last_name'], gender_id=genders[data['gender']], is_mailing_list=data['is_mailing_list'])
         new_user.set_password(data['password'])
         new_user.save()
         # создание корзины и вл для пользователя

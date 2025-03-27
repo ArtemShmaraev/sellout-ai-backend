@@ -16,7 +16,7 @@ from users.models import User
 
 
 class ShoppingCartUser(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, user_id):
         try:
@@ -57,7 +57,7 @@ class ShoppingCartUser(APIView):
 
 
 class CheckOutView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def post(self, request, user_id):
         try:
@@ -94,7 +94,7 @@ class CheckOutView(APIView):
 
 
 class AllOrdersView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         if request.user.is_staff:
@@ -106,7 +106,7 @@ class AllOrdersView(APIView):
 
 
 class UserOrdersView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, user_id):
         try:
@@ -121,7 +121,7 @@ class UserOrdersView(APIView):
 
 
 class OrderView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, order_id):
         try:

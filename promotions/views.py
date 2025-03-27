@@ -30,7 +30,7 @@ def check_promo(text, user_id):
 
 
 class PromocodeView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:

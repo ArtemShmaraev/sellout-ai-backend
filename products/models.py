@@ -50,10 +50,14 @@ class Line(models.Model):
             self.full_name = f"{self.parent_line.full_name} | {self.name}"
         if "все" in self.full_name.lower():
             self.full_eng_name = "_".join(
-                self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
-                                                                                                              "").split())
+                self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся",
+                                                                                                       "").replace(
+                    "все",
+                    "").split())
         else:
-            self.full_eng_name = "_".join(self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все", "").split())
+            self.full_eng_name = "_".join(
+                self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
+                                                                                                              "").split())
         if "все" in self.name.lower() or "другие" in self.name.lower():
             self.view_name = self.name
         else:
@@ -174,10 +178,12 @@ class Product(models.Model):
             # Добавляем текущую категорию к товару
             if category.parent_category:
                 if Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
-                    category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}")
+                    category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}",
+                                                           parent_category=category.parent_category)
                     self.categories.add(category_is_all)
                 elif Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
-                    category_is_all = Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}")
+                    category_is_all = Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}",
+                                                              parent_category=category.parent_category)
                     self.categories.add(category_is_all)
                 add_categories_to_product(category.parent_category)
 
@@ -186,7 +192,7 @@ class Product(models.Model):
             self.lines.add(line)
             if line.parent_line:
                 if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
-                    line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}")
+                    line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}", parent_line=line.parent_line)
                     self.lines.add(line_is_all)
                 add_lines_to_product(line.parent_line)
 

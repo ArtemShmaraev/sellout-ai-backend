@@ -65,6 +65,9 @@ class ProductUnit(models.Model):
     availability = models.BooleanField(default=True)
     warehouse = models.BooleanField(default=False)  # на руках ли товар
     is_multiple = models.BooleanField(default=False)  # можно ли несколько позиций взять
+    is_return = models.BooleanField(default=False)
+    is_fast_shipping = models.BooleanField(default=False)
+    is_sale = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"

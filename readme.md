@@ -34,6 +34,8 @@ Anon)
 ## Category, Line, Color, Brand API
 у каждой сущности есть все виды запросов [GET]
 1. `[GET][Anon] product/[categories|lines|colors|brands]` вернет все сущности [⬇️](#clcb)
+2. `[GET][Anon] product/cat_no_child` список всех категорий для админки
+3. `[GET][Anon] product/line_no_child` список всех линеек для админки
 
 
 ## Shipping API

@@ -3,11 +3,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from wishlist.models import Wishlist, WishlistUnit
+import json
 from products.models import Product, Category, Line
 from rest_framework import status
-import json
-from django.core.paginator import Paginator
-from rest_framework.pagination import PageNumberPagination
 from .serializers import ProductSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer
 
 
@@ -53,13 +51,31 @@ def build_category_tree(categories):
     return root_categories
 
 
+def category_no_child(cats):
+    result = []
+    for cat in cats:
+        if 'subcategories' not in cat:
+            result.append(cat)
+        else:
+            children = cat['subcategories']
+            result.extend(category_no_child(children))
+    # result.sort(key=lambda x: x['full_name'])
+    return result
+
+
 class CategoryTreeView(APIView):
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
         return Response(build_category_tree(cats))
 
 
-def build_line_tree(lines):
+class CategoryNoChildView(APIView):
+    def get(self, request):
+        cats = CategorySerializer(Category.objects.all(), many=True).data
+        return Response(category_no_child(build_category_tree(cats)))
+
+
+def build_line_tree(lines, child=True):
     line_dict = {}
     root_lines = []
 
@@ -92,6 +108,8 @@ def build_line_tree(lines):
             name = child['name'].lower()
             if 'все' in name:
                 return 0, '', ''
+            elif name.isdigit():
+                return (1, int(name), '')
             return 1, order.get(name, float('inf')), name
 
         for item in data:
@@ -102,7 +120,6 @@ def build_line_tree(lines):
         return data
 
     root_lines = sort_children(root_lines)
-
     with_children = [x for x in root_lines if x.get('children')]
     without_children = [x for x in root_lines if not x.get('children')]
 
@@ -110,11 +127,45 @@ def build_line_tree(lines):
 
     # Сортируем оставшиеся элементы
     sorted_data_without_children = sorted(without_children, key=lambda x: x['name'].lower())
-
     # Объединяем отсортированные части
     sorted_data = sorted_data_with_children + sorted_data_without_children
 
     return sorted_data
+
+
+def line_no_child(lines):
+    line_dict = {}
+    root_lines = []
+
+    # Создание словаря линеек с использованием их идентификаторов в качестве ключей
+    for line in lines:
+        line_dict[line['id']] = line
+
+    # Построение дерева линеек
+    for line in lines:
+        parent_line = line['parent_line']
+        if parent_line is None:
+            # Если у линейки нет родительской линейки, она считается корневой линейкой
+            root_lines.append(line)
+        else:
+            parent_id = parent_line['id']
+            parent_line = line_dict.get(parent_id)
+            if parent_line:
+                # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
+                parent_line.setdefault('children', []).append(line)
+
+    def get_lines_without_children(lines):
+        result = []
+        for line in lines:
+            if 'children' not in line:
+                result.append(line)
+            else:
+                children = line['children']
+                result.extend(get_lines_without_children(children))
+        result.sort(key=lambda x: x['full_name'])
+        return result
+
+    return get_lines_without_children(root_lines)
 
 
 
@@ -124,15 +175,21 @@ class LineTreeView(APIView):
         return Response(build_line_tree(lines))
 
 
+class LineNoChildView(APIView):
+    def get(self, request):
+        lines = LineSerializer(Line.objects.all(), many=True).data
+        return Response(line_no_child(lines))
+
+
 class ProductUpdateView(APIView):
     def delete(self, request, product_id):
         product = Product.objects.get(id=product_id)
         product.delete()
         return Response("Товар успешно удален")
 
-    def put(self, request, product_id):
+    def post(self, request, product_id):
         product = Product.objects.get(id=product_id)
-        data = request.data
+        data = json.loads(request.body)
         if 'categories' in data:
             categories = data.get('categories', [])
             product.categories.clear()

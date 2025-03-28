@@ -212,7 +212,7 @@ class UserChangePassword(APIView):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
+# класс из джанго
 class TokenViewBase(generics.GenericAPIView):
     permission_classes = ()
     authentication_classes = ()

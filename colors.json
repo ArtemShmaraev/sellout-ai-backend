@@ -1,109 +1,107 @@
 [
-    {
-        "id": 2,
-        "name": "neutrals",
-        "is_main_color": true,
-        "russian_name": "Нейтральный",
-        "hex": "#fce5cd"
-    },
-    {
-        "id": 3,
-        "name": "white",
-        "is_main_color": true,
-        "russian_name": "Белый",
-        "hex": "#ffffff"
-    },
-    {
-        "id": 5,
-        "name": "black",
-        "is_main_color": true,
-        "russian_name": "Черный",
-        "hex": "#000000"
-    },
-    {
-        "id": 16,
-        "name": "yellow",
-        "is_main_color": true,
-        "russian_name": "Жёлтый",
-        "hex": "#ffd043"
-    },
-    {
-        "id": 17,
-        "name": "red",
-        "is_main_color": true,
-        "russian_name": "Красный",
-        "hex": "#ff3d2f"
-    },
-    {
-        "id": 24,
-        "name": "green",
-        "is_main_color": true,
-        "russian_name": "Зелёный",
-        "hex": "#38761d"
-    },
-    {
-        "id": 30,
-        "name": "blue",
-        "is_main_color": true,
-        "russian_name": "Голубой",
-        "hex": "#80c2ff"
-    },
-    {
-        "id": 33,
-        "name": "orange",
-        "is_main_color": true,
-        "russian_name": "Оранжевый",
-        "hex": "#ff9e39"
-    },
-    {
-        "id": 59,
-        "name": "pink",
-        "is_main_color": true,
-        "russian_name": "Розовый",
-        "hex": "#ff68de"
-    },
-    {
-        "id": 66,
-        "name": "purple",
-        "is_main_color": true,
-        "russian_name": "Фиолетовый",
-        "hex": "#8f51ca"
-    },
-    {
-        "id": 88,
-        "name": "grey",
-        "is_main_color": true,
-        "russian_name": "Серый",
-        "hex": "#b0b0b0"
-
-    },
-    {
-        "id": 143,
-        "name": "multicolour",
-        "is_main_color": true,
-        "russian_name": "Разноцветный",
-        "hex": "conic-gradient(red, orange, yellow, green, skyblue, blue, red)"
-    },
-    {
-        "id": 188,
-        "name": "brown",
-        "is_main_color": true,
-        "russian_name": "Коричнеый",
-        "hex": "#744700"
-    },
-    {
-        "id": 190,
-        "name": "gold",
-        "is_main_color": true,
-        "russian_name": "Золотой",
-        "hex": "#ffc30c"
-    },
-
-    {
-        "id": 445,
-        "name": "silver",
-        "is_main_color": true,
-        "russian_name": "Серебряный",
-        "hex": "#e2e2e2"
-    }
+  {
+    "id": 3,
+    "name": "white",
+    "is_main_color": true,
+    "russian_name": "Белый",
+    "hex": "#ffffff"
+  },
+  {
+    "id": 445,
+    "name": "silver",
+    "is_main_color": true,
+    "russian_name": "Серебряный",
+    "hex": "#D9DADB"
+  },
+  {
+    "id": 2,
+    "name": "neutrals",
+    "is_main_color": true,
+    "russian_name": "Нейтральный",
+    "hex": "#fce5cd"
+  },
+  {
+    "id": 16,
+    "name": "yellow",
+    "is_main_color": true,
+    "russian_name": "Жёлтый",
+    "hex": "#FFEB3B"
+  },
+  {
+    "id": 190,
+    "name": "gold",
+    "is_main_color": true,
+    "russian_name": "Золотой",
+    "hex": "#E7CF27"
+  },
+  {
+    "id": 24,
+    "name": "green",
+    "is_main_color": true,
+    "russian_name": "Зелёный",
+    "hex": "#4CAF50"
+  },
+  {
+    "id": 33,
+    "name": "orange",
+    "is_main_color": true,
+    "russian_name": "Оранжевый",
+    "hex": "#F57C00"
+  },
+  {
+    "id": 59,
+    "name": "pink",
+    "is_main_color": true,
+    "russian_name": "Розовый",
+    "hex": "#F06292"
+  },
+  {
+    "id": 17,
+    "name": "red",
+    "is_main_color": true,
+    "russian_name": "Красный",
+    "hex": "#D50000"
+  },
+  {
+    "id": 30,
+    "name": "blue",
+    "is_main_color": true,
+    "russian_name": "Синий",
+    "hex": "#0288D1"
+  },
+  {
+    "id": 66,
+    "name": "purple",
+    "is_main_color": true,
+    "russian_name": "Фиолетовый",
+    "hex": "#6A1B9A"
+  },
+  {
+    "id": 88,
+    "name": "grey",
+    "is_main_color": true,
+    "russian_name": "Серый",
+    "hex": "#757575"
+  },
+  {
+    "id": 5,
+    "name": "black",
+    "is_main_color": true,
+    "russian_name": "Черный",
+    "hex": "#000000"
+  },
+  {
+    "id": 188,
+    "name": "brown",
+    "is_main_color": true,
+    "russian_name": "Коричневый",
+    "hex": "#6D4C41"
+  },
+  {
+    "id": 143,
+    "name": "multicolour",
+    "is_main_color": true,
+    "russian_name": "Разноцветный",
+    "hex": "conic-gradient(red, orange, yellow, green, skyblue, blue, red)"
+  }
 ]

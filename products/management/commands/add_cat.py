@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 import json
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color
 from django.core.exceptions import ObjectDoesNotExist
+import users.models
 
 
 class Command(BaseCommand):
@@ -34,6 +35,12 @@ class Command(BaseCommand):
         gender.save()
         gender = Gender(name="K")
         gender.save()
+
+        gender = users.models.Gender(name="M")
+        gender.save()
+        gender = users.models.Gender(name="F")
+        gender.save()
+
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)
         print('finished')

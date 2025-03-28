@@ -33,7 +33,7 @@ class User(AbstractUser):
 
     personal_discount_percentage = models.IntegerField(default=0)
 
-    is_malling_list = models.BooleanField(default=False)
+    is_mailing_list = models.BooleanField(default=False)
 
     # wishlist and shopping cart are described in Wishlist and ShoppingCart models
 

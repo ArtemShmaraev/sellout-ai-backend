@@ -14,6 +14,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['last_name'] = user.last_name
 
         return token
+
     def validate(self, attrs):
         data = super().validate(attrs)
 
@@ -29,7 +30,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        exclude = ("password", )
-        depth = 1     # глубина позволяет возвращать не только id бренда, но и его поля (name)
-
-
+        exclude = ("password",)
+        depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)

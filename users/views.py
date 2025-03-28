@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
+from rest_framework import exceptions
 from products.models import Product
 from sellout.settings import URL
 from shipping.views import product_unit_product_main
@@ -69,29 +70,37 @@ class UserRegister(generics.GenericAPIView):
         )
 
     def post(self, request, *args, **kwargs):
-        # _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
-        data = json.loads(request.body)
-        genders = {'male': 1, "female": 2}
-        new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
-                        last_name=data['last_name'], gender_id=genders[data['gender']], is_mailing_list=data['is_mailing_list'])
-        new_user.set_password(data['password'])
-        new_user.save()
-        # создание корзины и вл для пользователя
-        cart = ShoppingCart(user_id=new_user.id)
-        wl = Wishlist(user_id=new_user.id)
-        cart.save()
-        wl.save()
-        log_data = {'username': data["username"],
-                    'password': data['password']}
-
-        serializer = self.get_serializer(data=log_data)
-
         try:
-            serializer.is_valid(raise_exception=True)
-        except TokenError as e:
-            raise InvalidToken(e.args[0])
+            data = json.loads(request.body)
+            genders = {'male': 1, "female": 2}
+            new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
+                            last_name=data['last_name'], gender_id=genders[data['gender']],
+                            is_mailing_list=data['is_mailing_list'])
+            new_user.set_password(data['password'])
+            new_user.save()
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+            cart = ShoppingCart(user_id=new_user.id)
+            wl = Wishlist(user_id=new_user.id)
+            cart.save()
+            wl.save()
+
+            log_data = {'username': data["username"], 'password': data['password']}
+            serializer = self.get_serializer(data=log_data)
+            serializer.is_valid(raise_exception=True)
+
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+        except exceptions.ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        except TokenError as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # последние 7 просмотренных товаров пользователя
@@ -201,3 +210,52 @@ class UserChangePassword(APIView):
             return Response(f"Отсутствует обязательное поле: {str(e)}", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class TokenViewBase(generics.GenericAPIView):
+    permission_classes = ()
+    authentication_classes = ()
+
+    serializer_class = None
+    _serializer_class = ""
+
+    www_authenticate_realm = "api"
+
+    def get_serializer_class(self):
+        """
+        If serializer_class is set, use it directly. Otherwise get the class from settings.
+        """
+
+        if self.serializer_class:
+            return self.serializer_class
+        try:
+            return import_string(self._serializer_class)
+        except ImportError:
+            msg = "Could not import serializer '%s'" % self._serializer_class
+            raise ImportError(msg)
+
+    def get_authenticate_header(self, request):
+        return '{} realm="{}"'.format(
+            AUTH_HEADER_TYPES[0],
+            self.www_authenticate_realm,
+        )
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=json.loads(request.body))
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+
+class UserLoginView(TokenViewBase):
+    """
+    Takes a set of user credentials and returns an access and refresh JSON web
+    token pair to prove the authentication of those credentials.
+    """
+
+    _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER

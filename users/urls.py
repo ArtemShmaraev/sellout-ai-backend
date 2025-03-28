@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import UserViewSet
 from django.urls import path, re_path
-from .views import UserLastSeenView, UserRegister, UserInfoView, UserAddressView, UserChangePassword
+from .views import UserLastSeenView, UserRegister, UserInfoView, UserAddressView, UserChangePassword, UserLoginView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 router = routers.DefaultRouter()
@@ -16,6 +16,6 @@ urlpatterns.append(path('register', UserRegister.as_view(), name='register'))
 urlpatterns.append(path('change_psw', UserChangePassword.as_view()))
 # urlpatterns.append(path('login', LoginUser.as_view()))
 
-urlpatterns.append(path('login', TokenObtainPairView.as_view(), name='token_obtain_pair'))
+urlpatterns.append(path('login', UserLoginView.as_view(), name='token_obtain_pair'))
 urlpatterns.append(path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'))
 urlpatterns.append(path('token/verify/', TokenVerifyView.as_view(), name='token_verify'))

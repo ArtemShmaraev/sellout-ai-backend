@@ -11,7 +11,7 @@ import json
 
 
 class ProductUnitProductView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, product_id):
         try:
@@ -23,7 +23,7 @@ class ProductUnitProductView(APIView):
 
 
 class ProductUnitProductSlugView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, slug):
         try:
@@ -35,7 +35,7 @@ class ProductUnitProductSlugView(APIView):
 
 
 def product_unit_product_main(product_id, user_id):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     try:
         product = Product.objects.get(id=product_id)
         ans = ProductSerializer(product).data
@@ -52,7 +52,7 @@ def product_unit_product_main(product_id, user_id):
 
 
 class ProductUnitProductMainView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, product_id, user_id):
         try:

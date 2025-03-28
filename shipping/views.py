@@ -16,7 +16,7 @@ class ProductUnitProductView(APIView):
     def get(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
-            serializer = ProductUnitSerializer(product.product_units.order_by('size__id'), many=True)
+            serializer = ProductUnitSerializer(product.product_units.order_by('size_id'), many=True)
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -28,7 +28,7 @@ class ProductUnitProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            serializer = ProductUnitSerializer(product.product_units.order_by('size__id'), many=True)
+            serializer = ProductUnitSerializer(product.product_units.order_by('size_id'), many=True)
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

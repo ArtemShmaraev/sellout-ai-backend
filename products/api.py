@@ -168,6 +168,10 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(product_units__is_sale=(is_sale == "is_sale"))
         if is_return:
             queryset = queryset.filter(product_units__is_sale=(is_sale == "is_return"))
+        if price_max:
+            queryset = queryset.filter(Q(product_units__final_price__lte=price_max))
+        if price_min:
+            queryset = queryset.filter(Q(product_units__final_price__gte=price_min))
 
         # color = self.request.query_params.getlist('line')
         if size_us != [] and price_max and price_min:

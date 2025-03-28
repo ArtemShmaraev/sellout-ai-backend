@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
         all_data = json.load(open("final.json"))
         colors_data = json.load(open("colors.json"))
-        k = 6520
+        k = 0
         kk = 0
         mk = len(all_data)
         time0 = datetime.now()
@@ -124,7 +124,7 @@ class Command(BaseCommand):
                     parent_line = line
                     product.lines.add(line)
 
-            product.min_price = random.randint(10, 200) * 500 - 10
+            # product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""
             product.save()
 
@@ -133,8 +133,8 @@ class Command(BaseCommand):
                 t = time2 - time0
                 # time0 = time2
                 itogo = ((mk - k) / kk) * t.seconds
-                print(
-                    f"{k}/{mk} {round((k / mk) * 100, 3)}% осталось {round(itogo, 2)} сек | эта десятка за {round(t.seconds / (kk / 10), 2)} сек")
+                self.stdout.write(self.style.SUCCESS(
+                    f"{k}/{mk} {round((k / mk) * 100, 3)}% осталось {round(itogo, 2)} сек | эта десятка за {round(t.seconds / (kk / 10), 2)} сек"))
             # print()
 
         print('finished')

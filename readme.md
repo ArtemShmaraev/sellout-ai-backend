@@ -298,8 +298,11 @@ Response:
 
 ```json
 {
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4MjA4MjEyOSwiaWF0IjoxNjgxNDc3MzI5LCJqdGkiOiI2ZGExNTQ5MmMyODk0YzVmODhiNWRkN2EyNTcwNTg0MiIsInVzZXJfaWQiOjE3fQ.HhBV5bNIFtEaRaS96q_DAPAu5cdQhfRRHTcSHAl_Ffk",
-  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgxNTYzNzI5LCJpYXQiOjE2ODE0NzczMjksImp0aSI6IjJjY2ZiZjNiZTJhYzQ3YTQ4NWRkNTY4ZGQzNWFiNzRhIiwidXNlcl9pZCI6MTd9.l-PcMX4WeUWmD5-egu1PNlgH_EdQb3tm2uIWUp57MzE"
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
+    "username": "arteddm@mail.ru",
+    "first_name": "artem",
+    "last_name": "sh"
 }
 ```
 
@@ -322,8 +325,11 @@ Response:
 
 ```json
 {
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4MjA4MjEyOSwiaWF0IjoxNjgxNDc3MzI5LCJqdGkiOiI2ZGExNTQ5MmMyODk0YzVmODhiNWRkN2EyNTcwNTg0MiIsInVzZXJfaWQiOjE3fQ.HhBV5bNIFtEaRaS96q_DAPAu5cdQhfRRHTcSHAl_Ffk",
-  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgxNTYzNzI5LCJpYXQiOjE2ODE0NzczMjksImp0aSI6IjJjY2ZiZjNiZTJhYzQ3YTQ4NWRkNTY4ZGQzNWFiNzRhIiwidXNlcl9pZCI6MTd9.l-PcMX4WeUWmD5-egu1PNlgH_EdQb3tm2uIWUp57MzE"
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
+    "username": "arteddm@mail.ru",
+    "first_name": "sd",
+    "last_name": "dsf"
 }
 ```
 

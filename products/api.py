@@ -149,6 +149,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         is_return = self.request.query_params.get("is_return")
         category = self.request.query_params.getlist("category")
         gender = self.request.query_params.getlist("gender")
+        brand = self.request.query_params.getlist("brand")
+
+        if brand:
+            for brand_name in brand:
+                queryset = queryset.filter(brands__name=brand_name)
         if line:
             queryset = queryset.filter(Q(lines__full_eng_name__in=line))
         if color:

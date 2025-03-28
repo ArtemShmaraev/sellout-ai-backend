@@ -1,0 +1,13 @@
+[
+  {
+    "photo": "фотка",
+    "description": "Описание",
+    "lines": [
+      "Nike"
+    ],
+    "categories": [
+      ""
+    ],
+    "gender": ["M", "F"]
+  }
+]

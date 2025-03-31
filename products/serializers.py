@@ -1,8 +1,11 @@
-from wishlist.models import Wishlist, WishlistUnit
-from .models import Product, Category, Line, Brand, Color
+
+from wishlist.models import Wishlist
+from products.models import Product, Category, Line, Brand, Color
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min
+from .tools import build_line_tree, build_category_tree
+# from .views import build_line_tree
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -118,9 +121,9 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         if user_id is not None and user_id > 0:
             try:
                 wishlist = Wishlist.objects.get(user_id=user_id)
-                data = WishlistUnit.objects.get(wishlist=wishlist, product=product)
-                return True
-            except WishlistUnit.DoesNotExist:
+                wishlist.products.filter(product_id=product.id)
+                return wishlist.products.filter(product_id=product.id).exists()
+            except Product.DoesNotExist:
                 pass
         return False
 

@@ -73,12 +73,14 @@ class UserRegister(generics.GenericAPIView):
         try:
             data = json.loads(request.body)
             genders = {'male': 1, "female": 2}
+            if User.objects.filter(username=data['username']).exists():
+                return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
+
             new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
                             last_name=data['last_name'], gender_id=genders[data['gender']],
-                            is_mailing_list=data['is_mailing_list'])
+                            is_mailing_list=data['is_mailing_list'], email=data['username'])
             new_user.set_password(data['password'])
             new_user.save()
-
             cart = ShoppingCart(user_id=new_user.id)
             wl = Wishlist(user_id=new_user.id)
             cart.save()
@@ -91,7 +93,7 @@ class UserRegister(generics.GenericAPIView):
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
         except exceptions.ValidationError as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

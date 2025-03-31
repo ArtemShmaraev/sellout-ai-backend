@@ -31,8 +31,6 @@ class Order(models.Model):
     fact_of_payment = models.BooleanField(default=False)
 
 
-
-
 class ShoppingCart(models.Model):
     user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.PROTECT,
                                 blank=False)

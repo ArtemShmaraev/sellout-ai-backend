@@ -9,7 +9,7 @@ from shipping.serializers import ProductUnitSerializer
 from users.models import User, Gender
 from orders.models import ShoppingCart
 from users.serializers import UserSerializer
-from wishlist.models import Wishlist, WishlistUnit
+from wishlist.models import Wishlist
 from products.serializers import ProductSerializer
 
 

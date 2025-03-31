@@ -8,18 +8,22 @@ from django.dispatch import receiver
 
 class Brand(models.Model):
     name = models.CharField(max_length=255)
+    query_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        self.query_name = self.name
+        super().save(*args, **kwargs)
 
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
     parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
                                         null=True)
-    eng_name = models.CharField(max_length=255, default="")
+    eng_name = models.CharField(max_length=255, default="") # для запросов
     is_all = models.BooleanField(default=False)
-    full_name = models.CharField(max_length=255, default="")
+    full_name = models.CharField(max_length=255, default="") # полный путь
 
     def __str__(self):
         return self.full_name
@@ -38,9 +42,9 @@ class Line(models.Model):
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
     brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True, related_name="lines")
     is_all = models.BooleanField(default=False)
-    view_name = models.CharField(max_length=255, default="")
-    full_name = models.CharField(max_length=255, default="")
-    full_eng_name = models.CharField(max_length=255, default="")
+    view_name = models.CharField(max_length=255, default="")  # для отображения в фильтрах
+    full_name = models.CharField(max_length=255, default="")  # полный путь
+    full_eng_name = models.CharField(max_length=255, default="")  # для отправки запроса
 
     def __str__(self):
         return self.full_name

@@ -36,6 +36,16 @@
           "subcategories": []
         },
         {
+          "name": "Лоферы",
+          "eng_name": "loafers",
+          "subcategories": []
+        },
+        {
+          "name": "Туфли",
+          "eng_name": "shoes",
+          "subcategories": []
+        },
+        {
           "name": "Баскетбольные кроссовки",
           "eng_name": "basketball_sneakers",
           "subcategories": []
@@ -51,18 +61,8 @@
           "subcategories": []
         },
         {
-          "name": "Шлёпки",
-          "eng_name": "slippers",
-          "subcategories": []
-        },
-        {
           "name": "Челси",
           "eng_name": "chelsea_boots",
-          "subcategories": []
-        },
-        {
-          "name": "Лоферы",
-          "eng_name": "loafer",
           "subcategories": []
         },
         {
@@ -71,13 +71,13 @@
           "subcategories": []
         },
         {
-          "name": "Ботинки",
-          "eng_name": "boots",
+          "name": "Шлёпки",
+          "eng_name": "slippers",
           "subcategories": []
         },
         {
-          "name": "Туфли",
-          "eng_name": "shoes",
+          "name": "Ботинки",
+          "eng_name": "boots",
           "subcategories": []
         },
         {
@@ -102,23 +102,13 @@
           "subcategories": []
         },
         {
-          "name": "Футболки",
-          "eng_name": "tshirts",
-          "subcategories": []
-        },
-        {
-          "name": "Поло",
-          "eng_name": "polo",
-          "subcategories": []
-        },
-        {
-          "name": "Майки",
-          "eng_name": "vest_shirt",
-          "subcategories": []
-        },
-        {
           "name": "Худи и Толстовки",
           "eng_name": "hoodie_sweatshirts",
+          "subcategories": []
+        },
+        {
+          "name": "Футболки",
+          "eng_name": "tshirts",
           "subcategories": []
         },
         {
@@ -132,8 +122,38 @@
           "subcategories": []
         },
         {
+          "name": "Поло",
+          "eng_name": "polo",
+          "subcategories": []
+        },
+        {
+          "name": "Майки",
+          "eng_name": "vest_shirt",
+          "subcategories": []
+        },
+        {
+          "name": "Шорты",
+          "eng_name": "shorts",
+          "subcategories": []
+        },
+        {
           "name": "Брюки",
           "eng_name": "trousers",
+          "subcategories": []
+        },
+        {
+          "name": "Платья",
+          "eng_name": "dresses",
+          "subcategories": []
+        },
+        {
+          "name": "Юбки",
+          "eng_name": "skirts",
+          "subcategories": []
+        },
+        {
+          "name": "Костюмы",
+          "eng_name": "suits",
           "subcategories": []
         },
         {
@@ -144,11 +164,6 @@
         {
           "name": "Деним",
           "eng_name": "denim",
-          "subcategories": []
-        },
-        {
-          "name": "Шорты",
-          "eng_name": "shorts",
           "subcategories": []
         },
         {
@@ -173,6 +188,16 @@
             {
               "name": "Баскетбольные шорты",
               "eng_name": "basketball_shorts",
+              "subcategories": []
+            },
+            {
+              "name": "Футбольные майки",
+              "eng_name": "football_shirts",
+              "subcategories": []
+            },
+            {
+              "name": "Футбольные шорты",
+              "eng_name": "football_shorts",
               "subcategories": []
             },
             {
@@ -239,28 +264,18 @@
           ]
         },
         {
-          "name": "Костюмы",
-          "eng_name": "suits",
+          "name": "Топы",
+          "eng_name": "tops",
+          "subcategories": []
+        },
+        {
+          "name": "Бейсбольная одежда",
+          "eng_name": "baseball_clothes",
           "subcategories": []
         },
         {
           "name": "Комбинезоны",
           "eng_name": "overalls",
-          "subcategories": []
-        },
-        {
-          "name": "Платья",
-          "eng_name": "dresses",
-          "subcategories": []
-        },
-        {
-          "name": "Юбки",
-          "eng_name": "skirts",
-          "subcategories": []
-        },
-        {
-          "name": "Топы",
-          "eng_name": "tops",
           "subcategories": []
         },
         {
@@ -285,13 +300,64 @@
           "subcategories": []
         },
         {
-          "name": "Часы",
-          "eng_name": "watches",
+          "name": "Сумки",
+          "eng_name": "bags",
+          "subcategories": [
+            {
+              "name": "Все сумки",
+              "eng_name": "bags",
+              "subcategories": []
+            },
+            {
+              "name": "Messenger сумки",
+              "eng_name": "messenger_bags",
+              "subcategories": []
+            },
+            {
+              "name": "Handbags",
+              "eng_name": "handbags",
+              "subcategories": []
+            },
+            {
+              "name": "Сумки через плечо",
+              "eng_name": "shoulder_bags",
+              "subcategories": []
+            },
+            {
+              "name": "Сумки на пояс",
+              "eng_name": "waist_bags",
+              "subcategories": []
+            },
+            {
+              "name": "Клатчи",
+              "eng_name": "clutches",
+              "subcategories": []
+            },
+            {
+              "name": "Косметички",
+              "eng_name": "makeup_bags",
+              "subcategories": []
+            }
+          ]
+        },
+        {
+          "name": "Кошельки",
+          "eng_name": "wallets",
           "subcategories": []
         },
         {
           "name": "Визитницы",
           "eng_name": "cardholders",
+          "subcategories": []
+        },
+        {
+          "name": "Рюкзаки",
+          "eng_name": "backpacks",
+          "subcategories": []
+        },
+        {
+          "name": "Часы",
+          "eng_name": "watches",
           "subcategories": []
         },
         {
@@ -302,6 +368,73 @@
         {
           "name": "Украшения",
           "eng_name": "jewelries",
+          "subcategories": [
+            {
+              "name": "Все украшения",
+              "eng_name": "jewelries",
+              "subcategories": []
+            },
+            {
+              "name": "Браслеты",
+              "eng_name": "bracelets",
+              "subcategories": []
+            },
+            {
+              "name": "Цепочки",
+              "eng_name": "necklaces",
+              "subcategories": []
+            },
+            {
+              "name": "Кольца",
+              "eng_name": "rings",
+              "subcategories": []
+            },
+            {
+              "name": "Серёжки",
+              "eng_name": "earrings",
+              "subcategories": []
+            },
+            {
+              "name": "Брелоки",
+              "eng_name": "keychains",
+              "subcategories": []
+            }
+          ]
+        },
+        {
+          "name": "Головные уборы",
+          "eng_name": "all_hats",
+          "subcategories": [
+            {
+              "name": "Все головные уборы",
+              "eng_name": "all_hats",
+              "subcategories": []
+            },
+            {
+              "name": "Кепки",
+              "eng_name": "caps",
+              "subcategories": []
+            },
+            {
+              "name": "Шапки",
+              "eng_name": "hats",
+              "subcategories": []
+            },
+            {
+              "name": "Панамы",
+              "eng_name": "panamas",
+              "subcategories": []
+            },
+            {
+              "name": "Шляпы",
+              "eng_name": "sun_hats",
+              "subcategories": []
+            }
+          ]
+        },
+        {
+          "name": "Перчатки",
+          "eng_name": "gloves",
           "subcategories": []
         },
         {
@@ -310,39 +443,30 @@
           "subcategories": []
         },
         {
-          "name": "Шапки",
-          "eng_name": "hats",
-          "subcategories": []
-        },
-        {
-          "name": "Панамы",
-          "eng_name": "panamas",
-          "subcategories": []
-        },
-        {
-          "name": "Кепки",
-          "eng_name": "caps",
-          "subcategories": []
-        },
-        {
-          "name": "Перчатки",
-          "eng_name": "gloves",
-          "subcategories": []
-        },
-        {
-          "name": "Кошельки",
-          "eng_name": "wallets",
-          "subcategories": []
-        },
-        {
-          "name": "Сумки",
-          "eng_name": "baga",
-          "subcategories": []
-        },
-        {
-          "name": "Рюкзаки",
-          "eng_name": "backpacks",
-          "subcategories": []
+          "name": "Спорттовары",
+          "eng_name": "sport_goods",
+          "subcategories": [
+            {
+              "name": "Все спорттовары",
+              "eng_name": "sport_goods",
+              "subcategories": []
+            },
+            {
+              "name": "Баскетбольные мячи",
+              "eng_name": "basketballs",
+              "subcategories": []
+            },
+            {
+              "name": "Футбольные мячи",
+              "eng_name": "footballs",
+              "subcategories": []
+            },
+            {
+              "name": "Другие спорттовары",
+              "eng_name": "other_sport_goods",
+              "subcategories": []
+            }
+          ]
         },
         {
           "name": "Солнцезащитные очки",
@@ -350,8 +474,28 @@
           "subcategories": []
         },
         {
-          "name": "Брелоки",
-          "eng_name": "keychains",
+          "name": "Духи",
+          "eng_name": "perfumes",
+          "subcategories": []
+        },
+        {
+          "name": "Аксессуары для техники",
+          "eng_name": "tech_accessories",
+          "subcategories": []
+        },
+        {
+          "name": "Косметика",
+          "eng_name": "cosmetics",
+          "subcategories": []
+        },
+        {
+          "name": "Оправы для очков",
+          "eng_name": "optical_glasses",
+          "subcategories": []
+        },
+        {
+          "name": "Чемоданы",
+          "eng_name": "suitcases",
           "subcategories": []
         }
       ]

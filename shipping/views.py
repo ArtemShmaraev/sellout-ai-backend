@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .serializers import ProductUnitSerializer
-from wishlist.models import Wishlist, WishlistUnit
+from wishlist.models import Wishlist
 from products.models import Product
 from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
@@ -42,8 +42,7 @@ def product_unit_product_main(product_id, user_id):
         if user_id > 0:
             try:
                 wishlist = Wishlist.objects.get(user_id=user_id)
-                data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
-                ans['in_wishlist'] = len(data) > 0
+                ans['in_wishlist'] = wishlist.products.filter(product_id=product_id)
             except Wishlist.DoesNotExist:
                 ans['in_wishlist'] = False
         return ans

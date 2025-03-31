@@ -9,6 +9,7 @@ from rest_framework.filters import OrderingFilter
 from shipping.models import ProductUnit
 from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef, Max
 from django.db.models import Q, Case, When, Value, BooleanField
+from .tools import build_line_tree, build_category_tree
 
 from rest_framework.filters import OrderingFilter
 
@@ -67,7 +68,46 @@ class ProductPagination(pagination.PageNumberPagination):
 
         response.data['min_price'] = Product.objects.aggregate(min_price=Min('min_price'))['min_price']
         response.data['max_price'] = Product.objects.aggregate(min_price=Max('min_price'))['min_price']
+
+        def find_oldest_name(names, target_names, cat=True):
+            def find_name_with_children(name, target_names):
+                if "children" not in name:
+                    return None
+                field = "eng_name"
+                if not cat:
+                    field = "full_" + field
+                children_names = [child[field] for child in name["children"]]
+                if all(child_name in children_names for child_name in target_names):
+                    return name[field]
+
+                for child in name["children"]:
+                    found_name = find_name_with_children(child, target_names)
+                    if found_name:
+                        return found_name
+
+                return None
+
+            for name in names:
+                found_name = find_name_with_children(name, target_names)
+                if found_name:
+                    return found_name
+
+            return None
+        request = self.request
+        lines = request.query_params.getlist('line')
+        categories = request.query_params.getlist('category')
+        line = ""
+        cat = ""
+        if lines:
+            tree = build_line_tree(LineSerializer(Line.objects.all(), many=True).data)
+            line = find_oldest_name(tree, lines, cat=False)
+        if categories:
+            tree = build_category_tree(CategorySerializer(Category.objects.all(), many=True).data)
+            cat = find_oldest_name(tree, categories)
+        response.data["products_page_header"] = str(line) + " " + str(cat)
         return response
+
+
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -86,12 +126,16 @@ class ProductViewSet(viewsets.ModelViewSet):
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
+        line = self.request.query_params.getlist('line')
+        category = self.request.query_params.getlist('category')
 
         # Передайте значения фильтров в контекст сериализатора
         context['size_us'] = context['size_us'] = size_us if size_us else None
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
+        context['line'] = line if line else None
+        context['category'] = category if category else None
         return context
 
     def get_queryset(self):
@@ -153,9 +197,13 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if brand:
             for brand_name in brand:
-                queryset = queryset.filter(brands__name=brand_name)
+                queryset = queryset.filter(brands__query_name=brand_name)
+        print("fkdsfdslkfds")
+        print()
+        print()
         if line:
-            queryset = queryset.filter(Q(lines__full_eng_name__in=line))
+            queryset = queryset.filter(lines__full_eng_name__in=line)
+        print("dsakfksaklfna")
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
         if category:
@@ -163,7 +211,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
         if is_fast_shipping:
-            queryset = queryset.filter(product_units_is_fast_shipping=(is_fast_shipping == "is_fast_shipping"))
+            queryset = queryset.filter(product_units__is_fast_shipping=(is_fast_shipping == "is_fast_shipping"))
         if is_sale:
             queryset = queryset.filter(product_units__is_sale=(is_sale == "is_sale"))
         if is_return:

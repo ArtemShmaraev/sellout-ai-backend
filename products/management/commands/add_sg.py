@@ -124,7 +124,7 @@ class Command(BaseCommand):
                     parent_line = line
                     product.lines.add(line)
 
-            # product.min_price = random.randint(10, 200) * 500 - 10
+            product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""
             product.save()
 

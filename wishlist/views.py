@@ -1,16 +1,17 @@
 from django.shortcuts import render
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Wishlist, WishlistUnit
+from .models import Wishlist
 # Create your views here.
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import WishlistSerializer, WishlistUnitSerializer
+from .serializers import WishlistSerializer
 from products.models import Product, SizeTranslationRows
 from sellout.settings import URL
 from rest_framework import status
 from users.models import User
+from products.serializers import ProductSerializer
 
 import requests
 
@@ -18,7 +19,6 @@ import requests
 # информация о вишлисте пользователя
 # информация о вишлисте пользователя
 class UserWishlist(APIView):
-    authentication_classes = [JWTAuthentication]
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
@@ -27,30 +27,27 @@ class UserWishlist(APIView):
             if not (request.user.id == user_id or request.user.is_staff):
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
-            wishlist_units = Wishlist.objects.get(user=user).wishlist_units
-            return Response(WishlistUnitSerializer(wishlist_units, many=True).data)
+            wishlist_products = Wishlist.objects.get(user=user).products
+            return Response(ProductSerializer(wishlist_products, many=True).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, user_id):
+    def post(self, request, user_id, product_id):
         if request.user.id == user_id or request.user.is_staff:
-            data = request.data
-            product_id = data.get('product_id')
-
             if product_id is not None:
                 try:
                     user = User.objects.get(id=user_id)
                     product = Product.objects.get(id=product_id)
 
                     # Проверяем, существует ли уже элемент в списке желаний
-                    if WishlistUnit.objects.filter(wishlist__user=user, product=product).exists():
+                    if Wishlist.objects.filter(user=user, product=product).exists():
                         return Response("Элемент уже существует в списке желаний", status=status.HTTP_400_BAD_REQUEST)
 
                     # Создаем новый элемент списка желаний
-                    wishlist_unit = WishlistUnit(wishlist=user.wishlist.first(), product=product)
-                    wishlist_unit.save()
+                    wishlist = Wishlist(user_id=user_id)
+                    wishlist.products.add(Product.objects.get(product_id=product_id))
 
-                    return Response(WishlistUnitSerializer(wishlist_unit).data)
+                    return Response(WishlistSerializer(wishlist).data)
                 except User.DoesNotExist:
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
                 except Product.DoesNotExist:
@@ -60,22 +57,22 @@ class UserWishlist(APIView):
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
-    def delete(self, request, user_id, wishlist_unit_id):
+    def delete(self, request, user_id, product_id):
         try:
-            user = User.objects.get(id=user_id)
-
             # Проверяем, имеет ли пользователь право удалять элемент из списка желаний
             if not (request.user.id == user_id or request.user.is_staff):
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
             # Проверяем, существует ли элемент списка желаний
-            wishlist_unit = WishlistUnit.objects.get(id=wishlist_unit_id, wishlist__user=user)
-            wishlist_unit.delete()
+            wishlist = Wishlist.objects.get(user_id=user_id)
+            product = wishlist.products.get(product_id=product_id)
+            wishlist.products.remove(product_id=product_id)
+
 
             return Response("Элемент успешно удален из списка желаний")
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
-        except WishlistUnit.DoesNotExist:
+        except Product.DoesNotExist:
             return Response("Элемент списка желаний не существует", status=status.HTTP_404_NOT_FOUND)
 
 

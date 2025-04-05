@@ -261,3 +261,12 @@ class UserLoginView(TokenViewBase):
     """
 
     _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
+
+
+class TokenVerifyView(TokenViewBase):
+    """
+    Takes a token and indicates if it is valid.  This view provides no
+    information about a token's fitness for a particular use.
+    """
+
+    _serializer_class = api_settings.TOKEN_VERIFY_SERIALIZER

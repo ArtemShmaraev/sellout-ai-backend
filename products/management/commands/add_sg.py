@@ -96,6 +96,22 @@ class Command(BaseCommand):
                     parent_category = category
                     product.categories.add(parent_category)
 
+            collections = data.get('collections', [])
+            colab = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
+                     "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
+                     "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
+                     "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
+            for col in collections:
+                if Collection.objects.filter(name=col).exists():
+                    product.collections.add(Collection.objects.get(name=col))
+                else:
+                    collection = Collection(name=col)
+                    collection.save()
+                    if col in colab:
+                        collection.is_colab = True
+                    product.collections.add(collection)
+
+
             # Обработка линий
             lines = data.get('lines', [])
             if lines:

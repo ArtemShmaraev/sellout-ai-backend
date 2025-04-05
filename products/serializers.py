@@ -1,6 +1,6 @@
 
 from wishlist.models import Wishlist
-from products.models import Product, Category, Line, Brand, Color
+from products.models import Product, Category, Line, Brand, Color, Collection
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min
@@ -54,6 +54,14 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = '__all__'
+        depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
 
 
 class ProductUnitPriceSerializer(serializers.ModelSerializer):

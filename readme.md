@@ -15,6 +15,8 @@ Anon)
 4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
 5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
 6. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
+7. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
+статус ответа 200 если токен валиден, иначе 401
 -
 6. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 7. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
@@ -34,7 +36,7 @@ Anon)
 
 ## Category, Line, Color, Brand API
 у каждой сущности есть все виды запросов [GET]
-1. `[GET][Anon] product/[categories|lines|colors|brands]` вернет все сущности [⬇️](#clcb)
+1. `[GET][Anon] product/[categories|lines|colors|brands|collections]` вернет все сущности [⬇️](#clcb)
 2. `[GET][Anon] product/cat_no_child` список всех категорий для админки
 3. `[GET][Anon] product/line_no_child` список всех линеек для админки
 
@@ -1388,6 +1390,7 @@ Response:
     category = Фильтр по категориям (eng_name)
     brand = Фильтр по брендам
     gender = Пол (M, F, K) male, female, kids
+    collection = Фильтр по коллекциям, колоборациям (query_name)
     color = Фильтр по цветам (name)
     price_min = Фильтр по цене мин
     price_max = Фильтр по цене макс

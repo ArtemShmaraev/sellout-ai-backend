@@ -1,7 +1,8 @@
 from rest_framework import routers
-from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet
+from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet
 from django.urls import include, path
-from .views import ProductSlugView, ProductIdView, CategoryTreeView, LineTreeView, ProductUpdateView, LineNoChildView, CategoryNoChildView
+from .views import ProductSlugView, ProductIdView, CategoryTreeView, LineTreeView, ProductUpdateView, LineNoChildView, \
+    CategoryNoChildView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -27,9 +28,17 @@ router_brand.register("brands", BrandViewSet, basename="brands")
 router_color = routers.DefaultRouter()
 router_color.register("colors", ColorViewSet, basename="colors")
 
-urlpatterns = [path("", include(router_product.urls)), path("", include(router_cat.urls)),
-               path("", include(router_brand.urls)), path("", include(router_line.urls)),
-               path("", include(router_color.urls)), path('slug/<str:slug>', ProductSlugView.as_view()),
-               path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
-               path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
-               path("update/<int:product_id>", ProductUpdateView.as_view())]
+router_color = routers.DefaultRouter()
+router_color.register("colors", ColorViewSet, basename="colors")
+
+router_collection = routers.DefaultRouter()
+router_collection.register("collections", CollectionViewSet, basename="collections")
+
+urlpatterns = [
+    path("", include(router_collection.urls)),
+    path("", include(router_product.urls)), path("", include(router_cat.urls)),
+    path("", include(router_brand.urls)), path("", include(router_line.urls)),
+    path("", include(router_color.urls)), path('slug/<str:slug>', ProductSlugView.as_view()),
+    path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
+    path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
+    path("update/<int:product_id>", ProductUpdateView.as_view())]

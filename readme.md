@@ -15,6 +15,8 @@ Anon)
 4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
 5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
 6. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
+7. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
+статус ответа 200 если токен валиден, иначе 401
 -
 6. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 7. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)

@@ -101,9 +101,16 @@ class Tag(models.Model):
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
+    is_colab = models.BooleanField(default=False)
+    query_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.query_name = "_".join(self.name.lower().split())
+
+        super().save(*args, **kwargs)
 
 
 class Color(models.Model):

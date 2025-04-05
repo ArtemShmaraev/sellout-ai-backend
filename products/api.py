@@ -1,9 +1,9 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Product, Category, Line, Brand, Color
+from .models import Product, Category, Line, Brand, Color, Collection
 from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
-    BrandSerializer, ColorSerializer
+    BrandSerializer, ColorSerializer, CollectionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from shipping.models import ProductUnit
@@ -36,6 +36,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = CategorySerializer
+
+
+class CollectionViewSet(viewsets.ModelViewSet):
+    # authentication_classes = [JWTAuthentication]
+    queryset = Collection.objects.all()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = CollectionSerializer
 
 
 class BrandViewSet(viewsets.ModelViewSet):
@@ -126,16 +134,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
-        line = self.request.query_params.getlist('line')
-        category = self.request.query_params.getlist('category')
 
         # Передайте значения фильтров в контекст сериализатора
         context['size_us'] = context['size_us'] = size_us if size_us else None
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
-        context['line'] = line if line else None
-        context['category'] = category if category else None
+
         return context
 
     def get_queryset(self):
@@ -194,16 +199,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         category = self.request.query_params.getlist("category")
         gender = self.request.query_params.getlist("gender")
         brand = self.request.query_params.getlist("brand")
+        collection = self.request.query_params.getlist("collection")
 
+        if collection:
+            queryset = queryset.filter(collections__query_name__in=collection)
         if brand:
             for brand_name in brand:
                 queryset = queryset.filter(brands__query_name=brand_name)
-        print("fkdsfdslkfds")
-        print()
-        print()
         if line:
             queryset = queryset.filter(lines__full_eng_name__in=line)
-        print("dsakfksaklfna")
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
         if category:

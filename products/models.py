@@ -101,14 +101,16 @@ class Tag(models.Model):
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
-    is_colab = models.BooleanField(default=False)
+    is_collab = models.BooleanField(default=False)
+    in_filter = models.BooleanField(default=False)
     query_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.query_name = "_".join(self.name.lower().split())
+        if not self.query_name:
+            self.query_name = "_".join(self.name.replace(" x ", " ").lower().split())
 
         super().save(*args, **kwargs)
 
@@ -162,7 +164,10 @@ class Product(models.Model):
     manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
     bucket_link = models.CharField(max_length=255, blank=True)
+
     is_collab = models.BooleanField(default=False)
+    collab_name = models.CharField(max_length=255, blank=True)
+    collab_query_name = models.CharField(max_length=255, blank=True)
 
     main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True, related_name="main")
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
@@ -224,6 +229,8 @@ class Product(models.Model):
                     self.main_color.save()
             if len(self.brands.all()) > 1:
                 self.is_collab = True
+                self.collab_name = ' x '.join([x.name for x in self.brands.all()])
+                self.collab_query_name = "_".join(self.collab_name.replace(" x ", " ").lower().split())
 
         super().save(*args, **kwargs)
 

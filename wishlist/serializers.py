@@ -5,7 +5,9 @@ from rest_framework import serializers
 class WishlistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wishlist
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['user', ]
+        depth = 2
         # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 

@@ -41,6 +41,8 @@ class Command(BaseCommand):
         gender = users.models.Gender(name="F")
         gender.save()
 
+        collection = Collection(name="Другие коллаборации", query_name="other_collab", in_filter=True)
+        collection.save()
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)
         print('finished')

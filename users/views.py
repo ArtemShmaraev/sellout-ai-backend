@@ -270,3 +270,12 @@ class TokenVerifyView(TokenViewBase):
     """
 
     _serializer_class = api_settings.TOKEN_VERIFY_SERIALIZER
+
+
+class TokenRefreshView(TokenViewBase):
+    """
+    Takes a refresh type JSON web token and returns an access type JSON web
+    token if the refresh token is valid.
+    """
+
+    _serializer_class = api_settings.TOKEN_REFRESH_SERIALIZER

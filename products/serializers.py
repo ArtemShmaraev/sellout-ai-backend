@@ -83,6 +83,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         fields = "__all__"
         depth = 2
 
+
+
     def get_is_return(self, obj):
         return obj.product_units.filter(is_return=True).exists()
 
@@ -129,9 +131,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         if user_id is not None and user_id > 0:
             try:
                 wishlist = Wishlist.objects.get(user_id=user_id)
-                wishlist.products.filter(product_id=product.id)
-                return wishlist.products.filter(product_id=product.id).exists()
-            except Product.DoesNotExist:
+                return product in wishlist.products.all()
+            except Wishlist.DoesNotExist:
                 pass
         return False
 

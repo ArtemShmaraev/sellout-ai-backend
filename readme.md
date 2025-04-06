@@ -51,7 +51,7 @@ Anon)
 ## WishList API
 
 1. `[GET][User] wishlist/<user_id>` вишлист пользователя [⬇️](#wl)
-2. `[POST][User] wishlist/<user_id>` добавление в вишлист [⬇️](#add_wl)
+2. `[POST][User] wishlist/<user_id>/<product_id>` добавление в вишлист [⬇️](#add_wl)
 3. `[DELETE][User] wishlist/<user_id>/<wishlist_unit_id>` Удаление из вишлиста [⬇️](#del_wl)
 4. `[POST][User] wishlist/change_size/<user_id>/<wishlist_unit_id>/<size_id>` поменять размер в
    вишлисте [⬇️](#change_wl)

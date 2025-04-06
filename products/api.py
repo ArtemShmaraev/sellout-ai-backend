@@ -40,7 +40,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class CollectionViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Collection.objects.all()
+    queryset = Collection.objects.filter(in_filter=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = CollectionSerializer
@@ -114,8 +114,6 @@ class ProductPagination(pagination.PageNumberPagination):
             cat = find_oldest_name(tree, categories)
         response.data["products_page_header"] = str(line) + " " + str(cat)
         return response
-
-
 
 
 class ProductViewSet(viewsets.ModelViewSet):

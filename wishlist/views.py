@@ -11,7 +11,7 @@ from products.models import Product, SizeTranslationRows
 from sellout.settings import URL
 from rest_framework import status
 from users.models import User
-from products.serializers import ProductSerializer
+from products.serializers import ProductSerializer, ProductMainPageSerializer
 
 import requests
 
@@ -28,7 +28,7 @@ class UserWishlist(APIView):
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
             wishlist_products = Wishlist.objects.get(user=user).products
-            return Response(ProductSerializer(wishlist_products, many=True).data)
+            return Response(ProductMainPageSerializer(wishlist_products, many=True, context={'user_id': user_id}).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 
@@ -38,16 +38,11 @@ class UserWishlist(APIView):
                 try:
                     user = User.objects.get(id=user_id)
                     product = Product.objects.get(id=product_id)
+                    wishlist = Wishlist.objects.get(user=user)
+                    wishlist.products.add(product)
 
-                    # Проверяем, существует ли уже элемент в списке желаний
-                    if Wishlist.objects.filter(user=user, product=product).exists():
-                        return Response("Элемент уже существует в списке желаний", status=status.HTTP_400_BAD_REQUEST)
-
-                    # Создаем новый элемент списка желаний
-                    wishlist = Wishlist(user_id=user_id)
-                    wishlist.products.add(Product.objects.get(product_id=product_id))
-
-                    return Response(WishlistSerializer(wishlist).data)
+                    return Response(
+                        ProductMainPageSerializer(wishlist.products, many=True, context={'user_id': user_id}).data)
                 except User.DoesNotExist:
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
                 except Product.DoesNotExist:
@@ -65,18 +60,16 @@ class UserWishlist(APIView):
 
             # Проверяем, существует ли элемент списка желаний
             wishlist = Wishlist.objects.get(user_id=user_id)
-            product = wishlist.products.get(product_id=product_id)
-            wishlist.products.remove(product_id=product_id)
-
+            product = Product.objects.get(id=product_id)
+            if product not in wishlist.products.all():
+                raise Product.DoesNotExist
+            wishlist.products.remove(product)
 
             return Response("Элемент успешно удален из списка желаний")
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
         except Product.DoesNotExist:
             return Response("Элемент списка желаний не существует", status=status.HTTP_404_NOT_FOUND)
-
-
-
 
 # добавить товар в вишлист с размером
 # class UserAddWishlist(APIView):

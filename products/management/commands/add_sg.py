@@ -50,11 +50,6 @@ class Command(BaseCommand):
                 tag, _ = Tag.objects.get_or_create(name=tag_name)
                 product.tags.add(tag)
 
-            # Обработка коллекций
-            collections = data.get('collections', [])
-            for col_name in collections:
-                col, _ = Collection.objects.get_or_create(name=col_name)
-                product.collections.add(col)
 
             # Обработка цветов
             colors = data.get('colors', [])
@@ -97,7 +92,7 @@ class Command(BaseCommand):
                     product.categories.add(parent_category)
 
             collections = data.get('collections', [])
-            colab = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
+            collab = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
                      "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
                      "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
                      "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
@@ -107,8 +102,13 @@ class Command(BaseCommand):
                 else:
                     collection = Collection(name=col)
                     collection.save()
-                    if col in colab:
-                        collection.is_colab = True
+                    if col in collab:
+                        collection.is_collab = True
+                        collection.in_filter = True
+                    elif " x " in collab:
+                        collection.is_collab = True
+                        product.collections.add(Collection.objects.get(name="Другие коллаборации"))
+                    collection.save()
                     product.collections.add(collection)
 
 

@@ -19,4 +19,4 @@ class Wishlist(models.Model):
     products = models.ManyToManyField("products.Product", blank=True)
 
     def __str__(self):
-        return f'{self.user} wl: {", ".join([str(pu) for pu in self.wishlist_units.all()])}'
+        return f'{self.user} wl: {", ".join([str(pu) for pu in self.products.all()])}'

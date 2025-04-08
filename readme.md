@@ -1488,7 +1488,7 @@ Response:
 
 
 <a name="product_min_price"></a>
-5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру 
+### 5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру 
 Response:
 ```json
 [
@@ -1577,7 +1577,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="product_delivery"></a>
-6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цен
+### 6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цен
 Response:
 ```json
 [

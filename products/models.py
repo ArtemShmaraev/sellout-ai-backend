@@ -12,6 +12,7 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.name
+
     def save(self, *args, **kwargs):
         self.query_name = self.name
         super().save(*args, **kwargs)
@@ -115,6 +116,21 @@ class Collection(models.Model):
         super().save(*args, **kwargs)
 
 
+class Collab(models.Model):
+    name = models.CharField(max_length=255)
+    query_name = models.CharField(max_length=255)
+    is_main_collab = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.query_name:
+            self.query_name = "_".join(self.name.replace(" x ", " ").lower().split())
+
+        super().save(*args, **kwargs)
+
+
 class Color(models.Model):
     name = models.CharField(max_length=255)
     is_main_color = models.BooleanField(default=False)
@@ -166,10 +182,9 @@ class Product(models.Model):
     bucket_link = models.CharField(max_length=255, blank=True)
 
     is_collab = models.BooleanField(default=False)
-    collab_name = models.CharField(max_length=255, blank=True)
-    collab_query_name = models.CharField(max_length=255, blank=True)
+    collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
 
-    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True, related_name="main")
+    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True, related_name="products_main")
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
@@ -227,11 +242,6 @@ class Product(models.Model):
                 if not self.main_color.is_main_color:
                     self.main_color.is_main_color = True
                     self.main_color.save()
-            if len(self.brands.all()) > 1:
-                self.is_collab = True
-                self.collab_name = ' x '.join([x.name for x in self.brands.all()])
-                self.collab_query_name = "_".join(self.collab_name.replace(" x ", " ").lower().split())
-
         super().save(*args, **kwargs)
 
     def __str__(self):

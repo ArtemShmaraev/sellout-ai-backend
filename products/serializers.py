@@ -1,6 +1,6 @@
 
 from wishlist.models import Wishlist
-from products.models import Product, Category, Line, Brand, Color, Collection
+from products.models import Product, Category, Line, Brand, Color, Collection, SizeTranslationRows
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min
@@ -20,6 +20,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
+class SizeTranslationRowsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SizeTranslationRows
+        fields = '__all__'
 
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:

@@ -48,6 +48,9 @@ Anon)
 3. `[GET][Anon] product_unit/product_main/<product_id>/<user_id>` "карточка товара" [⬇️](#product_main)
 4. `[GET][Anon] /product` фильтрация товаров [⬇️](#product_filter)
 
+5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру [⬇️](#product_min_price)
+6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цены [⬇️](#product_delivery)
+
 ## WishList API
 
 1. `[GET][User] wishlist/<user_id>` вишлист пользователя [⬇️](#wl)
@@ -1480,9 +1483,117 @@ Response:
     ]
 }
 ```
+[:arrow_up:Shipping API](#shipping)
+[:arrow_up:SellOut API](#up)
 
 
+<a name="product_min_price"></a>
+5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру 
+Response:
+```json
+[
+    {
+        "min_price": 79990,
+        "size": {
+            "id": 87,
+            "US": "9.5",
+            "UK": "8.5",
+            "EU": "43",
+            "RU": "42",
+            "CM": null,
+            "table": 6
+        },
+        "view_size": "43"
+    },
+    {
+        "min_price": 60490,
+        "size": {
+            "id": 73,
+            "US": "6",
+            "UK": "4",
+            "EU": "36.5",
+            "RU": "35.5",
+            "CM": null,
+            "table": 5
+        },
+        "view_size": "36.5"
+    },
+    {
+        "min_price": 44490,
+        "size": {
+            "id": 76,
+            "US": "7.5",
+            "UK": "5.5",
+            "EU": "38",
+            "RU": "37",
+            "CM": null,
+            "table": 5
+        },
+        "view_size": "38"
+    },
+    {
+        "min_price": 34490,
+        "size": {
+            "id": 41,
+            "US": "12",
+            "UK": "10.5",
+            "EU": "45 1/3",
+            "RU": "44",
+            "CM": null,
+            "table": 2
+        },
+        "view_size": "45 1/3"
+    },
+    {
+        "min_price": 76990,
+        "size": {
+            "id": 7,
+            "US": "6.5",
+            "UK": "6",
+            "EU": "39 1/3",
+            "RU": "38",
+            "CM": null,
+            "table": 1
+        },
+        "view_size": "39 1/3"
+    },
+    {
+        "min_price": 36990,
+        "size": {
+            "id": 57,
+            "US": "5",
+            "UK": "4",
+            "EU": "37",
+            "RU": "36",
+            "CM": null,
+            "table": 4
+        },
+        "view_size": "37"
+    }
+]
+```
 
+[:arrow_up:Shipping API](#shipping)
+[:arrow_up:SellOut API](#up)
+
+<a name="product_delivery"></a>
+6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цен
+Response:
+```json
+[
+    {
+        "id": 1,
+        "final_price": 79990,
+        "start_price": 79990,
+        "delivery": {
+            "id": 1,
+            "name": "poizon"
+        }
+    }
+]
+```
+[:arrow_up:Shipping API](#shipping)
+[:arrow_up:SellOut API](#up)
 
 <a name="wishlist"></a>
 

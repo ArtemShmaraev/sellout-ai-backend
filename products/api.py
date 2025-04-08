@@ -40,7 +40,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class CollectionViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Collection.objects.filter(in_filter=True)
+    queryset = Collection.objects.filter()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = CollectionSerializer

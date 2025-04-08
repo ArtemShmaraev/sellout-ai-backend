@@ -3,7 +3,7 @@ from itertools import count
 from django.core.management.base import BaseCommand
 import json
 from datetime import datetime
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color
+from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
 
 
 class Command(BaseCommand):
@@ -91,23 +91,32 @@ class Command(BaseCommand):
                     parent_category = category
                     product.categories.add(parent_category)
 
-            collections = data.get('collections', [])
-            collab = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
+
+            main_collabs = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
                      "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
                      "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
                      "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
+
+            collab = data.get('collabs')
+            if collab:
+                if Collab.objects.filter(name=collab).exists():
+                    collab = Collab.objects.filter(name=collab)
+                else:
+                    collab = Collab(name=collab)
+                    if collab.name in main_collabs:
+                        collab.is_main_collab = True
+                    else:
+                        collab.query_name = brand.query_name
+                    collab.save()
+                product.collab = collab
+
+
+            collections = data.get('collections', [])
             for col in collections:
                 if Collection.objects.filter(name=col).exists():
                     product.collections.add(Collection.objects.get(name=col))
                 else:
                     collection = Collection(name=col)
-                    collection.save()
-                    if col in collab:
-                        collection.is_collab = True
-                        collection.in_filter = True
-                    elif " x " in collab:
-                        collection.is_collab = True
-                        product.collections.add(Collection.objects.get(name="Другие коллаборации"))
                     collection.save()
                     product.collections.add(collection)
 

@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import ProductUnitViewSet
 from django.urls import path, re_path
-from .views import ProductUnitProductView, ProductUnitProductMainView, ProductUnitProductSlugView
+from .views import ProductUnitProductView, ProductUnitProductMainView, ProductUnitProductSlugView, MinPriceForSizeView, DeliveryForSizeView
 
 router = routers.DefaultRouter()
 router.register("", ProductUnitViewSet, 'product_unit')
@@ -13,3 +13,7 @@ urlpatterns.append(
     path('product/<str:slug>/', ProductUnitProductSlugView.as_view(), name="product_units_for_product_slug"))
 urlpatterns.append(path('product_main/<int:product_id>/<int:user_id>/', ProductUnitProductMainView.as_view(),
                         name="product_main_view"))
+urlpatterns.append(path('min_price/<int:product_id>', MinPriceForSizeView.as_view(),
+                        name="product_min_size_view"))
+urlpatterns.append(path('delivery/<int:product_id>/<int:size_id>', DeliveryForSizeView.as_view(),
+                        name="delivery_for_size_view"))

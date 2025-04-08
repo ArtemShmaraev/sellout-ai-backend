@@ -197,10 +197,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         category = self.request.query_params.getlist("category")
         gender = self.request.query_params.getlist("gender")
         brand = self.request.query_params.getlist("brand")
-        collection = self.request.query_params.getlist("collection")
+        collab = self.request.query_params.getlist("collab")
 
-        if collection:
-            queryset = queryset.filter(collections__query_name__in=collection)
+        if collab:
+            if collab == "all":
+                queryset = queryset.filter(is_collab=True)
+            else:
+                queryset = queryset.filter(collab__query_name__in=collab)
         if brand:
             for brand_name in brand:
                 queryset = queryset.filter(brands__query_name=brand_name)

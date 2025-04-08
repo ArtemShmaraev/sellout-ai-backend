@@ -1,7 +1,7 @@
 from itertools import count
 from django.core.management.base import BaseCommand
 import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color
+from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
 from django.core.exceptions import ObjectDoesNotExist
 import users.models
 
@@ -41,8 +41,10 @@ class Command(BaseCommand):
         gender = users.models.Gender(name="F")
         gender.save()
 
-        collection = Collection(name="Другие коллаборации", query_name="other_collab", in_filter=True)
-        collection.save()
+        collab = Collab(name="Другие коллаборации", query_name="other_collab")
+        collab.save()
+        collab = Collab(name="Все коллаборации", query_name="all")
+        collab.save()
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)
         print('finished')

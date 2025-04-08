@@ -168,8 +168,7 @@ class Product(models.Model):
                                         blank=True)
     lines = models.ManyToManyField("Line", related_name='products',
                                    blank=True)
-    collections = models.ManyToManyField("Collection", related_name='products',
-                                         blank=True)
+    # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
 

@@ -96,7 +96,6 @@ class Command(BaseCommand):
                      "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
                      "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
                      "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
-
             collab = data.get('collabs')
             if collab:
                 if Collab.objects.filter(name=collab).exists():
@@ -111,14 +110,14 @@ class Command(BaseCommand):
                 product.collab = collab
 
 
-            collections = data.get('collections', [])
-            for col in collections:
-                if Collection.objects.filter(name=col).exists():
-                    product.collections.add(Collection.objects.get(name=col))
-                else:
-                    collection = Collection(name=col)
-                    collection.save()
-                    product.collections.add(collection)
+            # collections = data.get('collections', [])
+            # for col in collections:
+            #     if Collection.objects.filter(name=col).exists():
+            #         product.collections.add(Collection.objects.get(name=col))
+            #     else:
+            #         collection = Collection(name=col)
+            #         collection.save()
+            #         product.collections.add(collection)
 
 
             # Обработка линий
@@ -149,7 +148,7 @@ class Command(BaseCommand):
                     parent_line = line
                     product.lines.add(line)
 
-            product.min_price = random.randint(10, 200) * 500 - 10
+            # product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""
             product.save()
 

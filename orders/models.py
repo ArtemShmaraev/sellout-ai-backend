@@ -39,3 +39,13 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f'{self.user} cart: {", ".join([str(pu) for pu in self.product_units.all()])}'
+
+
+class ProductOrderUnit(models.Model):
+    product_unit = models.ForeignKey("shipping.ProductUnit", blank=True, on_delete=models.PROTECT, )
+    start_price = models.IntegerField(blank=True, null=True)
+    final_price = models.IntegerField(blank=True, null=True)
+    status = models.CharField(default="", max_length=127)
+
+    def __str__(self):
+        return str(self.product_unit)

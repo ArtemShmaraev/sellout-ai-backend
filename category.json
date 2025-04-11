@@ -66,6 +66,16 @@
           "subcategories": []
         },
         {
+          "name": "Эспадрильи",
+          "eng_name": "espadrilles",
+          "subcategories": []
+        },
+        {
+          "name": "Слипоны",
+          "eng_name": "slip_ons",
+          "subcategories": []
+        },
+        {
           "name": "Сандалии",
           "eng_name": "sandals",
           "subcategories": []
@@ -102,13 +112,18 @@
           "subcategories": []
         },
         {
-          "name": "Худи и Толстовки",
+          "name": "Худи и толстовки",
           "eng_name": "hoodie_sweatshirts",
           "subcategories": []
         },
         {
           "name": "Футболки",
           "eng_name": "tshirts",
+          "subcategories": []
+        },
+        {
+          "name": "Лонгсливы",
+          "eng_name": "longsleeves",
           "subcategories": []
         },
         {
@@ -172,6 +187,11 @@
           "subcategories": []
         },
         {
+          "name": "Зимние штаны",
+          "eng_name": "winter_pants",
+          "subcategories": []
+        },
+        {
           "name": "Спортивная одежда",
           "eng_name": "sport_clothes",
           "subcategories": [
@@ -202,6 +222,11 @@
             },
             {
               "name": "Спортивные майки",
+              "eng_name": "sport_vests",
+              "subcategories": []
+            },
+            {
+              "name": "Спортивные шорты",
               "eng_name": "sport_vests",
               "subcategories": []
             },
@@ -252,13 +277,28 @@
               "subcategories": []
             },
             {
-              "name": "Пальто и ветровки",
+              "name": "Шубы",
+              "eng_name": "fur_coats",
+              "subcategories": []
+            },
+            {
+              "name": "Пальто",
+              "eng_name": "coats",
+              "subcategories": []
+            },
+            {
+              "name": "Ветровки",
               "eng_name": "windbreakers",
               "subcategories": []
             },
             {
               "name": "Жилетки",
               "eng_name": "vests",
+              "subcategories": []
+            },
+            {
+              "name": "Лыжные костюмы",
+              "eng_name": "ski_suit",
               "subcategories": []
             }
           ]
@@ -324,6 +364,11 @@
               "subcategories": []
             },
             {
+              "name": "Chest bags",
+              "eng_name": "chest_bags",
+              "subcategories": []
+            },
+            {
               "name": "Сумки на пояс",
               "eng_name": "waist_bags",
               "subcategories": []
@@ -331,6 +376,21 @@
             {
               "name": "Клатчи",
               "eng_name": "clutches",
+              "subcategories": []
+            },
+            {
+              "name": "Сумки на запястье",
+              "eng_name": "wrist_bags",
+              "subcategories": []
+            },
+            {
+              "name": "Портфель",
+              "eng_name": "formal_case",
+              "subcategories": []
+            },
+            {
+              "name": "Спортивные сумки",
+              "eng_name": "sport_bags",
               "subcategories": []
             },
             {
@@ -348,6 +408,11 @@
         {
           "name": "Визитницы",
           "eng_name": "cardholders",
+          "subcategories": []
+        },
+        {
+          "name": "Обложки на паспорт",
+          "eng_name": "passport_covers",
           "subcategories": []
         },
         {
@@ -462,6 +527,11 @@
               "subcategories": []
             },
             {
+              "name": "Cумки для спорта",
+              "eng_name": "sports_bags",
+              "subcategories": []
+            },
+            {
               "name": "Другие спорттовары",
               "eng_name": "other_sport_goods",
               "subcategories": []
@@ -496,6 +566,11 @@
         {
           "name": "Чемоданы",
           "eng_name": "suitcases",
+          "subcategories": []
+        },
+        {
+          "name": "Другие аксессуары",
+          "eng_name": "other_accessories",
           "subcategories": []
         }
       ]

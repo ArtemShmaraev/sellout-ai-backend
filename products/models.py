@@ -6,6 +6,13 @@ from django.db import models
 from django.dispatch import receiver
 
 
+class Photo(models.Model):
+    url = models.CharField(max_length=127)
+
+    def __str__(self):
+        return str(self.product)
+
+
 class Brand(models.Model):
     name = models.CharField(max_length=255)
     query_name = models.CharField(max_length=255, default="")
@@ -22,9 +29,9 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
                                         null=True)
-    eng_name = models.CharField(max_length=255, default="") # для запросов
+    eng_name = models.CharField(max_length=255, default="")  # для запросов
     is_all = models.BooleanField(default=False)
-    full_name = models.CharField(max_length=255, default="") # полный путь
+    full_name = models.CharField(max_length=255, default="")  # полный путь
 
     def __str__(self):
         return self.full_name
@@ -53,16 +60,16 @@ class Line(models.Model):
     def save(self, *args, **kwargs):
         if self.parent_line:
             self.full_name = f"{self.parent_line.full_name} | {self.name}"
-        if "все" in self.full_name.lower():
-            self.full_eng_name = "_".join(
-                self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся",
-                                                                                                       "").replace(
-                    "все",
-                    "").split())
-        else:
-            self.full_eng_name = "_".join(
-                self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
-                                                                                                              "").split())
+        # if "все" in self.full_name.lower():
+        #     self.full_eng_name = "_".join(
+        #         self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся",
+        #                                                                                                "").replace(
+        #             "все",
+        #             "").split())
+        # else:
+        #     self.full_eng_name = "_".join(
+        #         self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
+        #                                                                                                       "").split())
         if "все" in self.name.lower() or "другие" in self.name.lower():
             self.view_name = self.name
         else:
@@ -72,7 +79,10 @@ class Line(models.Model):
                 if "все" not in s.lower():
                     new_st.append(s)
 
-            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan")
+            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace(" Blazer", "", 1).replace(
+                " Dunk", "", 1)
+            self.full_eng_name = self.view_name.lower().replace(" ", "_")
+
         if "все" in self.name.lower():
             self.is_all = True
         super().save(*args, **kwargs)
@@ -178,12 +188,13 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
-    bucket_link = models.CharField(max_length=255, blank=True)
+    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True)
 
     is_collab = models.BooleanField(default=False)
     collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
 
-    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True, related_name="products_main")
+    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name="products_main")
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
@@ -213,8 +224,8 @@ class Product(models.Model):
                     category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}",
                                                            parent_category=category.parent_category)
                     self.categories.add(category_is_all)
-                elif Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
-                    category_is_all = Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}",
+                elif Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}").exists():
+                    category_is_all = Category.objects.get(name=f"Вся {category.parent_category.name.lower()}",
                                                               parent_category=category.parent_category)
                     self.categories.add(category_is_all)
                 add_categories_to_product(category.parent_category)

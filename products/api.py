@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Product, Category, Line, Brand, Color, Collection
+from .models import Product, Category, Line, Brand, Color, Collection, Collab
 from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
     BrandSerializer, ColorSerializer, CollectionSerializer
@@ -54,6 +54,13 @@ class BrandViewSet(viewsets.ModelViewSet):
     serializer_class = BrandSerializer
 
 
+class CollabViewSet(viewsets.ModelViewSet):
+    # authentication_classes = [JWTAuthentication]
+    queryset = Collab.objects.all().order_by("name")
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = BrandSerializer
+
 class ProductPagination(pagination.PageNumberPagination):
     page_size = 60
     page_size_query_param = 'page_size'
@@ -61,18 +68,17 @@ class ProductPagination(pagination.PageNumberPagination):
 
     def get_paginated_response(self, data):
         response = super().get_paginated_response(data)
-
-        min_price = 9999999999
-        max_price = 0
-
-        # Calculate min_price and max_price from the data
-        for item in data:
-            min_price_product_unit = item['min_price_product_unit']
-            if min_price_product_unit is not None:
-                if min_price is not None and min_price_product_unit < min_price:
-                    min_price = min_price_product_unit
-                if max_price is not None and min_price_product_unit > max_price:
-                    max_price = min_price_product_unit
+        # min_price = 9999999999
+        # max_price = 0
+        #
+        # # Calculate min_price and max_price from the data
+        # for item in data:
+        #     min_price_product_unit = item['min_price_product_unit']
+        #     if min_price_product_unit is not None:
+        #         if min_price is not None and min_price_product_unit < min_price:
+        #             min_price = min_price_product_unit
+        #         if max_price is not None and min_price_product_unit > max_price:
+        #             max_price = min_price_product_unit
 
         response.data['min_price'] = Product.objects.aggregate(min_price=Min('min_price'))['min_price']
         response.data['max_price'] = Product.objects.aggregate(min_price=Max('min_price'))['min_price']
@@ -113,6 +119,7 @@ class ProductPagination(pagination.PageNumberPagination):
             tree = build_category_tree(CategorySerializer(Category.objects.all(), many=True).data)
             cat = find_oldest_name(tree, categories)
         response.data["products_page_header"] = str(line) + " " + str(cat)
+
         return response
 
 

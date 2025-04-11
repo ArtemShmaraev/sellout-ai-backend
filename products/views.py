@@ -19,7 +19,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            serializer = ProductMainPageSerializer(product)
+            serializer = ProductMainPageSerializer(product, context={'user_id': request.user.id})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

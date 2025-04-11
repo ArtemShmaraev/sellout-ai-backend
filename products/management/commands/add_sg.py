@@ -96,10 +96,12 @@ class Command(BaseCommand):
                      "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
                      "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
                      "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
-            collab = data.get('collabs')
+
+
+            collab = data.get('collab')
             if collab:
                 if Collab.objects.filter(name=collab).exists():
-                    collab = Collab.objects.filter(name=collab)
+                    collab = Collab.objects.get(name=collab)
                 else:
                     collab = Collab(name=collab)
                     if collab.name in main_collabs:

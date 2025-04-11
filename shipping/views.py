@@ -43,12 +43,12 @@ class MinPriceForSizeView(APIView):
             for item in product_units:
                 size_id = item.size_id
                 price = item.final_price
+                available = item.availability
 
                 # Проверка наличия размера в словаре
-                if size_id in prices_by_size:
-                    prices_by_size[size_id].append(price)
-                else:
-                    prices_by_size[size_id] = [price]
+                if size_id not in prices_by_size:
+                    prices_by_size[size_id] = []
+                prices_by_size[size_id].append(price)
 
             min_prices_by_size = {}
             s = []
@@ -58,9 +58,14 @@ class MinPriceForSizeView(APIView):
 
                 min_price = min(prices)
                 d = dict()
-                d['min_price'] = min_price
-                d['size'] = SizeTranslationRowsSerializer(SizeTranslationRows.objects.get(id=size_id)).data
-                d['view_size'] = SizeTranslationRows.objects.get(id=size_id).EU
+                d['min_price'] = 0
+                if len(prices) > 0:
+                    d['min_price'] = min_price
+                    d['size'] = SizeTranslationRowsSerializer(SizeTranslationRows.objects.get(id=size_id)).data
+                    d['view_size'] = SizeTranslationRows.objects.get(id=size_id).EU
+                    d['available'] = True
+                else:
+                    d['available'] = False
                 min_prices_by_size[size_id] = d
                 s.append(d)
             return Response(s)

@@ -129,7 +129,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     # filterset_class = ProductFilter
     pagination_class = ProductPagination
-    ordering_fields = ['release_date']
+    ordering_fields = ['exact_date']
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

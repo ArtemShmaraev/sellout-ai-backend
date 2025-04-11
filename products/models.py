@@ -210,7 +210,9 @@ class Product(models.Model):
     available_flag = models.BooleanField(default=True)
     last_upd = models.DateTimeField(default=timezone.now)
     add_date = models.DateField(default=date.today)
-    release_date = models.DateField(default=date.today, blank=True)
+
+    exact_date = models.DateField(default=date.today, blank=True)
+    approximate_date = models.CharField(max_length=63, null=False, blank=True, default="")
 
 
     fit = models.IntegerField(default=0)

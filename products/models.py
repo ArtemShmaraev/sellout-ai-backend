@@ -130,6 +130,7 @@ class Collab(models.Model):
     name = models.CharField(max_length=255)
     query_name = models.CharField(max_length=255)
     is_main_collab = models.BooleanField(default=False)
+    is_all = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

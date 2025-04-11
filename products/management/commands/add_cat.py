@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
         collab = Collab(name="Другие коллаборации", query_name="other_collab")
         collab.save()
-        collab = Collab(name="Все коллаборации", query_name="all")
+        collab = Collab(name="Все коллаборации", query_name="all", is_all=True)
         collab.save()
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)

@@ -86,6 +86,8 @@ class Command(BaseCommand):
                 parent_category = None
                 for category_name in categories:
                     category, _ = Category.objects.get_or_create(name=category_name)
+                    if _:
+                        print(f'"{category_name}"')
                     if parent_category is not None:
                         category.parent_category = parent_category
                     parent_category = category

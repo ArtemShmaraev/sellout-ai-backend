@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from .models import ProductUnit
 from .serializers import ProductUnitSerializer, DeliveryTypeSerializer
 from wishlist.models import Wishlist
 from products.models import Product, SizeTranslationRows
@@ -20,6 +21,10 @@ class DeliveryForSizeView(APIView):
                 d['id'] = product_unit.id
                 d['final_price'] = product_unit.final_price
                 d['start_price'] = product_unit.start_price
+                d['available'] = product_unit.available
+                d['is_fast_shipping'] = product_unit.is_fast_shipping
+                d['is_sale'] = product_unit.is_sale
+                d['is_return'] = product_unit.is_return
                 d['delivery'] = DeliveryTypeSerializer(product_unit.delivery_type).data
                 s.append(d)
             return Response(s)
@@ -47,25 +52,33 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size_id not in prices_by_size:
-                    prices_by_size[size_id] = []
-                prices_by_size[size_id].append(price)
+                    prices_by_size[size_id] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False}
 
+                prices_by_size[size_id]['price'].append(price)
+                if available:
+                    prices_by_size[size_id]["available"] = True
+                if item.is_fast_shipping:
+                    prices_by_size[size_id]["is_fast_shipping"] = True
+                if item.is_sale:
+                    prices_by_size[size_id]["is_sale"] = True
+                if item.is_return:
+                    prices_by_size[size_id]["is_return"] = True
             min_prices_by_size = {}
             s = []
 
             # Вычисление минимальной цены для каждого размера
             for size_id, prices in prices_by_size.items():
 
-                min_price = min(prices)
+                min_price = min(prices['price'])
                 d = dict()
-                d['min_price'] = 0
                 if len(prices) > 0:
                     d['min_price'] = min_price
+                    d['available'] = prices['available']
+                    d['is_fast_shipping'] = prices['is_fast_shipping']
+                    d['is_sale'] = prices['is_sale']
+                    d['is_return'] = prices['is_return']
                     d['size'] = SizeTranslationRowsSerializer(SizeTranslationRows.objects.get(id=size_id)).data
                     d['view_size'] = SizeTranslationRows.objects.get(id=size_id).EU
-                    d['available'] = True
-                else:
-                    d['available'] = False
                 min_prices_by_size[size_id] = d
                 s.append(d)
             return Response(s)
@@ -126,3 +139,22 @@ class ProductUnitProductMainView(APIView):
                 return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
+
+
+class ListProductUnitView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        try:
+            s_product_unit = json.loads(request.body)
+            product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+            serializer = ProductUnitSerializer(product_units, many=True)
+            return Response(serializer.data)
+        except json.JSONDecodeError:
+            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+        except ProductUnit.DoesNotExist:
+            return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -13,6 +15,9 @@ from rest_framework import status
 from promotions.models import PromoCode
 from promotions.views import check_promo
 from users.models import User
+
+
+
 
 
 class ShoppingCartUser(APIView):
@@ -62,7 +67,7 @@ class CheckOutView(APIView):
     def post(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
-                data = request.data
+                data = json.loads(request.body)
                 user = get_object_or_404(User, id=user_id)
                 address = get_object_or_404(AddressInfo, id=data['address_id'])
 

@@ -16,7 +16,7 @@ class Command(BaseCommand):
             return False
 
         all_data = json.load(open("final.json"))
-        colors_data = json.load(open("colors.json"))
+        colors_data = json.load(open("colors.json", encoding="utf-8"))
         k = 0
         kk = 0
         mk = len(all_data)

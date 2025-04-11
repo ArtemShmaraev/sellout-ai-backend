@@ -11,9 +11,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         products = Product.objects.all()
         # currencies = Currency.objects.all()
-        delivery_type = DeliveryType(name="poizon")
+        delivery_type1 = DeliveryType(name="до 10 дней")
+        delivery_type2 = DeliveryType(name="до 30 дней")
         platform = Platform(platform='poizon', site="poizon")
-        delivery_type.save()
+        delivery_type1.save()
+        delivery_type2.save()
         platform.save()
 
         for product in products:
@@ -33,7 +35,7 @@ class Command(BaseCommand):
                     # currency=currencies.first(),
                     start_price=start_price,
                     final_price=final_price,
-                    delivery_type=delivery_type,
+                    delivery_type=delivery_type1 if randint(1, 100) % 2 == 0 else delivery_type2,
                     platform=platform,
                     url=url,
                     availability=((randint(1, 10) % 2) == 1),

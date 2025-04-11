@@ -188,7 +188,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
-    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True)
+    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True)
 
     is_collab = models.BooleanField(default=False)
     collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
@@ -211,6 +211,8 @@ class Product(models.Model):
     last_upd = models.DateTimeField(default=timezone.now)
     add_date = models.DateField(default=date.today)
     release_date = models.DateField(default=date.today, blank=True)
+
+
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
     objects = ProductManager()

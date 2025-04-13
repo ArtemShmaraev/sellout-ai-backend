@@ -138,3 +138,25 @@ class OrderView(APIView):
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
         except Order.DoesNotExist:
             return Response("Заказ не найден", status=status.HTTP_404_NOT_FOUND)
+
+
+class ListProductUnitView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def post(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                s_product_unit = json.loads(request.body)
+                product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+                cart = ShoppingCart.objects.get(user_id=user_id)
+                for product_unit in product_units:
+                    cart.product_units.add(product_unit)
+                return Response("Корзина обновлена")
+            except json.JSONDecodeError:
+                return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+            except ProductUnit.DoesNotExist:
+                return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

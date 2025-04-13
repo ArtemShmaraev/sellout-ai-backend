@@ -21,7 +21,7 @@ class DeliveryForSizeView(APIView):
                 d['id'] = product_unit.id
                 d['final_price'] = product_unit.final_price
                 d['start_price'] = product_unit.start_price
-                d['available'] = product_unit.available
+                d['available'] = product_unit.availability
                 d['is_fast_shipping'] = product_unit.is_fast_shipping
                 d['is_sale'] = product_unit.is_sale
                 d['is_return'] = product_unit.is_return

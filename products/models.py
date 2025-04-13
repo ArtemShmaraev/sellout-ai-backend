@@ -192,6 +192,8 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True)
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True)
 
+
+    is_custom = models.BooleanField(default=False)
     is_collab = models.BooleanField(default=False)
     collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
 

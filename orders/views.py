@@ -146,7 +146,7 @@ class ListProductUnitOrderView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             try:
-                s_product_unit = json.loads(request.body)
+                s_product_unit = json.loads(request.body)["product_unit_list"]
                 product_units = ProductUnit.objects.filter(id__in=s_product_unit)
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 for product_unit in product_units:

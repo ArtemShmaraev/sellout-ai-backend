@@ -72,7 +72,7 @@ Anon)
 6. `[GET][User] order/user_orders/<int:user_id>` все заказы пользователя [⬇️](#user_orders)
 7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
-8. `[POST][Anon]order/cart_list` Body: {"product_unit_list": [2, 3]} Response (добавление в корзину или исключение)
+8. `[POST][Anon]order/cart_list/<user_id>` Body: {"product_unit_list": [2, 3]} Response (добавление в корзину или исключение)
 
 
 # Поиск

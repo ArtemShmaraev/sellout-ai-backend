@@ -79,9 +79,9 @@ class Line(models.Model):
                 if "все" not in s.lower():
                     new_st.append(s)
 
-            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace(" Blazer", "", 1).replace(
-                " Dunk", "", 1)
-            self.full_eng_name = self.view_name.lower().replace(" ", "_")
+            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "", 1).replace(
+                "Dunk Dunk", "", 1)
+        self.full_eng_name = self.view_name.lower().replace(" ", "_")
 
         if "все" in self.name.lower():
             self.is_all = True
@@ -128,7 +128,7 @@ class Collection(models.Model):
 
 class Collab(models.Model):
     name = models.CharField(max_length=255)
-    query_name = models.CharField(max_length=255)
+    query_name = models.CharField(max_length=255, blank=True, null=True)
     is_main_collab = models.BooleanField(default=False)
     is_all = models.BooleanField(default=False)
 
@@ -251,8 +251,10 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
-            for line in self.lines.all():
-                add_lines_to_product(line)
+
+            if len(self.lines.all()) == 1:
+                for line in self.lines.all():
+                    add_lines_to_product(line)
 
             for cat in self.categories.all():
                 add_categories_to_product(cat)
@@ -260,7 +262,6 @@ class Product(models.Model):
             if self.main_color:
                 if not self.main_color.is_main_color:
                     self.main_color.is_main_color = True
-                    self.main_color.save()
 
             lines = self.lines.exclude(name__icontains='Все')
             if lines:

@@ -140,7 +140,7 @@ class OrderView(APIView):
             return Response("Заказ не найден", status=status.HTTP_404_NOT_FOUND)
 
 
-class ListProductUnitView(APIView):
+class ListProductUnitOrderView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def post(self, request, user_id):

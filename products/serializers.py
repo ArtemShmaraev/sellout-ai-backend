@@ -77,7 +77,6 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
-    main_line = serializers.SerializerMethodField()
     is_sale = serializers.SerializerMethodField()
     is_fast_shipping = serializers.SerializerMethodField()
     is_return = serializers.SerializerMethodField()
@@ -97,13 +96,6 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     def get_is_sale(self, obj):
         return obj.product_units.filter(is_sale=True).exists()
-
-    def get_main_line(self, obj):
-        lines = obj.lines.exclude(name__icontains='Все')
-        if lines:
-            main_line = lines.order_by('-id').first()
-            return main_line.view_name
-        return None
 
     def get_min_price_product_unit(self, obj):
         size_us = self.context.get('size_us')

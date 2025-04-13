@@ -179,6 +179,7 @@ class Product(models.Model):
                                         blank=True)
     lines = models.ManyToManyField("Line", related_name='products',
                                    blank=True)
+    main_line = models.ForeignKey("Line", on_delete=models.PROTECT, blank=True, null=True, related_name="main_products")
     # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
@@ -215,9 +216,10 @@ class Product(models.Model):
     exact_date = models.DateField(default=date.today, blank=True)
     approximate_date = models.CharField(max_length=63, null=False, blank=True, default="")
 
-
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
+    platform_info = models.JSONField(blank=True, null=True)
+
     objects = ProductManager()
 
     def save(self, *args, **kwargs):
@@ -257,6 +259,10 @@ class Product(models.Model):
                 if not self.main_color.is_main_color:
                     self.main_color.is_main_color = True
                     self.main_color.save()
+
+            lines = self.lines.exclude(name__icontains='Все')
+            if lines:
+                self.main_line = lines.order_by('-id').first()
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -154,6 +154,7 @@ class Command(BaseCommand):
 
             # product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""
+            product.available_flag = False
             product.save()
 
             if k % 10 == 0:

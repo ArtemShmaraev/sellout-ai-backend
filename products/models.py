@@ -79,8 +79,8 @@ class Line(models.Model):
                 if "все" not in s.lower():
                     new_st.append(s)
 
-            self.view_name = " ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "", 1).replace(
-                "Dunk Dunk", "", 1)
+            self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
+                "Dunk Dunk", "Dunk", 1).split())
         self.full_eng_name = self.view_name.lower().replace(" ", "_")
 
         if "все" in self.name.lower():
@@ -263,7 +263,7 @@ class Product(models.Model):
                 if not self.main_color.is_main_color:
                     self.main_color.is_main_color = True
 
-            lines = self.lines.exclude(name__icontains='Все')
+            lines = self.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')
             if lines:
                 self.main_line = lines.order_by('-id').first()
         super().save(*args, **kwargs)

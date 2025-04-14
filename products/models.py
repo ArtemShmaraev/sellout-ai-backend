@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=127)
+    url = models.CharField(max_length=255)
 
     def __str__(self):
         return str(self.product)

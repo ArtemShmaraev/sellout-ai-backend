@@ -19,7 +19,7 @@ class Command(BaseCommand):
                     return color
             return False
 
-        def add_prodoct(data):
+        def add_product(data):
             # print(data)
             rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
             if Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku'),
@@ -162,13 +162,13 @@ class Command(BaseCommand):
             # self.stdout.write(self.style.SUCCESS(product))
 
         for count in range(1, 2):
-            # folder_path = f'dewu/{count}m
-            folder_path = f'dewu/{count}m'  # Укажите путь к папке, содержащей JSON-файлы
-            k = 0
+            folder_path = f'dewu/{count}m'
+            # folder_path = f'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
+            k = 4200
             ek = 0
             t0 = datetime.now()
             # Перебор всех файлов в папке
-            for filename in os.listdir(folder_path)[:]:
+            for filename in os.listdir(folder_path)[k:]:
                 if filename.endswith('.json'):  # Проверка, что файл имеет расширение .json
                     file_path = os.path.join(folder_path, filename)  # Полный путь к файлу
                     k += 1
@@ -181,8 +181,11 @@ class Command(BaseCommand):
                         json_content = file.read()
 
                     # Преобразование содержимого файла в словарь
-
-                    data = json.loads(json_content)
-                    add_prodoct(data)
+                    try:
+                        data = json.loads(json_content)
+                        add_product(data)
+                    except Exception as e:
+                        print(data)
+                        print(e)
 
         print('finished')

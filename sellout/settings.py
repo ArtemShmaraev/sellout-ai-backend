@@ -32,10 +32,12 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://62.84.118.213:8080',
-    'http://51.250.2.233:8080',
-    'http://158.160.36.51:8080'
+    'http://51.250.74.115:8080',
+    'http://sellout.su:8080',
+    'http://sellout.su:80',
+    'http://51.250.74.115:80',
 ]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',

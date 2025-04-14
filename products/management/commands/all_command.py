@@ -8,6 +8,8 @@ class Command(BaseCommand):
         # Выполнение команды python manage.py makemigrations
         call_command('flush')
 
+        call_command('delete_migrations')
+
         call_command('makemigrations')
 
         # Выполнение команды python manage.py migrate

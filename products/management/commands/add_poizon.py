@@ -162,6 +162,7 @@ class Command(BaseCommand):
             # self.stdout.write(self.style.SUCCESS(product))
 
         for count in range(1, 2):
+            # folder_path = f'dewu/{count}m
             folder_path = f'dewu/{count}m'  # Укажите путь к папке, содержащей JSON-файлы
             k = 0
             ek = 0

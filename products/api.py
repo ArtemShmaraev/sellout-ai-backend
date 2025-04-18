@@ -145,7 +145,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
-
         return context
 
     def get_queryset(self):
@@ -205,7 +204,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         gender = self.request.query_params.getlist("gender")
         brand = self.request.query_params.getlist("brand")
         collab = self.request.query_params.getlist("collab")
+        available = self.request.query_params.get("available")
 
+        if not available:
+            queryset = queryset.filter(available=True)
         if collab:
             if collab == "all":
                 queryset = queryset.filter(is_collab=True)

@@ -24,6 +24,7 @@ class Formula(models.Model):
 
 
 class AddressInfo(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
     address = models.CharField(max_length=255, null=False, blank=False)
     post_index = models.CharField(max_length=10, null=False, blank=False)
 
@@ -54,6 +55,8 @@ class ProductUnit(models.Model):
                                 null=False, blank=False)
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name='product_units',
                              null=True, blank=True)
+    color = models.CharField(max_length=255, null=True, blank=True, default="")
+    configuration = models.CharField(max_length=255, null=True, blank=True, default="")
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)

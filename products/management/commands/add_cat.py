@@ -41,10 +41,30 @@ class Command(BaseCommand):
         gender = users.models.Gender(name="F")
         gender.save()
 
-        collab = Collab(name="Другие коллаборации", query_name="other_collab")
+        collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
         collab.save()
-        collab = Collab(name="Все коллаборации", query_name="all", is_all=True)
+        collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
         collab.save()
+        main_collab = [
+            "Nike x Off-White",
+            "Nike x Travis Scott",
+            "adidas Yeezy",
+            "Nike x Supreme",
+            "Nike x Union",
+            "Nike x Clot",
+            "Nike x Sacai",
+            "Nike x Stüssy",
+            "Nike x Ambush",
+            "Nike x A Ma Maniére",
+            "adidas x Pharrell Williams",
+            "Supreme x The North Face",
+            "New Balance x Salehe Bembury"
+        ]
+        for collab_name in main_collab:
+            collab = Collab(name=collab_name, query_name="all", is_all=True, is_main_collab=True)
+            collab.save()
+
+
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)
         print('finished')

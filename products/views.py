@@ -19,7 +19,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            serializer = ProductMainPageSerializer(product, context={'user_id': request.user.id})
+            serializer = ProductMainPageSerializer(product, context={'user_id': request.user.id, "list_lines": True})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -31,7 +31,7 @@ class ProductIdView(APIView):
     def get(self, request, id):
         try:
             product = Product.objects.get(id=id)
-            serializer = ProductMainPageSerializer(product)
+            serializer = ProductMainPageSerializer(product, context={"list_lines": True, 'user_id': request.user.id})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -46,7 +46,7 @@ class CategoryTreeView(APIView):
 
 
 class CategoryNoChildView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data

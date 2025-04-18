@@ -285,6 +285,19 @@ Response:
 
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
+<a name="user_post"></a>
+### 3.1 `[POST][User] user/user_info/<user_id>` Изменить данные пользователя
+Body:
+```json
+{
+  "username": "new_username",
+  "first_name": "new_first_name",
+  "last_name": "new_last_name",
+  "email": "new_email@example.com"
+}
+```
+Response: Данные пользователя
+
 <a name="reg"></a>
 
 ### 4. `[POST][Anon] user/register` регистрация пользователя
@@ -374,6 +387,7 @@ Response:
 [
   {
     "id": 1,
+    "name": "name",
     "address": "Проспект Мира 111",
     "post_index": "308033"
   }
@@ -389,6 +403,7 @@ Response:
 Body:
 ```json
 {
+  "name": "name",
   "address": "Проспект Мира 111",
   "post_index": "308033"
 }
@@ -399,6 +414,7 @@ Response:
 ```json
   {
     "id": 1,
+    "name": "name",
     "address": "Проспект Мира 111",
     "post_index": "308033"
   }
@@ -414,6 +430,7 @@ Response:
 Body:
 ```json
 {
+  "name": "name",
   "address": "Проспект Мира 111",
   "post_index": "308033"
 }
@@ -424,6 +441,7 @@ Response:
 ```json
   {
     "id": 1,
+    "name": "name",
     "address": "Проспект Мира 111",
     "post_index": "308033"
   }

@@ -22,17 +22,16 @@ class Command(BaseCommand):
         def add_product(data):
             # print(data)
             rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
-            if Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku'),
-                                      is_custom=False).exists() and not data.get('is_custom'):
+            manufactorer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", "")
+            if SG_PRODUCTS.filter(manufacturer_sku=manufactorer_sku).exists() and not data.get('is_custom'):
                 # Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku')).delete()
-                product = Product.objects.get(manufacturer_sku=data.get('manufacturer_sku'), is_custom=False)
+                product = Product.objects.get(manufacturer_sku=manufactorer_sku, is_custom=False)
+                product.manufacturer_sku = data.get('manufacturer_sku')
                 product.available_flag = True
                 product.rel_num = int(rel_num if rel_num else 0)
-
                 product.is_collab = data.get('is_collab')
 
             else:
-                Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku')).delete()
                 # Создание нового продукта
                 product = Product.objects.create(
                     model=data.get('model'),
@@ -40,7 +39,8 @@ class Command(BaseCommand):
                     russian_name=data.get('model'),
                     slug=data.get('manufacturer_sku'),
                     rel_num=int(rel_num if rel_num else 0),
-                    is_collab=data.get('is_collab')
+                    is_collab=data.get('is_collab'),
+                    main_color=Color.objects.get(name="multicolour")
                 )
 
                 # Обработка брендов
@@ -48,7 +48,6 @@ class Command(BaseCommand):
                 for brand_name in brands:
                     brand, _ = Brand.objects.get_or_create(name=brand_name)
                     product.brands.add(brand)
-
                 # Обработка цветов
                 colors = data.get('colors', [])
                 for color_name in colors:
@@ -82,6 +81,7 @@ class Command(BaseCommand):
                     for line in lines:
                         product.lines.add(Line.objects.get(view_name=line))
                 else:
+                    # линейка всегда существует, сюда код не дойдет
                     parent_line = None
                     for line_name in lines:
                         if Line.objects.filter(name=line_name, parent_line=parent_line,
@@ -106,8 +106,6 @@ class Command(BaseCommand):
                             product.lines.add(line_all)
                         parent_line = line
                         product.lines.add(line)
-
-
                 product.slug = ""
                 product.save()
                 # print(product.main_line.view_name)
@@ -152,12 +150,13 @@ class Command(BaseCommand):
             if product.is_collab:
                 collab, _ = Collab.objects.get_or_create(name=data.get('collab_name'))
                 product.collab = collab
-            product.slug = ""
-            product.save()
-            if (Category.objects.get(name="Кроссовки") not in product.categories.all() or product.model == "") and product.main_line is None:
+
+            if "кроссовки" not in "_".join(categories):
                 product.colorway = product.model
                 product.model = singular_data[categories[0]]
+            product.slug = ""
             product.save()
+
 
             # self.stdout.write(self.style.SUCCESS(product))
 
@@ -167,9 +166,10 @@ class Command(BaseCommand):
             k = 0
             ek = 0
             t0 = datetime.now()
+            SG_PRODUCTS = Product.objects.filter(id__lte=19000)
             # Перебор всех файлов в папке
             for filename in os.listdir(folder_path)[k:]:
-                if filename.endswith('.json'):  # Проверка, что файл имеет расширение .json
+                if filename.endswith('json'):  # Проверка, что файл имеет расширение .json
                     file_path = os.path.join(folder_path, filename)  # Полный путь к файлу
                     k += 1
                     if k % 100 == 0:

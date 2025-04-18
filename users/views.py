@@ -26,7 +26,7 @@ import requests
 
 
 class UserInfoView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, user_id):
         try:
@@ -37,6 +37,25 @@ class UserInfoView(APIView):
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            if user is None:
+                return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+            if request.user.id == user_id or request.user.is_staff:
+                data = json.loads(request.body)
+                user.username = data.get('username', user.username)
+                user.first_name = data.get('first_name', user.first_name)
+                user.last_name = data.get('last_name', user.last_name)
+                user.email = data.get('email', user.email)
+                user.save()
+                serializer = UserSerializer(user)
+                return Response(serializer.data)
+            else:
+                return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -159,7 +178,7 @@ class UserAddressView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
-            address = AddressInfo(address=data['address'], post_index=data['post_index'])
+            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
             address.save()
             request.user.address.add(address)
             return Response(AddressInfoSerializer(address).data)
@@ -174,6 +193,7 @@ class UserAddressView(APIView):
                 return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)
 
             data = json.loads(request.body)
+            address.name = data.get('name', address.name)
             address.address = data.get('address', address.address)
             address.post_index = data.get('post_index', address.post_index)
             address.save()

@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from promotions.models import Bonuses
 import json
 from products.models import Product, Category, Brand, SizeTable, SizeTranslationRows, Gender
 from django.core.exceptions import ObjectDoesNotExist
@@ -7,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+
         s = SizeTable.objects.all()
         s.delete()
         s = SizeTranslationRows.objects.all()

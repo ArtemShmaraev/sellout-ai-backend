@@ -17,7 +17,7 @@ def get_default_status():
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False, blank=False,
                              related_name="orders")
-    product_unit = models.ManyToManyField("shipping.ProductUnit", blank=True, related_name="orders")
+    product_units = models.ManyToManyField("shipping.ProductUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)
     email = models.EmailField(null=False, blank=False)
     tel = models.CharField(max_length=20, null=False, blank=False)

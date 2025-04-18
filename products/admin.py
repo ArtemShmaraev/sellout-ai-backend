@@ -5,7 +5,7 @@ from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Li
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('model', '_brand', 'colorway', '_line', 'min_price')
+    list_display = ('_brand', 'model', 'colorway', '_line',)
     search_fields = ("brands__name", "model", "colorway", "lines__name")
 
     # prepopulated_fields = {'slug': ('name',)}

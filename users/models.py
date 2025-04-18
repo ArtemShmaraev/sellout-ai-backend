@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from promotions.models import Bonuses
 
 
 class User(AbstractUser):
@@ -21,6 +22,7 @@ class User(AbstractUser):
         blank=True,
         related_name='my_users'
     )
+    phone_number = models.CharField(max_length=20)
 
     gender = models.ForeignKey("Gender", on_delete=models.PROTECT, null=True, blank=True,
                                related_name="users")
@@ -37,11 +39,14 @@ class User(AbstractUser):
 
     # wishlist and shopping cart are described in Wishlist and ShoppingCart models
 
-    referral_link = models.CharField(max_length=100, null=True, blank=True)
+    referral_promo = models.CharField(max_length=100, null=True, blank=True)
     ref_user = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
+    bonuses = models.ForeignKey("promotions.Bonuses", on_delete=models.PROTECT, null=True, blank=True,
+                                related_name="users")
     preferred_size_grid = models.CharField(max_length=100, null=True, blank=True)
     last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
                                                   blank=True)
+    happy_birthday = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.username

@@ -18,10 +18,12 @@ class Command(BaseCommand):
         # Выполнение команды python manage.py add_cat
         call_command('add_cat')
 
+        call_command('add_line')
+
         # Выполнение команды python manage.py add_size_table
-        call_command('add_size_table')
+        # call_command('add_size_table')
 
         # Выполнение команды python manage.py add_sg
-        call_command('add_sg')
+        # call_command('add_sg')
 
         print('All commands executed successfully.')

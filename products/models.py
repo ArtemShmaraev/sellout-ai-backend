@@ -60,27 +60,18 @@ class Line(models.Model):
     def save(self, *args, **kwargs):
         if self.parent_line:
             self.full_name = f"{self.parent_line.full_name} | {self.name}"
-        # if "все" in self.full_name.lower():
-        #     self.full_eng_name = "_".join(
-        #         self.parent_line.full_name.lower().replace("другие", "other").replace("|", "").replace("вся",
-        #                                                                                                "").replace(
-        #             "все",
-        #             "").split())
+        self.view_name = self.name
+        # if "все" in self.name.lower() or "другие" in self.name.lower():
+        #     self.view_name = self.name
         # else:
-        #     self.full_eng_name = "_".join(
-        #         self.full_name.lower().replace("другие", "other").replace("|", "").replace("вся", "").replace("все",
-        #                                                                                                       "").split())
-        if "все" in self.name.lower() or "другие" in self.name.lower():
-            self.view_name = self.name
-        else:
-            st = self.full_name.replace("|", "").split()
-            new_st = []
-            for s in st:
-                if "все" not in s.lower():
-                    new_st.append(s)
-
-            self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
-                "Dunk Dunk", "Dunk", 1).split())
+        #     st = self.full_name.replace("|", "").split()
+        #     new_st = []
+        #     for s in st:
+        #         if "все" not in s.lower():
+        #             new_st.append(s)
+        #
+        #     self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
+        #         "Dunk Dunk", "Dunk", 1).split())
         self.full_eng_name = self.view_name.lower().replace(" ", "_")
 
         if "все" in self.name.lower():
@@ -192,7 +183,6 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True)
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True)
 
-
     is_custom = models.BooleanField(default=False)
     is_collab = models.BooleanField(default=False)
     collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
@@ -212,6 +202,11 @@ class Product(models.Model):
     # product units are initialized in UnitBundle model by ForeignKey
 
     available_flag = models.BooleanField(default=True)
+
+    has_many_sizes = models.BooleanField(default=False)
+    has_many_colors = models.BooleanField(default=False)
+    has_many_configurations = models.BooleanField(default=False)
+
     last_upd = models.DateTimeField(default=timezone.now)
     add_date = models.DateField(default=date.today)
 
@@ -266,6 +261,13 @@ class Product(models.Model):
             lines = self.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')
             if lines:
                 self.main_line = lines.order_by('-id').first()
+
+            for brand in self.brands.all():
+                line, _ = Line.objects.get_or_create(name=brand.name, brand_id=brand.id)
+                line.save()
+                self.lines.add(line)
+                if Line.objects.filter(name=f"Все {brand.name}").exists():
+                    self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
         super().save(*args, **kwargs)
 
     def __str__(self):

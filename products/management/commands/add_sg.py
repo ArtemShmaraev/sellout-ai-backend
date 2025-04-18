@@ -24,7 +24,8 @@ class Command(BaseCommand):
         for data in all_data[k:]:
             k += 1
             kk += 1
-            manufacturer_sku = data.get('manufacturer_sku')
+            manufacturer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", " ")
+
 
             # Удаление существующего продукта с указанным manufacturer_sku
             Product.objects.filter(manufacturer_sku=manufacturer_sku).delete()
@@ -94,24 +95,24 @@ class Command(BaseCommand):
                     product.categories.add(parent_category)
 
 
-            main_collabs = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
-                     "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
-                     "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
-                     "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
-
-
-            collab = data.get('collab')
-            if collab:
-                if Collab.objects.filter(name=collab).exists():
-                    collab = Collab.objects.get(name=collab)
-                else:
-                    collab = Collab(name=collab)
-                    if collab.name in main_collabs:
-                        collab.is_main_collab = True
-                    else:
-                        collab.query_name = brand.query_name
-                    collab.save()
-                product.collab = collab
+            # main_collabs = ["Nike x Off-White", "Adidas Yeezy", "Nike x Travis Scott", "Jordan x Travis Scott",
+            #          "Nike x Supreme", "Nike x Union", "Nike x Louis Vuitton",
+            #          "Nike x Sacai", "Nike x Kaws", "Nike x Acronym", "Supreme x Louis Vuitton",
+            #          "Vans x Supreme", "Stone Island x Supreme", "Nike x Nocta", "Nike x Stussy"]
+            #
+            #
+            # collab = data.get('collab')
+            # if collab:
+            #     if Collab.objects.filter(name=collab).exists():
+            #         collab = Collab.objects.get(name=collab)
+            #     else:
+            #         collab = Collab(name=collab)
+            #         if collab.name in main_collabs:
+            #             collab.is_main_collab = True
+            #         else:
+            #             collab.query_name = brand.query_name
+            #         collab.save()
+            #     product.collab = collab
 
 
             # collections = data.get('collections', [])

@@ -10,6 +10,7 @@ from shipping.models import ProductUnit
 from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef, Max
 from django.db.models import Q, Case, When, Value, BooleanField
 from .tools import build_line_tree, build_category_tree
+from rest_framework.response import Response
 
 from rest_framework.filters import OrderingFilter
 
@@ -56,10 +57,11 @@ class BrandViewSet(viewsets.ModelViewSet):
 
 class CollabViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Collab.objects.all().order_by("name")
+    queryset = Collab.objects.filter(is_main_collab=True).order_by("id")
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = BrandSerializer
+
 
 class ProductPagination(pagination.PageNumberPagination):
     page_size = 60
@@ -130,6 +132,18 @@ class ProductViewSet(viewsets.ModelViewSet):
     # filterset_class = ProductFilter
     pagination_class = ProductPagination
     ordering_fields = ['exact_date']
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #
+    #     # Применение пагинации
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -205,9 +219,12 @@ class ProductViewSet(viewsets.ModelViewSet):
         brand = self.request.query_params.getlist("brand")
         collab = self.request.query_params.getlist("collab")
         available = self.request.query_params.get("available")
+        custom = self.request.query_params.get("custom")
 
         if not available:
             queryset = queryset.filter(available_flag=True)
+        if not custom:
+            queryset = queryset.filter(is_custom=False)
         if collab:
             if collab == "all":
                 queryset = queryset.filter(is_collab=True)

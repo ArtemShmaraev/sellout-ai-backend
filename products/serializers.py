@@ -35,7 +35,7 @@ class ColorSerializer(serializers.ModelSerializer):
 class LineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
-        fields = '__all__'
+        exclude = ['parent_line', 'brand',]
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
@@ -80,11 +80,28 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
     is_sale = serializers.SerializerMethodField()
     is_fast_shipping = serializers.SerializerMethodField()
     is_return = serializers.SerializerMethodField()
+    list_lines = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = "__all__"
+        exclude = ["platform_info",]
         depth = 2
+
+
+    def get_list_lines(self, obj):
+        list_lines = self.context.get('list_lines')
+        s = []
+        def get_line_parents(line):
+            parents = [line]
+            current_line = line
+            while current_line.parent_line:
+                current_line = current_line.parent_line
+                parents.append(current_line)
+            return parents[::-1]
+        if list_lines:
+            s = LineSerializer(get_line_parents(obj.main_line), many=True).data
+        return s
+
 
 
 

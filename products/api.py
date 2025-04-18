@@ -207,7 +207,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         available = self.request.query_params.get("available")
 
         if not available:
-            queryset = queryset.filter(available=True)
+            queryset = queryset.filter(available_flag=True)
         if collab:
             if collab == "all":
                 queryset = queryset.filter(is_collab=True)

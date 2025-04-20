@@ -126,32 +126,32 @@ class Command(BaseCommand):
 
 
             # Обработка линий
-            lines = data.get('lines', [])
-            if lines:
-                parent_line = None
-                for line_name in lines:
-                    if Line.objects.filter(name=line_name, parent_line=parent_line,
-                                           brand=Brand.objects.get(name=lines[0])).exists():
-                        line = Line.objects.get(name=line_name, parent_line=parent_line,
-                                                brand=Brand.objects.get(name=lines[0]))
-                    else:
-                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
-                                    full_name=line_name)
-                        line.save()
-                    if parent_line is not None:
-                        if Line.objects.filter(name=f"Все {parent_line.name}", brand=Brand.objects.get(name=lines[0]),
-                                               parent_line=parent_line).exists():
-                            line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                                        brand=Brand.objects.get(name=lines[0]))
-                        else:
-                            line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                            brand=Brand.objects.get(name=lines[0]),
-                                            full_name=line_name)
-                            line_all.save()
-                        product.lines.add(line_all)
-
-                    parent_line = line
-                    product.lines.add(line)
+            # lines = data.get('lines', [])
+            # if lines:
+            #     parent_line = None
+            #     for line_name in lines:
+            #         if Line.objects.filter(name=line_name, parent_line=parent_line,
+            #                                brand=Brand.objects.get(name=lines[0])).exists():
+            #             line = Line.objects.get(name=line_name, parent_line=parent_line,
+            #                                     brand=Brand.objects.get(name=lines[0]))
+            #         else:
+            #             line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
+            #                         full_name=line_name)
+            #             line.save()
+            #         if parent_line is not None:
+            #             if Line.objects.filter(name=f"Все {parent_line.name}", brand=Brand.objects.get(name=lines[0]),
+            #                                    parent_line=parent_line).exists():
+            #                 line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
+            #                                             brand=Brand.objects.get(name=lines[0]))
+            #             else:
+            #                 line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
+            #                                 brand=Brand.objects.get(name=lines[0]),
+            #                                 full_name=line_name)
+            #                 line_all.save()
+            #             product.lines.add(line_all)
+            #
+            #         parent_line = line
+            #         product.lines.add(line)
 
             # product.min_price = random.randint(10, 200) * 500 - 10
             product.slug = ""

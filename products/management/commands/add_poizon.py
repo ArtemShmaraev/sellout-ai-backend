@@ -68,44 +68,6 @@ class Command(BaseCommand):
                     main_color.save()
                     product.main_color = main_color
 
-                lines = data.get('lines', [])
-                if len(lines) != 0:
-                    lines = lines[0]
-
-                f = True
-                # проверка что линека уже существует
-                for line in lines:
-                    if not Line.objects.filter(view_name=line).exists():
-                        f = False
-                if f:  # если линейка уже существует
-                    for line in lines:
-                        product.lines.add(Line.objects.get(view_name=line))
-                else:
-                    # линейка всегда существует, сюда код не дойдет
-                    parent_line = None
-                    for line_name in lines:
-                        if Line.objects.filter(name=line_name, parent_line=parent_line,
-                                               brand=Brand.objects.get(name=lines[0])).exists():
-                            line = Line.objects.get(name=line_name, parent_line=parent_line,
-                                                    brand=Brand.objects.get(name=lines[0]))
-                        else:
-                            line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
-                                        full_name=line_name)
-                            line.save()
-                        if parent_line is not None:
-                            if Line.objects.filter(name=f"Все {parent_line.name}",
-                                                   brand=Brand.objects.get(name=lines[0]),
-                                                   parent_line=parent_line).exists():
-                                line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                                            brand=Brand.objects.get(name=lines[0]))
-                            else:
-                                line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                                brand=Brand.objects.get(name=lines[0]),
-                                                full_name=line_name)
-                                line_all.save()
-                            product.lines.add(line_all)
-                        parent_line = line
-                        product.lines.add(line)
                 product.slug = ""
                 product.save()
                 # print(product.main_line.view_name)
@@ -138,6 +100,45 @@ class Command(BaseCommand):
 
             if data['approximate_date']:
                 product.approximate_date = data['approximate_date']
+
+            lines = data.get('lines', [])
+            if len(lines) != 0:
+                lines = lines[0]
+
+            f = True
+            # проверка что линека уже существует
+            for line in lines:
+                if not Line.objects.filter(view_name=line).exists():
+                    f = False
+            if f:  # если линейка уже существует
+                for line in lines:
+                    product.lines.add(Line.objects.get(view_name=line))
+            else:
+                # линейка всегда существует, сюда код не дойдет
+                parent_line = None
+                for line_name in lines:
+                    if Line.objects.filter(name=line_name, parent_line=parent_line,
+                                           brand=Brand.objects.get(name=lines[0])).exists():
+                        line = Line.objects.get(name=line_name, parent_line=parent_line,
+                                                brand=Brand.objects.get(name=lines[0]))
+                    else:
+                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
+                                    full_name=line_name)
+                        line.save()
+                    if parent_line is not None:
+                        if Line.objects.filter(name=f"Все {parent_line.name}",
+                                               brand=Brand.objects.get(name=lines[0]),
+                                               parent_line=parent_line).exists():
+                            line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
+                                                        brand=Brand.objects.get(name=lines[0]))
+                        else:
+                            line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
+                                            brand=Brand.objects.get(name=lines[0]),
+                                            full_name=line_name)
+                            line_all.save()
+                        product.lines.add(line_all)
+                    parent_line = line
+                    product.lines.add(line)
 
             # # Обработка рекомендованного пола Возможно тут список из одного элемента!!!
             # recommended_gender = data.get('recommended_gender')

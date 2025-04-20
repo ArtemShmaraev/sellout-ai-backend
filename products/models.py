@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=255)
+    url = models.CharField(max_length=512)
 
     def __str__(self):
         return str(self.product)
@@ -230,7 +230,7 @@ class Product(models.Model):
                     self.categories.add(category_is_all)
                 elif Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}").exists():
                     category_is_all = Category.objects.get(name=f"Вся {category.parent_category.name.lower()}",
-                                                              parent_category=category.parent_category)
+                                                           parent_category=category.parent_category)
                     self.categories.add(category_is_all)
                 add_categories_to_product(category.parent_category)
 

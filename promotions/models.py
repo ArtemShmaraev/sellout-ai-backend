@@ -74,6 +74,7 @@ def update_total_amount_after_delete(sender, instance, **kwargs):
     for bonus in bonuses:
         bonus.update_total_amount()
 
+
 @receiver(post_save, sender=AccrualBonus)
 def update_bonus_amount(sender, instance, **kwargs):
     if instance.bonuses.all():

@@ -48,7 +48,7 @@ def run_scheduler():
         time.sleep(60)  # Проверка каждую минуту
 
 scheduler_thread = threading.Thread(target=run_scheduler)
-scheduler_thread.start()
+# scheduler_thread.start()
 
 
 # def run_bonus_scheduler():

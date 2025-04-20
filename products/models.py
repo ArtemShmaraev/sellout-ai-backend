@@ -48,7 +48,6 @@ class Category(models.Model):
 class Line(models.Model):
     name = models.CharField(max_length=255)
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
-    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, null=True, blank=True, related_name="lines")
     is_all = models.BooleanField(default=False)
     view_name = models.CharField(max_length=255, default="")  # для отображения в фильтрах
     full_name = models.CharField(max_length=255, default="")  # полный путь
@@ -235,7 +234,6 @@ class Product(models.Model):
                 add_categories_to_product(category.parent_category)
 
         def add_lines_to_product(line):
-            line.brand = self.brands.first()
             self.lines.add(line)
             if line.parent_line:
                 if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
@@ -247,9 +245,8 @@ class Product(models.Model):
             self.slug = slugify(
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
 
-            if len(self.lines.all()) == 1:
-                for line in self.lines.all():
-                    add_lines_to_product(line)
+            for line in self.lines.all():
+                add_lines_to_product(line)
 
             for cat in self.categories.all():
                 add_categories_to_product(cat)
@@ -263,7 +260,7 @@ class Product(models.Model):
                 self.main_line = lines.order_by('-id').first()
 
             for brand in self.brands.all():
-                line, _ = Line.objects.get_or_create(name=brand.name, brand_id=brand.id)
+                line, _ = Line.objects.get_or_create(name=brand.name)
                 line.save()
                 self.lines.add(line)
                 if Line.objects.filter(name=f"Все {brand.name}").exists():

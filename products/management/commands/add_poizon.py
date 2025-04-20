@@ -40,7 +40,7 @@ class Command(BaseCommand):
                     slug=data.get('manufacturer_sku'),
                     rel_num=int(rel_num if rel_num else 0),
                     is_collab=data.get('is_collab'),
-                    main_color=Color.objects.get(name="multicolour")
+                    main_color=Color.objects.get_or_create(name="multicolour")[0]
                 )
 
                 # Обработка брендов
@@ -49,37 +49,29 @@ class Command(BaseCommand):
                     brand, _ = Brand.objects.get_or_create(name=brand_name)
                     product.brands.add(brand)
                 # Обработка цветов
-                colors = data.get('colors', [])
-                for color_name in colors:
-                    color, _ = Color.objects.get_or_create(name=color_name)
-                    product.colors.add(color)
 
-                # Обработка основного цвета
-                main_color = data.get('main_color')
-                if main_color:
-                    color_in = check_color_in_list(main_color)
-                    if color_in:
-                        main_color, _ = Color.objects.get_or_create(name=main_color)
-                        main_color.hex = color_in['hex']
-                        main_color.russian_name = color_in['russian_name']
-                    else:
-                        main_color, _ = Color.objects.get_or_create(name=main_color)
-                    main_color.is_main_color = True
-                    main_color.save()
-                    product.main_color = main_color
+                # colors = data.get('colors', [])
+                # for color_name in colors:
+                #     color, _ = Color.objects.get_or_create(name=color_name)
+                #     product.colors.add(color)
+                #
+                # # Обработка основного цвета
+                # main_color = data.get('main_color')
+                # if main_color:
+                #     color_in = check_color_in_list(main_color)
+                #     if color_in:
+                #         main_color, _ = Color.objects.get_or_create(name=main_color)
+                #         main_color.hex = color_in['hex']
+                #         main_color.russian_name = color_in['russian_name']
+                #     else:
+                #         main_color, _ = Color.objects.get_or_create(name=main_color)
+                #     main_color.is_main_color = True
+                #     main_color.save()
+                #     product.main_color = main_color
 
-                product.slug = ""
-                product.save()
+
                 # print(product.main_line.view_name)
-                if product.main_line is not None:
-                    model = product.main_line.view_name
-                    for brand in brands:
-                        model = model.replace(brand, "") if brand != "Jordan" and "Air" not in model else model
-                    model = " ".join(model.split())
-                    if not Brand.objects.filter(name=model).exists():
-                        product.model = model
 
-                        product.colorway = data.get('model')
 
             categories = data.get('categories')
             if not isinstance(categories, list):
@@ -117,28 +109,37 @@ class Command(BaseCommand):
                 # линейка всегда существует, сюда код не дойдет
                 parent_line = None
                 for line_name in lines:
-                    if Line.objects.filter(name=line_name, parent_line=parent_line,
-                                           brand=Brand.objects.get(name=lines[0])).exists():
-                        line = Line.objects.get(name=line_name, parent_line=parent_line,
-                                                brand=Brand.objects.get(name=lines[0]))
+                    if Line.objects.filter(name=line_name, parent_line=parent_line).exists():
+                        line = Line.objects.get(name=line_name, parent_line=parent_line)
                     else:
-                        line = Line(name=line_name, parent_line=parent_line, brand=Brand.objects.get(name=lines[0]),
-                                    full_name=line_name)
+                        line = Line(name=line_name, parent_line=parent_line, full_name=line_name)
                         line.save()
                     if parent_line is not None:
                         if Line.objects.filter(name=f"Все {parent_line.name}",
-                                               brand=Brand.objects.get(name=lines[0]),
                                                parent_line=parent_line).exists():
-                            line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                                        brand=Brand.objects.get(name=lines[0]))
+                            line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line, )
                         else:
                             line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                            brand=Brand.objects.get(name=lines[0]),
                                             full_name=line_name)
                             line_all.save()
                         product.lines.add(line_all)
                     parent_line = line
                     product.lines.add(line)
+
+            product.slug = ""
+            product.save()
+
+
+            if product.main_line is not None:
+                brands = data.get('brands', [])
+                model = product.main_line.view_name
+                for brand in brands:
+                    model = model.replace(brand, "") if brand != "Jordan" and "Air" not in model else model
+                model = " ".join(model.split())
+                if not Brand.objects.filter(name=model).exists():
+                    product.model = model
+
+                    product.colorway = data.get('model')
 
             # # Обработка рекомендованного пола Возможно тут список из одного элемента!!!
             # recommended_gender = data.get('recommended_gender')
@@ -157,7 +158,6 @@ class Command(BaseCommand):
                 product.model = singular_data[categories[0]]
             product.slug = ""
             product.save()
-
 
             # self.stdout.write(self.style.SUCCESS(product))
 

@@ -4,11 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
+from django.http import JsonResponse, FileResponse
 from .models import Product, Category, Line
 from rest_framework import status
 from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child
-
+from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
 # Create your views here.
 
@@ -123,6 +123,24 @@ class ProductUpdateView(APIView):
         product.save()
 
         return Response(ProductMainPageSerializer(product).data, status=status.HTTP_200_OK)
+
+
+class ProductSizeView(APIView):
+    def get(self, request):
+        # Откройте JSON-файл и загрузите его содержимое
+        with open('size_table_2.json', 'r', encoding='utf-8') as file:
+            product_sizes_data = json.load(file)
+
+        # Верните JSON-данные в ответе
+        return Response(product_sizes_data)
+
+
+class AddProductView(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        product = add_product(data)
+        return Response(product.manufacturer_sku)
+
 
 # class ProductMainPageView(rest_framework.generics.ListAPIView):
 #     queryset = Product.objects.all()

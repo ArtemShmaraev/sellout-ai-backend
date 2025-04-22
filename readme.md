@@ -12,19 +12,20 @@ Anon)
 1. `[GET][Admin] user` информация обо всех пользователях, списком [⬇️](#users)
 2. `[GET][Admin] user/<user_id>` данные пользователя [⬇️](#user_id)
 3. `[GET][User] user_info/<user_id>` данные пользователя [⬇️](#user_id)
-4. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
-5. `[POST][Anon] user/login` вход в систему [⬇️](#log)
-6. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
-7. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
+4. `[POST][User] user_info/<user_id>` редактирование данных пользователя [⬇️](#edit_user_id)
+5. `[POST][Anon] user/register` регистрация пользователя [⬇️](#reg)
+6. `[POST][Anon] user/login` вход в систему [⬇️](#log)
+7. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
+8. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
 статус ответа 200 если токен валиден, иначе 401
 -
-6. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
-7. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
-8. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя [⬇️](#edit_address)
-9. `[DELETE][User] user/address/<user_id>/<address_id>`удаление адреса пользователя [⬇️](#del_address)
+9. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
+10. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
+11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя [⬇️](#edit_address)
+12. `[DELETE][User] user/address/<user_id>/<address_id>`удаление адреса пользователя [⬇️](#del_address)
 -
-10. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
-11. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
+13. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
+14. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
 
 ## Product API
 
@@ -285,9 +286,9 @@ Response:
 
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
-<a name="user_post"></a>
-### 3.1 `[POST][User] user/user_info/<user_id>` Изменить данные пользователя
-Body:
+<a name="edit_user_id"></a>
+### 5 `[POST][User] user/user_info/<user_id>` Изменить данные пользователя
+Body: передать измененные параметры
 ```json
 {
   "username": "new_username",
@@ -300,7 +301,7 @@ Response: Данные пользователя
 
 <a name="reg"></a>
 
-### 4. `[POST][Anon] user/register` регистрация пользователя
+### 6. `[POST][Anon] user/register` регистрация пользователя
 
 Body:
 
@@ -331,7 +332,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 <a name="log"></a>
 
-### 5. `[POST][Anon] user/login` вход в систему
+### 7. `[POST][Anon] user/login` вход в систему
 
 Body:
 
@@ -358,7 +359,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="refresh"></a>
-### 6. `[POST][User] user/token/refresh/` обновление токена
+### 8. `[POST][User] user/token/refresh/` обновление токена
 Body:
 ```json
 {
@@ -379,7 +380,7 @@ Response:
 
 <a name="address"></a>
 
-### 6. `[GET][User] user/address/<user_id>` адреса пользователя
+### 9. `[GET][User] user/address/<user_id>` адреса пользователя
 
 Response:
 
@@ -399,7 +400,7 @@ Response:
 
 <a name="add_address"></a>
 
-### 7. `[POST][User] user/address/<user_id>` добавление адреса пользователя
+### 10. `[POST][User] user/address/<user_id>` добавление адреса пользователя
 Body:
 ```json
 {
@@ -426,7 +427,7 @@ Response:
 
 <a name="edit_address"></a>
 
-### 8. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя
+### 11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя
 Body:
 ```json
 {
@@ -453,7 +454,7 @@ Response:
 
 <a name="del_address"></a>
 
-### 9. `[DELETE][User] user/address/<user_id>/<address_id>` удаление адреса пользователя
+### 12. `[DELETE][User] user/address/<user_id>/<address_id>` удаление адреса пользователя
 Response("Адрес успешно удален")
 
 [:arrow_up:User API](#user)
@@ -462,7 +463,7 @@ Response("Адрес успешно удален")
 
 <a name="last"></a>
 
-### 10. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
+### 13. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя
 
 Response:
 
@@ -547,7 +548,7 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="add_last"></a>
-### 11. `[POST][User] user/last_seen/<user_id>` Добавление товара в просмотренные
+### 14. `[POST][User] user/last_seen/<user_id>` Добавление товара в просмотренные
 Body:
 ```json
 {

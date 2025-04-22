@@ -35,7 +35,7 @@ class ColorSerializer(serializers.ModelSerializer):
 class LineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
-        exclude = ['parent_line', 'brand',]
+        exclude = ['parent_line',]
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 

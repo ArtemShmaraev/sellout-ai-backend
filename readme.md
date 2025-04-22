@@ -390,7 +390,8 @@ Response:
     "id": 1,
     "name": "name",
     "address": "Проспект Мира 111",
-    "post_index": "308033"
+    "post_index": "308033",
+     "is_main": true
   }
 ]
 ```
@@ -406,7 +407,8 @@ Body:
 {
   "name": "name",
   "address": "Проспект Мира 111",
-  "post_index": "308033"
+  "post_index": "308033", 
+   "is_main": true
 }
 
 ```
@@ -417,7 +419,8 @@ Response:
     "id": 1,
     "name": "name",
     "address": "Проспект Мира 111",
-    "post_index": "308033"
+    "post_index": "308033",
+   "is_main": true
   }
 ```
 
@@ -433,7 +436,8 @@ Body:
 {
   "name": "name",
   "address": "Проспект Мира 111",
-  "post_index": "308033"
+  "post_index": "308033",
+   "is_main": true
 }
 
 ```
@@ -444,7 +448,8 @@ Response:
     "id": 1,
     "name": "name",
     "address": "Проспект Мира 111",
-    "post_index": "308033"
+    "post_index": "308033",
+   "is_main": true
   }
 ```
 

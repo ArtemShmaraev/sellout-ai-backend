@@ -178,7 +178,7 @@ class UserAddressView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
-            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
+            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'], is_main=data['is_main'])
             address.save()
             request.user.address.add(address)
             return Response(AddressInfoSerializer(address).data)
@@ -196,6 +196,7 @@ class UserAddressView(APIView):
             address.name = data.get('name', address.name)
             address.address = data.get('address', address.address)
             address.post_index = data.get('post_index', address.post_index)
+            address.is_main = data.get('is_main', address.is_main)
             address.save()
 
             return Response(AddressInfoSerializer(address).data)

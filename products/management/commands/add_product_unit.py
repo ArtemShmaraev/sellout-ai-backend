@@ -1,6 +1,6 @@
 from random import randint
 from django.core.management.base import BaseCommand
-from products.models import Product, SizeTranslationRows
+from products.models import Product
 from shipping.models import Platform, ProductUnit, DeliveryType
 from utils.models import Currency
 
@@ -19,19 +19,21 @@ class Command(BaseCommand):
         platform.save()
 
         for product in products:
+            product.save()
+            continue
             # Генерация случайного количества product_unit для каждого продукта
             num_units = randint(5, 10)
 
             for _ in range(num_units):
                 # Создание случайного product_unit
-                size = SizeTranslationRows.objects.all()[randint(1, 100)]  # Замените на логику выбора размера
+                size = str(randint(36, 45))  # Замените на логику выбора размера
                 start_price = randint(10, 200) * 500 - 10  # Замените на логику генерации старой цены
                 final_price = start_price  # Замените на логику генерации новой цены
                 url = ""  # Замените на логику генерации URL
 
                 product_unit = ProductUnit.objects.create(
                     product=product,
-                    size=size,
+                    good_size_platform=size,
                     # currency=currencies.first(),
                     start_price=start_price,
                     final_price=final_price,

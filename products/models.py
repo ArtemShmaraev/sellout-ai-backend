@@ -1,3 +1,5 @@
+import random
+
 from django.db import models
 from django.utils import timezone
 from datetime import date
@@ -193,7 +195,10 @@ class Product(models.Model):
 
     gender = models.ManyToManyField("Gender", related_name='products', blank=True)
     recommended_gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
-    size_table = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True)
+    size_table = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name='products')
+    size_table_platform = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
+                                            related_name='products_platform')
 
     min_price = models.IntegerField(blank=True, null=True)
 
@@ -215,6 +220,7 @@ class Product(models.Model):
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0)
     platform_info = models.JSONField(blank=True, null=True)
+    sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
     objects = ProductManager()
 
@@ -265,31 +271,53 @@ class Product(models.Model):
                 self.lines.add(line)
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
-        super().save(*args, **kwargs)
+        product_units = self.product_units.all()
+        if len(self.sizes_prices) != len(product_units):
+            for product_unit in product_units:
+                size = product_unit.size
 
-    def __str__(self):
-        return self.model
+                last = next(
+                    (size_data for size_data in self.sizes_prices
+                     if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
+                     and size_data.get("is_sale") == product_unit.is_sale
+                     and size_data.get("is_return") == product_unit.is_return
+                     and size_data.get("size") == size),
+                    None
+                )
+                if last:
+                    if product_unit.final_price < last['price']:
+                        last['price'] = product_unit.final_price
+                else:
+                    self.sizes_prices.append({"size": product_unit.size,
+                                              "price": product_unit.final_price,
+                                              "is_fast_shipping": product_unit.is_fast_shipping,
+                                              "is_sale": product_unit.is_sale,
+                                              "is_return": product_unit.is_return})
+
+            super().save(*args, **kwargs)
+
+        def __str__(self):
+            return self.model
 
 
 class SizeTable(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
-    brand = models.ForeignKey("Brand", on_delete=models.PROTECT, blank=True, null=True)
-    category = models.ForeignKey("Category", on_delete=models.PROTECT, blank=True, null=True)
-    # gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
-    gender = models.CharField(max_length=255, blank=True, null=True)
-    size_row = models.ManyToManyField("SizeTranslationRows", related_name='rows', blank=True, null=True)
+    filter_name = models.CharField(max_length=255, blank=True, null=True)
+    category = models.ManyToManyField("Category", related_name='size_tables', blank=True)
+    gender = models.ManyToManyField("Gender", related_name='size_tables', blank=True)
+    size_rows = models.JSONField(blank=True, null=True)
+    standard = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.brand} {self.gender}"
+        return f"{self.name}"
 
-
-class SizeTranslationRows(models.Model):
-    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT)
-    US = models.CharField(max_length=16, blank=True, null=True)
-    UK = models.CharField(max_length=16, blank=True, null=True)
-    EU = models.CharField(max_length=16, blank=True, null=True)
-    RU = models.CharField(max_length=16, blank=True, null=True)
-    CM = models.CharField(max_length=16, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.table} {self.US}"
+    # class SizeTranslationRows(models.Model):
+    #     table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT)
+    #     US = models.CharField(max_length=16, blank=True, null=True)
+    #     UK = models.CharField(max_length=16, blank=True, null=True)
+    #     EU = models.CharField(max_length=16, blank=True, null=True)
+    #     RU = models.CharField(max_length=16, blank=True, null=True)
+    #     CM = models.CharField(max_length=16, blank=True, null=True)
+    #
+    #     def __str__(self):
+    #         return f"{self.table} {self.US}"

@@ -241,52 +241,55 @@ class ProductViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(Q(categories__eng_name__in=category))
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
-        if is_fast_shipping:
-            queryset = queryset.filter(product_units__is_fast_shipping=(is_fast_shipping == "is_fast_shipping"))
-        if is_sale:
-            queryset = queryset.filter(product_units__is_sale=(is_sale == "is_sale"))
-        if is_return:
-            queryset = queryset.filter(product_units__is_sale=(is_sale == "is_return"))
-        if price_max:
-            queryset = queryset.filter(Q(product_units__final_price__lte=price_max))
-        if price_min:
-            queryset = queryset.filter(Q(product_units__final_price__gte=price_min))
 
-        # color = self.request.query_params.getlist('line')
-        if size_us != [] and price_max and price_min:
-            # вариант №0
-            queryset = queryset.filter(
-                Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max) & Q(
-                    product_units__final_price__gte=price_min)
-            )
+        """фильтры по продукт юнитам"""
 
-            # надо затестить что быстрее это №1
-            # queryset = queryset.filter(
-            #     product_units__size__US=size_us,
-            #     product_units__final_price__lte=price_max
-            # )
+        # if is_fast_shipping:
+        #     queryset = queryset.filter(product_size_units__product_units__is_fast_shipping=(is_fast_shipping == "is_fast_shipping"))
+        # if is_sale:
+        #     queryset = queryset.filter(product_size_units__product_units__is_sale=(is_sale == "is_sale"))
+        # if is_return:
+        #     queryset = queryset.filter(product_size_units__product_units__is_sale=(is_sale == "is_return"))
+        # if price_max:
+        #     queryset = queryset.filter(Q(product_size_units__product_units__final_price__lte=price_max))
+        # if price_min:
+        #     queryset = queryset.filter(Q(product_size_units__product_units__final_price__gte=price_min))
+        #
+        # # color = self.request.query_params.getlist('line')
+        # if size_us != [] and price_max and price_min:
+        #     # вариант №0
+        #     queryset = queryset.filter(
+        #         Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max) & Q(
+        #             product_units__final_price__gte=price_min)
+        #     )
+        #
+        #     # надо затестить что быстрее это №1
+        #     # queryset = queryset.filter(
+        #     #     product_units__size__US=size_us,
+        #     #     product_units__final_price__lte=price_max
+        #     # )
+        #
+        #     # надо затестить что быстрее это №2
+        #     # queryset = queryset.annotate(
+        #     #     has_valid_size=Case(
+        #     #         When(Q(product_units__size__US=size_us) & Q(product_units__final_price__lte=price_max), then=Value(True)),
+        #     #         default=Value(False),
+        #     #         output_field=BooleanField()
+        #     #     )
+        #     # ).filter(has_valid_size=True)
+        # elif size_us and price_min:
+        #     queryset = queryset.filter(
+        #         Q(product_units__size__US__in=size_us) & Q(product_units__final_price__gte=price_min)
+        #     )
+        #
+        # elif size_us and price_max:
+        #     queryset = queryset.filter(
+        #         Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max)
+        #     )
+        # elif size_us:
+        #     queryset = queryset.filter(product_units__size__US__in=size_us)
 
-            # надо затестить что быстрее это №2
-            # queryset = queryset.annotate(
-            #     has_valid_size=Case(
-            #         When(Q(product_units__size__US=size_us) & Q(product_units__final_price__lte=price_max), then=Value(True)),
-            #         default=Value(False),
-            #         output_field=BooleanField()
-            #     )
-            # ).filter(has_valid_size=True)
-        elif size_us and price_min:
-            queryset = queryset.filter(
-                Q(product_units__size__US__in=size_us) & Q(product_units__final_price__gte=price_min)
-            )
-
-        elif size_us and price_max:
-            queryset = queryset.filter(
-                Q(product_units__size__US__in=size_us) & Q(product_units__final_price__lte=price_max)
-            )
-        elif size_us:
-            queryset = queryset.filter(product_units__size__US__in=size_us)
-
-        queryset = queryset.distinct()
+        # queryset = queryset.distinct()
         return queryset
 
 # def filter_queryset(self, queryset):

@@ -10,7 +10,7 @@ urlpatterns = router.urls
 urlpatterns.append(path('last_seen/<int:user_id>', UserLastSeenView.as_view()))
 urlpatterns.append(path('user_info/<int:user_id>', UserInfoView.as_view(), name='user_info'))
 urlpatterns.append(path('address/<int:user_id>', UserAddressView.as_view()))
-urlpatterns.append(path('address/<int:user_id>/<int:addresss_id>', UserAddressView.as_view()))
+urlpatterns.append(path('address/<int:user_id>/<int:address_id>', UserAddressView.as_view()))
 urlpatterns.append(path('register', UserRegister.as_view(), name='register'))
 urlpatterns.append(path('change_psw', UserChangePassword.as_view()))
 # urlpatterns.append(path('login', LoginUser.as_view()))

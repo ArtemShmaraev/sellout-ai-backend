@@ -178,9 +178,12 @@ class UserAddressView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
-            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'], is_main=data['is_main'])
+            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
             address.save()
             request.user.address.add(address)
+            if data['is_main']:
+                address.is_main = True
+                address.save()
             return Response(AddressInfoSerializer(address).data)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
@@ -188,6 +191,7 @@ class UserAddressView(APIView):
     def put(self, request, user_id, address_id):
         if request.user.id == user_id or request.user.is_staff:
             try:
+                address = AddressInfo.objects.get(id=address_id)
                 address = AddressInfo.objects.get(id=address_id)
             except AddressInfo.DoesNotExist:
                 return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)

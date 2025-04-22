@@ -1,5 +1,6 @@
 import rest_framework.generics
 from django.shortcuts import render
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -11,6 +12,32 @@ from .serializers import ProductMainPageSerializer, CategorySerializer, LineSeri
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
 # Create your views here.
+
+class CustomPagination(PageNumberPagination):
+    page_size = 60
+    page_size_query_param = 'page_size'  # Дополнительно можно разрешить клиенту указывать желаемое количество товаров на странице
+    max_page_size = 120  # Опционально, чтобы ограничить максимальное количество товаров на странице
+
+class ProductView(APIView):
+    pagination_class = CustomPagination
+
+    def get(self, request):
+        products = Product.objects.all()
+        context = {'user_id': self.request.user.id}
+
+        size = self.request.query_params.getlist('size')
+        price_max = self.request.query_params.get('price_max')
+        price_min = self.request.query_params.get('price_min')
+        ordering = self.request.query_params.get('ordering')
+
+        # Передайте значения фильтров в контекст сериализатора
+        context['size'] = context['size_us'] = size if size else None
+        context['price_max'] = price_max if price_max else None
+        context['price_min'] = price_min if price_min else None
+        context['ordering'] = ordering if ordering else None
+        paginated_products = self.pagination_class.paginate_queryset(products, request)
+        serializer = ProductMainPageSerializer(paginated_products, many=True, context=context)
+        return self.pagination_class.get_paginated_response(serializer.data)
 
 
 class ProductSlugView(APIView):
@@ -140,6 +167,22 @@ class AddProductView(APIView):
         data = json.loads(request.body)
         product = add_product(data)
         return Response(product.manufacturer_sku)
+
+
+class ListProductView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        try:
+            s_products = json.loads(request.body)["products"]
+            products = Product.objects.filter(id__in=s_products)
+            return Response(ProductMainPageSerializer(products, many=True).data)
+        except json.JSONDecodeError:
+            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+        except Product.DoesNotExist:
+            return Response("One or more product do not exist", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class ProductMainPageView(rest_framework.generics.ListAPIView):

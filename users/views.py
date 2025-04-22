@@ -192,7 +192,6 @@ class UserAddressView(APIView):
         if request.user.id == user_id or request.user.is_staff:
             try:
                 address = AddressInfo.objects.get(id=address_id)
-                address = AddressInfo.objects.get(id=address_id)
             except AddressInfo.DoesNotExist:
                 return Response("Адрес не существует", status=status.HTTP_404_NOT_FOUND)
 

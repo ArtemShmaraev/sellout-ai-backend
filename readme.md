@@ -34,6 +34,7 @@ Anon)
 3. `[GET][Anon] product/products/&page=n` страница товаров [⬇️](#product_all)
 4. `[PUT][Anon] product/update/<product_id>` редактирование товара [⬇️](#product_update)
 5. `[DELETE][Anon] product/update/<product_id>` удаление товара по id
+6. `[POST][Anon] product/list_product` карточки товаров по массиву {"products": [1, 2]}
 
 ## Category, Line, Color, Brand API
 у каждой сущности есть все виды запросов [GET]

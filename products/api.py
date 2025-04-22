@@ -149,13 +149,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['user_id'] = self.request.user.id
         # Получите значения фильтров из запроса
-        size_us = self.request.query_params.getlist('size_us')
+        size = self.request.query_params.getlist('size')
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
 
         # Передайте значения фильтров в контекст сериализатора
-        context['size_us'] = context['size_us'] = size_us if size_us else None
+        context['size'] = context['size_us'] = size if size else None
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None

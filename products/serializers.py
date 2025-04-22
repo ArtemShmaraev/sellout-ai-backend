@@ -111,29 +111,30 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         return obj.product_units.filter(is_sale=True).exists()
 
     def get_min_price_product_unit(self, obj):
-        size_us = self.context.get('size_us')
+        size_us = self.context.get('size')
         price_max = self.context.get('price_max')
         price_min = self.context.get('price_min')
+        return obj.min_price
 
         # Проверьте, соответствуют ли значения фильтров product_unit
-        if size_us and price_max and price_min:
-            # Верните поле final_price
-            return obj.product_units.filter(size__US__in=size_us, final_price__lte=price_max,
-                                            final_price__gte=price_min).aggregate(min_price=Min('final_price'))[
-                'min_price']
-        elif size_us and price_max:
-            return obj.product_units.filter(size__US__in=size_us, final_price__lte=price_max).aggregate(
-                min_price=Min('final_price'))['min_price']
-
-        elif size_us and price_min:
-            return obj.product_units.filter(size__US__in=size_us, final_price__gte=price_min).aggregate(
-                min_price=Min('final_price'))['min_price']
-
-        elif size_us:
-            return obj.product_units.filter(size__US__in=size_us).aggregate(
-                min_price=Min('final_price'))['min_price']
-        else:
-            return obj.min_price
+        # if size_us and price_max and price_min:
+        #     # Верните поле final_price
+        #     return obj.product_units.filter(size__US__in=size_us, final_price__lte=price_max,
+        #                                     final_price__gte=price_min).aggregate(min_price=Min('final_price'))[
+        #         'min_price']
+        # elif size_us and price_max:
+        #     return obj.product_units.filter(size__US__in=size_us, final_price__lte=price_max).aggregate(
+        #         min_price=Min('final_price'))['min_price']
+        #
+        # elif size_us and price_min:
+        #     return obj.product_units.filter(size__US__in=size_us, final_price__gte=price_min).aggregate(
+        #         min_price=Min('final_price'))['min_price']
+        #
+        # elif size_us:
+        #     return obj.product_units.filter(size__US__in=size_us).aggregate(
+        #         min_price=Min('final_price'))['min_price']
+        # else:
+        #     return obj.min_price
 
     def get_in_wishlist(self, product):
         user_id = self.context.get('user_id')
@@ -145,14 +146,3 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 pass
         return False
 
-    # def get_is_favorite(self, product_id, wishlist):
-    #     if self.context.get('user_id') > 0:
-    #         data = WishlistUnit.objects.filter(wishlist=wishlist, product_id=product_id)
-    #         return len(data) > 0
-    #     return False
-    #
-    # def to_representation(self, instance):
-    #     data = super().to_representation(instance)
-    #     wishlist = Wishlist.objects.get(user_id=self.context.get('user_id'))
-    #     data['is_favorite'] = self.get_is_favorite(data['id'], wishlist)
-    #     return data

@@ -84,7 +84,7 @@ def build_line_tree(lines):
                 sort_children(item['children'])
         return data
 
-    root_lines = sort_children(root_lines)
+    # root_lines = sort_children(root_lines)
     with_children = [x for x in root_lines if x.get('children')]
     without_children = [x for x in root_lines if not x.get('children')]
 

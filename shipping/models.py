@@ -50,13 +50,18 @@ def get_default_delivery_type():
     return default_object.pk
 
 
-class ProductUnit(models.Model):
+class ProductSizeUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="product_units",
                                 null=False, blank=False)
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name='product_units',
                              null=True, blank=True)
     color = models.CharField(max_length=255, null=True, blank=True, default="")
     configuration = models.CharField(max_length=255, null=True, blank=True, default="")
+
+
+class ProductUnit(models.Model):
+    product_size_unit = models.ForeignKey("ProductSizeUnit", on_delete=models.CASCADE, related_name="product_units",
+                                null=False, blank=False)
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)

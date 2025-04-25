@@ -22,7 +22,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
         exclude = ['user', ]
         # fields = '__all__'
-        depth = 2
+        depth = 3
 
 
 class OrderSerializer(serializers.ModelSerializer):

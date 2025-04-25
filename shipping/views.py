@@ -80,9 +80,10 @@ class MinPriceForSizeView(APIView):
                     d['view_size'] = size
                 min_prices_by_size[size] = d
                 s.append(d)
-            return Response(sorted(s, key=lambda x: int(x['size'])))
+            return Response(sorted(s, key=lambda x: int(x['size']) if x['size'].isdigit() else x['size']))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
 
 class ProductUnitProductView(APIView):
     # authentication_classes = [JWTAuthentication]
@@ -143,7 +144,6 @@ class ProductUnitProductMainView(APIView):
 
 class ListProductUnitView(APIView):
     # authentication_classes = [JWTAuthentication]
-
     def post(self, request):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]

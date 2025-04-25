@@ -76,7 +76,7 @@ class ShoppingCart(models.Model):
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь
         # Если промокод активен и применим, обновить поле promo_code для текущей корзины
-        if not check_promo(self.promo_code, self.user_id, self)[0]:
+        if not check_promo(self.promo_code, user_id=self.user_id)[0]:
             self.promo_code = None
 
         if self.promo_code:

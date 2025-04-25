@@ -148,8 +148,29 @@ class ListProductUnitView(APIView):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
             product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+
             serializer = ProductUnitSerializer(product_units, many=True)
             return Response(serializer.data)
+        except json.JSONDecodeError:
+            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+        except ProductUnit.DoesNotExist:
+            return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TotalPriceForListProductUnitView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        try:
+            s_product_unit = json.loads(request.body)["product_unit_list"]
+            product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+            sum = 0
+            for product_unit in product_units:
+                sum += product_unit.final_price
+
+            return Response({"total_amount": sum})
         except json.JSONDecodeError:
             return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
         except ProductUnit.DoesNotExist:

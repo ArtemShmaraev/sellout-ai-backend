@@ -17,9 +17,6 @@ from promotions.views import check_promo
 from users.models import User
 
 
-
-
-
 class ShoppingCartUser(APIView):
     # authentication_classes = [JWTAuthentication]
 

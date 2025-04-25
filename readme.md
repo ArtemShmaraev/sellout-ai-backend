@@ -51,6 +51,7 @@ Anon)
 4. `[GET][Anon] /product` фильтрация товаров [⬇️](#product_filter)
 5. `[GET][Anon] product_unit/<product_unit_id>` информация о product_unit
 6. `[POST][Anon] product_unit/list` Body: {"product_unit_list": [2, 3]} Response Список product_unit
+   7. `[POST][Anon] product_unit/total_amount_list` Body: {"product_unit_list": [2, 3]} Response: Сумма
 
 5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру [⬇️](#product_min_price)
 6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цены [⬇️](#product_delivery)

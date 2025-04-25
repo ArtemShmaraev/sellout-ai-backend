@@ -272,28 +272,28 @@ class Product(models.Model):
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
         # print()
-        # product_units = self.product_units.all()
-        # if len(self.sizes_prices) != len(product_units):
-        #     for product_unit in product_units:
-        #         size = product_unit.size
-        #
-        #         last = next(
-        #             (size_data for size_data in self.sizes_prices
-        #              if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
-        #              and size_data.get("is_sale") == product_unit.is_sale
-        #              and size_data.get("is_return") == product_unit.is_return
-        #              and size_data.get("size") == size),
-        #             None
-        #         )
-        #         if last:
-        #             if product_unit.final_price < last['price']:
-        #                 last['price'] = product_unit.final_price
-        #         else:
-        #             self.sizes_prices.append({"size": product_unit.size,
-        #                                       "price": product_unit.final_price,
-        #                                       "is_fast_shipping": product_unit.is_fast_shipping,
-        #                                       "is_sale": product_unit.is_sale,
-        #                                       "is_return": product_unit.is_return})
+        product_units = self.product_units.all()
+        if len(self.sizes_prices) != len(product_units):
+            for product_unit in product_units:
+                size = product_unit.size
+
+                last = next(
+                    (size_data for size_data in self.sizes_prices
+                     if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
+                     and size_data.get("is_sale") == product_unit.is_sale
+                     and size_data.get("is_return") == product_unit.is_return
+                     and size_data.get("size") == size),
+                    None
+                )
+                if last:
+                    if product_unit.final_price < last['price']:
+                        last['price'] = product_unit.final_price
+                else:
+                    self.sizes_prices.append({"size": product_unit.size,
+                                              "price": product_unit.final_price,
+                                              "is_fast_shipping": product_unit.is_fast_shipping,
+                                              "is_sale": product_unit.is_sale,
+                                              "is_return": product_unit.is_return})
 
         super().save(*args, **kwargs)
 

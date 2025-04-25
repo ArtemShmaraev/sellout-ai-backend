@@ -120,8 +120,9 @@ class UserRegister(generics.GenericAPIView):
         except TokenError as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        except Exception as e:
-            return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # except Exception as e:
+        #     print(e)
+        #     return Response({'error': 'Internal server error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # последние 7 просмотренных товаров пользователя

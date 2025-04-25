@@ -64,6 +64,7 @@ class ShoppingCart(models.Model):
     final_amount = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         for product_unit in self.product_units.all():
@@ -86,14 +87,14 @@ class ShoppingCart(models.Model):
         else:
             self.final_amount = self.total_amount
 
-        super().save(*args, **kwargs)
+
 
 
 
 
 
     def __str__(self):
-        return f'{self.user} cart: {", ".join([str(pu) for pu in self.product_units.all()])}'
+        return f'{self.user}'
 
 
 class ProductOrderUnit(models.Model):

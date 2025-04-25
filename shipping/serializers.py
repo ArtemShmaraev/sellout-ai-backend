@@ -3,6 +3,7 @@ from rest_framework import serializers
 from products.serializers import ProductMainPageSerializer
 
 class ProductUnitSerializer(serializers.ModelSerializer):
+    product = ProductMainPageSerializer()
     class Meta:
         model = ProductUnit
         fields = '__all__'

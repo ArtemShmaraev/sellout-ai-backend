@@ -3,11 +3,13 @@ from rest_framework import serializers
 from products.serializers import ProductMainPageSerializer
 from shipping.serializers import ProductUnitSerializer
 from promotions.serializers import PromoCodeSerializer
+from users.models import User
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     promo_code = PromoCodeSerializer()
-    # product_unit = ProductUnitSerializer()
+    product_units = ProductUnitSerializer(many=True, read_only=True)
+    bonus = serializers.SerializerMethodField()
     # Вычисляемое поле "сумма покупки"
     # total_amount = serializers.SerializerMethodField()
     #
@@ -17,6 +19,19 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     #     # В примере суммируем значения полей "price" для каждого товара в корзине
     #     total = sum(unit.final_price for unit in obj.product_units.all())
     #     return total
+
+
+    def get_bonus(self, obj):
+        user_id = self.context.get('user_id')
+        if user_id is not None and user_id > 0:
+            try:
+                user = User.objects.get(id=user_id)
+                bonus = user.bonuses.total_amount
+
+                return bonus
+            except User.DoesNotExist:
+                pass
+        return False
 
     class Meta:
         model = ShoppingCart

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-
+from promotions.models import Bonuses
 from .serializers import UserSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
@@ -102,6 +102,9 @@ class UserRegister(generics.GenericAPIView):
             new_user.save()
             cart = ShoppingCart(user_id=new_user.id)
             wl = Wishlist(user_id=new_user.id)
+            bonus = Bonuses()
+            bonus.save()
+            new_user.bonuses = bonus
             cart.save()
             wl.save()
 
@@ -134,7 +137,7 @@ class UserLastSeenView(APIView):
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
                 last_viewed_products = user.last_viewed_products.all()
-                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[-15:])
+                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[::-1])
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
@@ -150,7 +153,9 @@ class UserLastSeenView(APIView):
                 try:
                     user = User.objects.get(id=user_id)
                     product = Product.objects.get(id=product_id)
-                    user.last_viewed_products.add(product)
+                    if product in user.last_viewed_products.all():
+                        user.last_viewed_products.remove(product)
+                        user.last_viewed_products.add(product)
                     if user.last_viewed_products.count() > 20:
                         # Получаем наиболее старый просмотренный товар
                         oldest_product = user.last_viewed_products.first()

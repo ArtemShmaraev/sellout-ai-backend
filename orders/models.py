@@ -28,10 +28,11 @@ class Order(models.Model):
     address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders")
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
+    bonus_sale = models.IntegerField(default=0)
+    promo_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
                                related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
-
 
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(
@@ -61,6 +62,8 @@ class ShoppingCart(models.Model):
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="carts")
     total_amount = models.IntegerField(default=0)
+    bonus_sale = models.IntegerField(default=0)
+    promo_sale = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
@@ -84,14 +87,10 @@ class ShoppingCart(models.Model):
                 self.final_amount = round(self.total_amount * (100 - self.promo_code.discount_percentage) // 100)
             elif self.promo_code.discount_absolute > 0:
                 self.final_amount = round(self.total_amount - self.promo_code.discount_absolute)
+            self.promo_sale = self.total_amount - self.final_amount
         else:
             self.final_amount = self.total_amount
-
-
-
-
-
-
+        self.final_amount -= self.bonus_sale
 
     def __str__(self):
         return f'{self.user}'
@@ -128,3 +127,4 @@ class OrderUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
+

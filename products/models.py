@@ -61,6 +61,8 @@ class Line(models.Model):
     def save(self, *args, **kwargs):
         if self.parent_line:
             self.full_name = f"{self.parent_line.full_name} | {self.name}"
+        else:
+            self.full_name = self.name
         self.view_name = self.name
         # if "все" in self.name.lower() or "другие" in self.name.lower():
         #     self.view_name = self.name
@@ -73,7 +75,7 @@ class Line(models.Model):
         #
         #     self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
         #         "Dunk Dunk", "Dunk", 1).split())
-        self.full_eng_name = self.view_name.lower().replace(" ", "_")
+        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все", "").strip()
 
         if "все" in self.name.lower():
             self.is_all = True
@@ -312,13 +314,11 @@ class SizeTable(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-    # class SizeTranslationRows(models.Model):
-    #     table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT)
-    #     US = models.CharField(max_length=16, blank=True, null=True)
-    #     UK = models.CharField(max_length=16, blank=True, null=True)
-    #     EU = models.CharField(max_length=16, blank=True, null=True)
-    #     RU = models.CharField(max_length=16, blank=True, null=True)
-    #     CM = models.CharField(max_length=16, blank=True, null=True)
-    #
-    #     def __str__(self):
-    #         return f"{self.table} {self.US}"
+class SizeTranslationRows(models.Model):
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT, related_name="rows")
+    row = models.JSONField(blank=True, null=True)
+    is_one_size = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f"{self.table} {self.id}"

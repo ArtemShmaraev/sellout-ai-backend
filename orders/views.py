@@ -25,7 +25,7 @@ class ShoppingCartUser(APIView):
             if request.user.id == user_id or request.user.is_staff:
                 shopping_cart = ShoppingCart.objects.get(user_id=user_id)
                 shopping_cart.save()
-                serializer = ShoppingCartSerializer(shopping_cart)
+                serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id})
                 return Response(serializer.data)
             else:
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
@@ -59,6 +59,24 @@ class ShoppingCartUser(APIView):
             return Response("ProductUnit не найден", status=status.HTTP_404_NOT_FOUND)
 
 
+class UseBonus(APIView):
+
+    def post(self, request, user_id):
+        try:
+            if request.user.id == user_id or request.user.is_staff:
+                bonus = int(json.loads(request.body)["bonus"])
+                cart = ShoppingCart.objects.get(user_id=user_id)
+                if bonus <= cart.user.bonuses.total_amount:
+                    cart.bonus_sale = bonus
+                    cart.save()
+                    return Response("Бонусы списаны")
+                else:
+                    return Response("Недостаточно бонусов", status=status.HTTP_403_FORBIDDEN)
+        except ShoppingCart.DoesNotExist:
+            return Response("Пользователь не найден", status=status.HTTP_404_NOT_FOUND)
+
+
+
 class CheckOutView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -76,8 +94,12 @@ class CheckOutView(APIView):
                               address=address, status_id=1, fact_of_payment=False)
                 order.save()
                 for unit in cart.product_units.all():
-
                     order.add_order_unit(unit)
+                order.promo_sale = cart.promo_sale
+                order.bonus_sale = cart.bonus_sale
+                if order.bonus_sale > 0:
+                    cart.user.bonuses.deduct_bonus(order.bonus_sale)
+                order.save()
 
                 serializer = OrderSerializer(order)
                 return Response(serializer.data)

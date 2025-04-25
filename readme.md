@@ -67,15 +67,15 @@ Anon)
 
 1. `[GET][User] order/cart/<user_id>` корзина пользователя [⬇️](#cart)
 2. `[POST][User]  order/cart/<user_id>/<product_unit_id>` добавить юнит в корзину [⬇️](#add_to_cart)
-3. `[DELETE][User] cart/cart/<user_id>/<product_unit_id>` удалить юнит из
+3. `[DELETE][User] order/cart/<user_id>/<product_unit_id>` удалить юнит из
    корзины [⬇️](#del_from_cart)
-4. `[POST][User] cart/checkout/<user_id>` оформить заказ [⬇️](#checkout)
+4. `[POST][User] order/checkout/<user_id>` оформить заказ [⬇️](#checkout)
 5. `[GET][Admin] order/orders` все заказы [⬇️](#orderss)
-6. `[GET][User] order/user_orders/<int:user_id>` все заказы пользователя [⬇️](#user_orders)
+6. `[GET][User] order/user_orders/<user_id>` все заказы пользователя [⬇️](#user_orders)
 7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
-8. `[POST][Anon]order/cart_list/<user_id>` Body: {"product_unit_list": [2, 3]} Response (добавление в корзину или исключение)
-
+8. `[POST][Anon] order/cart_list/<user_id>` Body: {"product_unit_list": [2, 3]} Response (добавление в корзину или исключение)
+9. `[POST][Anon] promo/check/<user_id>` Body: {"promo": "penis"} Response (статус 200) или ошибка
 
 # Поиск
 Запросы отправляются на сервер с elastic 
@@ -312,7 +312,8 @@ Body:
   "password": "пароль",
   "first_name": "Имя",
   "last_name": "Фамилия",
-  "gender": "male"
+  "gender": "male",
+  "phone": "79524363887"
 }
 
 ```

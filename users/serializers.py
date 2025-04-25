@@ -33,3 +33,11 @@ class UserSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         exclude = ("password",)
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
+class ForAnonUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = '__all__'
+        fields = ("username",)
+        depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)

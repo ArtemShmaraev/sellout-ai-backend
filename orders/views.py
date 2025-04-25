@@ -27,6 +27,7 @@ class ShoppingCartUser(APIView):
         try:
             if request.user.id == user_id or request.user.is_staff:
                 shopping_cart = ShoppingCart.objects.get(user_id=user_id)
+                shopping_cart.save()
                 serializer = ShoppingCartSerializer(shopping_cart)
                 return Response(serializer.data)
             else:
@@ -67,26 +68,19 @@ class CheckOutView(APIView):
     def post(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
+                cart = ShoppingCart.objects.get(user_id=user_id)
                 data = json.loads(request.body)
                 user = get_object_or_404(User, id=user_id)
                 address = get_object_or_404(AddressInfo, id=data['address_id'])
 
-                order = Order(user=user, total_amount=data['total_amount'],
-                              email=data['email'], tel=data['tel'],
+                order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount, promo_code=cart.promo_code,
+                              email=data['email'], tel=data['phone'],
                               name=data['first_name'], surname=data['last_name'],
                               address=address, status_id=1, fact_of_payment=False)
-
-                check, promo = check_promo(data["promo_code"], user_id)
-                if check:
-                    promo_code = get_object_or_404(PromoCode, string_representation=data["promo_code"])
-                    order.promo_code = promo_code
-
                 order.save()
+                for unit in cart.product_units.all():
 
-                units = data['product_unit']
-                for unit in units:
-                    product_unit = get_object_or_404(ProductUnit, id=unit)
-                    order.product_unit.add(product_unit)
+                    order.add_order_unit(unit)
 
                 serializer = OrderSerializer(order)
                 return Response(serializer.data)

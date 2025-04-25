@@ -166,11 +166,11 @@ class ProductManager(models.Manager):
 
 class Product(models.Model):
     brands = models.ManyToManyField("Brand", related_name='products',
-                                    blank=True)
+                                    blank=True, db_index=True)
     categories = models.ManyToManyField("Category", related_name='products',
-                                        blank=True)
+                                        blank=True, db_index=True)
     lines = models.ManyToManyField("Line", related_name='products',
-                                   blank=True)
+                                   blank=True, db_index=True)
     main_line = models.ForeignKey("Line", on_delete=models.PROTECT, blank=True, null=True, related_name="main_products")
     # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
@@ -184,28 +184,28 @@ class Product(models.Model):
     description = models.TextField(default="", blank=True)
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True)
 
-    is_custom = models.BooleanField(default=False)
-    is_collab = models.BooleanField(default=False)
+    is_custom = models.BooleanField(default=False, db_index=True)
+    is_collab = models.BooleanField(default=False, db_index=True)
     collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
 
     main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True,
-                                   related_name="products_main")
+                                   related_name="products_main", db_index=True)
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
-    gender = models.ManyToManyField("Gender", related_name='products', blank=True)
+    gender = models.ManyToManyField("Gender", related_name='products', blank=True, db_index=True)
     recommended_gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
     size_table = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name='products')
     size_table_platform = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
                                             related_name='products_platform')
 
-    min_price = models.IntegerField(blank=True, null=True)
+    min_price = models.IntegerField(blank=True, null=True, db_index=True)
 
     # sizes are initialized in Size model by ForeignKey
     # product units are initialized in UnitBundle model by ForeignKey
 
-    available_flag = models.BooleanField(default=True)
+    available_flag = models.BooleanField(default=True, db_index=True)
 
     has_many_sizes = models.BooleanField(default=False)
     has_many_colors = models.BooleanField(default=False)
@@ -271,30 +271,31 @@ class Product(models.Model):
                 self.lines.add(line)
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
-        product_units = self.product_units.all()
-        if len(self.sizes_prices) != len(product_units):
-            for product_unit in product_units:
-                size = product_unit.size
+        # print()
+        # product_units = self.product_units.all()
+        # if len(self.sizes_prices) != len(product_units):
+        #     for product_unit in product_units:
+        #         size = product_unit.size
+        #
+        #         last = next(
+        #             (size_data for size_data in self.sizes_prices
+        #              if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
+        #              and size_data.get("is_sale") == product_unit.is_sale
+        #              and size_data.get("is_return") == product_unit.is_return
+        #              and size_data.get("size") == size),
+        #             None
+        #         )
+        #         if last:
+        #             if product_unit.final_price < last['price']:
+        #                 last['price'] = product_unit.final_price
+        #         else:
+        #             self.sizes_prices.append({"size": product_unit.size,
+        #                                       "price": product_unit.final_price,
+        #                                       "is_fast_shipping": product_unit.is_fast_shipping,
+        #                                       "is_sale": product_unit.is_sale,
+        #                                       "is_return": product_unit.is_return})
 
-                last = next(
-                    (size_data for size_data in self.sizes_prices
-                     if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
-                     and size_data.get("is_sale") == product_unit.is_sale
-                     and size_data.get("is_return") == product_unit.is_return
-                     and size_data.get("size") == size),
-                    None
-                )
-                if last:
-                    if product_unit.final_price < last['price']:
-                        last['price'] = product_unit.final_price
-                else:
-                    self.sizes_prices.append({"size": product_unit.size,
-                                              "price": product_unit.final_price,
-                                              "is_fast_shipping": product_unit.is_fast_shipping,
-                                              "is_sale": product_unit.is_sale,
-                                              "is_return": product_unit.is_return})
-
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         def __str__(self):
             return self.model

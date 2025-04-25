@@ -1,28 +1,46 @@
+from django.utils.functional import cached_property
+
 import rest_framework.generics
+from django.db.models import Q
 from django.shortcuts import render
-from rest_framework.pagination import PageNumberPagination
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
+from time import time
 from django.http import JsonResponse, FileResponse
 from .models import Product, Category, Line
 from rest_framework import status
-from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer
+from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
+
 
 # Create your views here.
 
+
+
+
 class CustomPagination(PageNumberPagination):
+    # default_limit = 60
     page_size = 60
-    page_size_query_param = 'page_size'  # Дополнительно можно разрешить клиенту указывать желаемое количество товаров на странице
-    max_page_size = 120  # Опционально, чтобы ограничить максимальное количество товаров на странице
+    # page_size_query_param = 'page_size'  # Дополнительно можно разрешить клиенту указывать желаемое количество товаров на странице
+    # max_page_size = 120  # Опционально, чтобы ограничить максимальное количество товаров на странице
+    count = False
+
+    #
+
 
 class ProductView(APIView):
-    pagination_class = CustomPagination
 
+    # @method_decorator(cache_page(60 * 5))
     def get(self, request):
-        products = Product.objects.all()
+        t1 = time()
+        queryset = Product.objects.all()
+        t2 = time()
+        print("t1", t2 - t1)
         context = {'user_id': self.request.user.id}
 
         size = self.request.query_params.getlist('size')
@@ -35,9 +53,68 @@ class ProductView(APIView):
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
-        paginated_products = self.pagination_class.paginate_queryset(products, request)
-        serializer = ProductMainPageSerializer(paginated_products, many=True, context=context)
-        return self.pagination_class.get_paginated_response(serializer.data)
+        # Создаем объект пагинации
+
+        line = self.request.query_params.getlist('line')
+        color = self.request.query_params.getlist('color')
+        is_fast_shipping = self.request.query_params.get("is_fast_shipping")
+        is_sale = self.request.query_params.get("is_sale")
+        is_return = self.request.query_params.get("is_return")
+        category = self.request.query_params.getlist("category")
+        gender = self.request.query_params.getlist("gender")
+        brand = self.request.query_params.getlist("brand")
+        collab = self.request.query_params.getlist("collab")
+        available = self.request.query_params.get("available")
+        custom = self.request.query_params.get("custom")
+
+        if not available:
+            queryset = queryset.filter(available_flag=True)
+        if not custom:
+            queryset = queryset.filter(is_custom=False)
+        if collab:
+            if collab == "all":
+                queryset = queryset.filter(is_collab=True)
+            else:
+                queryset = queryset.filter(collab__query_name__in=collab)
+        if brand:
+            for brand_name in brand:
+                queryset = queryset.filter(brands__query_name=brand_name)
+        if line:
+            queryset = queryset.filter(lines__full_eng_name__in=line)
+        if color:
+            queryset = queryset.filter(Q(main_color__name__in=color))
+        if category:
+            queryset = queryset.filter(Q(categories__eng_name__in=category))
+        if gender:
+            queryset = queryset.filter(Q(gender__name__in=gender))
+
+        t3 = time()
+        print("t2", t3 - t2)
+
+        # paginator = CustomPagination()
+        # Применяем пагинацию к списку объектов Product
+        # paginated_products = paginator.paginate_queryset(queryset, request)
+        # serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
+        # res = paginator.get_paginated_response(serializer)
+
+        res = {"count": queryset.count()}
+        t4 = time()
+        print("t3", t4 - t3)
+
+        page_number = self.request.query_params.get("page")
+        page_number = int(page_number if page_number else 1)
+        start_index = (page_number - 1) * 60
+        queryset = queryset[start_index:start_index + 60]
+
+        # Сериализуем объекты и возвращаем ответ с пагинированными данными
+        serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
+        t5 = time()
+        print("t4", t5 - t4)
+
+        res['results'] = serializer
+        t6 = time()
+        print("t5", t6 - t5)
+        return Response(res)
 
 
 class ProductSlugView(APIView):
@@ -183,7 +260,6 @@ class ListProductView(APIView):
             return Response("One or more product do not exist", status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 # class ProductMainPageView(rest_framework.generics.ListAPIView):
 #     queryset = Product.objects.all()

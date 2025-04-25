@@ -282,6 +282,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
         product.colorway = product.model
         product.model = singular_data[categories[0]]
     product.save()
+    print(product)
     return product
 
     # self.stdout.write(self.style.SUCCESS(product))

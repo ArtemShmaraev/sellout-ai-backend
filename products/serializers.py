@@ -73,14 +73,15 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
-    is_sale = serializers.SerializerMethodField()
-    is_fast_shipping = serializers.SerializerMethodField()
-    is_return = serializers.SerializerMethodField()
-    list_lines = serializers.SerializerMethodField()
+    # is_sale = serializers.SerializerMethodField()
+    # is_fast_shipping = serializers.SerializerMethodField()
+    # is_return = serializers.SerializerMethodField()
+    # list_lines = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        exclude = ["platform_info",]
+        # fields = "__all__"
+        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "categories", ]
         depth = 2
 
 

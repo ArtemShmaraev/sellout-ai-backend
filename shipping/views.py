@@ -11,10 +11,10 @@ from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
 
 class DeliveryForSizeView(APIView):
-    def get(self, request, product_id, size_id):
+    def get(self, request, product_id, size):
         try:
             product = Product.objects.get(id=product_id)
-            product_units = product.product_units.filter(size=size_id)
+            product_units = product.product_units.filter(good_size_platform=size)
             s = []
             for product_unit in product_units:
                 d = dict()
@@ -45,7 +45,7 @@ class MinPriceForSizeView(APIView):
 
             # Проход по каждому элементу списка
             for item in product_units:
-                size = item.size
+                size = item.good_size_platform
                 price = item.final_price
                 available = item.availability
 
@@ -80,7 +80,7 @@ class MinPriceForSizeView(APIView):
                     d['view_size'] = size
                 min_prices_by_size[size] = d
                 s.append(d)
-            return Response(s)
+            return Response(sorted(s, key=lambda x: int(x['size'])))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

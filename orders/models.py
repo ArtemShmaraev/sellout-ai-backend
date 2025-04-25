@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from promotions.tools import check_promo
 
 
 class Status(models.Model):
@@ -17,8 +18,9 @@ def get_default_status():
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False, blank=False,
                              related_name="orders")
-    product_units = models.ManyToManyField("shipping.ProductUnit", blank=True, related_name="orders")
+    order_units = models.ManyToManyField("OrderUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)
+    final_amount = models.IntegerField(default=0)
     email = models.EmailField(null=False, blank=False)
     tel = models.CharField(max_length=20, null=False, blank=False)
     name = models.CharField(max_length=100, null=False, blank=False)
@@ -31,11 +33,64 @@ class Order(models.Model):
     fact_of_payment = models.BooleanField(default=False)
 
 
+    def add_order_unit(self, product_unit):
+        order_unit = OrderUnit(
+            product=product_unit.product,
+            good_size_platform=product_unit.good_size_platform,
+            size_table_platform=product_unit.size_table_platform,
+            color=product_unit.color,
+            configuration=product_unit.configuration,
+            start_price=product_unit.start_price,
+            final_price=product_unit.final_price,
+            delivery_type=product_unit.delivery_type,
+            platform=product_unit.platform,
+            url=product_unit.url,
+            warehouse=product_unit.warehouse,
+            is_return=product_unit.is_return,
+            is_fast_shipping=product_unit.is_fast_shipping,
+            is_sale=product_unit.is_sale
+        )
+        self.order_units.add(order_unit)
+
+
 class ShoppingCart(models.Model):
     user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.PROTECT,
                                 blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
                                            related_name="shopping_carts")
+    promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name="carts")
+    total_amount = models.IntegerField(default=0)
+    final_amount = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        # Пересчитать total_amount на основе product_units и их цен
+        total_amount = 0
+        for product_unit in self.product_units.all():
+            total_amount += product_unit.final_price
+
+        # Обновить поле total_amount для текущей корзины
+        self.total_amount = total_amount
+
+        # Выполнить проверку активности промокода и его применимости
+        # Ваш код для проверки промокода здесь
+        # Если промокод активен и применим, обновить поле promo_code для текущей корзины
+        if not check_promo(self.promo_code, self.user_id, self)[0]:
+            self.promo_code = None
+
+        if self.promo_code:
+            if self.promo_code.discount_percentage > 0:
+                self.final_amount = round(self.total_amount * (100 - self.promo_code.discount_percentage) // 100)
+            elif self.promo_code.discount_absolute > 0:
+                self.final_amount = round(self.total_amount - self.promo_code.discount_absolute)
+        else:
+            self.final_amount = self.total_amount
+
+        super().save(*args, **kwargs)
+
+
+
+
 
     def __str__(self):
         return f'{self.user} cart: {", ".join([str(pu) for pu in self.product_units.all()])}'
@@ -49,3 +104,26 @@ class ProductOrderUnit(models.Model):
 
     def __str__(self):
         return str(self.product_unit)
+
+
+class OrderUnit(models.Model):
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="order_units",
+                                null=False, blank=False)
+    good_size_platform = models.CharField(max_length=255, null=True, blank=True,
+                                          default="")  # обработанный размер с платформы
+    size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
+
+    color = models.CharField(max_length=255, null=True, blank=True, default="")
+    configuration = models.CharField(max_length=255, null=True, blank=True, default="")
+
+    start_price = models.IntegerField(null=False, blank=False)  # Старая цена
+    final_price = models.IntegerField(null=False, blank=False)  # Новая цена
+    delivery_type = models.ForeignKey("shipping.DeliveryType", on_delete=models.CASCADE, related_name='order_units',
+                                      null=False, blank=False)
+    platform = models.ForeignKey("shipping.Platform", on_delete=models.CASCADE, related_name='order_units',
+                                 null=False, blank=False)
+    url = models.CharField(max_length=255, null=True, blank=True, default="")
+    warehouse = models.BooleanField(default=False)  # на руках ли товар
+    is_return = models.BooleanField(default=False)
+    is_fast_shipping = models.BooleanField(default=False)
+    is_sale = models.BooleanField(default=False)

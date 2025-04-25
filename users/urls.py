@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import UserViewSet
 from django.urls import path, re_path
-from .views import UserLastSeenView, UserRegister, UserInfoView, UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView
+from .views import AddFavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView
 
 router = routers.DefaultRouter()
 router.register("", UserViewSet, 'user')
@@ -18,3 +18,4 @@ urlpatterns.append(path('change_psw', UserChangePassword.as_view()))
 urlpatterns.append(path('login', UserLoginView.as_view(), name='token_obtain_pair'))
 urlpatterns.append(path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh')) #кастом
 urlpatterns.append(path('token/verify/', TokenVerifyView.as_view(), name='token_verify')) #кастом
+urlpatterns.append(path('favorite_brand/<int:user_id>/<int:brand_id>', AddFavoriteBrands.as_view())) #кастом

@@ -15,6 +15,6 @@ urlpatterns.append(path('product_main/<int:product_id>/<int:user_id>/', ProductU
                         name="product_main_view"))
 urlpatterns.append(path('min_price/<int:product_id>', MinPriceForSizeView.as_view(),
                         name="product_min_size_view"))
-urlpatterns.append(path('delivery/<int:product_id>/<int:size_id>', DeliveryForSizeView.as_view(),
+urlpatterns.append(path('delivery/<int:product_id>/<str:size>', DeliveryForSizeView.as_view(),
                         name="delivery_for_size_view"))
 urlpatterns.append(path('list', ListProductUnitView.as_view()))

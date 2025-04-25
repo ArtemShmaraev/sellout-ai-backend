@@ -2,7 +2,7 @@ from rest_framework import routers
 from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, CollabViewSet
 from django.urls import include, path
 from .views import ProductSlugView, ProductIdView, CategoryTreeView, LineTreeView, ProductUpdateView, LineNoChildView, \
-    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView
+    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -38,6 +38,7 @@ router_collab = routers.DefaultRouter()
 router_collab.register("collabs", CollabViewSet, basename="collab")
 
 urlpatterns = [
+    path("products2", ProductView.as_view()),
     path("", include(router_collection.urls)),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),

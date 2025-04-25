@@ -6,11 +6,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Выполнение команды python manage.py makemigrations
-        call_command('flush')
+        # call_command('flush')
 
-        call_command('delete_migrations')
+        # call_command('delete_migrations')
 
-        call_command('makemigrations')
+        # call_command('makemigrations')
 
         # Выполнение команды python manage.py migrate
         call_command('migrate')

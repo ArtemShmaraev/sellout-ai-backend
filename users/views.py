@@ -5,7 +5,7 @@ from .serializers import UserSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
 from rest_framework import exceptions
-from products.models import Product
+from products.models import Product, Brand
 from sellout.settings import URL
 from shipping.views import product_unit_product_main
 import json
@@ -97,7 +97,7 @@ class UserRegister(generics.GenericAPIView):
 
             new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
                             last_name=data['last_name'], gender_id=genders[data['gender']],
-                            is_mailing_list=data['is_mailing_list'], email=data['username'])
+                            is_mailing_list=data['is_mailing_list'], email=data['username'], phone_number=data['phone'])
             new_user.set_password(data['password'])
             new_user.save()
             cart = ShoppingCart(user_id=new_user.id)
@@ -126,14 +126,14 @@ class UserRegister(generics.GenericAPIView):
 
 # последние 7 просмотренных товаров пользователя
 class UserLastSeenView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
 
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
                 last_viewed_products = user.last_viewed_products.all()
-                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[-7:])
+                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[-15:])
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
@@ -179,8 +179,9 @@ class UserAddressView(APIView):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
             address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
-            address.save()
             request.user.address.add(address)
+            address.save()
+
             if data['is_main']:
                 address.is_main = True
                 address.save()
@@ -303,3 +304,37 @@ class TokenRefreshView(TokenViewBase):
     """
 
     _serializer_class = api_settings.TOKEN_REFRESH_SERIALIZER
+
+
+class AddFavoriteBrands(APIView):
+    def get(self, request, user_id, brand_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                user = User.objects.get(id=user_id)
+                brand = Brand.objects.get(id=brand_id)
+                user.favorite_brands.add(brand)
+                return Response("бренд добавлен")
+
+            except Brand.DoesNotExist:
+                return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
+
+            except User.DoesNotExist:
+                return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, user_id, brand_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                user = User.objects.get(id=user_id)
+                brand = Brand.objects.get(id=brand_id)
+                user.favorite_brands.remove(brand)
+                return Response("бренд удален")
+
+            except Brand.DoesNotExist:
+                return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
+
+            except User.DoesNotExist:
+                return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)

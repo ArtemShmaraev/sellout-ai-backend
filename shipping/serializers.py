@@ -5,8 +5,7 @@ from products.serializers import ProductMainPageSerializer
 class ProductUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductUnit
-        # fields = '__all__'
-        exclude = ['product', ]
+        fields = '__all__'
         depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 

@@ -43,6 +43,7 @@ class UserInfoView(APIView):
 
     def post(self, request, user_id):
         try:
+            genders = {'male': 1, "female": 2}
             user = User.objects.get(id=user_id)
             if user is None:
                 return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
@@ -52,6 +53,9 @@ class UserInfoView(APIView):
                 user.first_name = data.get('first_name', user.first_name)
                 user.last_name = data.get('last_name', user.last_name)
                 user.email = data.get('email', user.email)
+                user.phone_number = data.get("phone", user.phone_number)
+                if "gender" in data:
+                    user.gender_id = genders['gender']
                 user.save()
                 serializer = UserSerializer(user)
                 return Response(serializer.data)
@@ -187,8 +191,9 @@ class UserAddressView(APIView):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
             address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
-            request.user.address.add(address)
             address.save()
+            request.user.address.add(address)
+
 
             if data['is_main']:
                 address.is_main = True

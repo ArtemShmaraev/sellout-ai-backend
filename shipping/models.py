@@ -40,7 +40,6 @@ class AddressInfo(models.Model):
                     address.is_main = False
 
 
-
 class Platform(models.Model):
     platform = models.CharField(max_length=255, null=False, blank=False)
     site = models.CharField(max_length=10, null=True, blank=True)

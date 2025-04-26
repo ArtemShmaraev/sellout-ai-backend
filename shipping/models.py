@@ -26,6 +26,7 @@ class AddressInfo(models.Model):
     address = models.CharField(max_length=255, null=False, blank=False)
     post_index = models.CharField(max_length=10, null=False, blank=False)
     is_main = models.BooleanField(default=False)
+    other_info = models.JSONField(default=dict)
 
     def __str__(self):
         return self.address

@@ -43,9 +43,10 @@ class Command(BaseCommand):
 
         collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
         collab.save()
-        main_collab = json.load(open("lines.json", encoding="utf-8"))
+        main_collab = json.load(open("collabs.json", encoding="utf-8"))
 
         for collab_name in main_collab:
+            print(collab_name)
             collab = Collab(name=collab_name, is_main_collab=True)
             collab.save()
 

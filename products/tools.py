@@ -165,7 +165,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
             model=data.get('model'),
             manufacturer_sku=data.get('manufacturer_sku'),
             russian_name=data.get('model'),
-            slug=data.get('manufacturer_sku'),
+            slug=data.get('manufacturer_sku') + str(random.randint(1, 50)),
             rel_num=int(rel_num if rel_num else 0),
             is_collab=data.get('is_collab'),
             main_color=Color.objects.get_or_create(name="multicolour")[0]
@@ -253,8 +253,8 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
             parent_line = line
             product.lines.add(line)
 
-    product.slug = ""
-    product.save()
+    # product.slug = ""
+    product.save(custom_param=True)
 
     if product.main_line is not None:
         brands = data.get('brands', [])

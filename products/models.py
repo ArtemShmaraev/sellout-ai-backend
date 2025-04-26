@@ -166,7 +166,16 @@ class ProductManager(models.Manager):
             product.save()
 
 
+class DewuInfo(models.Model):
+    spu_id = models.IntegerField(default=0)
+    api_data = models.JSONField(default=dict)
+    preprocessed_data = models.JSONField(default=dict)
+    web_data = models.JSONField(default=dict)
+
+
 class Product(models.Model):
+    spu_id = models.IntegerField(default=0, db_index=True)
+    dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
     brands = models.ManyToManyField("Brand", related_name='products',
                                     blank=True, db_index=True)
     categories = models.ManyToManyField("Category", related_name='products',
@@ -224,8 +233,6 @@ class Product(models.Model):
     platform_info = models.JSONField(blank=True, null=True)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
-
-
     objects = ProductManager()
 
     def save(self, *args, **kwargs):
@@ -251,7 +258,8 @@ class Product(models.Model):
                     self.lines.add(line_is_all)
                 add_lines_to_product(line.parent_line)
 
-        if not self.slug:
+        custom_param = kwargs.pop('custom_param', False)
+        if custom_param:
             self.slug = slugify(
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
 

@@ -23,6 +23,7 @@ Anon)
 10. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
 11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя [⬇️](#edit_address)
 12. `[DELETE][User] user/address/<user_id>/<address_id>`удаление адреса пользователя [⬇️](#del_address)
+13. `[POST][Anon] https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address` Header: ```Authorization: Token 7b8466ea8df30fc6a906c7e351e1da4160766933``` Body: ```{ "query": "москва хабар" }``` Response: Список словарей, нужная подсказка  dict["value"]
 -
 13. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 14. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
@@ -78,7 +79,7 @@ Anon)
    <a name="user"></a>
 8. `[POST]User order/cart_list/<user_id>` Body: ```{"product_unit_list": [2, 3]}``` Response (добавление в корзину или исключение)
 9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}``` Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
-10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true}```
+10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```
 
 # Поиск
 Запросы отправляются на сервер с elastic 

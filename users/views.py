@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import AUTH_HEADER_TYPES, JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.settings import api_settings
+from .tools import check_adress
 
 from shipping.views import ProductUnitProductMainView
 
@@ -181,6 +182,8 @@ class UserLastSeenView(APIView):
 class UserAddressView(APIView):
     authentication_classes = [JWTAuthentication]
 
+
+
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
@@ -190,7 +193,12 @@ class UserAddressView(APIView):
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
-            address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
+            address_info = check_adress(data['address'])
+            if address_info:
+                address = AddressInfo(name=data['name'], address=address_info['value'], post_index=data['post_index'], other_info=address_info)
+            else:
+                address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
+
             address.save()
             request.user.address.add(address)
 
@@ -211,7 +219,13 @@ class UserAddressView(APIView):
 
             data = json.loads(request.body)
             address.name = data.get('name', address.name)
-            address.address = data.get('address', address.address)
+            if 'address' in data:
+                address_info = check_adress(data['address'])
+                if address_info:
+                    address.address = address_info['value']
+                    address.other_info = address_info
+                else:
+                    address.address = data['address']
             address.post_index = data.get('post_index', address.post_index)
             address.is_main = data.get('is_main', address.is_main)
             address.save()

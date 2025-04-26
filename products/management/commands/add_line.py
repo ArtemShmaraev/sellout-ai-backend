@@ -30,4 +30,11 @@ class Command(BaseCommand):
                 if line['parent']:
                     db_line.parent_line = Line.objects.get(name=line['parent'])
                 db_line.save()
+        brands = all_data
+        for brand in brands:
+            if Brand.objects.filter(name=brand['name']).exists():
+                continue
+            else:
+                db_brand = Brand(name=brand['name'])
+                db_brand.save()
         print('finished')

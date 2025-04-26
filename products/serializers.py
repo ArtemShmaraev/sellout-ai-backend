@@ -1,6 +1,6 @@
 from users.models import User
 from wishlist.models import Wishlist
-from products.models import Product, Category, Line, Brand, Color, Collection
+from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min
@@ -9,6 +9,11 @@ from .tools import build_line_tree, build_category_tree
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+
+class DewuInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DewuInfo
+        fields = '__all__'
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -88,12 +93,12 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
     # is_sale = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()
     # is_return = serializers.SerializerMethodField()
-    # list_lines = serializers.SerializerMethodField()
+    list_lines = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table",]
+        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories', "lines", "size_table_platform"]
         depth = 2
 
 

@@ -2,6 +2,7 @@ from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
 from django.db.models import Q
+from rest_framework.decorators import api_view, action
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -12,31 +13,107 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 from time import time
 from django.http import JsonResponse, FileResponse
-from .models import Product, Category, Line
+from .models import Product, Category, Line, DewuInfo
 from rest_framework import status
-from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer
+from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer, DewuInfoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
 
 # Create your views here.
 
 
+class DewuInfoView(APIView):
+    @api_view(["GET"])
+    def get(self, request):
+        dewu_infos = DewuInfo.objects.all()
+        count = dewu_infos.count()
+        page_number = self.request.query_params.get("page")
+        page_number = int(page_number if page_number else 1)
+        start_index = (page_number - 1) * 60
+        queryset = dewu_infos[start_index:start_index + 60]
+        serializer = DewuInfoSerializer(queryset, many=True)
+        res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
+        return Response(res, status=status.HTTP_200_OK)
+
+    @api_view(["GET"])
+    def get_by_spu_id(self, request, spu_id):
+        dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
+        serializer = DewuInfoSerializer(dewu_info, many=True)
+        res = {'count': dewu_info.count(), "results": serializer.data}  # Замените на вашу сериализацию
+        return Response(res, status=status.HTTP_200_OK)
+
+    def post(self, request, spu_id):
+        data = json.loads(request.body)
+        if DewuInfo.objects.filter(spu_id=spu_id).exists():
+            dewu_info = DewuInfo.objects.get(spu_id=spu_id)
+            if "api_data" in data:
+                dewu_info.api_data = data['api_data']
+            if "preprocessed_data" in data:
+                dewu_info.preprocessed_data = data['preprocessed_data']
+            if "web_data" in data:
+                dewu_info.web_data = data['web_data']
+            dewu_info.save()
+            return Response(DewuInfoSerializer(dewu_info).data)
+        else:
+            products = Product.objects.filter(spu_id=spu_id)
+            if products.exists():
+                dewu_info = DewuInfo(spu_id=spu_id)
+                if "api_data" in data:
+                    dewu_info.api_data = data['api_data']
+                if "preprocessed_data" in data:
+                    dewu_info.preprocessed_data = data['preprocessed_data']
+                if "web_data" in data:
+                    dewu_info.web_data = data['web_data']
+                dewu_info.save()
+                for product in products:
+                    product.dewu_info = dewu_info
+                    product.save()
+                return Response(DewuInfoSerializer(dewu_info).data)
+            else:
+                return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
 
-class CustomPagination(PageNumberPagination):
-    # default_limit = 60
-    page_size = 60
-    # page_size_query_param = 'page_size'  # Дополнительно можно разрешить клиенту указывать желаемое количество товаров на странице
-    # max_page_size = 120  # Опционально, чтобы ограничить максимальное количество товаров на странице
-    count = False
 
-    #
+
+
+
+
+class ProductSearchView(APIView):
+    def get(self, request):
+        query = json.loads(request.body)  # Получение параметра запроса
+        search_fields = query
+
+        q_objects = Q()
+        for k, v in search_fields.items():
+            q_objects &= Q(**{f'{k}__icontains': v})
+
+        products = Product.objects.filter(q_objects)
+        count = products.count()
+        page_number = self.request.query_params.get("page")
+        page_number = int(page_number if page_number else 1)
+        start_index = (page_number - 1) * 60
+        queryset = products[start_index:start_index + 60]
+        serializer = ProductMainPageSerializer(queryset, many=True)
+        res = {'count': count, "results": serializer.data}# Замените на вашу сериализацию
+
+        return Response(res, status=status.HTTP_200_OK)
+
+
+# class CustomPagination(PageNumberPagination):
+#     # default_limit = 60
+#     page_size = 60
+#     # page_size_query_param = 'page_size'  # Дополнительно можно разрешить клиенту указывать желаемое количество товаров на странице
+#     # max_page_size = 120  # Опционально, чтобы ограничить максимальное количество товаров на странице
+#     count = False
+#
+#     #
 
 
 class ProductView(APIView):
 
     # @method_decorator(cache_page(60 * 5))
     def get(self, request):
+
         t1 = time()
         queryset = Product.objects.all()
         t2 = time()
@@ -81,10 +158,59 @@ class ProductView(APIView):
         if line:
             queryset = queryset.filter(lines__full_eng_name__in=line)
 
+            def find_common_ancestor(lines):
+                # Создаем множество для хранения всех родительских линеек
+                ancestors = set()
+
+                # Добавляем все родительские линейки в множество
+                for line in lines:
+                    current_line = line
+                    while current_line.parent_line:
+                        ancestors.add(current_line.parent_line)
+                        current_line = current_line.parent_line
+
+                # Проходим по списку линеек и находим первую общую родительскую линейку
+                for line in lines:
+                    current_line = line
+                    while current_line.parent_line:
+                        if current_line.parent_line in ancestors:
+                            return current_line.parent_line
+                        current_line = current_line.parent_line
+
+                return None  # Если общей родительской линейки не найдено
+            # Пример использования
+            selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
+            oldest_line = find_common_ancestor(selected_lines)
+
+
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
         if category:
             queryset = queryset.filter(categories__eng_name__in=category)
+
+            def find_common_ancestor(categories):
+                # Создаем множество для хранения всех родительских линеек
+                ancestors = set()
+
+                # Добавляем все родительские линейки в множество
+                for category in categories:
+                    current_category = category
+                    while current_category.parent_category:
+                        ancestors.add(current_category.parent_category)
+                        current_category = current_category.parent_category
+
+                # Проходим по списку линеек и находим первую общую родительскую линейку
+                for category in categories:
+                    current_category = category
+                    while current_category.parent_category:
+                        if current_category.parent_category in ancestors:
+                            return current_category.parent_category
+                        current_category = current_category.parent_category
+                return None  # Если общей родительской линейки не найдено
+            selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
+            oldest_cat = find_common_ancestor(selected_cat)
+            print(oldest_cat)
+
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
 
@@ -131,15 +257,36 @@ class ProductView(APIView):
         page_number = int(page_number if page_number else 1)
         start_index = (page_number - 1) * 60
         queryset = queryset[start_index:start_index + 60]
+        t41 = time()
+        print("t41", t41 - t3)
 
         # Сериализуем объекты и возвращаем ответ с пагинированными данными
         serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         t5 = time()
-        print("t4", t5 - t4)
+        print("t4", t5 - t41)
 
         res['results'] = serializer
         t6 = time()
         print("t5", t6 - t5)
+
+
+
+
+        # line = ""
+        # cat = ""
+        # if lines:
+        #     tree = build_line_tree(LineSerializer(Line.objects.all(), many=True).data)
+        #     line = find_oldest_name(tree, lines, cat=False)
+        # if categories:
+        #     tree = build_category_tree(CategorySerializer(Category.objects.all(), many=True).data)
+        #     cat = find_oldest_name(tree, categories)
+        # response.data["products_page_header"] = str(line) + " " + str(cat)
+
+
+
+
+
+
         return Response(res)
 
 

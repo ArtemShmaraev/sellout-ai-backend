@@ -15,7 +15,8 @@ class ProductUnitSerializer(serializers.ModelSerializer):
 class AddressInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddressInfo
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = ['other_info']
 
 
 class DeliveryTypeSerializer(serializers.ModelSerializer):

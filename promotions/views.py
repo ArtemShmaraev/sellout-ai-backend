@@ -65,6 +65,7 @@ class PromocodeAnonView(APIView):
                 final_amount = round(sum - promo.discount_absolute)
             else:
                 return Response({"final_amount": sum, "message": "Промокод не активен", "status": False})
-            return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True})
+            return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
+                             "promo_sale": sum - final_amount})
         else:
             return Response({"final_amount": sum, "message": check[1], "status": False})

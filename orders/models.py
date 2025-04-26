@@ -34,7 +34,7 @@ class Order(models.Model):
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
                                related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=timezone.now)
 
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(

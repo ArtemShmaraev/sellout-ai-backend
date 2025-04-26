@@ -44,8 +44,9 @@ class User(AbstractUser):
     bonuses = models.ForeignKey("promotions.Bonuses", on_delete=models.PROTECT, null=True, blank=True,
                                 related_name="users")
     preferred_size_grid = models.CharField(max_length=100, null=True, blank=True)
-    last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
-                                                  blank=True)
+    # last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
+    #                                               blank=True)
+    last_viewed_products = models.JSONField(blank=True, null=True, default=list)
     happy_birthday = models.DateTimeField(auto_now=True)
 
     def __str__(self):

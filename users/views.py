@@ -6,6 +6,7 @@ from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
 from rest_framework import exceptions
 from products.models import Product, Brand
+from django.db import models
 from sellout.settings import URL
 from shipping.views import product_unit_product_main
 import json
@@ -137,8 +138,10 @@ class UserLastSeenView(APIView):
         try:
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
-                last_viewed_products = user.last_viewed_products.all()
-                return Response(ProductMainPageSerializer(last_viewed_products, many=True).data[::-1])
+                products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
+                models.Case(*[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
+            )
+                return Response(ProductMainPageSerializer(products, many=True).data)
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
@@ -154,14 +157,11 @@ class UserLastSeenView(APIView):
                 try:
                     user = User.objects.get(id=user_id)
                     product = Product.objects.get(id=product_id)
-                    if product in user.last_viewed_products.all():
-                        user.last_viewed_products.remove(product)
-                    user.last_viewed_products.add(product)
-                    if user.last_viewed_products.count() > 20:
-                        # Получаем наиболее старый просмотренный товар
-                        oldest_product = user.last_viewed_products.first()
-                        # Удаляем его из списка
-                        user.last_viewed_products.remove(oldest_product)
+                    if product.id in user.last_viewed_products:
+                        user.last_viewed_products.remove(product.id)
+                    user.last_viewed_products.insert(0, product.id)
+                    if len(user.last_viewed_products) > 20:
+                        user.last_viewed_products = user.last_viewed_products[:20]
                     user.save()
                     return Response("Продукт успешно добавлен в список последних просмотров")
                 except User.DoesNotExist:

@@ -29,8 +29,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 bonus = 0
                 if user.bonuses:
                     bonus = user.bonuses.total_amount
-
-
                 return bonus
             except User.DoesNotExist:
                 pass

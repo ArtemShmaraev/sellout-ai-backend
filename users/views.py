@@ -105,6 +105,7 @@ class UserRegister(generics.GenericAPIView):
             bonus = Bonuses()
             bonus.save()
             new_user.bonuses = bonus
+            new_user.save()
             cart.save()
             wl.save()
 
@@ -161,6 +162,7 @@ class UserLastSeenView(APIView):
                         oldest_product = user.last_viewed_products.first()
                         # Удаляем его из списка
                         user.last_viewed_products.remove(oldest_product)
+                    user.save()
                     return Response("Продукт успешно добавлен в список последних просмотров")
                 except User.DoesNotExist:
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)

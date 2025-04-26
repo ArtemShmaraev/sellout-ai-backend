@@ -23,7 +23,7 @@ class Brand(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.query_name = self.name
+        self.query_name = self.name.lower().replace(" ", "_")
         super().save(*args, **kwargs)
 
 

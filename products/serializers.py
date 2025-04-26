@@ -1,4 +1,4 @@
-
+from users.models import User
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection
 from rest_framework import serializers
@@ -36,10 +36,22 @@ class LineSerializer(serializers.ModelSerializer):
 
 
 class BrandSerializer(serializers.ModelSerializer):
+    in_wishlist = serializers.SerializerMethodField()
     class Meta:
         model = Brand
         fields = '__all__'
         # depth = 2 # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+    def get_in_wishlist(self, brand):
+        user_id = self.context.get('user_id')
+        if user_id is not None and user_id > 0:
+            try:
+                user = User.objects.get(id=user_id)
+                fv_brands = user.favorite_brands.all()
+                return brand in fv_brands
+            except Wishlist.DoesNotExist:
+                pass
+        return False
 
 
 class CategorySerializer(serializers.ModelSerializer):

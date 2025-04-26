@@ -54,6 +54,11 @@ class BrandViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     serializer_class = BrandSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user_id'] = self.request.user.id
+        return context
+
 
 class CollabViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]

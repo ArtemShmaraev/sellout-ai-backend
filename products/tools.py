@@ -170,6 +170,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
             is_collab=data.get('is_collab'),
             main_color=Color.objects.get_or_create(name="multicolour")[0]
         )
+        # product.save()
 
         # Обработка брендов
         brands = data.get('brands', [])

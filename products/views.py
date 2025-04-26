@@ -54,7 +54,6 @@ class ProductView(APIView):
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
         # Создаем объект пагинации
-
         line = self.request.query_params.getlist('line')
         color = self.request.query_params.getlist('color')
         is_fast_shipping = self.request.query_params.get("is_fast_shipping")
@@ -81,12 +80,39 @@ class ProductView(APIView):
                 queryset = queryset.filter(brands__query_name=brand_name)
         if line:
             queryset = queryset.filter(lines__full_eng_name__in=line)
+
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
         if category:
-            queryset = queryset.filter(Q(categories__eng_name__in=category))
+            queryset = queryset.filter(categories__eng_name__in=category)
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
+
+
+        filters = Q()
+        # Фильтр по цене
+        if price_min:
+            filters &= Q(product_units__final_price__gte=price_min)
+
+            # Фильтр по максимальной цене
+        if price_max:
+            filters &= Q(product_units__final_price__lte=price_max)
+
+        # Фильтр по размеру
+        if size:
+            filters &= Q(product_units__size__in=size)
+
+        # Фильтр по наличию скидки
+        if is_sale:
+            filters &= Q(product_units__is_sale=is_sale)
+        if is_return:
+            filters &= Q(product_units__is_return=is_return)
+        if is_fast_shipping:
+            filters &= Q(product_units__fast_shipping=is_fast_shipping)
+        if filters != Q():
+        # Выполняем фильтрацию
+            queryset = queryset.filter(filters)
+        queryset = queryset.distinct()
 
         t3 = time()
         print("t2", t3 - t2)

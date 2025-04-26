@@ -93,7 +93,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "categories", ]
+        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table",]
         depth = 2
 
 

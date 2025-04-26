@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from promotions.tools import check_promo
+from django.utils import timezone
 
 
 class Status(models.Model):
@@ -33,6 +34,7 @@ class Order(models.Model):
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
                                related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
+    date = models.DateTimeField(default=timezone.now())
 
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(
@@ -112,6 +114,8 @@ class OrderUnit(models.Model):
     good_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
     size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
+    size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="order_units",
+                             null=True, blank=True)
 
     color = models.CharField(max_length=255, null=True, blank=True, default="")
     configuration = models.CharField(max_length=255, null=True, blank=True, default="")
@@ -127,4 +131,5 @@ class OrderUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
-
+    status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
+                               related_name="order_units", default=get_default_status)

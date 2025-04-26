@@ -77,8 +77,8 @@ Anon)
 7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
 8. `[POST]User order/cart_list/<user_id>` Body: ```{"product_unit_list": [2, 3]}``` Response (добавление в корзину или исключение)
-9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}``` Response (статус 200) или ошибка
-10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен"}```
+9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}``` Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
+10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true}```
 
 # Поиск
 Запросы отправляются на сервер с elastic 
@@ -1817,127 +1817,383 @@ Response:
 
 ```json
 {
-  "id": 1,
-  "user": {
     "id": 1,
-    "last_login": "2023-04-12T15:14:50.148633Z",
-    "is_superuser": true,
-    "username": "artem",
-    "first_name": "",
-    "last_name": "",
-    "email": "arten@mail.ru",
-    "is_staff": true,
-    "is_active": true,
-    "date_joined": "2023-04-07T15:26:38Z",
-    "all_purchase_amount": 0,
-    "personal_discount_percentage": 0,
-    "referral_link": null,
-    "preferred_size_grid": null,
-    "gender": null,
-    "ref_user": null,
-    "groups": [],
-    "user_permissions": [],
-    "my_groups": [],
-    "address": [],
-    "last_viewed_products": [
-      {
+    "promo_code": {
         "id": 1,
-        "name": "Air Force 1",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "air_force_1",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:28:17Z",
-        "add_date": "2023-04-07",
-        "fit": 1,
-        "rel_num": 1,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      },
-      {
-        "id": 2,
-        "name": "Dunk",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "sku",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:59:39Z",
-        "add_date": "2023-04-07",
-        "fit": 0,
-        "rel_num": 0,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      }
-    ]
-  },
-  "product_units": [
-    {
-      "id": 1,
-      "final_price": 7,
-      "availability": true,
-      "product": {
-        "id": 1,
-        "name": "Air Force 1",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "air_force_1",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:28:17Z",
-        "add_date": "2023-04-07",
-        "fit": 1,
-        "rel_num": 1,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      },
-      "size": {
-        "id": 1,
-        "INT": "12",
-        "US": "12",
-        "UK": "12",
-        "EU": "12",
-        "IT": "12",
-        "RU": "12",
-        "product": 1
-      },
-      "currency": {
-        "id": 2,
-        "name": "pending"
-      },
-      "delivery_type": {
-        "id": 1,
-        "name": "Самолёт"
-      },
-      "platform": {
-        "id": 1,
-        "platform": "Poizon",
-        "site": "/poizon"
-      }
-    }
-  ]
+        "owner": null,
+        "string_representation": "PENIS",
+        "discount_percentage": 50,
+        "discount_absolute": 0,
+        "activation_count": 0,
+        "max_activation_count": 1,
+        "active_status": true,
+        "active_until_date": "2023-08-02"
+    },
+    "product_units": [
+        {
+            "id": 3,
+            "product": {
+                "id": 1,
+                "in_wishlist": false,
+                "min_price_product_unit": 32990,
+                "model": "Баскетбольные шорты",
+                "colorway": "SS18 Bolt Basketball Short Black",
+                "russian_name": "SS18 Bolt Basketball Short Black",
+                "slug": "supreme-ss18-bolt-basketball-short-black-1",
+                "manufacturer_sku": "SUP-SS18-407",
+                "description": "",
+                "is_custom": false,
+                "is_collab": false,
+                "designer_color": "",
+                "min_price": 32990,
+                "available_flag": true,
+                "has_many_sizes": false,
+                "has_many_colors": false,
+                "has_many_configurations": false,
+                "exact_date": "2018-06-07",
+                "approximate_date": "07.06.2018",
+                "fit": 0,
+                "rel_num": 442,
+                "main_line": null,
+                "collab": null,
+                "main_color": {
+                    "id": 1,
+                    "name": "multicolour",
+                    "is_main_color": false,
+                    "russian_name": "",
+                    "hex": ""
+                },
+                "recommended_gender": null,
+                "size_table_platform": null,
+                "brands": [
+                    {
+                        "id": 1,
+                        "name": "Supreme",
+                        "query_name": "supreme"
+                    }
+                ],
+                "categories": [
+                    {
+                        "id": 21,
+                        "name": "Одежда",
+                        "eng_name": "clothes",
+                        "is_all": false,
+                        "full_name": "Одежда",
+                        "parent_category": null
+                    },
+                    {
+                        "id": 22,
+                        "name": "Вся одежда",
+                        "eng_name": "clothes",
+                        "is_all": true,
+                        "full_name": "Одежда | Вся одежда",
+                        "parent_category": {
+                            "id": 21,
+                            "name": "Одежда",
+                            "eng_name": "clothes",
+                            "is_all": false,
+                            "full_name": "Одежда",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 39,
+                        "name": "Спортивная одежда",
+                        "eng_name": "sport_clothes",
+                        "is_all": false,
+                        "full_name": "Одежда | Спортивная одежда",
+                        "parent_category": {
+                            "id": 21,
+                            "name": "Одежда",
+                            "eng_name": "clothes",
+                            "is_all": false,
+                            "full_name": "Одежда",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 40,
+                        "name": "Вся спортивная одежда",
+                        "eng_name": "sport_clothes",
+                        "is_all": true,
+                        "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
+                        "parent_category": {
+                            "id": 39,
+                            "name": "Спортивная одежда",
+                            "eng_name": "sport_clothes",
+                            "is_all": false,
+                            "full_name": "Одежда | Спортивная одежда",
+                            "parent_category": 21
+                        }
+                    },
+                    {
+                        "id": 42,
+                        "name": "Баскетбольные шорты",
+                        "eng_name": "basketball_shorts",
+                        "is_all": false,
+                        "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
+                        "parent_category": {
+                            "id": 39,
+                            "name": "Спортивная одежда",
+                            "eng_name": "sport_clothes",
+                            "is_all": false,
+                            "full_name": "Одежда | Спортивная одежда",
+                            "parent_category": 21
+                        }
+                    }
+                ],
+                "lines": [
+                    {
+                        "id": 224,
+                        "name": "Supreme",
+                        "is_all": false,
+                        "view_name": "Supreme",
+                        "full_name": "Supreme",
+                        "full_eng_name": "supreme",
+                        "parent_line": null
+                    }
+                ],
+                "tags": [],
+                "bucket_link": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
+                    },
+                    {
+                        "id": 3,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
+                    }
+                ],
+                "colors": [],
+                "gender": [
+                    {
+                        "id": 1,
+                        "name": "M"
+                    },
+                    {
+                        "id": 2,
+                        "name": "F"
+                    }
+                ]
+            },
+            "size_platform": "",
+            "good_size_platform": "36.5",
+            "size_table_platform": "",
+            "color": "",
+            "configuration": "",
+            "start_price": 65990,
+            "final_price": 65990,
+            "url": "",
+            "availability": true,
+            "warehouse": false,
+            "is_multiple": false,
+            "is_return": true,
+            "is_fast_shipping": false,
+            "is_sale": false,
+            "currency": {
+                "id": 1,
+                "name": "pending"
+            },
+            "delivery_type": {
+                "id": 4,
+                "name": "до 30 дней",
+                "view_name": null
+            },
+            "platform": {
+                "id": 2,
+                "platform": "poizon",
+                "site": "poizon"
+            }
+        },
+        {
+            "id": 4,
+            "product": {
+                "id": 1,
+                "in_wishlist": false,
+                "min_price_product_unit": 32990,
+                "model": "Баскетбольные шорты",
+                "colorway": "SS18 Bolt Basketball Short Black",
+                "russian_name": "SS18 Bolt Basketball Short Black",
+                "slug": "supreme-ss18-bolt-basketball-short-black-1",
+                "manufacturer_sku": "SUP-SS18-407",
+                "description": "",
+                "is_custom": false,
+                "is_collab": false,
+                "designer_color": "",
+                "min_price": 32990,
+                "available_flag": true,
+                "has_many_sizes": false,
+                "has_many_colors": false,
+                "has_many_configurations": false,
+                "exact_date": "2018-06-07",
+                "approximate_date": "07.06.2018",
+                "fit": 0,
+                "rel_num": 442,
+                "main_line": null,
+                "collab": null,
+                "main_color": {
+                    "id": 1,
+                    "name": "multicolour",
+                    "is_main_color": false,
+                    "russian_name": "",
+                    "hex": ""
+                },
+                "recommended_gender": null,
+                "size_table_platform": null,
+                "brands": [
+                    {
+                        "id": 1,
+                        "name": "Supreme",
+                        "query_name": "supreme"
+                    }
+                ],
+                "categories": [
+                    {
+                        "id": 21,
+                        "name": "Одежда",
+                        "eng_name": "clothes",
+                        "is_all": false,
+                        "full_name": "Одежда",
+                        "parent_category": null
+                    },
+                    {
+                        "id": 22,
+                        "name": "Вся одежда",
+                        "eng_name": "clothes",
+                        "is_all": true,
+                        "full_name": "Одежда | Вся одежда",
+                        "parent_category": {
+                            "id": 21,
+                            "name": "Одежда",
+                            "eng_name": "clothes",
+                            "is_all": false,
+                            "full_name": "Одежда",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 39,
+                        "name": "Спортивная одежда",
+                        "eng_name": "sport_clothes",
+                        "is_all": false,
+                        "full_name": "Одежда | Спортивная одежда",
+                        "parent_category": {
+                            "id": 21,
+                            "name": "Одежда",
+                            "eng_name": "clothes",
+                            "is_all": false,
+                            "full_name": "Одежда",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 40,
+                        "name": "Вся спортивная одежда",
+                        "eng_name": "sport_clothes",
+                        "is_all": true,
+                        "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
+                        "parent_category": {
+                            "id": 39,
+                            "name": "Спортивная одежда",
+                            "eng_name": "sport_clothes",
+                            "is_all": false,
+                            "full_name": "Одежда | Спортивная одежда",
+                            "parent_category": 21
+                        }
+                    },
+                    {
+                        "id": 42,
+                        "name": "Баскетбольные шорты",
+                        "eng_name": "basketball_shorts",
+                        "is_all": false,
+                        "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
+                        "parent_category": {
+                            "id": 39,
+                            "name": "Спортивная одежда",
+                            "eng_name": "sport_clothes",
+                            "is_all": false,
+                            "full_name": "Одежда | Спортивная одежда",
+                            "parent_category": 21
+                        }
+                    }
+                ],
+                "lines": [
+                    {
+                        "id": 224,
+                        "name": "Supreme",
+                        "is_all": false,
+                        "view_name": "Supreme",
+                        "full_name": "Supreme",
+                        "full_eng_name": "supreme",
+                        "parent_line": null
+                    }
+                ],
+                "tags": [],
+                "bucket_link": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
+                    },
+                    {
+                        "id": 3,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
+                    }
+                ],
+                "colors": [],
+                "gender": [
+                    {
+                        "id": 1,
+                        "name": "M"
+                    },
+                    {
+                        "id": 2,
+                        "name": "F"
+                    }
+                ]
+            },
+            "size_platform": "",
+            "good_size_platform": "36",
+            "size_table_platform": "",
+            "color": "",
+            "configuration": "",
+            "start_price": 32990,
+            "final_price": 32990,
+            "url": "",
+            "availability": false,
+            "warehouse": false,
+            "is_multiple": false,
+            "is_return": true,
+            "is_fast_shipping": true,
+            "is_sale": true,
+            "currency": {
+                "id": 1,
+                "name": "pending"
+            },
+            "delivery_type": {
+                "id": 4,
+                "name": "до 30 дней",
+                "view_name": null
+            },
+            "platform": {
+                "id": 2,
+                "platform": "poizon",
+                "site": "poizon"
+            }
+        }
+    ],
+    "bonus": 0,
+    "total_amount": 98980,
+    "bonus_sale": 0,
+    "promo_sale": 49490,
+    "final_amount": 49490
 }
 ```
 
@@ -1948,92 +2204,7 @@ Response:
 ### 2. `[POST][User] order/cart/<user_id>/<product_unit_id>` добавить юнит в корзину
 
 Response:
-
-```json
-{
-  "id": 2,
-  "final_price": 100,
-  "availability": true,
-  "product": {
-    "id": 2,
-    "name": "Dunk",
-    "bucket_link": "/buck",
-    "description": "desc",
-    "sku": "sku",
-    "available_flag": true,
-    "last_upd": "2023-04-07T15:59:39Z",
-    "add_date": "2023-04-07",
-    "fit": 0,
-    "rel_num": 0,
-    "gender": {
-      "id": 1,
-      "name": "M"
-    },
-    "brands": [
-      {
-        "id": 1,
-        "name": "Nike"
-      }
-    ],
-    "categories": [
-      {
-        "id": 1,
-        "name": "Sport"
-      }
-    ],
-    "tags": [
-      {
-        "id": 1,
-        "name": "Style"
-      }
-    ]
-  },
-  "size": {
-    "id": 1,
-    "INT": "12",
-    "US": "12",
-    "UK": "12",
-    "EU": "12",
-    "IT": "12",
-    "RU": "12",
-    "product": {
-      "id": 1,
-      "name": "Air Force 1",
-      "bucket_link": "/buck",
-      "description": "desc",
-      "sku": "air_force_1",
-      "available_flag": true,
-      "last_upd": "2023-04-07T15:28:17Z",
-      "add_date": "2023-04-07",
-      "fit": 1,
-      "rel_num": 1,
-      "gender": 1,
-      "brands": [
-        1
-      ],
-      "categories": [
-        1
-      ],
-      "tags": [
-        1
-      ]
-    }
-  },
-  "currency": {
-    "id": 2,
-    "name": "pending"
-  },
-  "delivery_type": {
-    "id": 1,
-    "name": "Самолёт"
-  },
-  "platform": {
-    "id": 1,
-    "platform": "Poizon",
-    "site": "/poizon"
-  }
-}
-```
+Вернет unit
 
 [:arrow_up:Orders API](#orders)
 [:arrow_up:SellOut API](#up)

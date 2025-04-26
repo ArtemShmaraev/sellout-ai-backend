@@ -6,7 +6,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Выполнение команды python manage.py makemigrations
-        # call_command('flush')
+        call_command('flush')
 
         # call_command('delete_migrations')
 
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         call_command('add_line')
 
         # Выполнение команды python manage.py add_size_table
-        # call_command('add_size_table')
+        call_command('add_size_table')
 
         # Выполнение команды python manage.py add_sg
         # call_command('add_sg')

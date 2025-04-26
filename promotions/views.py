@@ -16,10 +16,6 @@ from .serializers import PromoCodeSerializer
 
 # Create your views here.
 
-
-
-
-
 class PromocodeView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -31,16 +27,15 @@ class PromocodeView(APIView):
             try:
                 promo = PromoCode.objects.get(string_representation=text.upper())
             except:
-                return Response("Промокод не найден")
+                return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False})
             check = check_promo(promo, user_id)
-            print(check)
 
             if check[0]:
                 promo = check[2]
                 cart.promo_code = promo
                 cart.save()
-                return Response("Промокод применен")
-            return Response(check[1])
+                return Response({"final_amount": cart.final_amount, "message": "Промокод применен", "status": True})
+            return Response({"final_amount": cart.final_amount, "message": check[1], "status": False})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
 
@@ -59,7 +54,7 @@ class PromocodeAnonView(APIView):
         try:
             promo = PromoCode.objects.get(string_representation=text.upper())
         except:
-            return Response({"final_amount": sum, "message": "Промокод не найден"})
+            return Response({"final_amount": sum, "message": "Промокод не найден", "status": False})
         check = check_promo(promo)
 
         if check[0]:
@@ -69,7 +64,7 @@ class PromocodeAnonView(APIView):
             elif promo.discount_absolute > 0:
                 final_amount = round(sum - promo.discount_absolute)
             else:
-                return Response({"final_amount": sum, "message": "Промокод не активен"})
-            return Response({"final_amount": final_amount, "message": "Промокод применен"})
+                return Response({"final_amount": sum, "message": "Промокод не активен", "status": False})
+            return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True})
         else:
-            return Response({"final_amount": sum, "message": check[1]})
+            return Response({"final_amount": sum, "message": check[1], "status": False})

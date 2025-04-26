@@ -31,6 +31,9 @@ class Command(BaseCommand):
                     with open(file_path, 'r') as file:
                         json_content = file.read()
 
+                    data = json.loads(json_content)
+                    add_product(data)
+
 
                     # Преобразование содержимого файла в словарь
                     try:

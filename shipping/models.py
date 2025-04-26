@@ -66,7 +66,8 @@ class ProductUnit(models.Model):
                                           default="")  # обработанный размер с платформы
     size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
 
-    size = models.IntegerField(null=True, blank=True)  # порядковый номер размера в таблице
+    size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="product_units",
+                             null=True, blank=True)  # порядковый номер размера в таблице
     color = models.CharField(max_length=255, null=True, blank=True, default="")
     configuration = models.CharField(max_length=255, null=True, blank=True, default="")
 

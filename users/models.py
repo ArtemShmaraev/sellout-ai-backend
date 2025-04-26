@@ -62,7 +62,7 @@ class Gender(models.Model):
     name = models.CharField(max_length=255, choices=GENDER_CHOICES)
 
     def __str__(self):
-        d = {"M":'male', "F": "female"}
+        d = {"M": 'male', "F": "female"}
         return d[self.name]
 
 

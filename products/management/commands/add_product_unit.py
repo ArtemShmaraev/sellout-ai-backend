@@ -1,6 +1,6 @@
 from random import randint
 from django.core.management.base import BaseCommand
-from products.models import Product
+from products.models import Product, SizeTranslationRows, SizeTable
 from shipping.models import Platform, ProductUnit, DeliveryType
 from utils.models import Currency
 
@@ -19,8 +19,8 @@ class Command(BaseCommand):
         platform.save()
 
         for product in products:
-            product.save()
-            continue
+            # product.save()
+            # continue
             # Генерация случайного количества product_unit для каждого продукта
             num_units = randint(5, 10)
 
@@ -30,10 +30,15 @@ class Command(BaseCommand):
                 start_price = randint(10, 200) * 500 - 10  # Замените на логику генерации старой цены
                 final_price = start_price  # Замените на логику генерации новой цены
                 url = ""  # Замените на логику генерации URL
+                size_table = SizeTable.objects.get(id=1)
+                product.size_table = size_table
+                size_rows = list(size_table.rows.all())
+                n = randint(1, 10)
 
                 product_unit = ProductUnit.objects.create(
                     product=product,
-                    good_size_platform=size,
+                    good_size_platform=size_rows[n].row['EU_sizes'],
+                    size=size_rows[n],
                     # currency=currencies.first(),
                     start_price=start_price,
                     final_price=final_price,
@@ -46,6 +51,9 @@ class Command(BaseCommand):
                     is_return=((randint(1, 10) % 3) > 0),
                     is_fast_shipping=((randint(1, 10) % 3) > 0),
                     is_sale=((randint(1, 10) % 3) > 0)
-                )
 
+                )
                 self.stdout.write(self.style.SUCCESS(f'Successfully created ProductUnit: {product_unit}'))
+            product.save()
+
+

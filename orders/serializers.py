@@ -26,7 +26,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         if user_id is not None and user_id > 0:
             try:
                 user = User.objects.get(id=user_id)
-                bonus = user.bonuses.total_amount
+                bonus = 0
+                if user.bonuses:
+                    bonus = user.bonuses.total_amount
+
 
                 return bonus
             except User.DoesNotExist:

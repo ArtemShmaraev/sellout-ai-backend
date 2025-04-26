@@ -1,5 +1,5 @@
 from django.utils.functional import cached_property
-
+from django.db import models
 import rest_framework.generics
 from django.db.models import Q
 from django.shortcuts import render
@@ -252,7 +252,9 @@ class ListProductView(APIView):
     def post(self, request):
         try:
             s_products = json.loads(request.body)["products"]
-            products = Product.objects.filter(id__in=s_products)
+            products = Product.objects.filter(id__in=s_products).order_by(
+                models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
+            )
             return Response(ProductMainPageSerializer(products, many=True).data)
         except json.JSONDecodeError:
             return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)

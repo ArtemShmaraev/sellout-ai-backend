@@ -155,7 +155,7 @@ class UserLastSeenView(APIView):
                     product = Product.objects.get(id=product_id)
                     if product in user.last_viewed_products.all():
                         user.last_viewed_products.remove(product)
-                        user.last_viewed_products.add(product)
+                    user.last_viewed_products.add(product)
                     if user.last_viewed_products.count() > 20:
                         # Получаем наиболее старый просмотренный товар
                         oldest_product = user.last_viewed_products.first()

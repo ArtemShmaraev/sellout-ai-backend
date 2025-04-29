@@ -51,24 +51,16 @@ class DewuInfoView(APIView):
             if "web_data" in data:
                 dewu_info.web_data = data['web_data']
             dewu_info.save()
-            return Response(DewuInfoSerializer(dewu_info).data)
         else:
-            products = Product.objects.filter(spu_id=spu_id)
-            if products.exists():
-                dewu_info = DewuInfo(spu_id=spu_id)
-                if "api_data" in data:
-                    dewu_info.api_data = data['api_data']
-                if "preprocessed_data" in data:
-                    dewu_info.preprocessed_data = data['preprocessed_data']
-                if "web_data" in data:
-                    dewu_info.web_data = data['web_data']
-                dewu_info.save()
-                for product in products:
-                    product.dewu_info = dewu_info
-                    product.save()
-                return Response(DewuInfoSerializer(dewu_info).data)
-            else:
-                return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+            dewu_info = DewuInfo(spu_id=spu_id)
+            if "api_data" in data:
+                dewu_info.api_data = data['api_data']
+            if "preprocessed_data" in data:
+                dewu_info.preprocessed_data = data['preprocessed_data']
+            if "web_data" in data:
+                dewu_info.web_data = data['web_data']
+            dewu_info.save()
+        return Response(DewuInfoSerializer(dewu_info).data)
 
 
 

@@ -81,6 +81,11 @@ Anon)
 9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}``` Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
 10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```
 
+
+## Dewu Info Для Дениса
+1. `[GET] product/dewu_info` Вернуть всё
+2. `[GET] product/dewu_info/<spu_id>` Венуть по Spu Id
+3. `[POST] product/dewu_info/<spu_id>` Body: ```{"api_data": api_data, "web_data": web_data, "preprocessed_data": data}``` Можно передать не все параметры для заполнения
 # Поиск
 Запросы отправляются на сервер с elastic 
 ### 1. `[GET][Anon] <elastichost>/sellout/_search` поискв

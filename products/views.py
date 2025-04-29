@@ -23,11 +23,11 @@ from .tools import build_line_tree, build_category_tree, category_no_child, line
 
 
 class DewuInfoView(APIView):
-    @api_view(["GET"])
+
     def get(self, request):
         dewu_infos = DewuInfo.objects.all()
         count = dewu_infos.count()
-        page_number = self.request.query_params.get("page")
+        page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
         start_index = (page_number - 1) * 60
         queryset = dewu_infos[start_index:start_index + 60]
@@ -35,7 +35,6 @@ class DewuInfoView(APIView):
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
         return Response(res, status=status.HTTP_200_OK)
 
-    @api_view(["GET"])
     def get_by_spu_id(self, request, spu_id):
         dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
         serializer = DewuInfoSerializer(dewu_info, many=True)

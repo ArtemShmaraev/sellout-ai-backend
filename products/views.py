@@ -22,7 +22,17 @@ from .tools import build_line_tree, build_category_tree, category_no_child, line
 # Create your views here.
 class DewuInfoListView(APIView):
     def get(self, request):
-        dewu_infos = DewuInfo.objects.all()
+        web_data = request.query_params.get("web_data")
+        if web_data is not None:
+            # Параметр был передан, теперь вы можете проверить его значение
+            web_data = web_data.lower() == 'true'
+
+            if not web_data:
+                dewu_infos = DewuInfo.objects.filter(web_data={})
+            else:
+                dewu_infos = DewuInfo.objects.all()
+        else:
+            dewu_infos = DewuInfo.objects.all()
         count = dewu_infos.count()
         page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)

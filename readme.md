@@ -83,7 +83,7 @@ Anon)
 
 
 ## Dewu Info Для Дениса
-1. `[GET] product/dewu_info` Вернуть всё
+1. `[GET] product/dewu_info` Вернуть всё (web_data=false вернёт товары у которых web_data пустая)
 2. `[GET] product/dewu_info/<spu_id>` Венуть по Spu Id
 3. `[POST] product/dewu_info/<spu_id>` Body: ```{"api_data": api_data, "web_data": web_data, "preprocessed_data": data}``` Можно передать не все параметры для заполнения
 # Поиск

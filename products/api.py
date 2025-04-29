@@ -294,7 +294,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         # elif size_us:
         #     queryset = queryset.filter(product_units__size__US__in=size_us)
 
-        # queryset = queryset.distinct()
+        queryset = queryset.distinct()
         return queryset
 
 # def filter_queryset(self, queryset):

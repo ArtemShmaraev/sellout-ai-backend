@@ -80,7 +80,7 @@ class MinPriceForSizeView(APIView):
                     d['view_size'] = size
                 min_prices_by_size[size] = d
                 s.append(d)
-            return Response(sorted(s, key=lambda x: int(x['size']) if x['size'].isdigit() else x['size']))
+            return Response(sorted(s, key=lambda x: float(x['size']) if x['size'].replace(".", "").isdigit() else x['size']))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

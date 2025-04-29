@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from promotions.models import Bonuses
+from products.models import SizeRow
 
 
 class User(AbstractUser):
@@ -48,9 +49,30 @@ class User(AbstractUser):
     #                                               blank=True)
     last_viewed_products = models.JSONField(blank=True, null=True, default=list)
     happy_birthday = models.DateTimeField(auto_now=True)
+    preferred_shoes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.PROTECT, blank=True, null=True,
+                                                   related_name='users_with_shoes_table')
+    preferred_clothes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.PROTECT, blank=True,
+                                                     null=True, related_name='users_with_clothes_table')
+    shoes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.PROTECT, blank=True, null=True,
+                                   related_name='users_with_shoes_size')
+    clothes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.PROTECT, blank=True, null=True,
+                                     related_name='users_with_clothes_size')
+    height = models.IntegerField(default=175)
+    weight = models.IntegerField(default=60)
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        # Если гендер мужской, установите значение по умолчанию для мужского размера обуви
+
+        if self.gender == 'M':
+            self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+            self.preferred_clothes_size_row = SizeRow.objects.get(id=10)
+        else:
+            self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+            self.preferred_clothes_size_row = SizeRow.objects.get(id=20)
+        super(User, self).save(*args, **kwargs)
 
 
 class Gender(models.Model):

@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import json
 from django.core.management.base import BaseCommand
-from products.models import SizeTable, Category, Gender, SizeTranslationRows
+from products.models import SizeTable, Category, Gender, SizeTranslationRows, SizeRow
 
 data = {
     # Вставьте предоставленную структуру данных здесь
@@ -22,13 +22,16 @@ class Command(BaseCommand):
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
 
+        k_id = 0
+
         for table in data:
 
             size_table = SizeTable.objects.create(
                 name=table['name'],
                 filter_name=table['filter_name'],
-                standard=False
+                standard=True
             )
+            size_table.save()
 
             category_objects = [Category.objects.get_or_create(name=name)[0] for name in table['category']]
             size_table.category.add(*category_objects)
@@ -36,7 +39,19 @@ class Command(BaseCommand):
             gender_objects = [Gender.objects.get_or_create(name=name)[0] for name in table['gender']]
             size_table.gender.add(*gender_objects)
 
-            size_table.size_rows = table['all_sizes']
+            k_id_do = k_id
+            for k, v in table['all_sizes'].items():
+                k_id = k_id_do
+                size_row = SizeRow(filter_name=v['filter_name'], filter_logo=v['filter_logo'])
+                new_sizes = []
+                for s in v['sizes']:
+                    k_id += 1
+                    new_sizes.append({"size": s, "query": k_id})
+                size_row.sizes = new_sizes
+
+                size_row.save()
+                size_table.size_rows.add(size_row)
+
             keys = list(dict(table['all_sizes']).keys())
             first_key = keys[0] if len(keys) > 0 else None
             len_table = len(table['all_sizes'][first_key]['sizes'])
@@ -51,8 +66,8 @@ class Command(BaseCommand):
                 if SizeTranslationRows.objects.filter(table=size_table, row=d, is_one_size=is_one_size).exists():
                     continue
                 else:
-                    size_row = SizeTranslationRows(table=size_table, row=d, is_one_size=is_one_size)
-                    size_row.save()
+                    size_trans_row = SizeTranslationRows(table=size_table, row=d, is_one_size=is_one_size)
+                    size_trans_row.save()
         self.stdout.write(self.style.SUCCESS('Successfully populated SizeTable'))
 
 

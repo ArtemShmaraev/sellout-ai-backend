@@ -43,7 +43,6 @@ def category_no_child(cats):
 def build_line_tree(lines):
     line_dict = {}
     root_lines = []
-
     # Создание словаря линеек с использованием их идентификаторов в качестве ключей
     for line in lines:
         line_dict[line['id']] = line
@@ -204,7 +203,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
     if not isinstance(categories, list):
         categories = [categories]
     for category_name in categories:
-        category, _ = Category.objects.get_or_create(name=category_name)
+        category = Category.objects.get(name=category_name)
         product.categories.add(category)
 
     product.platform_info = json.dumps(data.get("platform_info"))
@@ -234,24 +233,25 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
             product.lines.add(Line.objects.get(view_name=line))
     else:
         # линейка всегда существует, сюда код не дойдет
-        parent_line = None
-        for line_name in lines:
-            if Line.objects.filter(name=line_name, parent_line=parent_line).exists():
-                line = Line.objects.get(name=line_name, parent_line=parent_line)
-            else:
-                line = Line(name=line_name, parent_line=parent_line, full_name=line_name)
-                line.save()
-            if parent_line is not None:
-                if Line.objects.filter(name=f"Все {parent_line.name}",
-                                       parent_line=parent_line).exists():
-                    line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line, )
-                else:
-                    line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
-                                    full_name=line_name)
-                    line_all.save()
-                product.lines.add(line_all)
-            parent_line = line
-            product.lines.add(line)
+        print("ПИЗДАААААААА")
+        # parent_line = None
+        # for line_name in lines:
+        #     if Line.objects.filter(name=line_name, parent_line=parent_line).exists():
+        #         line = Line.objects.get(name=line_name, parent_line=parent_line)
+        #     else:
+        #         line = Line(name=line_name, parent_line=parent_line, full_name=line_name)
+        #         line.save()
+        #     if parent_line is not None:
+        #         if Line.objects.filter(name=f"Все {parent_line.name}",
+        #                                parent_line=parent_line).exists():
+        #             line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line, )
+        #         else:
+        #             line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
+        #                             full_name=line_name)
+        #             line_all.save()
+        #         product.lines.add(line_all)
+        #     parent_line = line
+        #     product.lines.add(line)
 
     # product.slug = ""
     product.save(custom_param=True)

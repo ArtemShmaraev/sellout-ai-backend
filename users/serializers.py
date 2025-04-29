@@ -37,6 +37,14 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
+class UserSizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['preferred_shoes_size_row', "preferred_clothes_size_row", "shoes_size", "clothes_size", "height",
+                  "weight"]
+        # depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
 class ForAnonUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

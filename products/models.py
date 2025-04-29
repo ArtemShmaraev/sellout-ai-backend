@@ -75,7 +75,7 @@ class Line(models.Model):
         #
         #     self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
         #         "Dunk Dunk", "Dunk", 1).split())
-        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все", "").strip()
+        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все_", "").strip()
 
         if "все" in self.name.lower():
             self.is_all = True
@@ -273,16 +273,18 @@ class Product(models.Model):
                 if not self.main_color.is_main_color:
                     self.main_color.is_main_color = True
 
-            lines = self.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')
-            if lines:
-                self.main_line = lines.order_by('-id').first()
-
             for brand in self.brands.all():
                 line, _ = Line.objects.get_or_create(name=brand.name)
                 line.save()
                 self.lines.add(line)
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
+
+            lines = self.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')
+            if lines:
+                self.main_line = lines.order_by('-id').first()
+
+
 
         # super(Product, self).save(*args, **kwargs)
         # print()
@@ -321,11 +323,16 @@ class SizeTable(models.Model):
     filter_name = models.CharField(max_length=255, blank=True, null=True)
     category = models.ManyToManyField("Category", related_name='size_tables', blank=True)
     gender = models.ManyToManyField("Gender", related_name='size_tables', blank=True)
-    size_rows = models.JSONField(blank=True, null=True)
+    size_rows = models.ManyToManyField("SizeRow", related_name='size_tables', blank=True)
     standard = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name}"
+
+class SizeRow(models.Model):
+    filter_name = models.CharField(max_length=128, default="")
+    filter_logo = models.CharField(max_length=128, default="")
+    sizes = models.JSONField(default=list)
 
 
 class SizeTranslationRows(models.Model):

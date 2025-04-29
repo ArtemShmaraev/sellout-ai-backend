@@ -1,7 +1,7 @@
 from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef, Min
 from rest_framework.decorators import api_view, action
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -13,9 +13,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 from time import time
 from django.http import JsonResponse, FileResponse
-from .models import Product, Category, Line, DewuInfo
+
+from users.models import User
+from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable
 from rest_framework import status
-from .serializers import ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer, DewuInfoSerializer
+from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer, \
+    DewuInfoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
 
@@ -73,8 +76,6 @@ class DewuInfoView(APIView):
         return Response(DewuInfoSerializer(dewu_info).data)
 
 
-
-
 class ProductSearchView(APIView):
     def get(self, request):
         query = json.loads(request.body)  # Получение параметра запроса
@@ -91,7 +92,7 @@ class ProductSearchView(APIView):
         start_index = (page_number - 1) * 60
         queryset = products[start_index:start_index + 60]
         serializer = ProductMainPageSerializer(queryset, many=True)
-        res = {'count': count, "results": serializer.data}# Замените на вашу сериализацию
+        res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
 
         return Response(res, status=status.HTTP_200_OK)
 
@@ -142,6 +143,8 @@ class ProductView(APIView):
 
         if not available:
             queryset = queryset.filter(available_flag=True)
+            queryset = queryset.filter(product_units__availability=True)
+            queryset = queryset.distinct()
         if not custom:
             queryset = queryset.filter(is_custom=False)
         if collab:
@@ -175,10 +178,10 @@ class ProductView(APIView):
                         current_line = current_line.parent_line
 
                 return None  # Если общей родительской линейки не найдено
+
             # Пример использования
             selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
             oldest_line = find_common_ancestor(selected_lines)
-
 
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
@@ -204,13 +207,12 @@ class ProductView(APIView):
                             return current_category.parent_category
                         current_category = current_category.parent_category
                 return None  # Если общей родительской линейки не найдено
+
             selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
             oldest_cat = find_common_ancestor(selected_cat)
-            print(oldest_cat)
 
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
-
 
         filters = Q()
         # Фильтр по цене
@@ -233,12 +235,35 @@ class ProductView(APIView):
         if is_fast_shipping:
             filters &= Q(product_units__fast_shipping=is_fast_shipping)
         if filters != Q():
-        # Выполняем фильтрацию
+            # Выполняем фильтрацию
             queryset = queryset.filter(filters)
         queryset = queryset.distinct()
 
         t3 = time()
         print("t2", t3 - t2)
+
+        ordering = self.request.query_params.get('ordering')
+        if ordering in ['exact_date']:
+            queryset = queryset.order_by(ordering)
+        elif ordering == "min_price" or ordering == "-min_price":
+            if size:
+                queryset = queryset.annotate(
+                    min_price_product_unit=Subquery(
+                        Product.objects.filter(pk=OuterRef('pk'))
+                        .annotate(unit_min_price=Min('product_units__final_price', filter=(
+                            Q(product_units__size__in=size))))
+                        .values('unit_min_price')[:1]
+                    )
+                )
+                if ordering == "min_price":
+                    queryset = queryset.order_by("min_price_product_unit")
+                else:
+                    queryset = queryset.order_by("-min_price_product_unit")
+            else:
+                queryset = queryset.order_by(ordering)
+
+        t4 = time()
+        print("t3", t4 - t3)
 
         # paginator = CustomPagination()
         # Применяем пагинацию к списку объектов Product
@@ -247,27 +272,34 @@ class ProductView(APIView):
         # res = paginator.get_paginated_response(serializer)
 
         res = {"count": queryset.count()}
-        t4 = time()
-        print("t3", t4 - t3)
+
+        t5 = time()
+        print("t4", t5 - t4)
 
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
         start_index = (page_number - 1) * 60
         queryset = queryset[start_index:start_index + 60]
-        t41 = time()
-        print("t41", t41 - t3)
 
-        # Сериализуем объекты и возвращаем ответ с пагинированными данными
-        serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
-        t5 = time()
-        print("t4", t5 - t41)
-
-        res['results'] = serializer
         t6 = time()
         print("t5", t6 - t5)
+        # Сериализуем объекты и возвращаем ответ с пагинированными данными
+        serializer = ProductMainPageSerializer(queryset, many=True, context=context)
+        t7 = time()
+        print("t6", t7 - t6)
 
+        serializer = serializer.data
+        t8 = time()
+        print("t7", t8 - t7)
 
-
+        res['results'] = serializer
+        t9 = time()
+        print("t8", t9 - t8)
+        res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
+        res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
+        res['min_price'] = 0
+        res['max_price'] = 1000000
+        res["products_page_header"] = " "
 
         # line = ""
         # cat = ""
@@ -278,11 +310,6 @@ class ProductView(APIView):
         #     tree = build_category_tree(CategorySerializer(Category.objects.all(), many=True).data)
         #     cat = find_oldest_name(tree, categories)
         # response.data["products_page_header"] = str(line) + " " + str(cat)
-
-
-
-
-
 
         return Response(res)
 
@@ -399,14 +426,34 @@ class ProductUpdateView(APIView):
         return Response(ProductMainPageSerializer(product).data, status=status.HTTP_200_OK)
 
 
+class SizeTableForFilter(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            gender = self.request.query_params.getlist("gender")
+            category = self.request.query_params.getlist("category")
+
+            filters = Q()
+            size_tables = SizeTable.objects.all()
+            # Фильтр по цене
+            if gender:
+                filters &= Q(gender__name__in=gender)
+            if category:
+                filters &= Q(category__eng_name__in=category)
+            if filters:
+                size_tables = size_tables.filter(filters).distinct()
+            return Response(SizeTableSerializer(size_tables, many=True, context={"user": user}).data)
+        except User.DoesNotExist:
+            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+
 class ProductSizeView(APIView):
     def get(self, request):
-        # Откройте JSON-файл и загрузите его содержимое
         with open('size_table_2.json', 'r', encoding='utf-8') as file:
             product_sizes_data = json.load(file)
 
         # Верните JSON-данные в ответе
         return Response(product_sizes_data)
+
 
 
 class AddProductView(APIView):

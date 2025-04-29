@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from promotions.models import Bonuses
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer
 from .models import User, Gender
 from rest_framework import exceptions
@@ -25,6 +25,46 @@ from .tools import check_adress
 from shipping.views import ProductUnitProductMainView
 
 import requests
+
+
+class UserSizeInfo(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            return Response(UserSizeSerializer(user).data)
+        except User.DoesNotExist:
+            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        user = User.objects.get(id=request.user.id)
+
+        # Assuming the data dictionary contains the necessary fields for sizes, height, and weight
+        preferred_shoes_size_row_id = data.get('preferred_shoes_size_table')
+        preferred_clothes_size_row_id = data.get('preferred_clothes_size_table')
+        shoes_size_id = data.get('shoes_size')
+        clothes_size_id = data.get('clothes_size')
+        height = data.get('height')
+        weight = data.get('weight')
+
+        if preferred_shoes_size_row_id is not None:
+            user.preferred_shoes_size_row_id = preferred_shoes_size_row_id
+        if preferred_clothes_size_row_id is not None:
+            user.preferred_clothes_size_table_id = preferred_clothes_size_row_id
+        if shoes_size_id is not None:
+            user.shoes_size_id = shoes_size_id
+        if clothes_size_id is not None:
+            user.clothes_size_id = clothes_size_id
+        if height is not None:
+            user.height = height
+        if weight is not None:
+            user.weight = weight
+
+        user.save()
+
+        return Response(UserSizeSerializer(user).data, status=status.HTTP_201_CREATED)
+
+
 
 
 class UserInfoView(APIView):

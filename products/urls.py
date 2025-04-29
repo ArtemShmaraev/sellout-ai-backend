@@ -1,7 +1,9 @@
 from rest_framework import routers
-from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, CollabViewSet
+from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
+    CollabViewSet
 from django.urls import include, path
-from .views import DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, ProductIdView, CategoryTreeView, LineTreeView, ProductUpdateView, LineNoChildView, \
+from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, ProductIdView, CategoryTreeView, \
+    LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView
 
 # router = routers.DefaultRouter()
@@ -14,7 +16,7 @@ from .views import DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlu
 
 
 router_product = routers.DefaultRouter()
-router_product.register("products", ProductViewSet, basename="product")
+router_product.register("products2", ProductViewSet, basename="product")
 
 router_cat = routers.DefaultRouter()
 router_cat.register("categories", CategoryViewSet, basename="category")
@@ -38,7 +40,7 @@ router_collab = routers.DefaultRouter()
 router_collab.register("collabs", CollabViewSet, basename="collab")
 
 urlpatterns = [
-    path("products2", ProductView.as_view()),
+    path("products/", ProductView.as_view()),
     path("", include(router_collection.urls)),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
@@ -49,4 +51,5 @@ urlpatterns = [
     path("update/<int:product_id>", ProductUpdateView.as_view()), path("size", ProductSizeView.as_view()),
     path("add_product", AddProductView.as_view()), path("list_product", ListProductView.as_view()),
     path("product_search", ProductSearchView.as_view()),
-    path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view())]
+    path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view()),
+    path("size_table", SizeTableForFilter.as_view())]

@@ -15,7 +15,7 @@ class Command(BaseCommand):
         for count in range(1, 2):
             # folder_path = f'dewu/{count}m'
             folder_path = f'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
-            k = 1600
+            k = 30000
             ek = 0
             t0 = datetime.now()
             # Перебор всех файлов в папке
@@ -31,8 +31,9 @@ class Command(BaseCommand):
                     with open(file_path, 'r') as file:
                         json_content = file.read()
 
-                    data = json.loads(json_content)
-                    add_product(data)
+                    # data = json.loads(json_content)
+                    # print(data)
+                    # add_product(data)
 
 
                     # Преобразование содержимого файла в словарь
@@ -42,6 +43,5 @@ class Command(BaseCommand):
                     except Exception as e:
                         print(data)
                         print(e)
-                        break
 
         print('finished')

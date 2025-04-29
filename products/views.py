@@ -20,10 +20,7 @@ from .tools import build_line_tree, build_category_tree, category_no_child, line
 
 
 # Create your views here.
-
-
-class DewuInfoView(APIView):
-
+class DewuInfoListView(APIView):
     def get(self, request):
         dewu_infos = DewuInfo.objects.all()
         count = dewu_infos.count()
@@ -35,11 +32,13 @@ class DewuInfoView(APIView):
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
         return Response(res, status=status.HTTP_200_OK)
 
-    def get_by_spu_id(self, request, spu_id):
+
+class DewuInfoView(APIView):
+    def get(self, request, spu_id):
         dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
         serializer = DewuInfoSerializer(dewu_info, many=True)
-        res = {'count': dewu_info.count(), "results": serializer.data}  # Замените на вашу сериализацию
-        return Response(res, status=status.HTTP_200_OK)
+        # Замените на вашу сериализацию
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, spu_id):
         data = json.loads(request.body)
@@ -70,9 +69,6 @@ class DewuInfoView(APIView):
                 return Response(DewuInfoSerializer(dewu_info).data)
             else:
                 return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
-
-
-
 
 
 

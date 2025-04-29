@@ -12,7 +12,7 @@
     "all_sizes": {
       "EU_sizes": {
         "filter_name": "Европейский(EU)",
-        "filter_logo": "-",
+        "filter_logo": "EU",
         "sizes": [
           "34",
           "34.5",
@@ -58,7 +58,7 @@
       },
       "RU_sizes": {
         "filter_name": "Российский(RU)",
-        "filter_logo": "-",
+        "filter_logo": "RU",
         "sizes": [
           "33",
           "33.5",
@@ -104,7 +104,7 @@
       },
       "US_sizes": {
         "filter_name": "Американский(US)",
-        "filter_logo": "-",
+        "filter_logo": "US",
         "sizes": [
           "1",
           "1.5",
@@ -150,7 +150,7 @@
       },
       "US_wmns_sizes": {
         "filter_name": "Американский женский(US-wmns)",
-        "filter_logo": "-",
+        "filter_logo": "US",
         "sizes": [
           "2.5",
           "3",
@@ -196,7 +196,7 @@
       },
       "UK_sizes": {
         "filter_name": "Английский(UK)",
-        "filter_logo": "-",
+        "filter_logo": "UK",
         "sizes": [
           "0",
           "0.5",
@@ -242,7 +242,7 @@
       },
       "JP(CM)_sizes": {
         "filter_name": "Японский(CM)",
-        "filter_logo": "-",
+        "filter_logo": "JP",
         "sizes": [
           "18",
           "18.5",
@@ -288,7 +288,7 @@
       },
       "CHN(mm)_sizes": {
         "filter_name": "Китайский(mm)",
-        "filter_logo": "-",
+        "filter_logo": "CN",
         "sizes": [
           "180",
           "185",
@@ -332,7 +332,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Европейский(EU)"
   },
   {
     "name": "Clothes_Men",
@@ -344,55 +345,9 @@
     ],
     "filter_name": "Мужская одежда",
     "all_sizes": {
-      "IT_sizes": {
-        "filter_name": "Итальянский(IT)",
-        "filter_logo": "-",
-        "sizes": [
-          "40",
-          "42",
-          "44",
-          "46",
-          "48",
-          "50",
-          "52",
-          "54",
-          "56",
-          "58",
-          "60",
-          "62",
-          "64",
-          "66",
-          "68",
-          "70",
-          "Один размер"
-        ]
-      },
-      "FR_sizes": {
-        "filter_name": "Французский(FR)",
-        "filter_logo": "-",
-        "sizes": [
-          "40",
-          "42",
-          "44",
-          "46",
-          "48",
-          "50",
-          "52",
-          "54",
-          "56",
-          "58",
-          "60",
-          "62",
-          "64",
-          "66",
-          "68",
-          "70",
-          "Один размер"
-        ]
-      },
       "Standard_sizes": {
         "filter_name": "Международный(INT)",
-        "filter_logo": "-",
+        "filter_logo": "INT",
         "sizes": [
           "XXXS",
           "XXS",
@@ -415,7 +370,53 @@
       },
       "RU_sizes": {
         "filter_name": "Российский(RU)",
-        "filter_logo": "-",
+        "filter_logo": "RU",
+        "sizes": [
+          "40",
+          "42",
+          "44",
+          "46",
+          "48",
+          "50",
+          "52",
+          "54",
+          "56",
+          "58",
+          "60",
+          "62",
+          "64",
+          "66",
+          "68",
+          "70",
+          "Один размер"
+        ]
+      },
+      "IT_sizes": {
+        "filter_name": "Итальянский(IT)",
+        "filter_logo": "IT",
+        "sizes": [
+          "40",
+          "42",
+          "44",
+          "46",
+          "48",
+          "50",
+          "52",
+          "54",
+          "56",
+          "58",
+          "60",
+          "62",
+          "64",
+          "66",
+          "68",
+          "70",
+          "Один размер"
+        ]
+      },
+      "FR_sizes": {
+        "filter_name": "Французский(FR)",
+        "filter_logo": "FR",
         "sizes": [
           "40",
           "42",
@@ -438,7 +439,7 @@
       },
       "Chest_sizes": {
         "filter_name": "Обхват груди(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "78-82",
           "82-86",
@@ -461,7 +462,7 @@
       },
       "Waist_sizes": {
         "filter_name": "Обхват талии(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "66-70",
           "70-74",
@@ -484,7 +485,7 @@
       },
       "Hip_sizes": {
         "filter_name": "Обхват бёдер(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "88-91",
           "91-94",
@@ -507,7 +508,7 @@
       },
       "UK_sizes": {
         "filter_name": "Английский(UK)",
-        "filter_logo": "-",
+        "filter_logo": "UK",
         "sizes": [
           "30",
           "32",
@@ -530,7 +531,7 @@
       },
       "US_sizes": {
         "filter_name": "Американский(US)",
-        "filter_logo": "-",
+        "filter_logo": "US",
         "sizes": [
           "30",
           "32",
@@ -553,7 +554,7 @@
       },
       "CHN_sizes": {
         "filter_name": "Китайский",
-        "filter_logo": "-",
+        "filter_logo": "CN",
         "sizes": [
           "155/86A",
           "160/80A",
@@ -576,7 +577,7 @@
       },
       "Numeric_sizes": {
         "filter_name": "Числовой",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "000",
           "00",
@@ -597,7 +598,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   },
   {
     "name": "Clothes_Women",
@@ -609,27 +611,9 @@
     ],
     "filter_name": "Женская одежда",
     "all_sizes": {
-      "IT_sizes": {
-        "filter_name": "Итальянский(IT)",
-        "filter_logo": "-",
-        "sizes": [
-          "34",
-          "36",
-          "38",
-          "40",
-          "42",
-          "44",
-          "46",
-          "48",
-          "50",
-          "52",
-          "54",
-          "Один размер"
-        ]
-      },
       "Standard_sizes": {
         "filter_name": "Международный(INT)",
-        "filter_logo": "-",
+        "filter_logo": "INT",
         "sizes": [
           "XXXS",
           "XXS",
@@ -647,7 +631,7 @@
       },
       "RU_sizes": {
         "filter_name": "Российский(RU)",
-        "filter_logo": "-",
+        "filter_logo": "RU",
         "sizes": [
           "38",
           "40",
@@ -663,9 +647,27 @@
           "Один размер"
         ]
       },
+      "IT_sizes": {
+        "filter_name": "Итальянский(IT)",
+        "filter_logo": "IT",
+        "sizes": [
+          "34",
+          "36",
+          "38",
+          "40",
+          "42",
+          "44",
+          "46",
+          "48",
+          "50",
+          "52",
+          "54",
+          "Один размер"
+        ]
+      },
       "FR_sizes": {
         "filter_name": "Французский(FR)",
-        "filter_logo": "-",
+        "filter_logo": "FR",
         "sizes": [
           "30",
           "32",
@@ -683,7 +685,7 @@
       },
       "Chest_sizes": {
         "filter_name": "Обхват груди(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "74-78",
           "78-82",
@@ -701,7 +703,7 @@
       },
       "Waist_sizes": {
         "filter_name": "Обхват талии(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "54-58",
           "58-62",
@@ -719,7 +721,7 @@
       },
       "Hip_sizes": {
         "filter_name": "Обхват бёдер(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "80-84",
           "84-88",
@@ -737,7 +739,7 @@
       },
       "US_sizes": {
         "filter_name": "Американский(US)",
-        "filter_logo": "-",
+        "filter_logo": "US",
         "sizes": [
           "00",
           "0",
@@ -755,7 +757,7 @@
       },
       "UK_sizes": {
         "filter_name": "Английский(UK)",
-        "filter_logo": "-",
+        "filter_logo": "UK",
         "sizes": [
           "2",
           "4",
@@ -773,7 +775,7 @@
       },
       "CHN_top_sizes": {
         "filter_name": "Китайский(верх)",
-        "filter_logo": "-",
+        "filter_logo": "CN",
         "sizes": [
           "140/64A",
           "145/72A",
@@ -791,7 +793,7 @@
       },
       "CHN_bottom_sizes": {
         "filter_name": "Китайский(низ)",
-        "filter_logo": "-",
+        "filter_logo": "CN",
         "sizes": [
           "140/60A",
           "145/64A",
@@ -809,7 +811,7 @@
       },
       "Numeric_sizes": {
         "filter_name": "Числовой",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "3",
           "5",
@@ -825,7 +827,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   },
   {
     "name": "Shoes_Kids",
@@ -839,7 +842,7 @@
     "all_sizes": {
       "EU_sizes": {
         "filter_name": "Европейский(EU)",
-        "filter_logo": "-",
+        "filter_logo": "EU",
         "sizes": [
           "16",
           "16.5",
@@ -898,7 +901,7 @@
       },
       "RU_sizes": {
         "filter_name": "Российский(RU)",
-        "filter_logo": "-",
+        "filter_logo": "RU",
         "sizes": [
           "15",
           "15.5",
@@ -957,7 +960,7 @@
       },
       "US_sizes": {
         "filter_name": "Американский(US)",
-        "filter_logo": "-",
+        "filter_logo": "US",
         "sizes": [
           "1C",
           "1.5C",
@@ -1016,7 +1019,7 @@
       },
       "JP(CM)_sizes": {
         "filter_name": "Японский(CM)",
-        "filter_logo": "-",
+        "filter_logo": "JP",
         "sizes": [
           "9",
           "9.5",
@@ -1075,7 +1078,7 @@
       },
       "CHN(mm)_sizes": {
         "filter_name": "Китайский(mm)",
-        "filter_logo": "-",
+        "filter_logo": "CN",
         "sizes": [
           "90",
           "95",
@@ -1132,7 +1135,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Европейский(EU)"
   },
   {
     "name": "Clothes_Kids",
@@ -1146,7 +1150,7 @@
     "all_sizes": {
       "Height_sizes": {
         "filter_name": "Рост(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "46-52",
           "58-64",
@@ -1173,7 +1177,7 @@
       },
       "Ages_sizes": {
         "filter_name": "Возраст",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "1 мес.",
           "3 мес.",
@@ -1200,7 +1204,7 @@
       },
       "Chest_sizes": {
         "filter_name": "Обхват груди(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "41-43",
           "45-47",
@@ -1227,7 +1231,7 @@
       },
       "Waist_sizes": {
         "filter_name": "Обхват талии(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "41-43",
           "45-47",
@@ -1254,7 +1258,7 @@
       },
       "Hip_sizes": {
         "filter_name": "Обхват бёдер(СМ)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "41-43",
           "45-47",
@@ -1279,7 +1283,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Рост(СМ)"
   },
   {
     "name": "Belts",
@@ -1293,35 +1298,35 @@
     ],
     "filter_name": "Ремни",
     "all_sizes": {
-      "Waist_CM_sizes": {
-        "filter_name": "Обхват талии(CM)",
-        "filter_logo": "-",
+      "Standard_sizes": {
+        "filter_name": "Международный(INT)",
+        "filter_logo": "INT",
         "sizes": [
-          "55-65",
-          "60-70",
-          "65-75",
-          "70-80",
-          "75-85",
-          "80-90",
-          "85-95",
-          "90-100",
-          "95-105",
-          "100-110",
-          "105-115",
-          "110-120",
-          "115-125",
-          "120-130",
-          "125-135",
-          "130-140",
-          "135-145",
-          "140-150",
-          "145-155",
+          "XXS",
+          "XXS",
+          "XS",
+          "XS",
+          "S",
+          "S",
+          "M",
+          "M",
+          "L",
+          "L",
+          "XL",
+          "XL",
+          "XXL",
+          "XXXL",
+          "XXXL",
+          "XXXL",
+          "XXXL",
+          "XXXL",
+          "XXXL",
           "Один размер"
         ]
       },
       "Sizes": {
         "filter_name": "Размер ремня",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "60",
           "65",
@@ -1345,35 +1350,35 @@
           "Один размер"
         ]
       },
-      "Standard_sizes": {
-        "filter_name": "Международный(INT)",
-        "filter_logo": "-",
+      "Waist_CM_sizes": {
+        "filter_name": "Обхват талии(CM)",
+        "filter_logo": "SIZE",
         "sizes": [
-          "XXS",
-          "XXS",
-          "XS",
-          "XS",
-          "S",
-          "S",
-          "M",
-          "M",
-          "L",
-          "L",
-          "XL",
-          "XL",
-          "XXL",
-          "XXXL",
-          "XXXL",
-          "XXXL",
-          "XXXL",
-          "XXXL",
-          "XXXL",
+          "55-65",
+          "60-70",
+          "65-75",
+          "70-80",
+          "75-85",
+          "80-90",
+          "85-95",
+          "90-100",
+          "95-105",
+          "100-110",
+          "105-115",
+          "110-120",
+          "115-125",
+          "120-130",
+          "125-135",
+          "130-140",
+          "135-145",
+          "140-150",
+          "145-155",
           "Один размер"
         ]
       },
       "EU_sizes": {
         "filter_name": "Европейский(EU)",
-        "filter_logo": "-",
+        "filter_logo": "EU",
         "sizes": [
           "24",
           "26",
@@ -1397,7 +1402,8 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   },
   {
     "name": "Hats",
@@ -1411,29 +1417,9 @@
     ],
     "filter_name": "Головные уборы",
     "all_sizes": {
-      "Hats_CM_sizes": {
-        "filter_name": "Обхват головы(CM)",
-        "filter_logo": "-",
-        "sizes": [
-          "54",
-          "55",
-          "56",
-          "57",
-          "58",
-          "59",
-          "60",
-          "61",
-          "62",
-          "63",
-          "64",
-          "65",
-          "66",
-          "Один размер"
-        ]
-      },
       "Standard_sizes": {
         "filter_name": "Международный(INT)",
-        "filter_logo": "-",
+        "filter_logo": "INT",
         "sizes": [
           "XXS",
           "XXS",
@@ -1450,8 +1436,29 @@
           "XXL",
           "Один размер"
         ]
+      },
+      "Hats_CM_sizes": {
+        "filter_name": "Обхват головы(CM)",
+        "filter_logo": "SIZE",
+        "sizes": [
+          "54",
+          "55",
+          "56",
+          "57",
+          "58",
+          "59",
+          "60",
+          "61",
+          "62",
+          "63",
+          "64",
+          "65",
+          "66",
+          "Один размер"
+        ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   },
   {
     "name": "Glasses",
@@ -1466,9 +1473,49 @@
     ],
     "filter_name": "Очки",
     "all_sizes": {
+      "Standard_sizes": {
+        "filter_name": "Международный(INT)",
+        "filter_logo": "INT",
+        "sizes": [
+          "XXXS",
+          "XXXS",
+          "XXXS",
+          "XXXS",
+          "XXXS",
+          "XXS",
+          "XXS",
+          "XXS",
+          "XS",
+          "XS",
+          "XS",
+          "XS",
+          "S",
+          "S",
+          "S",
+          "S",
+          "M",
+          "M",
+          "M",
+          "M",
+          "L",
+          "L",
+          "L",
+          "L",
+          "XL",
+          "XL",
+          "XL",
+          "XXL",
+          "XXL",
+          "XXL",
+          "XXXL",
+          "XXXL",
+          "XXXL",
+          "Один размер"
+        ]
+      },
       "Glasses_mm_sizes": {
         "filter_name": "Ширина линзы(mm)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "38",
           "39",
@@ -1505,48 +1552,9 @@
           "70",
           "Один размер"
         ]
-      },
-      "Standard_sizes": {
-        "filter_name": "Международный(INT)",
-        "filter_logo": "-",
-        "sizes": [
-          "XXXS",
-          "XXXS",
-          "XXXS",
-          "XXXS",
-          "XXXS",
-          "XXS",
-          "XXS",
-          "XXS",
-          "XS",
-          "XS",
-          "XS",
-          "XS",
-          "S",
-          "S",
-          "S",
-          "S",
-          "M",
-          "M",
-          "M",
-          "M",
-          "L",
-          "L",
-          "L",
-          "L",
-          "XL",
-          "XL",
-          "XL",
-          "XXL",
-          "XXL",
-          "XXL",
-          "XXXL",
-          "XXXL",
-          "XXXL",
-          "Один размер"
-        ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   },
   {
     "name": "Gloves",
@@ -1560,9 +1568,29 @@
     ],
     "filter_name": "Перчатки",
     "all_sizes": {
+      "Standard_sizes": {
+        "filter_name": "Международный(INT)",
+        "filter_logo": "INT",
+        "sizes": [
+          "XXS",
+          "XXS",
+          "XS",
+          "XS",
+          "S",
+          "S",
+          "M",
+          "M",
+          "L",
+          "L",
+          "XL",
+          "XL",
+          "XXL",
+          "Один размер"
+        ]
+      },
       "Gloves_sizes": {
         "filter_name": "Обхват руки(Дюймы)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "6",
           "6.5",
@@ -1580,29 +1608,9 @@
           "Один размер"
         ]
       },
-      "Standard_sizes": {
-        "filter_name": "Международный(INT)",
-        "filter_logo": "-",
-        "sizes": [
-          "XXS",
-          "XXS",
-          "XS",
-          "XS",
-          "S",
-          "S",
-          "M",
-          "M",
-          "L",
-          "L",
-          "XL",
-          "XL",
-          "XXL",
-          "Один размер"
-        ]
-      },
       "Gloves_CM_sizes": {
         "filter_name": "Обхват руки(CM)",
-        "filter_logo": "-",
+        "filter_logo": "SIZE",
         "sizes": [
           "15.2",
           "16.5",
@@ -1620,6 +1628,7 @@
           "Один размер"
         ]
       }
-    }
+    },
+    "default_size": "Международный(INT)"
   }
 ]

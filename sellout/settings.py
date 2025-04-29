@@ -28,7 +28,6 @@ SECRET_KEY = 'django-insecure-hr+%so83!fts7gey%sb3%#_n%e&2=v9g2mmsg(zy$q*w@g05j@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = ["*"]
 # Application definition
 
@@ -38,7 +37,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://sellout.su:80',
     'http://51.250.74.115:80',
 ]
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -172,7 +170,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 60,  # Укажите, сколько элементов на странице вы хотите отображать
+
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 25
 }
@@ -227,23 +228,22 @@ SIMPLE_JWT = {
 
 
 # Не удаляй
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sellout_db',
-        'USER': 'app',
-        'PASSWORD': 'apppassword2023',
-        'HOST': '158.160.56.73',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'sellout_db',
+#         'USER': 'app',
+#         'PASSWORD': 'apppassword2023',
+#         'HOST': '158.160.56.73',
+#         'PORT': '5432',
+#     }
+# }

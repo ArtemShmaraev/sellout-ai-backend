@@ -13,22 +13,23 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class SizeRowSerializer(serializers.ModelSerializer):
-    is_user_main = serializers.SerializerMethodField()
+    is_main = serializers.SerializerMethodField()
     class Meta:
         model = SizeRow
         fields = '__all__'
 
-    def get_is_user_main(self, row):
+    def get_is_main(self, row):
         user = self.context.get('user')
         if user is not None:
             return user.preferred_shoes_size_row == row or user.preferred_clothes_size_row == row
-        return False
+        return row == row.size_tables.first().default_row
 
 
 
 
 class SizeTableSerializer(serializers.ModelSerializer):
     size_rows = SizeRowSerializer(many=True)
+
     class Meta:
         model = SizeTable
         fields = '__all__'

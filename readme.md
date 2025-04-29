@@ -1285,222 +1285,59 @@ gender и category
 Response:
 ```json
 [
-    {
-        "id": 3,
-        "size_rows": [
-            {
-                "id": 19,
-                "is_user_main": false,
-                "filter_name": "Итальянский(IT)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "34",
-                        "query": 58
-                    },
-                    {
-                        "size": "36",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 20,
-                "is_user_main": false,
-                "filter_name": "Международный(INT)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "XXXS",
-                        "query": 58
-                    },
-                    {
-                        "size": "XXS",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 21,
-                "is_user_main": false,
-                "filter_name": "Российский(RU)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "38",
-                        "query": 58
-                    },
-                    {
-                        "size": "40",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 22,
-                "is_user_main": false,
-                "filter_name": "Французский(FR)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "30",
-                        "query": 58
-                    },
-                    {
-                        "size": "32",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 23,
-                "is_user_main": false,
-                "filter_name": "Обхват груди(СМ)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "74-78",
-                        "query": 58
-                    },
-                    {
-                        "size": "78-82",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 24,
-                "is_user_main": false,
-                "filter_name": "Обхват талии(СМ)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "54-58",
-                        "query": 58
-                    },
-                    {
-                        "size": "58-62",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 25,
-                "is_user_main": false,
-                "filter_name": "Обхват бёдер(СМ)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "80-84",
-                        "query": 58
-                    },
-                    {
-                        "size": "84-88",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 26,
-                "is_user_main": false,
-                "filter_name": "Американский(US)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "00",
-                        "query": 58
-                    },
-                    {
-                        "size": "0",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 27,
-                "is_user_main": false,
-                "filter_name": "Английский(UK)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "2",
-                        "query": 58
-                    },
-                    {
-                        "size": "4",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 28,
-                "is_user_main": false,
-                "filter_name": "Китайский(верх)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "140/64A",
-                        "query": 58
-                    },
-                    {
-                        "size": "145/72A",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 29,
-                "is_user_main": false,
-                "filter_name": "Китайский(низ)",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "140/60A",
-                        "query": 58
-                    },
-                    {
-                        "size": "145/64A",
-                        "query": 59
-                    }
-                ]
-            },
-            {
-                "id": 30,
-                "is_user_main": false,
-                "filter_name": "Числовой",
-                "filter_logo": "-",
-                "sizes": [
-                    {
-                        "size": "3",
-                        "query": 58
-                    },
-                    {
-                        "size": "5",
-                        "query": 59
-                    }
-                ]
-            }
-        ],
-        "name": "Clothes_Women",
-        "filter_name": "Женская одежда",
-        "standard": true,
-        "category": [
-            {
-                "id": 21,
-                "name": "Одежда",
-                "eng_name": "clothes",
-                "is_all": false,
-                "full_name": "Одежда",
-                "parent_category": null
-            }
-        ],
-        "gender": [
-            {
-                "id": 2,
-                "name": "F"
-            }
-        ]
-    }
+   {
+      "id": 3,
+      "size_rows": [
+         {
+            "id": 19,
+            "is_main": false,
+            "filter_name": "Итальянский(IT)",
+            "filter_logo": "-",
+            "sizes": [
+               {
+                  "size": "XXS",
+                  "query": [
+                     212,
+                     213
+                  ]
+               },
+               {
+                  "size": "XS",
+                  "query": [
+                     214,
+                     215
+                  ]
+               },
+               {
+                  "size": "S",
+                  "query": [
+                     216,
+                     217
+                  ]
+               }
+            ]
+         }
+      ],
+      "name": "Clothes_Women",
+      "filter_name": "Женская одежда",
+      "standard": true,
+      "category": [
+         {
+            "id": 21,
+            "name": "Одежда",
+            "eng_name": "clothes",
+            "is_all": false,
+            "full_name": "Одежда",
+            "parent_category": null
+         }
+      ],
+      "gender": [
+         {
+            "id": 2,
+            "name": "F"
+         }
+      ]
+   }
 ]
 ```
 

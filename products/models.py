@@ -324,6 +324,7 @@ class SizeTable(models.Model):
     category = models.ManyToManyField("Category", related_name='size_tables', blank=True)
     gender = models.ManyToManyField("Gender", related_name='size_tables', blank=True)
     size_rows = models.ManyToManyField("SizeRow", related_name='size_tables', blank=True)
+    default_row = models.ForeignKey("SizeRow", related_name='default_size_table', blank=True, on_delete=models.PROTECT, null=True)
     standard = models.BooleanField(default=False)
 
     def __str__(self):

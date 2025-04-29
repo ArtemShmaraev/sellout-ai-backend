@@ -429,7 +429,8 @@ class ProductUpdateView(APIView):
 class SizeTableForFilter(APIView):
     def get(self, request):
         try:
-            user = User.objects.get(id=request.user.id)
+            if request.user.id:
+                user = User.objects.get(id=request.user.id)
             gender = self.request.query_params.getlist("gender")
             category = self.request.query_params.getlist("category")
 
@@ -442,7 +443,7 @@ class SizeTableForFilter(APIView):
                 filters &= Q(category__eng_name__in=category)
             if filters:
                 size_tables = size_tables.filter(filters).distinct()
-            return Response(SizeTableSerializer(size_tables, many=True, context={"user": user}).data)
+            return Response(SizeTableSerializer(size_tables, many=True, context={"user": user if request.user.id else None}).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

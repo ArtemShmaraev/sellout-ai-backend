@@ -66,9 +66,9 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         # Если гендер мужской, установите значение по умолчанию для мужского размера обуви
 
-        if self.gender == 'M':
+        if self.gender.name == 'M':
             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-            self.preferred_clothes_size_row = SizeRow.objects.get(id=10)
+            self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
         else:
             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
             self.preferred_clothes_size_row = SizeRow.objects.get(id=20)

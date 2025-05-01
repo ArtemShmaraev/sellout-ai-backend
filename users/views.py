@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from promotions.models import Bonuses
 from .serializers import UserSerializer, UserSizeSerializer
-from products.serializers import ProductSerializer, ProductMainPageSerializer
+from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer
 from .models import User, Gender
 from rest_framework import exceptions
-from products.models import Product, Brand
+from products.models import Product, Brand, SizeTable
 from django.db import models
 from sellout.settings import URL
 from shipping.views import product_unit_product_main
@@ -25,6 +25,21 @@ from .tools import check_adress
 from shipping.views import ProductUnitProductMainView
 
 import requests
+
+
+class SizeTableInLK(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            print(user.gender.name)
+            if user.gender.name == "M":
+                return Response(SizeTableSerializer(
+                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data)
+            else:
+                return Response(SizeTableSerializer(
+                    SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data)
+        except User.DoesNotExist:
+            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 
 
 class UserSizeInfo(APIView):
@@ -63,8 +78,6 @@ class UserSizeInfo(APIView):
         user.save()
 
         return Response(UserSizeSerializer(user).data, status=status.HTTP_201_CREATED)
-
-
 
 
 class UserInfoView(APIView):
@@ -184,8 +197,8 @@ class UserLastSeenView(APIView):
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
                 products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
-                models.Case(*[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
-            )
+                    models.Case(*[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
+                )
                 return Response(ProductMainPageSerializer(products, many=True).data)
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
@@ -222,8 +235,6 @@ class UserLastSeenView(APIView):
 class UserAddressView(APIView):
     authentication_classes = [JWTAuthentication]
 
-
-
     def get(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
             return Response(AddressInfoSerializer(User.objects.get(id=user_id).address.all(), many=True).data)
@@ -235,13 +246,13 @@ class UserAddressView(APIView):
             data = json.loads(request.body)
             address_info = check_adress(data['address'])
             if address_info:
-                address = AddressInfo(name=data['name'], address=address_info['value'], post_index=data['post_index'], other_info=address_info)
+                address = AddressInfo(name=data['name'], address=address_info['value'], post_index=data['post_index'],
+                                      other_info=address_info)
             else:
                 address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
 
             address.save()
             request.user.address.add(address)
-
 
             if data['is_main']:
                 address.is_main = True

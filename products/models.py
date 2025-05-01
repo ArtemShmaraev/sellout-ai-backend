@@ -280,11 +280,9 @@ class Product(models.Model):
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
 
-            lines = self.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')
+            lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
             if lines:
                 self.main_line = lines.order_by('-id').first()
-
-
 
         # super(Product, self).save(*args, **kwargs)
         # print()
@@ -314,8 +312,9 @@ class Product(models.Model):
                                                   "is_sale": product_unit.is_sale,
                                                   "is_return": product_unit.is_return})
             # self.save()
-        def __str__(self):
-            return self.model
+
+    def __str__(self):
+        return self.model
 
 
 class SizeTable(models.Model):
@@ -324,11 +323,13 @@ class SizeTable(models.Model):
     category = models.ManyToManyField("Category", related_name='size_tables', blank=True)
     gender = models.ManyToManyField("Gender", related_name='size_tables', blank=True)
     size_rows = models.ManyToManyField("SizeRow", related_name='size_tables', blank=True)
-    default_row = models.ForeignKey("SizeRow", related_name='default_size_table', blank=True, on_delete=models.PROTECT, null=True)
+    default_row = models.ForeignKey("SizeRow", related_name='default_size_table', blank=True, on_delete=models.PROTECT,
+                                    null=True)
     standard = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name}"
+
 
 class SizeRow(models.Model):
     filter_name = models.CharField(max_length=128, default="")
@@ -341,6 +342,21 @@ class SizeTranslationRows(models.Model):
     row = models.JSONField(blank=True, null=True)
     is_one_size = models.BooleanField(default=False)
 
-
     def __str__(self):
         return f"{self.table} {self.id}"
+
+
+class HeaderPage(models.Model):
+    genders = models.ManyToManyField("Gender", related_name='headers', blank=True)
+    categories = models.ManyToManyField("Category", related_name='headers',
+                                        blank=True)
+    lines = models.ManyToManyField("Line", related_name='headers',
+                                   blank=True)
+    title = models.CharField(max_length=256, default="")
+    text = models.CharField(max_length=1024, default="")
+    photos = models.ManyToManyField("Photo", related_name='headers', blank=True)
+    font_color = models.CharField(max_length=512, default="")
+    background_color = models.CharField(max_length=512, default="")
+    button = models.BooleanField(default=False)
+    button_text = models.CharField(max_length=256, default="")
+

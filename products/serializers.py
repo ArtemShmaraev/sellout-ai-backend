@@ -34,7 +34,7 @@ class SizeTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SizeTable
-        fields = '__all__'
+        exclude = ['default_row', ]
         depth = 2
 
 

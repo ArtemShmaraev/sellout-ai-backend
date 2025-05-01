@@ -2,12 +2,15 @@ from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
 from django.db.models import Q, Subquery, OuterRef, Min
+# from haystack.query import SearchQuerySet
 from rest_framework.decorators import api_view, action
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.views import APIView
+
+from django.db.models.functions import Lower
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
@@ -17,10 +20,96 @@ from django.http import JsonResponse, FileResponse
 from users.models import User
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable
 from rest_framework import status
-from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, ProductSerializer, \
+from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
+    ProductSerializer, \
     DewuInfoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from elasticsearch_dsl import Q, Search
+from .search_tools import search_best_line
+from .documents import ProductDocument  # Импортируйте ваш документ
+
+
+class ProductSearchAPIView(APIView):
+    def get(self, request):
+        query = request.query_params.get('q', '')
+        if query:
+
+            search = Search(index='product_index')
+            search = search.query('multi_match', query=query, fuzziness='AUTO')
+
+            response = search.execute()
+
+            count = response.hits.total.value
+            page_number = request.query_params.get("page")
+            page_number = int(page_number if page_number else 1)
+            start_index = (page_number - 1) * 60
+            queryset = response.hits[start_index:start_index + 60]
+
+            products = [Product.objects.get(id=hit.meta.id) for hit in queryset]
+
+            serializer = ProductMainPageSerializer(products, many=True)  # Замените на ваш сериализатор
+            res = {'count': count, "results": serializer.data}
+
+            search_line = search_best_line(query)
+            # search_category = search_best_category(query)
+            print(search_line)
+
+
+
+            return Response(res, status=status.HTTP_200_OK)
+
+            # search = search.query(
+            #     Q('match', categories=query) | Q('match', colorway=query) | Q('match', brands=query)
+            # )
+
+        else:
+            results = []
+
+        return Response({'results': results.to_dict()})
+
+
+# class SearchAPIView(APIView):
+#     def get(self, request):
+#         search_term = request.query_params.get('q')
+#
+#         if search_term:
+#             lower_search_term = search_term.lower()
+#             search_results = SearchQuerySet().filter(content=f"{search_term}~")
+#             count = search_results.count()
+#
+#             page_number = request.query_params.get("page")
+#             page_number = int(page_number if page_number else 1)
+#             start_index = (page_number - 1) * 60
+#             queryset = search_results[start_index:start_index + 60]
+#
+#             queryset = [result.object for result in queryset]
+#
+#             # queryset = search_results.values()
+#             print(queryset)
+#
+#
+#
+#             serializer = ProductMainPageSerializer(queryset, many=True)  # Замените на ваш сериализатор
+#             res = {'count': count, "results": serializer.data}
+#             return Response(res, status=status.HTTP_200_OK)
+#         else:
+#             product = Product.objects.get(id=682)
+#             queryset = SearchQuerySet().more_like_this(product)
+#             count = queryset.count()
+#
+#             page_number = request.query_params.get("page")
+#             page_number = int(page_number if page_number else 1)
+#             start_index = (page_number - 1) * 60
+#             queryset = queryset[start_index:start_index + 60]
+#
+#             queryset = [result.object for result in queryset]
+#             serializer = ProductMainPageSerializer(queryset, many=True)  # Замените на ваш сериализатор
+#             res = {'count': count, "results": serializer.data}
+#             return Response(res, status=status.HTTP_200_OK)
 
 # Create your views here.
 class DewuInfoListView(APIView):
@@ -75,6 +164,15 @@ class DewuInfoView(APIView):
             dewu_info.save()
         return Response(DewuInfoSerializer(dewu_info).data)
 
+    def delete(self, request, spu_id):
+        try:
+            dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
+            dewu_info.delete()
+
+            return Response("Удален", status=status.HTTP_200_OK)
+        except DewuInfo.DoesNotExist:
+            return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
 
 class ProductSearchView(APIView):
     def get(self, request):
@@ -109,7 +207,7 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    # @method_decorator(cache_page(60 * 5))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t1 = time()
@@ -160,28 +258,32 @@ class ProductView(APIView):
 
             def find_common_ancestor(lines):
                 # Создаем множество для хранения всех родительских линеек
-                ancestors = set()
 
                 # Добавляем все родительские линейки в множество
-                for line in lines:
-                    current_line = line
-                    while current_line.parent_line:
-                        ancestors.add(current_line.parent_line)
-                        current_line = current_line.parent_line
+                current_line = lines[0]
+                parent_lines = set()
+                parent_lines.add(current_line)
 
-                # Проходим по списку линеек и находим первую общую родительскую линейку
-                for line in lines:
-                    current_line = line
-                    while current_line.parent_line:
-                        if current_line.parent_line in ancestors:
-                            return current_line.parent_line
-                        current_line = current_line.parent_line
+                while current_line.parent_line:
+                    parent_lines.add(current_line.parent_line)
+                    current_line = current_line.parent_line
 
+                # Переберите остальные выбранные линейки и найдите первую общую вершину
+                for line in selected_lines[1:]:
+                    current_line = line
+                    while current_line:
+                        if current_line in parent_lines:
+                            return current_line
+                        current_line = current_line.parent_line
+                print(parent_lines)
+                if len(lines) == 1:
+                    return lines[0]
                 return None  # Если общей родительской линейки не найдено
 
             # Пример использования
             selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
             oldest_line = find_common_ancestor(selected_lines)
+            print(oldest_line)
 
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
@@ -189,27 +291,29 @@ class ProductView(APIView):
             queryset = queryset.filter(categories__eng_name__in=category)
 
             def find_common_ancestor(categories):
-                # Создаем множество для хранения всех родительских линеек
-                ancestors = set()
 
-                # Добавляем все родительские линейки в множество
-                for category in categories:
-                    current_category = category
-                    while current_category.parent_category:
-                        ancestors.add(current_category.parent_category)
-                        current_category = current_category.parent_category
+                current_cat = categories[0]
+                parent_cats = set()
+                parent_cats.add(current_cat)
 
-                # Проходим по списку линеек и находим первую общую родительскую линейку
-                for category in categories:
-                    current_category = category
-                    while current_category.parent_category:
-                        if current_category.parent_category in ancestors:
-                            return current_category.parent_category
-                        current_category = current_category.parent_category
-                return None  # Если общей родительской линейки не найдено
+                while current_cat.parent_category:
+                    parent_cats.add(current_cat.parent_category)
+                    current_cat = current_cat.parent_category
+
+                # Переберите остальные выбранные линейки и найдите первую общую вершину
+                for cat in categories[1:]:
+                    current_cat = cat
+                    while current_cat:
+                        if current_cat in parent_cats:
+                            return current_cat
+                        current_cat = current_cat.parent_category
+                if len(categories) == 1:
+                    return categories[0]
+                return None
 
             selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
             oldest_cat = find_common_ancestor(selected_cat)
+            print(oldest_cat)
 
         if gender:
             queryset = queryset.filter(Q(gender__name__in=gender))
@@ -243,7 +347,7 @@ class ProductView(APIView):
         print("t2", t3 - t2)
 
         ordering = self.request.query_params.get('ordering')
-        if ordering in ['exact_date']:
+        if ordering in ['exact_date', 'rel_num', '-rel_num']:
             queryset = queryset.order_by(ordering)
         elif ordering == "min_price" or ordering == "-min_price":
             if size:
@@ -443,9 +547,11 @@ class SizeTableForFilter(APIView):
                 filters &= Q(category__eng_name__in=category)
             if filters:
                 size_tables = size_tables.filter(filters).distinct()
-            return Response(SizeTableSerializer(size_tables, many=True, context={"user": user if request.user.id else None}).data)
+            return Response(
+                SizeTableSerializer(size_tables, many=True, context={"user": user if request.user.id else None}).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+
 
 class ProductSizeView(APIView):
     def get(self, request):
@@ -454,7 +560,6 @@ class ProductSizeView(APIView):
 
         # Верните JSON-данные в ответе
         return Response(product_sizes_data)
-
 
 
 class AddProductView(APIView):

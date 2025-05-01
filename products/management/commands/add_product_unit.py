@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Autofill ProductUnit model'
 
     def handle(self, *args, **options):
-        products = Product.objects.all()
+        products = Product.objects.filter(id__gte=2000)
         # currencies = Currency.objects.all()
         delivery_type1 = DeliveryType(name="до 10 дней")
         delivery_type2 = DeliveryType(name="до 30 дней")
@@ -22,7 +22,7 @@ class Command(BaseCommand):
             # product.save()
             # continue
             # Генерация случайного количества product_unit для каждого продукта
-            num_units = randint(5, 10)
+            num_units = randint(2, 5)
 
             for _ in range(num_units):
                 # Создание случайного product_unit

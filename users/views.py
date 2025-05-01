@@ -31,13 +31,19 @@ class SizeTableInLK(APIView):
     def get(self, request):
         try:
             user = User.objects.get(id=request.user.id)
-            print(user.gender.name)
+
+            res = {"user_shoes_size": user.shoes_size,
+                   "user_clothes_size": user.clothes_size}
+
             if user.gender.name == "M":
-                return Response(SizeTableSerializer(
-                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data)
+                size_tables = SizeTableSerializer(
+                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
+
             else:
-                return Response(SizeTableSerializer(
-                    SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data)
+                size_tables = SizeTableSerializer(
+                    SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data
+            res['size_tables'] = size_tables
+            return Response(res)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

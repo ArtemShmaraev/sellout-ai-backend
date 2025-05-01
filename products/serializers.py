@@ -14,6 +14,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class SizeRowSerializer(serializers.ModelSerializer):
     is_main = serializers.SerializerMethodField()
+
     class Meta:
         model = SizeRow
         fields = '__all__'
@@ -27,6 +28,7 @@ class SizeRowSerializer(serializers.ModelSerializer):
 
 
 
+
 class SizeTableSerializer(serializers.ModelSerializer):
     size_rows = SizeRowSerializer(many=True)
 
@@ -34,6 +36,7 @@ class SizeTableSerializer(serializers.ModelSerializer):
         model = SizeTable
         fields = '__all__'
         depth = 2
+
 
 
 class SizeTranslationRowsSerializer(serializers.ModelSerializer):

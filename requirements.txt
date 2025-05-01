@@ -42,3 +42,5 @@ vine==5.0.0
 wcwidth==0.2.6
 schedule==1.2.0
 dadata==21.10.1
+elasticsearch>=7,<8
+elasticsearch-dsl>=7,<8

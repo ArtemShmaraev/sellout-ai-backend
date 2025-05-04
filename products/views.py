@@ -64,11 +64,21 @@ class ProductSearchAPIView(APIView):
             search_category = search_best_category(query)
             search_color = search_best_color(query)
             search_collab = search_best_collab(query)
+            url = "?"
+            if search_collab:
+                url += f"collab={search_collab.name}&"
+            if search_category:
+                url += f"category={search_category.eng_name}&"
+            if search_line:
+                url += f"line={search_line.full_eng_name}&"
+            if search_color:
+                url += f"color={search_color}&"
             print()
             print(search_collab)
             print(search_line)
             print(search_category)
             print(search_color)
+            print(url)
             print()
 
             search = Search(index='line_index')
@@ -302,7 +312,7 @@ class ProductView(APIView):
             print(oldest_cat)
 
         if gender:
-            queryset = queryset.filter(Q(gender__name__in=gender))
+            queryset = queryset.filter(gender__name__in=gender)
 
         filters = Q()
         # Фильтр по цене

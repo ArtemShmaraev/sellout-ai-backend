@@ -2,7 +2,7 @@ from rest_framework import routers
 from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
     CollabViewSet
 from django.urls import include, path
-from .views import ProductSearchAPIView, SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, ProductIdView, CategoryTreeView, \
+from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView
 
@@ -52,4 +52,4 @@ urlpatterns = [
     path("add_product", AddProductView.as_view()), path("list_product", ListProductView.as_view()),
     path("product_search", ProductSearchView.as_view()),
     path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view()),
-    path("size_table", SizeTableForFilter.as_view()), path("search", ProductSearchAPIView.as_view())]
+    path("size_table", SizeTableForFilter.as_view())]

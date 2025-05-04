@@ -29,82 +29,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from elasticsearch_dsl import Q, Search
-from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab
+from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product
 from .documents import ProductDocument  # Импортируйте ваш документ
 
-
-class ProductSearchAPIView(APIView):
-    def get(self, request):
-        query = request.query_params.get('q', '')
-        if query:
-
-            search = Search(index='product_index')
-            search = search.query(
-                'multi_match',
-                query=query,
-                fields=['manufacturer_sku^1', 'model^3', 'lines^3', 'russian_name^1', 'colorway^1'],
-                # Установите вес для каждого поля
-                fuzziness='AUTO'
-            )
-
-            response = search.execute()
-
-            count = response.hits.total.value
-            page_number = request.query_params.get("page")
-            page_number = int(page_number if page_number else 1)
-            start_index = (page_number - 1) * 60
-            queryset = response.hits[start_index:start_index + 60]
-
-            products = [Product.objects.get(id=hit.meta.id) for hit in queryset]
-
-            serializer = ProductMainPageSerializer(products, many=True)  # Замените на ваш сериализатор
-            res = {'count': count, "results": serializer.data}
-
-            search_line = search_best_line(query)
-            search_category = search_best_category(query)
-            search_color = search_best_color(query)
-            search_collab = search_best_collab(query)
-            url = "?"
-            if search_collab:
-                url += f"collab={search_collab.name}&"
-            if search_category:
-                url += f"category={search_category.eng_name}&"
-            if search_line:
-                url += f"line={search_line.full_eng_name}&"
-            if search_color:
-                url += f"color={search_color}&"
-            print()
-            print(search_collab)
-            print(search_line)
-            print(search_category)
-            print(search_color)
-            print(url)
-            print()
-
-            search = Search(index='line_index')
-
-            # Запрос на поиск линеек
-            search = search.query('multi_match', query=query, fields=['name'])
-
-
-            # Запрос для подсказок (completion suggester)
-            search = search.suggest('line_suggest', query, completion={
-                'field': 'suggest',
-                'size': 5
-            })
-
-            response = search.execute()
-            print(response)
-            return Response(res, status=status.HTTP_200_OK)
-
-            # search = search.query(
-            #     Q('match', categories=query) | Q('match', colorway=query) | Q('match', brands=query)
-            # )
-
-        else:
-            results = []
-
-        return Response({'results': results.to_dict()})
 
 
 # Create your views here.
@@ -209,9 +136,11 @@ class ProductView(APIView):
         t1 = time()
         queryset = Product.objects.all()
         t2 = time()
+        res = {}
         print("t1", t2 - t1)
         context = {'user_id': self.request.user.id}
 
+        query = self.request.query_params.get('q')
         size = self.request.query_params.getlist('size')
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
@@ -223,6 +152,7 @@ class ProductView(APIView):
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
         # Создаем объект пагинации
+
         line = self.request.query_params.getlist('line')
         color = self.request.query_params.getlist('color')
         is_fast_shipping = self.request.query_params.get("is_fast_shipping")
@@ -234,6 +164,23 @@ class ProductView(APIView):
         collab = self.request.query_params.getlist("collab")
         available = self.request.query_params.get("available")
         custom = self.request.query_params.get("custom")
+
+
+        # if query:
+        #     search = search_product(query)
+        #     queryset = search['queryset']
+        #     print(queryset)
+        #     if 'category' in search:
+        #         category.append(search['category'])
+        #     if 'collab' in search:
+        #         collab.append(search['collab'])
+        #     if 'line' in search:
+        #         line.append(search['line'])
+        #     if 'color' in search:
+        #         color.append(search['color'])
+        #     res['add_filter'] = search['url']
+
+
 
         if not available:
             queryset = queryset.filter(available_flag=True)
@@ -250,11 +197,11 @@ class ProductView(APIView):
             for brand_name in brand:
                 queryset = queryset.filter(brands__query_name=brand_name)
         if line:
+            print(line)
             queryset = queryset.filter(lines__full_eng_name__in=line)
 
             def find_common_ancestor(lines):
                 # Создаем множество для хранения всех родительских линеек
-
                 # Добавляем все родительские линейки в множество
                 current_line = lines[0]
                 parent_lines = set()
@@ -275,6 +222,7 @@ class ProductView(APIView):
                 if len(lines) == 1:
                     return lines[0]
                 return None  # Если общей родительской линейки не найдено
+
 
             # Пример использования
             selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
@@ -372,7 +320,7 @@ class ProductView(APIView):
         # serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         # res = paginator.get_paginated_response(serializer)
 
-        res = {"count": queryset.count()}
+        res["count"] = queryset.count()
 
         t5 = time()
         print("t4", t5 - t4)

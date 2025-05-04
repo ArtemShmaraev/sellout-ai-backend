@@ -120,7 +120,7 @@ class DewuInfoListView(APIView):
             else:
                 dewu_infos = DewuInfo.objects.all()
         else:
-            dewu_infos = DewuInfo.objects.all().order_by('id')
+            dewu_infos = DewuInfo.objects.all().order_by('spu_id')
         count = dewu_infos.count()
         page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)

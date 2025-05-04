@@ -314,29 +314,30 @@ class ProductView(APIView):
         if gender:
             queryset = queryset.filter(gender__name__in=gender)
 
-        filters = Q()
+        filters = {}
+
         # Фильтр по цене
         if price_min:
-            filters &= Q(product_units__final_price__gte=price_min)
+            filters["product_units__final_price__gte"] = price_min
 
             # Фильтр по максимальной цене
         if price_max:
-            filters &= Q(product_units__final_price__lte=price_max)
+            filters["product_units__final_price__lte"] = price_max
 
         # Фильтр по размеру
         if size:
-            filters &= Q(product_units__size__in=size)
+            filters["product_units__size__in"] = size
 
         # Фильтр по наличию скидки
         if is_sale:
-            filters &= Q(product_units__is_sale=is_sale)
+            filters["product_units__is_sale"] = is_sale
         if is_return:
-            filters &= Q(product_units__is_return=is_return)
+            filters["product_units__is_return"] = is_return
         if is_fast_shipping:
-            filters &= Q(product_units__fast_shipping=is_fast_shipping)
-        if filters != Q():
+            filters["product_units__fast_shipping"] = is_fast_shipping
+        if filters:
             # Выполняем фильтрацию
-            queryset = queryset.filter(filters)
+            queryset = queryset.filter(**filters)
         queryset = queryset.distinct()
 
         t3 = time()
@@ -536,15 +537,19 @@ class SizeTableForFilter(APIView):
             gender = self.request.query_params.getlist("gender")
             category = self.request.query_params.getlist("category")
 
-            filters = Q()
+
+            filters = {}
             size_tables = SizeTable.objects.all()
+
             # Фильтр по цене
             if gender:
-                filters &= Q(gender__name__in=gender)
+                filters['gender__name__in'] = gender
             if category:
-                filters &= Q(category__eng_name__in=category)
-            if filters != Q():
-                size_tables = size_tables.filter(filters)
+                filters['category__eng_name__in'] = category
+
+            if filters:
+                size_tables = size_tables.filter(**filters)
+
             return Response(
                 SizeTableSerializer(size_tables, many=True, context=context).data)
         except User.DoesNotExist:

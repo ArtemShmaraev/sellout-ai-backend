@@ -58,6 +58,10 @@ class Command(BaseCommand):
 
             line_doc = LineDocument(meta={'id': line.id})
             line_doc.name = line.name
+            line_doc.suggest = {
+                'input': [line.name],
+                'weight': 1
+            }
             line_doc.save()
 
         self.stdout.write(self.style.SUCCESS('Line indexing complete.'))
@@ -79,6 +83,10 @@ class Command(BaseCommand):
             category_doc = CategoryDocument(meta={'id': category.id})
             category_doc.name = category.name
             category_doc.save()
+            category_doc.suggest = {
+                'input': [category.name],
+                'weight': 1
+            }
 
         self.stdout.write(self.style.SUCCESS('Category indexing complete.'))
 

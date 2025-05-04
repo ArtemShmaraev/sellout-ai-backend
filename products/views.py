@@ -39,7 +39,13 @@ class ProductSearchAPIView(APIView):
         if query:
 
             search = Search(index='product_index')
-            search = search.query('multi_match', query=query, fuzziness='AUTO')
+            search = search.query(
+                'multi_match',
+                query=query,
+                fields=['manufacturer_sku^1', 'model^3', 'lines^3', 'russian_name^1', 'colorway^1'],
+                # Установите вес для каждого поля
+                fuzziness='AUTO'
+            )
 
             response = search.execute()
 
@@ -65,6 +71,20 @@ class ProductSearchAPIView(APIView):
             print(search_color)
             print()
 
+            search = Search(index='line_index')
+
+            # Запрос на поиск линеек
+            search = search.query('multi_match', query=query, fields=['name'])
+
+
+            # Запрос для подсказок (completion suggester)
+            search = search.suggest('line_suggest', query, completion={
+                'field': 'suggest',
+                'size': 5
+            })
+
+            response = search.execute()
+            print(response)
             return Response(res, status=status.HTTP_200_OK)
 
             # search = search.query(
@@ -76,45 +96,6 @@ class ProductSearchAPIView(APIView):
 
         return Response({'results': results.to_dict()})
 
-
-# class SearchAPIView(APIView):
-#     def get(self, request):
-#         search_term = request.query_params.get('q')
-#
-#         if search_term:
-#             lower_search_term = search_term.lower()
-#             search_results = SearchQuerySet().filter(content=f"{search_term}~")
-#             count = search_results.count()
-#
-#             page_number = request.query_params.get("page")
-#             page_number = int(page_number if page_number else 1)
-#             start_index = (page_number - 1) * 60
-#             queryset = search_results[start_index:start_index + 60]
-#
-#             queryset = [result.object for result in queryset]
-#
-#             # queryset = search_results.values()
-#             print(queryset)
-#
-#
-#
-#             serializer = ProductMainPageSerializer(queryset, many=True)  # Замените на ваш сериализатор
-#             res = {'count': count, "results": serializer.data}
-#             return Response(res, status=status.HTTP_200_OK)
-#         else:
-#             product = Product.objects.get(id=682)
-#             queryset = SearchQuerySet().more_like_this(product)
-#             count = queryset.count()
-#
-#             page_number = request.query_params.get("page")
-#             page_number = int(page_number if page_number else 1)
-#             start_index = (page_number - 1) * 60
-#             queryset = queryset[start_index:start_index + 60]
-#
-#             queryset = [result.object for result in queryset]
-#             serializer = ProductMainPageSerializer(queryset, many=True)  # Замените на ваш сериализатор
-#             res = {'count': count, "results": serializer.data}
-#             return Response(res, status=status.HTTP_200_OK)
 
 # Create your views here.
 class DewuInfoListView(APIView):
@@ -538,8 +519,10 @@ class ProductUpdateView(APIView):
 class SizeTableForFilter(APIView):
     def get(self, request):
         try:
+            context = {}
             if request.user.id:
                 user = User.objects.get(id=request.user.id)
+                context = {"user": user}
             gender = self.request.query_params.getlist("gender")
             category = self.request.query_params.getlist("category")
 
@@ -550,10 +533,10 @@ class SizeTableForFilter(APIView):
                 filters &= Q(gender__name__in=gender)
             if category:
                 filters &= Q(category__eng_name__in=category)
-            if filters:
-                size_tables = size_tables.filter(filters).distinct()
+            if filters != Q():
+                size_tables = size_tables.filter(filters)
             return Response(
-                SizeTableSerializer(size_tables, many=True, context={"user": user if request.user.id else None}).data)
+                SizeTableSerializer(size_tables, many=True, context=context).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

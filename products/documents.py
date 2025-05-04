@@ -1,4 +1,4 @@
-from elasticsearch_dsl import Document, Text, Keyword, Float, Integer
+from elasticsearch_dsl import Document, Text, Keyword, Float, Integer, Completion
 from elasticsearch_dsl.connections import connections
 from .models import Product, Line, Category, Color
 from elasticsearch_dsl import analyzer, token_filter
@@ -30,6 +30,7 @@ class ProductDocument(Document):
     colors = Keyword(multi=True)
     designer_color = Text()
     gender = Keyword(multi=True)
+    suggest = Completion()
 
     class Index:
         name = 'product_index'
@@ -37,6 +38,7 @@ class ProductDocument(Document):
 
 class LineDocument(Document):
     name = Text()
+    suggest = Completion()
 
     class Index:
         name = 'line_index'
@@ -44,6 +46,7 @@ class LineDocument(Document):
 
 class CategoryDocument(Document):
     name = Text()
+    suggest = Completion()
 
     class Index:
         name = 'category_index'

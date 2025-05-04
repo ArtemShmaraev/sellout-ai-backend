@@ -14,8 +14,6 @@ def search_best_line(query_string):
     )
     # search = search.sort('_score')  # Сортировка по рейтингу убывающим образом
     response = search.execute()
-    print(response.hits[0].meta.score)
-    print(response.hits[1].meta.score)
 
     if response:
         return Line.objects.get(id=response.hits[0].meta.id)

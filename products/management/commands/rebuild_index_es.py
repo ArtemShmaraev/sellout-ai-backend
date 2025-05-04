@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
-from products.documents import ProductDocument, LineDocument, CategoryDocument  # Замените на путь к вашему документу
-from products.models import Product, Line, Category  # Замените на путь к вашей модели Product
+from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument  # Замените на путь к вашему документу
+from products.models import Product, Line, Category, Color, Collab  # Замените на путь к вашей модели Product
 
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
@@ -81,5 +81,46 @@ class Command(BaseCommand):
             category_doc.save()
 
         self.stdout.write(self.style.SUCCESS('Category indexing complete.'))
+
+
+
+
+        color_index = ColorDocument._index
+        if color_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing color index...'))
+            color_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating color index...'))
+        color_index.create()
+
+        colors = Color.objects.all()
+
+        for color in colors:
+            if color.russian_name != "":
+                print(color.russian_name)
+                color_doc = ColorDocument(meta={'id': color.id})
+                color_doc.russian_name = color.russian_name
+                color_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Color indexing complete.'))
+
+
+
+        collab_index = CollabDocument._index
+        if collab_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing collab index...'))
+            collab_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating collab index...'))
+        collab_index.create()
+
+        collabs = Collab.objects.filter(is_main_collab=True)
+
+        for collab in collabs:
+            collab_doc = CollabDocument(meta={'id': collab.id})
+            collab_doc.name = collab.name
+            collab_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Collab indexing complete.'))
 
         self.stdout.write(self.style.SUCCESS('Indexing complete.'))

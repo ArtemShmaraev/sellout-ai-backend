@@ -29,7 +29,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from elasticsearch_dsl import Q, Search
-from .search_tools import search_best_line
+from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab
 from .documents import ProductDocument  # Импортируйте ваш документ
 
 
@@ -55,10 +55,15 @@ class ProductSearchAPIView(APIView):
             res = {'count': count, "results": serializer.data}
 
             search_line = search_best_line(query)
-            # search_category = search_best_category(query)
+            search_category = search_best_category(query)
+            search_color = search_best_color(query)
+            search_collab = search_best_collab(query)
+            print()
+            print(search_collab)
             print(search_line)
-
-
+            print(search_category)
+            print(search_color)
+            print()
 
             return Response(res, status=status.HTTP_200_OK)
 
@@ -124,12 +129,12 @@ class DewuInfoListView(APIView):
             else:
                 dewu_infos = DewuInfo.objects.all()
         else:
-            dewu_infos = DewuInfo.objects.all()
+            dewu_infos = DewuInfo.objects.all().order_by('id')
         count = dewu_infos.count()
         page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 60
-        queryset = dewu_infos[start_index:start_index + 60]
+        start_index = (page_number - 1) * 100
+        queryset = dewu_infos[start_index:start_index + 100]
         serializer = DewuInfoSerializer(queryset, many=True)
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
         return Response(res, status=status.HTTP_200_OK)

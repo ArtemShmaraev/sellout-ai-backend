@@ -48,3 +48,17 @@ class CategoryDocument(Document):
     class Index:
         name = 'category_index'
 
+
+class ColorDocument(Document):
+    russian_name = Text(analyzer=russian_analyzer)
+
+    class Index:
+        name = 'color_index'
+
+
+class CollabDocument(Document):
+    name = Text()
+
+    class Index:
+        name = 'collab_index'
+

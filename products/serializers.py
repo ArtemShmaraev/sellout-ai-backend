@@ -1,6 +1,7 @@
 from users.models import User
 from wishlist.models import Wishlist
-from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, SizeTranslationRows, Collab
+from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
+    SizeTranslationRows, Collab
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min, Q
@@ -8,8 +9,6 @@ from django.db.models import Min, Q
 # from .views import build_line_tree
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-
 
 
 class SizeRowSerializer(serializers.ModelSerializer):
@@ -26,9 +25,6 @@ class SizeRowSerializer(serializers.ModelSerializer):
         return row == row.size_tables.first().default_row
 
 
-
-
-
 class SizeTableSerializer(serializers.ModelSerializer):
     size_rows = SizeRowSerializer(many=True)
 
@@ -36,7 +32,6 @@ class SizeTableSerializer(serializers.ModelSerializer):
         model = SizeTable
         exclude = ['default_row', ]
         depth = 2
-
 
 
 class SizeTranslationRowsSerializer(serializers.ModelSerializer):
@@ -56,16 +51,10 @@ class CollabSerializer(serializers.ModelSerializer):
         return True
 
 
-
-
-
 class DewuInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = DewuInfo
         fields = '__all__'
-
-
-
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -92,7 +81,6 @@ class LineSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         exclude = ['full_name']
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
-
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -122,13 +110,6 @@ class CategorySerializer(serializers.ModelSerializer):
         # depth = 3 # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = '__all__'
-        depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
-
-
 class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
@@ -142,7 +123,7 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
         fields = ['final_price']
 
 
-class ProductMainPageSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
 
@@ -153,9 +134,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
-                   "size_table_platform", "russian_name"]
+        exclude = ["platform_info", "sizes_prices", "russian_name", "dewu_info", "spu_id"]
         depth = 2
 
     def get_list_lines(self, obj):
@@ -205,6 +184,63 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         else:
             return obj.min_price
 
+    def get_in_wishlist(self, product):
+        # user_id = self.context.get('user_id')
+        wishlist = self.context.get('wishlist')
+        if wishlist:
+            return product in wishlist.products.all()
+        return False
+
+
+class ProductMainPageSerializer(serializers.ModelSerializer):
+    in_wishlist = serializers.SerializerMethodField()
+    min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
+
+    # is_sale = serializers.SerializerMethodField()
+    # is_fast_shipping = serializers.SerializerMethodField()
+    # is_return = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ["in_wishlist", "min_price_product_unit", "model", "colorway", "slug", "is_collab",
+                  "collab", "brands", "bucket_link"]
+        # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
+        #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
+        #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
+        #            "spu_id", "has_many_sizes", "has_many_colors", "has_many_configurations", "is_custom",
+        #            "recommended_gender", "designer_color", "available_flag", "tags", "id", "min_price"]
+        depth = 2
+
+    # def get_is_return(self, obj):
+    #     return obj.product_units.filter(is_return=True).exists()
+    #
+    # def get_is_fast_shipping(self, obj):
+    #     return obj.product_units.filter(is_fast_shipping=True).exists()
+    #
+    # def get_is_sale(self, obj):
+    #     return obj.product_units.filter(is_sale=True).exists()
+
+    def get_min_price_product_unit(self, obj):
+        size = self.context.get('size')
+        price_max = self.context.get('price_max')
+        price_min = self.context.get('price_min')
+
+        # Проверьте, соответствуют ли значения фильтров product_unit
+        filters = Q(availability=True)
+
+        if size:
+            filters &= Q(size__in=size)
+
+        if price_max:
+            filters &= Q(final_price__lte=price_max)
+
+        if price_min:
+            filters &= Q(final_price__gte=price_min)
+
+        if filters:
+            return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+        else:
+            return obj.min_price
 
     def get_in_wishlist(self, product):
         # user_id = self.context.get('user_id')

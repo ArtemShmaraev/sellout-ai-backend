@@ -102,7 +102,7 @@ def search_product(query, queryset, page_number=1):
                               'multi_match',
                               query=query,
                               type="most_fields",
-                              fields=['manufacturer_sku^1', 'model^3', 'lines^2', 'colorway^1',
+                              fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'colorway^1',
                                       "collab^4", "categories^3", 'brands^4'],
                               # Установите вес для каждого поля
                               fuzziness="AUTO")],

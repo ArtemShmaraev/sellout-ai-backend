@@ -47,6 +47,7 @@ Anon)
 1. `[GET][Anon] product/[categories|lines|colors|brands|collections]` вернет все сущности [⬇️](#clcb)
 2. `[GET][Anon] product/cat_no_child` список всех категорий для админки
 3. `[GET][Anon] product/line_no_child` список всех линеек для админки
+4. `[GET][Anon] product/similar/<slug>` вернет список похожих товаров
 
 
 ## Shipping API

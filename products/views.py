@@ -141,7 +141,7 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    # @method_decorator(cache_page(60 * 5))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t0 = time()
@@ -345,15 +345,16 @@ class ProductView(APIView):
         # serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         # res = paginator.get_paginated_response(serializer)
 
-        res["count"] = queryset.count()
+        # res["count"] = queryset.count()
 
+        res["count"] = 1000
         t5 = time()
         print("t4", t5 - t4)
 
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 60
-        queryset = queryset[start_index:start_index + 60]
+        start_index = (page_number - 1) * 48
+        queryset = queryset[start_index:start_index + 48]
 
         t6 = time()
         print("t5", t6 - t5)
@@ -401,7 +402,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            serializer = ProductMainPageSerializer(product, context={"list_lines": True,
+            serializer = ProductSerializer(product, context={"list_lines": True,
                                                                      "wishlist": Wishlist.objects.get(user=User(
                                                                          id=self.request.user.id)) if request.user.id else None})
             return Response(serializer.data)
@@ -415,7 +416,7 @@ class ProductIdView(APIView):
     def get(self, request, id):
         try:
             product = Product.objects.get(id=id)
-            serializer = ProductMainPageSerializer(product, context={"list_lines": True,
+            serializer = ProductSerializer(product, context={"list_lines": True,
                                                                      "wishlist": Wishlist.objects.get(user=User(
                                                                          id=self.request.user.id) if request.user.id else None)})
             return Response(serializer.data)
@@ -550,7 +551,7 @@ class ProductUpdateView(APIView):
         product.slug = ""
         product.save()
 
-        return Response(ProductMainPageSerializer(product).data, status=status.HTTP_200_OK)
+        return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
 
 
 class SizeTableForFilter(APIView):

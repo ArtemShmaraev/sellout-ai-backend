@@ -1,15 +1,15 @@
 from .models import ProductUnit, AddressInfo, DeliveryType
 from rest_framework import serializers
-from products.serializers import ProductMainPageSerializer
+from products.serializers import ProductMainPageSerializer, ProductSerializer
 
 
 class ProductUnitSerializer(serializers.ModelSerializer):
-    product = ProductMainPageSerializer()
+    product = ProductSerializer()
     class Meta:
         model = ProductUnit
         # fields = '__all__'
         exclude = ["size",]
-        depth = 2  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+        depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
 class AddressInfoSerializer(serializers.ModelSerializer):

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Line, SizeTable, SizeTranslationRows
+from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Line, SizeTable, SizeTranslationRows, SizeRow
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -55,6 +55,10 @@ class SizeTableAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
+class SizeRowAdmin(admin.ModelAdmin):
+    list_display = ('filter_name', "sizes")
+
+
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Tag, TagAdmin)
@@ -65,3 +69,5 @@ admin.site.register(Color, ColorAdmin)
 admin.site.register(Line, LineAdmin)
 admin.site.register(SizeTable, SizeTableAdmin)
 admin.site.register(SizeTranslationRows, SizeTranslationRowsAdmin)
+admin.site.register(SizeRow, SizeRowAdmin)
+

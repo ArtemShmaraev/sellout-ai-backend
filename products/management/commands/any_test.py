@@ -1,23 +1,21 @@
 from itertools import count
 from django.core.management.base import BaseCommand
 import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color
+from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow
 from django.core.exceptions import ObjectDoesNotExist
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        ps = Product.objects.all()
-        k = 0
-        for p in ps:
-            k += 1
-            if p.available_flag:
-                # print(p.platform_info)
-                try:
-                    a = json.loads(p.platform_info)['poizon']['detail']['spuId']
+        sr = SizeRow.objects.all()
+        for s in sr:
+            sizes = s.sizes
+            for t in sizes:
+                new_v = t
+                if t['size'] == "Один размер":
+                    t['id'] = [t['query'][0].split("_")[1]]
+                # sizes = new_v
+            s.sizes = sizes
+            s.save()
 
-                except Exception as e:
-                    print(p)
-                    print(1)
-        print('f')

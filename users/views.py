@@ -84,7 +84,7 @@ class UserSizeInfo(APIView):
             user.weight = weight
 
 
-        user.save()
+        user.save(size_info=True)
 
         return Response(UserSizeSerializer(user).data, status=status.HTTP_201_CREATED)
 

@@ -12,11 +12,11 @@ from time import time
 from django.http import JsonResponse, FileResponse
 
 from users.models import User
-from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable
+from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer
+    DewuInfoSerializer, CollabSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
 
 from django.shortcuts import get_object_or_404
@@ -413,11 +413,16 @@ class LineTreeView(APIView):
 
     def get(self, request):
         q = self.request.query_params.get('q')
+        tree = build_line_tree()
         if q:
-            lines = search_line()
-        else:
-            lines = LineSerializer(Line.objects.all(), many=True).data
-        return Response(build_line_tree(lines))
+            new_tree = []
+            # sugg = search_line(q)
+            for brand in tree:
+                if q.lower() in brand['view_name'].lower():
+                    new_tree.append(brand)
+            return Response(new_tree)
+
+        return Response(tree)
 
 
 class LineNoChildView(APIView):
@@ -426,6 +431,23 @@ class LineNoChildView(APIView):
     def get(self, request):
         lines = LineSerializer(Line.objects.all(), many=True).data
         return Response(line_no_child(lines))
+
+
+class CollabView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        q = self.request.query_params.get('q')
+        collabs = CollabSerializer(Collab.objects.all(), many=True).data
+        if q:
+            new_collabs = []
+            for collab in collabs:
+                if q.lower() in collab['name'].lower() or q.lower() in collab['name'].replace(" x ", " ").lower():
+                    new_collabs.append(collab)
+            return Response(new_collabs)
+
+        return Response(collabs)
+
 
 
 class ProductUpdateView(APIView):

@@ -4,7 +4,7 @@ from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, Br
 from django.urls import include, path
 from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
-    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView
+    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -36,15 +36,12 @@ router_color.register("colors", ColorViewSet, basename="colors")
 router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")
 
-router_collab = routers.DefaultRouter()
-router_collab.register("collabs", CollabViewSet, basename="collab")
-
 urlpatterns = [
     path("products/", ProductView.as_view()),
     path("", include(router_collection.urls)),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
-    path("", include(router_color.urls)), path("", include(router_collab.urls)),
+    path("", include(router_color.urls)),
     path('slug/<str:slug>', ProductSlugView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
@@ -52,4 +49,4 @@ urlpatterns = [
     path("add_product", AddProductView.as_view()), path("list_product", ListProductView.as_view()),
     path("product_search", ProductSearchView.as_view()),
     path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view()),
-    path("size_table/", SizeTableForFilter.as_view())]
+    path("size_table", SizeTableForFilter.as_view()), path("collabs", CollabView.as_view())]

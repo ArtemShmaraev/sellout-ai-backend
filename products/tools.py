@@ -1,11 +1,9 @@
 import random
-from itertools import count
-from django.core.management.base import BaseCommand
 import json
-import os
-import json
+from functools import lru_cache
 from datetime import datetime, date
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo
+from products.serializers import LineSerializer
 
 
 def build_category_tree(categories):
@@ -39,8 +37,9 @@ def category_no_child(cats):
     return result
 
 
-
-def build_line_tree(lines):
+@lru_cache(maxsize=2)
+def build_line_tree():
+    lines = LineSerializer(Line.objects.all(), many=True).data
     line_dict = {}
     root_lines = []
     # Создание словаря линеек с использованием их идентификаторов в качестве ключей
@@ -52,6 +51,7 @@ def build_line_tree(lines):
         parent_line = line['parent_line']
         if parent_line is None:
             # Если у линейки нет родительской линейки, она считается корневой линейкой
+            del line['parent_line']
             root_lines.append(line)
         else:
             parent_id = parent_line['id']
@@ -60,40 +60,39 @@ def build_line_tree(lines):
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
 
-    def sort_children(data):
-        order = {'low': 0, 'mid': 1, 'high': 2, "air jordan 1": 3,
-                 "air jordan 2": 4, "air jordan 3": 5, "air jordan 4": 6,
-                 "air jordan 5": 7, "air jordan 6": 8, "air jordan 7": 9,
-                 "air jordan 8": 10, "air jordan 9": 11, "air jordan 10": 12,
-                 "air jordan 11": 13, "air jordan 12": 14, "air jordan 13": 15,
-                 "air jordan 14": 16, "air jordan 15": 17}
-
-        def sort_key(child):
-            name = child['name'].lower()
-            if 'все' in name:
-                return 0, '', ''
-            elif name.isdigit():
-                return (1, int(name), '')
-            return 1, order.get(name, float('inf')), name
-
-        for item in data:
-            children = item.get('children')
-            if children:
-                item['children'] = sorted(children, key=sort_key)
-                sort_children(item['children'])
-        return data
+    # def sort_children(data):
+    #     order = {'low': 0, 'mid': 1, 'high': 2, "air jordan 1": 3,
+    #              "air jordan 2": 4, "air jordan 3": 5, "air jordan 4": 6,
+    #              "air jordan 5": 7, "air jordan 6": 8, "air jordan 7": 9,
+    #              "air jordan 8": 10, "air jordan 9": 11, "air jordan 10": 12,
+    #              "air jordan 11": 13, "air jordan 12": 14, "air jordan 13": 15,
+    #              "air jordan 14": 16, "air jordan 15": 17}
+    #
+    #     def sort_key(child):
+    #         name = child['name'].lower()
+    #         if 'все' in name:
+    #             return 0, '', ''
+    #         elif name.isdigit():
+    #             return (1, int(name), '')
+    #         return 1, order.get(name, float('inf')), name
+    #
+    #     # for item in data:
+    #     #     children = item.get('children')
+    #     #     if children:
+    #     #         item['children'] = sorted(children, key=sort_key)
+    #     #         sort_children(item['children'])
+    #     return data
 
     # root_lines = sort_children(root_lines)
     with_children = [x for x in root_lines if x.get('children')]
     without_children = [x for x in root_lines if not x.get('children')]
 
-    sorted_data_with_children = sorted(with_children, key=lambda x: x['name'].lower())
+    # sorted_data_with_children = sorted(with_children, key=lambda x: x['name'].lower())
 
     # Сортируем оставшиеся элементы
     sorted_data_without_children = sorted(without_children, key=lambda x: x['name'].lower())
     # Объединяем отсортированные части
-    sorted_data = sorted_data_with_children + sorted_data_without_children
-
+    sorted_data = with_children + sorted_data_without_children
     return sorted_data
 
 

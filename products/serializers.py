@@ -1,10 +1,10 @@
 from users.models import User
 from wishlist.models import Wishlist
-from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, SizeTranslationRows
+from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, SizeTranslationRows, Collab
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min, Q
-from .tools import build_line_tree, build_category_tree
+
 # from .views import build_line_tree
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -45,6 +45,12 @@ class SizeTranslationRowsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CollabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collab
+        fields = '__all__'
+
+
 
 
 class DewuInfoSerializer(serializers.ModelSerializer):
@@ -77,7 +83,8 @@ class ColorSerializer(serializers.ModelSerializer):
 class LineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['full_name']
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 

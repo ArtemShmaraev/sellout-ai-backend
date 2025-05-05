@@ -11,39 +11,39 @@ class Command(BaseCommand):
         # hosts = ['http://51.250.74.115:9200']
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
-        product_index = ProductDocument._index
-        if product_index.exists():
-            self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
-            product_index.delete()
-
-        self.stdout.write(self.style.SUCCESS('Creating index...'))
-        product_index.create()
-
-        products = Product.objects.all()
-        count = products.count()
-        k = 0
-        kk = 0
-        for product in products:
-            kk += 1
-            if kk * 100 / count > k:
-                self.stdout.write(self.style.SUCCESS(f"{k} %"))
-                k += 1
-            product_doc = ProductDocument(meta={'id': product.id})
-            product_doc.brands = [brand.name for brand in product.brands.all()]
-            product_doc.categories = [category.name for category in product.categories.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-            product_doc.lines = [line.name for line in product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-            product_doc.model = product.model
-            product_doc.colorway = product.colorway
-            # product_doc.russian_name = product.russian_name
-            product_doc.manufacturer_sku = product.manufacturer_sku
-            # product_doc.description = product.description
-            product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
-            # product_doc.main_color = product.main_color.name if product.main_color else None
-            # product_doc.colors = [color.name for color in product.colors.all()]
-            # product_doc.designer_color = product.designer_color
-            product_doc.gender = [gender.name for gender in product.gender.all()]
-            product_doc.save()
-        self.stdout.write(self.style.SUCCESS(f"{k} %"))
+        # product_index = ProductDocument._index
+        # if product_index.exists():
+        #     self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
+        #     product_index.delete()
+        #
+        # self.stdout.write(self.style.SUCCESS('Creating index...'))
+        # product_index.create()
+        #
+        # products = Product.objects.all()
+        # count = products.count()
+        # k = 0
+        # kk = 0
+        # for product in products:
+        #     kk += 1
+        #     if kk * 100 / count > k:
+        #         self.stdout.write(self.style.SUCCESS(f"{k} %"))
+        #         k += 1
+        #     product_doc = ProductDocument(meta={'id': product.id})
+        #     product_doc.brands = [brand.name for brand in product.brands.all()]
+        #     product_doc.categories = [category.name for category in product.categories.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+        #     product_doc.lines = [line.name for line in product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+        #     product_doc.model = product.model
+        #     product_doc.colorway = product.colorway
+        #     # product_doc.russian_name = product.russian_name
+        #     product_doc.manufacturer_sku = product.manufacturer_sku
+        #     # product_doc.description = product.description
+        #     product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
+        #     # product_doc.main_color = product.main_color.name if product.main_color else None
+        #     # product_doc.colors = [color.name for color in product.colors.all()]
+        #     # product_doc.designer_color = product.designer_color
+        #     product_doc.gender = [gender.name for gender in product.gender.all()]
+        #     product_doc.save()
+        # self.stdout.write(self.style.SUCCESS(f"{k} %"))
 
 
         line_index = LineDocument._index
@@ -59,11 +59,12 @@ class Command(BaseCommand):
         for line in lines:
 
             line_doc = LineDocument(meta={'id': line.id})
-            line_doc.name = line.name
-            line_doc.suggest = {
-                'input': [line.name],
-                'weight': 1 if line.parent_line is not None else 2
-            }
+            line_doc.name = line.view_name
+            if line.parent_line is None:
+                line_doc.suggest = {
+                    'input': [line.view_name],
+                    'weight': 1
+                }
             line_doc.save()
 
         self.stdout.write(self.style.SUCCESS('Line indexing complete.'))

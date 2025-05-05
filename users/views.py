@@ -73,14 +73,14 @@ class UserSizeInfo(APIView):
         if preferred_shoes_size_row_id is not None:
             user.preferred_shoes_size_row_id = preferred_shoes_size_row_id
         if preferred_clothes_size_row_id is not None:
-            user.preferred_clothes_size_table_id = preferred_clothes_size_row_id
+            user.preferred_clothes_size_row_id = preferred_clothes_size_row_id
         if shoes_size_id is not None:
             user.shoes_size_id = shoes_size_id
         if clothes_size_id is not None:
             user.clothes_size_id = clothes_size_id
-        if height is not None:
+        if height is not None and height != "":
             user.height = height
-        if weight is not None:
+        if weight is not None and weight != "":
             user.weight = weight
 
 

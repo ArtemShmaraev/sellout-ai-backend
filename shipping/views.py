@@ -53,15 +53,18 @@ class MinPriceForSizeView(APIView):
                 if size not in prices_by_size:
                     prices_by_size[size] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False}
 
-                prices_by_size[size]['price'].append(price)
+
                 if available:
                     prices_by_size[size]["available"] = True
-                if item.is_fast_shipping:
-                    prices_by_size[size]["is_fast_shipping"] = True
-                if item.is_sale:
-                    prices_by_size[size]["is_sale"] = True
-                if item.is_return:
-                    prices_by_size[size]["is_return"] = True
+                    prices_by_size[size]['price'].append(price)
+                    if item.is_fast_shipping:
+                        prices_by_size[size]["is_fast_shipping"] = True
+                    if item.is_sale:
+                        prices_by_size[size]["is_sale"] = True
+                    if item.is_return:
+                        prices_by_size[size]["is_return"] = True
+                else:
+                    prices_by_size[size]['price'].append(0)
             min_prices_by_size = {}
             s = []
 

@@ -10,5 +10,5 @@ def check_adress(text):
     return None
 
 
-check_adress("белгород губкина 17б")
+# check_adress("белгород губкина 17б")
 

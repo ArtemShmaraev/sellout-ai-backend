@@ -3,7 +3,7 @@ from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, SizeTranslationRows
 from rest_framework import serializers
 from shipping.models import ProductUnit
-from django.db.models import Min
+from django.db.models import Min, Q
 from .tools import build_line_tree, build_category_tree
 # from .views import build_line_tree
 
@@ -175,21 +175,22 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         price_min = self.context.get('price_min')
 
         # Проверьте, соответствуют ли значения фильтров product_unit
-        filters = {}
+        filters = Q(availability=True)
 
         if size:
-            filters['size__in'] = size
+            filters &= Q(size__in=size)
 
         if price_max:
-            filters['final_price__lte'] = price_max
+            filters &= Q(final_price__lte=price_max)
 
         if price_min:
-            filters['final_price__gte'] = price_min
+            filters &= Q(final_price__gte=price_min)
 
         if filters:
-            return obj.product_units.filter(**filters).aggregate(min_price=Min('final_price'))['min_price']
+            return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
         else:
             return obj.min_price
+
 
     def get_in_wishlist(self, product):
         user_id = self.context.get('user_id')

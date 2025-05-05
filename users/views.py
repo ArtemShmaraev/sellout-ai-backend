@@ -31,14 +31,16 @@ class SizeTableInLK(APIView):
     def get(self, request):
         try:
             user = User.objects.get(id=request.user.id)
-
-            res = {"user_shoes_size": user.shoes_size,
-                   "user_clothes_size": user.clothes_size}
+            res = {"user_shoes_size": None,
+                   "user_clothes_size": None}
+            if user.shoes_size is not None:
+                res["user_shoes_size"] = user.shoes_size.id
+            if user.clothes_size is not None:
+                res["user_clothes_size"] = user.clothes_size.id
 
             if user.gender.name == "M":
                 size_tables = SizeTableSerializer(
                     SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
-
             else:
                 size_tables = SizeTableSerializer(
                     SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data
@@ -61,8 +63,8 @@ class UserSizeInfo(APIView):
         user = User.objects.get(id=request.user.id)
 
         # Assuming the data dictionary contains the necessary fields for sizes, height, and weight
-        preferred_shoes_size_row_id = data.get('preferred_shoes_size_table')
-        preferred_clothes_size_row_id = data.get('preferred_clothes_size_table')
+        preferred_shoes_size_row_id = data.get('preferred_shoes_size_row')
+        preferred_clothes_size_row_id = data.get('preferred_clothes_size_row')
         shoes_size_id = data.get('shoes_size')
         clothes_size_id = data.get('clothes_size')
         height = data.get('height')
@@ -80,6 +82,7 @@ class UserSizeInfo(APIView):
             user.height = height
         if weight is not None:
             user.weight = weight
+
 
         user.save()
 

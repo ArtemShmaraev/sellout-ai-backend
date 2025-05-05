@@ -18,6 +18,7 @@ class Command(BaseCommand):
     help = 'Populate SizeTable with data'
 
     def handle(self, *args, **options):
+
         file_path = 'my_size_dict2.json'  # Замените на путь к вашему JSON файлу
         with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)

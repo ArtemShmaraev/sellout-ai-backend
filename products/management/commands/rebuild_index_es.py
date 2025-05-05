@@ -7,7 +7,9 @@ class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
 
     def handle(self, *args, **options):
-        connections.create_connection(hosts=['localhost'])  # Замените на адрес вашего Elasticsearch-сервера
+        hosts = ['localhost']
+        # hosts = ['http://51.250.74.115:9200']
+        connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         product_index = ProductDocument._index
         if product_index.exists():
@@ -25,20 +27,20 @@ class Command(BaseCommand):
             kk += 1
             if kk * 100 / count > k:
                 self.stdout.write(self.style.SUCCESS(f"{k} %"))
-                k += 10
+                k += 1
             product_doc = ProductDocument(meta={'id': product.id})
             product_doc.brands = [brand.name for brand in product.brands.all()]
             product_doc.categories = [category.name for category in product.categories.exclude(name__icontains='Все').exclude(name__contains='Другие')]
             product_doc.lines = [line.name for line in product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
             product_doc.model = product.model
             product_doc.colorway = product.colorway
-            product_doc.russian_name = product.russian_name
+            # product_doc.russian_name = product.russian_name
             product_doc.manufacturer_sku = product.manufacturer_sku
-            product_doc.description = product.description
-            product_doc.collab = product.collab.name if product.collab else None
-            product_doc.main_color = product.main_color.name if product.main_color else None
-            product_doc.colors = [color.name for color in product.colors.all()]
-            product_doc.designer_color = product.designer_color
+            # product_doc.description = product.description
+            product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
+            # product_doc.main_color = product.main_color.name if product.main_color else None
+            # product_doc.colors = [color.name for color in product.colors.all()]
+            # product_doc.designer_color = product.designer_color
             product_doc.gender = [gender.name for gender in product.gender.all()]
             product_doc.save()
         self.stdout.write(self.style.SUCCESS(f"{k} %"))
@@ -60,7 +62,7 @@ class Command(BaseCommand):
             line_doc.name = line.name
             line_doc.suggest = {
                 'input': [line.name],
-                'weight': 1
+                'weight': 1 if line.parent_line is not None else 2
             }
             line_doc.save()
 

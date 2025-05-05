@@ -7,12 +7,6 @@ from rest_framework.decorators import api_view, action
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
-from rest_framework.views import APIView
-
-from django.db.models.functions import Lower
-from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 from time import time
 from django.http import JsonResponse, FileResponse
@@ -28,10 +22,10 @@ from .tools import build_line_tree, build_category_tree, category_no_child, line
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from elasticsearch_dsl import Q, Search
-from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product
-from .documents import ProductDocument  # Импортируйте ваш документ
 
+from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
+    similar_product, search_line
+from .documents import ProductDocument  # Импортируйте ваш документ
 
 
 # Create your views here.
@@ -130,24 +124,27 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    @method_decorator(cache_page(60 * 5))
+    # @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
-        t1 = time()
+        t0 = time()
         queryset = Product.objects.all()
-        t2 = time()
+        t1 = time()
         res = {}
-        print("t1", t2 - t1)
+        print("t0", t1 - t0)
         context = {'user_id': self.request.user.id}
 
         query = self.request.query_params.get('q')
         size = self.request.query_params.getlist('size')
+        if size:
+            size = list(map(lambda x: x.split("_")[1], size))
+
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
 
         # Передайте значения фильтров в контекст сериализатора
-        context['size'] = context['size_us'] = size if size else None
+        context['size'] = size if size else None
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
@@ -155,7 +152,7 @@ class ProductView(APIView):
 
         line = self.request.query_params.getlist('line')
         color = self.request.query_params.getlist('color')
-        is_fast_shipping = self.request.query_params.get("is_fast_shipping")
+        is_fast_ship = self.request.query_params.get("is_fast_shipx`")
         is_sale = self.request.query_params.get("is_sale")
         is_return = self.request.query_params.get("is_return")
         category = self.request.query_params.getlist("category")
@@ -164,23 +161,6 @@ class ProductView(APIView):
         collab = self.request.query_params.getlist("collab")
         available = self.request.query_params.get("available")
         custom = self.request.query_params.get("custom")
-
-
-        # if query:
-        #     search = search_product(query)
-        #     queryset = search['queryset']
-        #     print(queryset)
-        #     if 'category' in search:
-        #         category.append(search['category'])
-        #     if 'collab' in search:
-        #         collab.append(search['collab'])
-        #     if 'line' in search:
-        #         line.append(search['line'])
-        #     if 'color' in search:
-        #         color.append(search['color'])
-        #     res['add_filter'] = search['url']
-
-
 
         if not available:
             queryset = queryset.filter(available_flag=True)
@@ -223,7 +203,6 @@ class ProductView(APIView):
                     return lines[0]
                 return None  # Если общей родительской линейки не найдено
 
-
             # Пример использования
             selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
             oldest_line = find_common_ancestor(selected_lines)
@@ -262,31 +241,56 @@ class ProductView(APIView):
         if gender:
             queryset = queryset.filter(gender__name__in=gender)
 
-        filters = {}
+        filters = Q(product_units__availability=True)
 
         # Фильтр по цене
         if price_min:
-            filters["product_units__final_price__gte"] = price_min
+            filters &= Q(product_units__final_price__gte=price_min)
 
             # Фильтр по максимальной цене
         if price_max:
-            filters["product_units__final_price__lte"] = price_max
+            filters &= Q(product_units__final_price__lte=price_max)
 
         # Фильтр по размеру
         if size:
-            filters["product_units__size__in"] = size
+            filters &= Q(product_units__size__in=size)
 
         # Фильтр по наличию скидки
         if is_sale:
-            filters["product_units__is_sale"] = is_sale
+            filters &= Q(product_units__is_sale=(is_sale == "is_sale"))
         if is_return:
-            filters["product_units__is_return"] = is_return
-        if is_fast_shipping:
-            filters["product_units__fast_shipping"] = is_fast_shipping
+            filters &= Q(product_units__is_return=(is_return == "is_return"))
+        if is_fast_ship:
+            filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
         if filters:
             # Выполняем фильтрацию
-            queryset = queryset.filter(**filters)
+            queryset = queryset.filter(filters)
         queryset = queryset.distinct()
+
+        t2 = time()
+        print("t1", t2 - t1)
+        # if query:
+        #     print()
+        #     print()
+        #     print(query.replace("_", " "))
+        #     print()
+        #     search = search_product(query.replace("_", " "), queryset)
+        #     queryset = search['queryset']
+        #     product = queryset[0]
+        #     print(product.model)
+        #     # queryset = similar_product(product)
+        #
+        #     search_line(query.replace("_", " "))
+        #
+        #     # if 'category' in search:
+        #     #     category.append(search['category'])
+        #     # if 'collab' in search:
+        #     #     collab.append(search['collab'])
+        #     # if 'line' in search:
+        #     #     line.append(search['line'])
+        #     # if 'color' in search:
+        #     #     color.append(search['color'])
+        #     res['add_filter'] = search['url']
 
         t3 = time()
         print("t2", t3 - t2)
@@ -344,6 +348,7 @@ class ProductView(APIView):
         res['results'] = serializer
         t9 = time()
         print("t8", t9 - t8)
+        print("t", t9 - t0)
         res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
         res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
         res['min_price'] = 0
@@ -407,7 +412,11 @@ class LineTreeView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        lines = LineSerializer(Line.objects.all(), many=True).data
+        q = self.request.query_params.get('q')
+        if q:
+            lines = search_line()
+        else:
+            lines = LineSerializer(Line.objects.all(), many=True).data
         return Response(build_line_tree(lines))
 
 
@@ -483,8 +492,7 @@ class SizeTableForFilter(APIView):
                 user = User.objects.get(id=request.user.id)
                 context = {"user": user}
             gender = self.request.query_params.getlist("gender")
-            category = self.request.query_params.getlist("category")
-
+            categories = self.request.query_params.getlist("category")
 
             filters = {}
             size_tables = SizeTable.objects.all()
@@ -492,8 +500,15 @@ class SizeTableForFilter(APIView):
             # Фильтр по цене
             if gender:
                 filters['gender__name__in'] = gender
-            if category:
-                filters['category__eng_name__in'] = category
+            if categories:
+                list_cat = []
+                for category in categories:
+                    category_model = Category.objects.filter(eng_name=category).first()
+                    list_cat.append(category_model.eng_name)
+                    while category_model.parent_category:
+                        list_cat.append(category_model.parent_category.eng_name)
+                        category_model = category_model.parent_category
+                filters['category__eng_name__in'] = list_cat
 
             if filters:
                 size_tables = size_tables.filter(**filters)

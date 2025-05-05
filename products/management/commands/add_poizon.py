@@ -15,7 +15,8 @@ class Command(BaseCommand):
         for count in range(1, 2):
             # folder_path = f'dewu/{count}m'
             folder_path = f'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
-            k = 30000
+            k = 37900
+            k = 980
             ek = 0
             t0 = datetime.now()
             # Перебор всех файлов в папке

@@ -9,12 +9,12 @@ class Command(BaseCommand):
 
         with open('colors.json', 'r', encoding="utf-8") as file:
             colors_data = json.load(file)
-        colors = Color.objects.all()
-        k = 0
-        for color in colors:
-            k += 1
-            if k != 1:
-                color.delete()
+        # colors = Color.objects.all()
+        # k = 0
+        # for color in colors:
+        #     k += 1
+        #     if k != 1:
+        #         color.delete()
 
 
         for color_data in colors_data:

@@ -17,20 +17,21 @@ russian_analyzer = analyzer(
 
 
 class ProductDocument(Document):
-    brands = Keyword(multi=True)
+    brands = Text(multi=True)
     categories = Text(multi=True, analyzer=russian_analyzer)
-    lines = Keyword(multi=True)
+    lines = Text(multi=True)
     model = Text()
     colorway = Text()
-    russian_name = Text()
-    manufacturer_sku = Text()
-    description = Text()
-    collab = Keyword()
-    main_color = Keyword()
-    colors = Keyword(multi=True)
-    designer_color = Text()
+    collab = Text()
+    # main_color = Keyword()
     gender = Keyword(multi=True)
+    manufacturer_sku = Text()
     suggest = Completion()
+
+    # colors = Keyword(multi=True)
+    # designer_color = Text()
+    # description = Text()
+    # russian_name = Text()
 
     class Index:
         name = 'product_index'

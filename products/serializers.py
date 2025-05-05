@@ -46,9 +46,15 @@ class SizeTranslationRowsSerializer(serializers.ModelSerializer):
 
 
 class CollabSerializer(serializers.ModelSerializer):
+    is_show = serializers.SerializerMethodField()
+
     class Meta:
         model = Collab
         fields = '__all__'
+
+    def get_is_show(self, row):
+        return True
+
 
 
 
@@ -149,7 +155,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         model = Product
         # fields = "__all__"
         exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
-                   "size_table_platform"]
+                   "size_table_platform", "russian_name"]
         depth = 2
 
     def get_list_lines(self, obj):
@@ -168,14 +174,14 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             s = LineSerializer(get_line_parents(obj.main_line), many=True).data
         return s
 
-    def get_is_return(self, obj):
-        return obj.product_units.filter(is_return=True).exists()
-
-    def get_is_fast_shipping(self, obj):
-        return obj.product_units.filter(is_fast_shipping=True).exists()
-
-    def get_is_sale(self, obj):
-        return obj.product_units.filter(is_sale=True).exists()
+    # def get_is_return(self, obj):
+    #     return obj.product_units.filter(is_return=True).exists()
+    #
+    # def get_is_fast_shipping(self, obj):
+    #     return obj.product_units.filter(is_fast_shipping=True).exists()
+    #
+    # def get_is_sale(self, obj):
+    #     return obj.product_units.filter(is_sale=True).exists()
 
     def get_min_price_product_unit(self, obj):
         size = self.context.get('size')
@@ -201,11 +207,15 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
 
     def get_in_wishlist(self, product):
-        user_id = self.context.get('user_id')
-        if user_id is not None and user_id > 0:
-            try:
-                wishlist = Wishlist.objects.get(user_id=user_id)
-                return product in wishlist.products.all()
-            except Wishlist.DoesNotExist:
-                pass
+        # user_id = self.context.get('user_id')
+        wishlist = self.context.get('wishlist')
+        if wishlist:
+            return product in wishlist.products.all()
         return False
+        # if user_id is not None and user_id > 0:
+        #     try:
+        #         wishlist = Wishlist.objects.get(user_id=user_id)
+        #         return product in wishlist.products.all()
+        #     except Wishlist.DoesNotExist:
+        #         pass
+        # return False

@@ -16,15 +16,18 @@ russian_analyzer = analyzer(
 
 
 class ProductDocument(Document):
-    brands = Text(multi=True)
+    brands = Text(multi=True, analyzer='keyword')
     categories = Text(multi=True, analyzer=russian_analyzer)
-    lines = Text(multi=True)
-    model = Text()
-    colorway = Text()
-    collab = Text()
-    # main_color = Keyword()
+    categories_eng = Text(multi=True, analyzer='standard')
+    main_category = Text(analyzer=russian_analyzer)
+    main_category_eng = Text(analyzer='standard')
+    lines = Text(multi=True, analyzer='standard')
+    main_line = Text(analyzer='standard')
+    model = Text(analyzer='standard')
+    colorway = Text(analyzer='standard')
+    collab = Text(analyzer='standard')
     gender = Keyword(multi=True)
-    manufacturer_sku = Text()
+    manufacturer_sku = Text(analyzer='standard')
     suggest = Completion()
 
     # colors = Keyword(multi=True)
@@ -36,26 +39,15 @@ class ProductDocument(Document):
         name = 'product_index'
 
 
-custom_edge_ngram = token_filter(
-    'custom_edge_ngram',
-    type='edgeNGram',
-    min_gram=2,
-    max_gram=20,
-    token_chars=['letter', 'digit']
-)
 
-
-custom_analyzer = analyzer(
-    'custom_analyzer',
-    tokenizer='standard',
-    filter=['lowercase', custom_edge_ngram]
-)
-
-class BrandDocument(Document):
-    name = Text(analyzer=custom_analyzer)
+class SuggestDocument(Document):
+    name = Text()
+    type = Text()
+    url = Text()
+    suggest = Completion()
 
     class Index:
-        name = 'brand_index'
+        name = 'suggest_index'
 
 
 class LineDocument(Document):

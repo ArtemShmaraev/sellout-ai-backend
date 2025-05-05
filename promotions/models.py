@@ -44,11 +44,9 @@ class Bonuses(models.Model):
     def deduct_bonus(self, amount):
         sorted_accrual = self.accrual.order_by('-date')
         for accrual_bonus in sorted_accrual:
-            if accrual_bonus.amount >= amount:
+            if accrual_bonus.amount > amount:
                 accrual_bonus.amount -= amount
                 accrual_bonus.save()
-                if accrual_bonus.amount == 0:
-                    accrual_bonus.delete()
                 break
             else:
                 amount -= accrual_bonus.amount

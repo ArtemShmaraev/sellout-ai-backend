@@ -20,7 +20,7 @@ class Command(BaseCommand):
             ek = 0
             t0 = datetime.now()
             # Перебор всех файлов в папке
-            for filename in os.listdir(folder_path)[k:]:
+            for filename in os.listdir(folder_path)[k:10000]:
                 if filename.endswith('json'):  # Проверка, что файл имеет расширение .json
                     file_path = os.path.join(folder_path, filename)  # Полный путь к файлу
                     k += 1

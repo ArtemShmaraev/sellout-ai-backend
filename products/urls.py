@@ -6,7 +6,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
-    DewuInfoListSpuIdView
+    DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -44,7 +44,7 @@ urlpatterns = [
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
-    path('slug/<str:slug>', ProductSlugView.as_view()),
+    path('slug/<str:slug>', ProductSlugView.as_view()), path('similar/<str:slug>', ProductSimilarView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
     path("update/<int:product_id>", ProductUpdateView.as_view()), path("size", ProductSizeView.as_view()),
@@ -52,4 +52,4 @@ urlpatterns = [
     path("product_search", ProductSearchView.as_view()),
     path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view()),
     path("size_table", SizeTableForFilter.as_view()), path("collabs", CollabView.as_view()),
-    path("dewu_info_list", DewuInfoListSpuIdView.as_view())]
+    path("dewu_info_list", DewuInfoListSpuIdView.as_view()), path("suggest_search", SuggestSearch.as_view())]

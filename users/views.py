@@ -208,7 +208,7 @@ class UserLastSeenView(APIView):
                 products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
                     models.Case(*[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
                 )
-                return Response(ProductMainPageSerializer(products, many=True).data)
+                return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}).data)
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:

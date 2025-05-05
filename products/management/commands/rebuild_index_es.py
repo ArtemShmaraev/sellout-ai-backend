@@ -1,7 +1,9 @@
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
-from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, BrandDocument  # Замените на путь к вашему документу
+from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, \
+    SuggestDocument  # Замените на путь к вашему документу
 from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
+
 
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
@@ -11,59 +13,132 @@ class Command(BaseCommand):
         # hosts = ['http://51.250.74.115:9200']
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
+        sug_index = SuggestDocument._index
+        if sug_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing SUG index...'))
+            sug_index.delete()
 
-        brand_index = BrandDocument._index
-        if brand_index.exists():
-            self.stdout.write(self.style.SUCCESS('Deleting existing brand index...'))
-            brand_index.delete()
+        self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
+        sug_index.create()
 
-        self.stdout.write(self.style.SUCCESS('Creating brand index...'))
-        brand_index.create()
+        lines = Line.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+        for line in lines:
 
-        brands = Brand.objects.all()
+            line_doc = SuggestDocument()
+            line_doc.name = line.name
+            line_doc.type = "Линейка"
+            line_doc.url = f"line={line.full_eng_name}"
+            level = 1
+            current_line = line
+            while current_line.parent_line is not None:
+                current_line = current_line.parent_line
+                level += 1
+            brand = current_line.view_name
 
-        for brand in brands:
+            if line.parent_line is None:
+                line_doc.suggest = [{
+                    'input': [line.view_name],
+                    'weight': 6 - level
+                }]
+            else:
 
-            brand_doc = BrandDocument(meta={'id': brand.id})
-            brand_doc.name = brand.name
-            brand_doc.save()
+                line_name = line.name.replace(brand, "").strip()
 
-        self.stdout.write(self.style.SUCCESS('Brand indexing complete.'))
+                line_doc.suggest = [{
+                    'input': [line.view_name],
+                    'weight': 5 - level
+                }]
+                if line_name != line.view_name:
+                    line_doc.suggest.append({
+                        'input': [line_name],
+                        'weight': 4 - level
+                    })
+            line_doc.save()
 
-        # product_index = ProductDocument._index
-        # if product_index.exists():
-        #     self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
-        #     product_index.delete()
-        #
-        # self.stdout.write(self.style.SUCCESS('Creating index...'))
-        # product_index.create()
-        #
-        # products = Product.objects.all()
-        # count = products.count()
-        # k = 0
-        # kk = 0
-        # for product in products:
-        #     kk += 1
-        #     if kk * 100 / count > k:
-        #         self.stdout.write(self.style.SUCCESS(f"{k} %"))
-        #         k += 1
-        #     product_doc = ProductDocument(meta={'id': product.id})
-        #     product_doc.brands = [brand.name for brand in product.brands.all()]
-        #     product_doc.categories = [category.name for category in product.categories.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-        #     product_doc.lines = [line.name for line in product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-        #     product_doc.model = product.model
-        #     product_doc.colorway = product.colorway
-        #     # product_doc.russian_name = product.russian_name
-        #     product_doc.manufacturer_sku = product.manufacturer_sku
-        #     # product_doc.description = product.description
-        #     product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
-        #     # product_doc.main_color = product.main_color.name if product.main_color else None
-        #     # product_doc.colors = [color.name for color in product.colors.all()]
-        #     # product_doc.designer_color = product.designer_color
-        #     product_doc.gender = [gender.name for gender in product.gender.all()]
-        #     product_doc.save()
-        # self.stdout.write(self.style.SUCCESS(f"{k} %"))
+        collabs = Collab.objects.all()
+        for collab in collabs:
+            collab_doc = SuggestDocument()
+            collab_doc.name = collab.name
+            collab_doc.url = f"collab={collab.query_name}"
+            collab_doc.type = "Коллаборация"
+            collab_doc.suggest = [{
+                'input': [collab.name, collab.name.replace(" x ", " ")],
+                'weight': 4
+            }]
+            collab_doc.save()
 
+        cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+        for cat in cats:
+            cat_doc = SuggestDocument()
+            cat_doc.name = cat.name
+            cat_doc.type = "Категория"
+            cat_doc.url = f"category={cat.eng_name}"
+            cat_doc.suggest = [{
+                'input': [cat.name, cat.eng_name],
+                'weight': 4
+            }]
+            cat_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
+
+        f = True
+        if f:
+            product_index = ProductDocument._index
+            if product_index.exists():
+                self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
+                product_index.delete()
+
+            self.stdout.write(self.style.SUCCESS('Creating index...'))
+            product_index.create()
+
+            products = Product.objects.all()
+            count = products.count()
+            k = 0
+            kk = 0
+            for product in products:
+                kk += 1
+                if kk * 100 / count > k:
+                    self.stdout.write(self.style.SUCCESS(f"{k} %"))
+                    k += 1
+                product_doc = ProductDocument(meta={'id': product.id})
+
+                lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+                if lines:
+                    main_line = lines.order_by('-id').first()
+                    product_doc.main_line = main_line.name
+
+                categories = product.categories.exclude(name__icontains='Все').exclude(
+                                              name__contains='Другие')
+                if categories:
+                    main_category = categories.order_by("-id").first()
+                    product_doc.main_category = main_category.name
+                    product_doc.main_category_eng = main_category.eng_name
+
+
+
+
+                product_doc.brands = [brand.name for brand in product.brands.all()]
+                product_doc.categories = [category.name for category in
+                                          product.categories.exclude(name__icontains='Все').exclude(
+                                              name__contains='Другие')]
+                product_doc.categories_eng = [category.eng_name for category in
+                                          product.categories.exclude(name__icontains='Все').exclude(
+                                              name__contains='Другие')]
+
+                product_doc.lines = [line.name for line in
+                                     product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+                product_doc.model = product.model
+                product_doc.colorway = product.colorway
+                # product_doc.russian_name = product.russian_name
+                product_doc.manufacturer_sku = product.manufacturer_sku
+                # product_doc.description = product.description
+                product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
+                # product_doc.main_color = product.main_color.name if product.main_color else None
+                # product_doc.colors = [color.name for color in product.colors.all()]
+                # product_doc.designer_color = product.designer_color
+                product_doc.gender = [gender.name for gender in product.gender.all()]
+                product_doc.save()
+            self.stdout.write(self.style.SUCCESS(f"{k} %"))
 
         line_index = LineDocument._index
         if line_index.exists():
@@ -88,8 +163,6 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Line indexing complete.'))
 
-
-
         category_index = CategoryDocument._index
         if category_index.exists():
             self.stdout.write(self.style.SUCCESS('Deleting existing category index...'))
@@ -101,7 +174,6 @@ class Command(BaseCommand):
         categories = Category.objects.all().exclude(name__icontains='Все').exclude(name__contains='Другие')
 
         for category in categories:
-
             category_doc = CategoryDocument(meta={'id': category.id})
             category_doc.name = category.name
             category_doc.save()
@@ -111,9 +183,6 @@ class Command(BaseCommand):
             }
 
         self.stdout.write(self.style.SUCCESS('Category indexing complete.'))
-
-
-
 
         color_index = ColorDocument._index
         if color_index.exists():
@@ -133,8 +202,6 @@ class Command(BaseCommand):
                 color_doc.save()
 
         self.stdout.write(self.style.SUCCESS('Color indexing complete.'))
-
-
 
         collab_index = CollabDocument._index
         if collab_index.exists():

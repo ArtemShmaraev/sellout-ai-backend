@@ -130,8 +130,8 @@ class Collab(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.query_name:
-            self.query_name = "_".join(self.name.replace(" x ", " ").lower().split())
+        # if not self.query_name:
+        self.query_name = "_".join(self.name.lower().split())
 
         super().save(*args, **kwargs)
 

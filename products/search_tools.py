@@ -12,36 +12,56 @@ from elasticsearch_dsl.search import Search, Q
 from .documents import LineDocument
 
 
-def search_brand(query):
-    index_name = 'brand_index'
+def suggest_search(query):
+    index_name = 'suggest_index'
 
     # Создайте объект Search и настройте подсказки
     search = Search(index=index_name)
-    search = search.query('match', name=query)
+    s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 10})
 
-    # Выполняем поиск и получаем результаты
-    response = search.execute()
-    s = []
-    # Выводим результаты
-    for hit in response:
-        s.append(hit.name.lower())
-        print(hit.name)
-    return s
+    # Выполнение запроса
+    response = s.execute()
+
+    # Извлечение подсказок из ответа
+    suggestions = response.suggest['user-input-suggestions'][0]['options']
+    sp = []
+
+    # Вывод подсказок
+    for suggestion in suggestions:
+        sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
+    return sp
+
+    # Извлечение всех подсказок из ответа
+    # suggestions = response.suggest['all-suggestions'][0]['options']
+
+    # Вывод всех подсказок
+    # for suggestion in suggestions:
+    #     print(suggestion.text)
 
 
 def similar_product(product):
     search = Search(index='product_index')  # Замените на имя вашего индекса
-    search = search.query(MoreLikeThis(like={'_id': product.id},
-                                       fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab', 'gender']))
+    search = search.query(
+        MoreLikeThis(
+            like={'_id': product.id},
+            fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2', 'collab'],
+            min_term_freq=1,
+            min_doc_freq=1,
+            max_query_terms=50,
+            boost_terms=1.5,
+            boost=1.2
+        )
+    )
+    # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']
 
-    # search = search[:1000]
+    search = search[:25]
 
     # Выполните запрос
     response = search.execute()
 
-    output_file = 'similar_results.json'
-    with open(output_file, 'w', encoding="utf-8") as f:
-        json.dump(response.to_dict(), f, indent=4)
+    # output_file = 'similar_results.json'
+    # with open(output_file, 'w', encoding="utf-8") as f:
+    #     json.dump(response.to_dict(), f, indent=4)
     # max_score = response.hits.max_score
     # threshold = 0.6 * max_score
 
@@ -150,8 +170,6 @@ def search_product(query, queryset, page_number=1):
     #     url += f"color={search_color.name}&"
     #     res['color'] = search_color.name
     res['url'] = url
-
-    print(queryset.count())
     return res
 
 

@@ -1,7 +1,7 @@
 from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
-from django.db.models import Q, Subquery, OuterRef, Min
+from django.db.models import Q, Subquery, OuterRef, Min, When, Case
 # from haystack.query import SearchQuerySet
 from rest_framework.decorators import api_view, action
 from django.shortcuts import render
@@ -12,6 +12,7 @@ from time import time
 from django.http import JsonResponse, FileResponse
 
 from users.models import User
+from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
@@ -24,13 +25,25 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
-    similar_product, search_brand
+    similar_product, suggest_search
 from .documents import ProductDocument  # Импортируйте ваш документ
+
+
+
+class ProductSimilarView(APIView):
+    def get(self, request, slug):
+        try:
+            product = Product.objects.get(slug=slug)
+            similar = similar_product(product)
+            return Response(ProductMainPageSerializer(similar, many=True).data)
+        except Product.DoesNotExist:
+            return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
 class DewuInfoListSpuIdView(APIView):
     def get(self, request):
         dewu_infos = DewuInfo.objects.values_list('spu_id', flat=True)
         return Response(dewu_infos, status=status.HTTP_200_OK)
+
 
 # Create your views here.
 class DewuInfoListView(APIView):
@@ -108,8 +121,8 @@ class ProductSearchView(APIView):
         count = products.count()
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 96
-        queryset = products[start_index:start_index + 96]
+        start_index = (page_number - 1) * 60
+        queryset = products[start_index:start_index + 60]
         serializer = ProductMainPageSerializer(queryset, many=True)
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
 
@@ -136,7 +149,7 @@ class ProductView(APIView):
         t1 = time()
         res = {}
         print("t0", t1 - t0)
-        context = {'user_id': self.request.user.id}
+        context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
 
         query = self.request.query_params.get('q')
         size = self.request.query_params.getlist('size')
@@ -181,7 +194,6 @@ class ProductView(APIView):
             for brand_name in brand:
                 queryset = queryset.filter(brands__query_name=brand_name)
         if line:
-            print(line)
             queryset = queryset.filter(lines__full_eng_name__in=line)
 
             def find_common_ancestor(lines):
@@ -273,28 +285,33 @@ class ProductView(APIView):
 
         t2 = time()
         print("t1", t2 - t1)
-        # if query:
-        #     print()
-        #     print()
-        #     print(query.replace("_", " "))
-        #     print()
-        #     search = search_product(query.replace("_", " "), queryset)
-        #     queryset = search['queryset']
-        #     product = queryset[0]
-        #     print(product.model)
-        #     # queryset = similar_product(product)
-        #
-        #     # search_line(query.replace("_", " "))
-        #
-        #     # if 'category' in search:
-        #     #     category.append(search['category'])
-        #     # if 'collab' in search:
-        #     #     collab.append(search['collab'])
-        #     # if 'line' in search:
-        #     #     line.append(search['line'])
-        #     # if 'color' in search:
-        #     #     color.append(search['color'])
-        #     res['add_filter'] = search['url']
+        if query:
+            query = query.replace("_", " ")
+            search = search_product(query, queryset)
+            queryset = search['queryset']
+            res['add_filter'] = search['url']
+
+            # product = queryset[:1]
+            # queryset = similar_product(product[0])
+            # # queryset = product | queryset
+            # from itertools import chain
+            # combined_queryset = list(chain(product, queryset))
+            # object_ids = [obj.id for obj in combined_queryset]
+            # queryset = Product.objects.filter(id__in=object_ids).order_by(
+            #     Case(*[When(id=obj_id, then=pos) for pos, obj_id in enumerate(object_ids)])
+            # )
+            # print(queryset)
+
+            # search_line(query.replace("_", " "))
+
+            # if 'category' in search:
+            #     category.append(search['category'])
+            # if 'collab' in search:
+            #     collab.append(search['collab'])
+            # if 'line' in search:
+            #     line.append(search['line'])
+            # if 'color' in search:
+            #     color.append(search['color'])
 
         t3 = time()
         print("t2", t3 - t2)
@@ -372,13 +389,21 @@ class ProductView(APIView):
         return Response(res)
 
 
+class SuggestSearch(APIView):
+    def get(self, request):
+        query = self.request.query_params.get('q')
+        return Response(suggest_search(query))
+
+
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            serializer = ProductMainPageSerializer(product, context={'user_id': request.user.id, "list_lines": True})
+            serializer = ProductMainPageSerializer(product, context={"list_lines": True,
+                                                                     "wishlist": Wishlist.objects.get(user=User(
+                                                                         id=self.request.user.id)) if request.user.id else None})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -390,7 +415,9 @@ class ProductIdView(APIView):
     def get(self, request, id):
         try:
             product = Product.objects.get(id=id)
-            serializer = ProductMainPageSerializer(product, context={"list_lines": True, 'user_id': request.user.id})
+            serializer = ProductMainPageSerializer(product, context={"list_lines": True,
+                                                                     "wishlist": Wishlist.objects.get(user=User(
+                                                                         id=self.request.user.id) if request.user.id else None)})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -420,16 +447,30 @@ class LineTreeView(APIView):
         tree = build_line_tree()
         if q:
             q = q.lower()
+            start_tree = []
+            in_tree = []
+            no_tree = []
+
             for i in range(len(tree)):
-                if q in tree[i]['view_name'].lower():
+                if tree[i]['view_name'].lower().startswith(q):
                     tree[i]['is_show'] = True
+                    start_tree.append(tree[i])
+                elif q in tree[i]['view_name'].lower():
+                    tree[i]['is_show'] = True
+                    in_tree.append(tree[i])
                 else:
-                    tree[i]["is_show"] = False
+                    tree[i]['is_show'] = False
+                    no_tree.append(tree[i])
+            return Response(start_tree + in_tree + no_tree)
+
+            # for i in range(len(tree)):
+            #     if q in tree[i]['view_name'].lower():
+            #         tree[i]['is_show'] = True
+            #     else:
+            #         tree[i]["is_show"] = False
         else:
             for i in range(len(tree)):
                 tree[i]['is_show'] = True
-
-
         return Response(tree)
 
 
@@ -449,16 +490,11 @@ class CollabView(APIView):
         collabs = CollabSerializer(Collab.objects.all(), many=True).data
         if q:
             for i in range(len(collabs)):
-                if q.lower() in collabs[i]['name'].lower() or q.lower() in collabs[i]['name'].replace(" x ", " ").lower():
-                    collabs[i]['is_show'] = True
-                else:
+                if not (q.lower() in collabs[i]['name'].lower() or q.lower() in collabs[i]['name'].replace(" x ",
+                                                                                                           " ").lower()):
                     collabs[i]['is_show'] = False
-        else:
-            for i in range(len(collabs)):
-                collabs[i]['is_show'] = True
 
         return Response(collabs)
-
 
 
 class ProductUpdateView(APIView):
@@ -577,7 +613,8 @@ class ListProductView(APIView):
             products = Product.objects.filter(id__in=s_products).order_by(
                 models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
             )
-            return Response(ProductMainPageSerializer(products, many=True).data)
+            return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(
+                user=User(id=self.request.user.id)) if request.user.id else None}).data)
         except json.JSONDecodeError:
             return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
         except Product.DoesNotExist:

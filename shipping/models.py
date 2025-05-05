@@ -87,6 +87,7 @@ class ProductUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
+    history_price = models.JSONField(default=list)
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"

@@ -28,7 +28,7 @@ class UserWishlist(APIView):
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
             wishlist_products = Wishlist.objects.get(user=user).products
-            return Response(ProductMainPageSerializer(wishlist_products, many=True, context={'user_id': user_id}).data)
+            return Response(ProductMainPageSerializer(wishlist_products, many=True, context={"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}).data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 
@@ -42,7 +42,7 @@ class UserWishlist(APIView):
                     wishlist.products.add(product)
 
                     return Response(
-                        ProductMainPageSerializer(wishlist.products, many=True, context={'user_id': user_id}).data)
+                        ProductMainPageSerializer(wishlist.products, many=True, context={"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}).data)
                 except User.DoesNotExist:
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
                 except Product.DoesNotExist:

@@ -30,7 +30,7 @@ Anon)
 15. `[GET][User] user/favorite_brand/<user_id>/<brand_id>` добавить любимый бренд, чтобы удалить метод Delete
 16. `[GET][User] user/size_info` Response: ```{"preferred_shoes_size_row": 1, "preferred_clothes_size_row": 43, "shoes_size": 8, "clothes_size": 55, "height": 175, "weight": 60 }```
 17. `[POST][User] user/size_info` Body: Верхний Response
-18. `[GET][User] user/get_size_table` Вернет две таблица для отображения в ЛК и ID размера пользователя, если в query соддержится размер пользоваеля, то выделить эту кнопку
+18. `[GET][User] user/get_size_table` Вернет две таблица для отображения в ЛК и ID размера пользователя, если в query содержится размер пользователя, то выделить эту кнопку
 
 ## Product API
 
@@ -1050,7 +1050,7 @@ Response
 
 <a name="clcb"></a>
 ## Категории, Линейки, Цвета, Бренды
-### Категории
+### Категории  
 `[GET][Anon] product/categories`
 Response Категория
 ```json
@@ -1130,7 +1130,9 @@ Response:
 ]
 ```
 ### Есть дерево ленеек
-`[GET][Anon] product/tree_line`
+`[GET][Anon] product/tree_line?q=чтото`
+Можно передать параметр q
+Вернёт подходящие под поиск линейки
 Response:
 ```json
 [

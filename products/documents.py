@@ -3,7 +3,6 @@ from elasticsearch_dsl.connections import connections
 from .models import Product, Line, Category, Color
 from elasticsearch_dsl import analyzer, token_filter
 
-
 connections.create_connection(hosts=['localhost'])  # Укажите адрес вашего Elasticsearch-сервера
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
@@ -37,6 +36,28 @@ class ProductDocument(Document):
         name = 'product_index'
 
 
+custom_edge_ngram = token_filter(
+    'custom_edge_ngram',
+    type='edgeNGram',
+    min_gram=2,
+    max_gram=20,
+    token_chars=['letter', 'digit']
+)
+
+
+custom_analyzer = analyzer(
+    'custom_analyzer',
+    tokenizer='standard',
+    filter=['lowercase', custom_edge_ngram]
+)
+
+class BrandDocument(Document):
+    name = Text(analyzer=custom_analyzer)
+
+    class Index:
+        name = 'brand_index'
+
+
 class LineDocument(Document):
     name = Text()
     suggest = Completion()
@@ -65,4 +86,3 @@ class CollabDocument(Document):
 
     class Index:
         name = 'collab_index'
-

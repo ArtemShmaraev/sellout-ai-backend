@@ -24,9 +24,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
-    similar_product, search_line
+    similar_product, search_brand
 from .documents import ProductDocument  # Импортируйте ваш документ
 
+class DewuInfoListSpuIdView(APIView):
+    def get(self, request):
+        dewu_infos = DewuInfo.objects.values_list('spu_id', flat=True)
+        return Response(dewu_infos, status=status.HTTP_200_OK)
 
 # Create your views here.
 class DewuInfoListView(APIView):
@@ -104,8 +108,8 @@ class ProductSearchView(APIView):
         count = products.count()
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 60
-        queryset = products[start_index:start_index + 60]
+        start_index = (page_number - 1) * 96
+        queryset = products[start_index:start_index + 96]
         serializer = ProductMainPageSerializer(queryset, many=True)
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
 
@@ -280,7 +284,7 @@ class ProductView(APIView):
         #     print(product.model)
         #     # queryset = similar_product(product)
         #
-        #     search_line(query.replace("_", " "))
+        #     # search_line(query.replace("_", " "))
         #
         #     # if 'category' in search:
         #     #     category.append(search['category'])
@@ -415,12 +419,16 @@ class LineTreeView(APIView):
         q = self.request.query_params.get('q')
         tree = build_line_tree()
         if q:
-            new_tree = []
-            # sugg = search_line(q)
-            for brand in tree:
-                if q.lower() in brand['view_name'].lower():
-                    new_tree.append(brand)
-            return Response(new_tree)
+            q = q.lower()
+            for i in range(len(tree)):
+                if q in tree[i]['view_name'].lower():
+                    tree[i]['is_show'] = True
+                else:
+                    tree[i]["is_show"] = False
+        else:
+            for i in range(len(tree)):
+                tree[i]['is_show'] = True
+
 
         return Response(tree)
 
@@ -440,11 +448,14 @@ class CollabView(APIView):
         q = self.request.query_params.get('q')
         collabs = CollabSerializer(Collab.objects.all(), many=True).data
         if q:
-            new_collabs = []
-            for collab in collabs:
-                if q.lower() in collab['name'].lower() or q.lower() in collab['name'].replace(" x ", " ").lower():
-                    new_collabs.append(collab)
-            return Response(new_collabs)
+            for i in range(len(collabs)):
+                if q.lower() in collabs[i]['name'].lower() or q.lower() in collabs[i]['name'].replace(" x ", " ").lower():
+                    collabs[i]['is_show'] = True
+                else:
+                    collabs[i]['is_show'] = False
+        else:
+            for i in range(len(collabs)):
+                collabs[i]['is_show'] = True
 
         return Response(collabs)
 

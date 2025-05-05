@@ -88,6 +88,7 @@ class LineSerializer(serializers.ModelSerializer):
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
+
 class BrandSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
 

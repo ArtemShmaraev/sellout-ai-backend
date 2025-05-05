@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
-from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument  # Замените на путь к вашему документу
-from products.models import Product, Line, Category, Color, Collab  # Замените на путь к вашей модели Product
+from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, BrandDocument  # Замените на путь к вашему документу
+from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
 
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
@@ -10,6 +10,25 @@ class Command(BaseCommand):
         hosts = ['localhost']
         # hosts = ['http://51.250.74.115:9200']
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
+
+
+        brand_index = BrandDocument._index
+        if brand_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing brand index...'))
+            brand_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating brand index...'))
+        brand_index.create()
+
+        brands = Brand.objects.all()
+
+        for brand in brands:
+
+            brand_doc = BrandDocument(meta={'id': brand.id})
+            brand_doc.name = brand.name
+            brand_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Brand indexing complete.'))
 
         # product_index = ProductDocument._index
         # if product_index.exists():

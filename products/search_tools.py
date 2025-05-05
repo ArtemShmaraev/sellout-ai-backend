@@ -12,34 +12,22 @@ from elasticsearch_dsl.search import Search, Q
 from .documents import LineDocument
 
 
-def search_line(query):
-    index_name = 'line_index'
+def search_brand(query):
+    index_name = 'brand_index'
 
     # Создайте объект Search и настройте подсказки
     search = Search(index=index_name)
-    search = search.suggest(
-        'line_suggestions',
-        query,  # Здесь замените на ваш поисковый запрос
-        completion={'field': 'suggest', "size": 7}
-    )
+    search = search.query('match', name=query)
 
-    # search = search.source(includes=['suggest'])
-    #
-    # # Выполните поиск и получите результаты
-    # response = search.execute()
-    # print("---------------------------")
-    # # Выведите все значения поля 'suggest'
-    # for hit in response.hits:
-    #     print(hit.suggest.input[0])
-
-    # Выполните поиск и получите результаты подсказок
+    # Выполняем поиск и получаем результаты
     response = search.execute()
-    suggestions = response.suggest.line_suggestions[0]['options']
     s = []
-    # Выведите список подсказок
-    for suggestion in suggestions:
-        s.append(suggestion['_source']['suggest']['input'][0])
+    # Выводим результаты
+    for hit in response:
+        s.append(hit.name.lower())
+        print(hit.name)
     return s
+
 
 def similar_product(product):
     search = Search(index='product_index')  # Замените на имя вашего индекса
@@ -97,7 +85,7 @@ def search_product(query, queryset, page_number=1):
                               fields=['manufacturer_sku^1', 'model^3', 'lines^2', 'colorway^1',
                                       "collab^4", "categories^3", 'brands^4'],
                               # Установите вес для каждого поля
-                              fuzziness=0)],
+                              fuzziness="AUTO")],
                           # filter=Q('ids', values=list(queryset.values_list('id', flat=True)))
                           )
 

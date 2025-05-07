@@ -56,8 +56,17 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_slugify_processor',
-    'django_filters',
-]
+    'django_filters',]
+    # 'haystack',
+
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': '51.250.74.115::9200',  # Адрес и порт вашего Elasticsearch
+    },
+}
+
+
 
 # Set the AUTH_USER_MODEL setting to point to your custom user model
 AUTH_USER_MODEL = 'users.User'

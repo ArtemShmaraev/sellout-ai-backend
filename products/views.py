@@ -31,9 +31,9 @@ from .documents import ProductDocument  # Импортируйте ваш док
 
 
 class ProductSimilarView(APIView):
-    def get(self, request, slug):
+    def get(self, request, product_id):
         try:
-            product = Product.objects.get(slug=slug)
+            product = Product.objects.get(id=product_id)
             similar = similar_product(product)
             return Response(ProductMainPageSerializer(similar, many=True).data)
         except Product.DoesNotExist:

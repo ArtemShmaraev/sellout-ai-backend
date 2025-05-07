@@ -31,6 +31,7 @@ class Order(models.Model):
                                    related_name="orders")
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
+    total_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
                                related_name="orders", default=get_default_status)
     fact_of_payment = models.BooleanField(default=False)
@@ -66,6 +67,7 @@ class ShoppingCart(models.Model):
     total_amount = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
+    total_sale = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
@@ -93,6 +95,7 @@ class ShoppingCart(models.Model):
         else:
             self.final_amount = self.total_amount
         self.final_amount -= self.bonus_sale
+        self.total_sale = self.bonus_sale + self.promo_sale
 
     def __str__(self):
         return f'{self.user}'

@@ -54,7 +54,7 @@ class PromocodeAnonView(APIView):
         try:
             promo = PromoCode.objects.get(string_representation=text.upper())
         except:
-            return Response({"final_amount": sum, "message": "Промокод не найден", "status": False})
+            return Response({"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0})
         check = check_promo(promo)
 
         if check[0]:
@@ -66,6 +66,6 @@ class PromocodeAnonView(APIView):
             else:
                 return Response({"final_amount": sum, "message": "Промокод не активен", "status": False})
             return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
-                             "promo_sale": sum - final_amount})
+                             "total_sale": sum - final_amount})
         else:
-            return Response({"final_amount": sum, "message": check[1], "status": False})
+            return Response({"final_amount": sum, "message": check[1], "status": False, "total_sale": 0})

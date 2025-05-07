@@ -17,7 +17,9 @@ def suggest_search(query):
 
     # Создайте объект Search и настройте подсказки
     search = Search(index=index_name)
-    s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 10})
+    s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 10, 'fuzzy': {
+        'fuzziness': 'AUTO'
+    }})
 
     # Выполнение запроса
     response = s.execute()

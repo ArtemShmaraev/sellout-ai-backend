@@ -80,22 +80,16 @@ class DewuInfoView(APIView):
         data = json.loads(request.body)
         if DewuInfo.objects.filter(spu_id=spu_id).exists():
             dewu_info = DewuInfo.objects.get(spu_id=spu_id)
-            if "api_data" in data:
-                dewu_info.api_data = data['api_data']
-            if "preprocessed_data" in data:
-                dewu_info.preprocessed_data = data['preprocessed_data']
-            if "web_data" in data:
-                dewu_info.web_data = data['web_data']
-            dewu_info.save()
         else:
             dewu_info = DewuInfo(spu_id=spu_id)
-            if "api_data" in data:
-                dewu_info.api_data = data['api_data']
-            if "preprocessed_data" in data:
-                dewu_info.preprocessed_data = data['preprocessed_data']
-            if "web_data" in data:
-                dewu_info.web_data = data['web_data']
-            dewu_info.save()
+
+        if "api_data" in data:
+            dewu_info.api_data = data['api_data']
+        if "preprocessed_data" in data:
+            dewu_info.preprocessed_data = data['preprocessed_data']
+        if "web_data" in data:
+            dewu_info.web_data = data['web_data']
+        dewu_info.save()
         return Response(DewuInfoSerializer(dewu_info).data)
 
     def delete(self, request, spu_id):
@@ -402,6 +396,8 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
+            product.rel_num += 1
+            product.save()
             serializer = ProductSerializer(product, context={"list_lines": True,
                                                                      "wishlist": Wishlist.objects.get(user=User(
                                                                          id=self.request.user.id)) if request.user.id else None})

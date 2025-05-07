@@ -25,6 +25,11 @@ class Command(BaseCommand):
             k += 1
             kk += 1
             manufacturer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", " ")
+            if Product.objects.filter(manufacturer_sku=manufacturer_sku).exists():
+                product = Product.objects.filter(manufacturer_sku=manufacturer_sku).first()
+                product.rel_num -= 2000000
+                product.save()
+            continue
 
 
             # Удаление существующего продукта с указанным manufacturer_sku

@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         hosts = ['localhost']
-        # hosts = ['http://51.250.74.115:9200']
+        hosts = ['http://51.250.74.115:9200']
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index
@@ -20,6 +20,14 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
         sug_index.create()
+
+        lines = open("suggest_brand.txt", encoding="utf-8").read().strip().split('\n')
+
+        # Создание словаря
+        dict_brand = {}
+        for line in lines:
+            key, *values = line.split(', ')
+            dict_brand[key.lower()] = list(values)
 
         lines = Line.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
         for line in lines:
@@ -37,7 +45,7 @@ class Command(BaseCommand):
 
             if line.parent_line is None:
                 line_doc.suggest = [{
-                    'input': [line.view_name],
+                    'input': [line.view_name] + dict_brand.get(line.view_name.lower(), []),
                     'weight': 6 - level
                 }]
             else:

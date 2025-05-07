@@ -44,7 +44,7 @@ urlpatterns = [
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
-    path('slug/<str:slug>', ProductSlugView.as_view()), path('similar/<str:slug>', ProductSimilarView.as_view()),
+    path('slug/<str:slug>', ProductSlugView.as_view()), path('similar/<int:id>', ProductSimilarView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
     path("update/<int:product_id>", ProductUpdateView.as_view()), path("size", ProductSizeView.as_view()),

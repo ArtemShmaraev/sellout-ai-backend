@@ -3,7 +3,7 @@ from .models import User, Gender
 # Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username',)
+    list_display = ('username', 'id')
 
 
 class GenderAdmin(admin.ModelAdmin):

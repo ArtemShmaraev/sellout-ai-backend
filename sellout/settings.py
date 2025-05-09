@@ -57,20 +57,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_slugify_processor',
-    'django_filters',  # Добавьте эту строку
-    'social_django',
+    'django_filters'
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'social_core.backends.google.GoogleOAuth2',
-    # ...
-)
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'google-auth-callback'
-REDIRECT_FIELD_NAME = 'google-auth-callback'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
+GOOGLE_OAUTH2_SECRET = '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'
 
 ELASTICSEARCH_DSL = {
     'default': {

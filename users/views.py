@@ -1,3 +1,4 @@
+import base64
 import hashlib
 from datetime import datetime, timedelta
 
@@ -25,7 +26,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import AUTH_HEADER_TYPES, JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework_simplejwt.settings import api_settings
-from .tools import check_adress
+from .tools import check_adress, register_user
 
 from shipping.views import ProductUnitProductMainView
 from sellout.settings import HOST
@@ -37,14 +38,126 @@ from django.shortcuts import redirect
 from social_django.utils import load_strategy
 from users.tools import secret_password
 from rest_framework.test import APIRequestFactory
-def google_auth(request):
-    strategy = load_strategy(request)
-    return redirect('social:begin', backend='google-oauth2')
 
 
-from social_core.backends.google import GoogleOAuth2
-from social_django.models import UserSocialAuth
+import os
+from django.shortcuts import redirect
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
+
+def initiate_google_auth(request):
+    # Формирование URL для авторизации
+    google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
+    client_id = GOOGLE_OAUTH2_KEY # Замените на ваш реальный клиентский ID
+    redirect_uri = "http://127.0.0.1:8000/api/v1/user/auth/complete/google-oauth2/"
+    scope = "email profile"
+    response_type = "code"
+    nonce = "123"
+
+    auth_url = f"{google_auth_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type={response_type}&scope={scope}&nonce={nonce}"
+
+    # Перенаправление пользователя на URL авторизации
+    return redirect(auth_url)
+
+
+class GoogleAuth(generics.GenericAPIView):
+    permission_classes = ()
+    authentication_classes = ()
+
+    serializer_class = None
+    _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
+
+    www_authenticate_realm = "api"
+
+    def get_serializer_class(self):
+        """
+        If serializer_class is set, use it directly. Otherwise get the class from settings.
+        """
+
+        if self.serializer_class:
+            return self.serializer_class
+        try:
+            return import_string(self._serializer_class)
+        except ImportError:
+            msg = "Could not import serializer '%s'" % self._serializer_class
+            raise ImportError(msg)
+
+    def get_authenticate_header(self, request):
+        return '{} realm="{}"'.format(
+            AUTH_HEADER_TYPES[0],
+            self.www_authenticate_realm,
+        )
+
+    def get(self, request, *args, **kwargs):
+        code = request.query_params.get('code')
+        if code:
+            # Создаем POST-запрос для обмена временного кода на токен
+            client_id = GOOGLE_OAUTH2_KEY
+            client_secret = GOOGLE_OAUTH2_SECRET
+            redirect_uri = "http://127.0.0.1:8000/api/v1/user/auth/complete/google-oauth2/"
+            grant_type = "authorization_code"
+
+            # Отправка POST-запроса
+            url = "https://oauth2.googleapis.com/token"
+            payload = {
+                "code": code,
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "redirect_uri": redirect_uri,
+                "grant_type": grant_type
+            }
+            response = requests.post(url, data=payload)
+
+            # Обработка ответа
+            if response.status_code == 200:
+                json_data = response.json()
+                access_token = json_data.get("access_token")
+                print("Access Token:", access_token)
+                if access_token:
+                    # Запрос к Google API для получения данных пользователя
+                    url = 'https://www.googleapis.com/oauth2/v1/userinfo'
+                    headers = {'Authorization': f'Bearer {access_token}'}
+                    response = requests.get(url, headers=headers)
+
+                    if response.status_code == 200:
+                        data = {}
+                        user_data = response.json()
+                        data['first_name'] = user_data.get('given_name')
+                        data['last_name'] = user_data.get('family_name')
+                        data['username'] = user_data.get('email')
+                        data['is_mailing_list'] = False
+
+                        data['password'] = secret_password(user_data.get('email'))
+
+                        try:
+                            if not User.objects.filter(username=data['username']).exists():
+                                register_user(data)
+                            else:
+                                user = User.objects.get(username=data['username'])
+                                user.set_password(data['password'])
+                                user.save()
+
+
+                            log_data = {'username': data["username"], 'password': data['password']}
+                            serializer = self.get_serializer(data=log_data)
+                            serializer.is_valid(raise_exception=True)
+
+                            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+                        except exceptions.ValidationError as e:
+                            return Response({'error': str(e)}, status=status.HTTP_200_OK)
+
+                        except User.DoesNotExist:
+                            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+                        except TokenError as e:
+                            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            else:
+                return Response({'error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -184,32 +297,15 @@ class UserRegister(generics.GenericAPIView):
             self.www_authenticate_realm,
         )
 
+
+
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
+            register_user(data)
 
             if User.objects.filter(username=data['username']).exists():
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
-
-            new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
-                            last_name=data['last_name'],
-                            is_mailing_list=data['is_mailing_list'], email=data['username'])
-            genders = {'male': 1, "female": 2}
-            if 'gender' in data:
-                new_user.gender_id = genders[data['gender']]
-            if 'phone' in data:
-                new_user.phone_number = data['phone']
-
-            new_user.set_password(data['password'])
-            new_user.save()
-            cart = ShoppingCart(user_id=new_user.id)
-            wl = Wishlist(user_id=new_user.id)
-            bonus = Bonuses()
-            bonus.save()
-            new_user.bonuses = bonus
-            new_user.save()
-            cart.save()
-            wl.save()
 
             log_data = {'username': data["username"], 'password': data['password']}
             serializer = self.get_serializer(data=log_data)
@@ -409,60 +505,6 @@ class UserLoginView(TokenViewBase):
     _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
 
 
-
-def google_auth_callback(request):
-    user = request.user
-    if not user.is_authenticated:
-        return redirect('login')  # Перенаправьте на страницу входа, если пользователь не аутентифицирован
-
-    # Получите данные о пользователе из Google OAuth2
-    google_user = user.social_auth.get(provider=GoogleOAuth2.name)
-
-
-    access_token = google_user.extra_data.get('access_token')
-    if access_token:
-        # Запрос к Google API для получения данных пользователя
-        url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-        headers = {'Authorization': f'Bearer {access_token}'}
-        response = requests.get(url, headers=headers)
-
-        if response.status_code == 200:
-            data = {}
-            user_data = response.json()
-            data['first_name'] = user_data.get('given_name')
-            data['last_name'] = user_data.get('family_name')
-            data['username'] = user_data.get('email')
-            data['is_mailing_list'] = False
-
-            data['password'] = secret_password(user_data.get('email'))
-            factory = APIRequestFactory()
-
-            if User.objects.filter(email=user_data.get('email')).exists():
-
-                login_request = factory.post('/api/v1/user/login', data, format='json')
-
-                # Создаем экземпляр представления UserRegister
-                user_login_view = UserLoginView.as_view()
-
-                # Вызываем представление UserRegister и получаем Response
-                response = user_login_view(login_request)
-
-            else:
-
-
-                # Создаем Request объект с использованием фабрики
-                register_request = factory.post('/api/v1/user/register', data, format='json')
-
-                # Создаем экземпляр представления UserRegister
-                user_register_view = UserRegister.as_view()
-
-                # Вызываем представление UserRegister и получаем Response
-                response = user_register_view(register_request)
-
-            return response
-
-
-    return Response("Авторизация не прошла", status=status.HTTP_400_BAD_REQUEST)
 
 
 

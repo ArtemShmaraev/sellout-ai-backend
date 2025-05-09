@@ -3,7 +3,7 @@ from rest_framework import routers
 from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
-    UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView, google_auth_callback, google_auth
+    UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView,GoogleAuth, initiate_google_auth
 
 
 router = routers.DefaultRouter()
@@ -18,7 +18,6 @@ urlpatterns.append(path('register', UserRegister.as_view(), name='register'))
 
 
 urlpatterns.append(path('change_psw', UserChangePassword.as_view()))
-# urlpatterns.append(path('login', LoginUser.as_view()))
 
 urlpatterns.append(path('login', UserLoginView.as_view(), name='token_obtain_pair'))
 urlpatterns.append(path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh')) #кастом
@@ -28,8 +27,5 @@ urlpatterns.append(path('size_info', UserSizeInfo.as_view()))
 urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 
 
-from social_django.urls import urlpatterns as social_django_urls
-
-urlpatterns.append(path('auth/', include('social_django.urls', namespace='social')))
-urlpatterns.append(path('auth/google/callback/', google_auth_callback, name='google-auth-callback'))
-urlpatterns.append(path('auth/google/', google_auth, name='google-auth'))
+urlpatterns.append(path('auth/complete/google-oauth2/', GoogleAuth.as_view(), name='google-auth-callback'))
+urlpatterns.append(path('auth/google/', initiate_google_auth))

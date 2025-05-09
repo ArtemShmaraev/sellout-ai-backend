@@ -159,7 +159,9 @@ class UserRegister(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
+            print(data)
             genders = {'male': 1, "female": 2}
+
             if User.objects.filter(username=data['username']).exists():
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
 
@@ -180,6 +182,8 @@ class UserRegister(generics.GenericAPIView):
             log_data = {'username': data["username"], 'password': data['password']}
             serializer = self.get_serializer(data=log_data)
             serializer.is_valid(raise_exception=True)
+
+
 
             return Response(serializer.validated_data, status=status.HTTP_200_OK)
 

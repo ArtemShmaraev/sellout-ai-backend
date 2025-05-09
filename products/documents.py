@@ -3,7 +3,7 @@ from elasticsearch_dsl.connections import connections
 from .models import Product, Line, Category, Color
 from elasticsearch_dsl import analyzer, token_filter
 
-connections.create_connection(hosts=['localhost'])  # Укажите адрес вашего Elasticsearch-сервера
+connections.create_connection(hosts=['51.250.74.115'])  # Укажите адрес вашего Elasticsearch-сервера
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
 russian_stemmer = token_filter('russian_stemmer', type='stemmer', language='russian')

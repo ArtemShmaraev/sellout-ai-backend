@@ -126,12 +126,12 @@ def search_product(query, queryset, page_number=1):
     # Определите пороговое значение для подходящих результатов (50% от max_score)
 
     # Запись результатов в JSON файл
-    output_file = 'search_results.json'
-    with open(output_file, 'w', encoding="utf-8") as f:
-        json.dump(response.to_dict(), f, indent=4)
-    max_score = response.hits.max_score
-    threshold = min(len(query) / 25, 0.8) * max_score
-    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > threshold]
+    # output_file = 'search_results.json'
+    # with open(output_file, 'w', encoding="utf-8") as f:
+    #     json.dump(response.to_dict(), f, indent=4)
+    # max_score = response.hits.max_score
+    # threshold = min(len(query) / 25, 0.8) * max_score
+    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.75]
     queryset = Product.objects.filter(id__in=product_ids)
 
     # Определение порядка объектов в queryset

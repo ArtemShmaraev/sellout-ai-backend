@@ -16,6 +16,8 @@ from datetime import timedelta
 from corsheaders.defaults import default_headers
 
 URL = " http://127.0.0.1:8000"
+HOST = "51.250.74.115"
+# HOST = "localhost"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,17 +58,17 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_slugify_processor',
-    'django_filters',]
-    # 'haystack',
+    'django_filters', ]
+# 'haystack',
 
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': '51.250.74.115::9200',  # Адрес и порт вашего Elasticsearch
+        'hosts': f'{HOST}:9200',
+
+        # 'hosts': '51.250.74.115:9200',  # Адрес и порт вашего Elasticsearch
     },
 }
-
-
 
 # Set the AUTH_USER_MODEL setting to point to your custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -169,6 +171,19 @@ CELERY_TASK_ROUTES = {
     'myapp.tasks.my_async_task': {'queue': 'high', 'routing_key': 'high'},
     # Add more tasks and their routing here
 }
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Set to True to always redirect HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Ensure secure handling of cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Enable HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

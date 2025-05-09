@@ -38,6 +38,15 @@ class PromocodeView(APIView):
             return Response({"final_amount": cart.final_amount, "message": check[1], "status": False})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
+    def delete(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            data = json.loads(request.body)
+            cart = ShoppingCart.objects.get(user_id=user_id)
+            cart.promo_code = None
+            cart.save()
+            return Response({"final_amount": cart.final_amount, "message": "", "status": False})
+        return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
 
 class PromocodeAnonView(APIView):
     # authentication_classes = [JWTAuthentication]

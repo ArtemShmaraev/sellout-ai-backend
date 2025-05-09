@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import WishlistSerializer
 from products.models import Product
-from sellout.settings import URL
 from rest_framework import status
 from users.models import User
 from products.serializers import ProductSerializer, ProductMainPageSerializer

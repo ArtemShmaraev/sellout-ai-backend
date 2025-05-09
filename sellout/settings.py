@@ -15,7 +15,6 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-URL = " http://127.0.0.1:8000"
 HOST = "51.250.74.115"
 # HOST = "localhost"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,9 +57,20 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_slugify_processor',
-    'django_filters', ]
-# 'haystack',
+    'django_filters',  # Добавьте эту строку
+    'social_django',
+]
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    # ...
+)
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'google-auth-callback'
+REDIRECT_FIELD_NAME = 'google-auth-callback'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 ELASTICSEARCH_DSL = {
     'default': {
@@ -81,7 +91,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 CORS_ALLOW_HEADERS = default_headers + (
@@ -171,19 +182,6 @@ CELERY_TASK_ROUTES = {
     'myapp.tasks.my_async_task': {'queue': 'high', 'routing_key': 'high'},
     # Add more tasks and their routing here
 }
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Set to True to always redirect HTTP requests to HTTPS
-SECURE_SSL_REDIRECT = True
-
-# Ensure secure handling of cookies
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-
-# Enable HTTP Strict Transport Security (HSTS)
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -193,6 +191,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ),
     'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ],
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

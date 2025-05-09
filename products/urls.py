@@ -39,7 +39,7 @@ router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")
 
 urlpatterns = [
-    path("products/", ProductView.as_view()),
+    path("products/", ProductView.as_view(), name="home"),
     path("", include(router_collection.urls)),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),

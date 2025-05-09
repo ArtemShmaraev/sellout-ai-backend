@@ -44,3 +44,4 @@ schedule==1.2.0
 dadata==21.10.1
 elasticsearch>=7,<8
 elasticsearch-dsl>=7,<8
+social-auth-app-django==5.2.0

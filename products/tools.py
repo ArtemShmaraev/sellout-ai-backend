@@ -52,11 +52,13 @@ def build_line_tree():
         if parent_line is None:
             # Если у линейки нет родительской линейки, она считается корневой линейкой
             del line['parent_line']
+            line["is_show"] = True
             root_lines.append(line)
         else:
             parent_id = parent_line['id']
             parent_line = line_dict.get(parent_id)
             if parent_line:
+                del line['parent_line']
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
 
@@ -90,7 +92,7 @@ def build_line_tree():
     # sorted_data_with_children = sorted(with_children, key=lambda x: x['name'].lower())
 
     # Сортируем оставшиеся элементы
-    sorted_data_without_children = sorted(without_children, key=lambda x: x['name'].lower())
+    sorted_data_without_children = sorted(without_children, key=lambda x: x['view_name'].lower())
     # Объединяем отсортированные части
     sorted_data = with_children + sorted_data_without_children
     return sorted_data

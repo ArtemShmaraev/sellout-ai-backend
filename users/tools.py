@@ -1,3 +1,5 @@
+import hashlib
+
 from dadata import Dadata
 
 def check_adress(text):
@@ -8,6 +10,24 @@ def check_adress(text):
     if len(result) > 0:
         return result[0]
     return None
+
+
+
+def hash_string(input_string):
+    # Создаем объект хэша
+    sha256_hash = hashlib.sha256()
+
+    # Обновляем хэш с входными данными в виде байтов
+    sha256_hash.update(input_string.encode('utf-8'))
+
+    # Получаем хэш-значение в виде шестнадцатеричной строки
+    hashed_string = sha256_hash.hexdigest()
+
+    return hashed_string
+
+def secret_password(email):
+    secret_key = "fsdhjk348290fjdsklfdsfj&*(esdfnklm fjvвыаw" + email
+    return hash_string(secret_key)
 
 
 # check_adress("белгород губкина 17б")

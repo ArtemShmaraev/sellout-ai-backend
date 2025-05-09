@@ -16,11 +16,11 @@ class Command(BaseCommand):
             # folder_path = f'dewu/{count}m'
             folder_path = f'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
             k = 37900
-            k = 980
+            k = 0
             ek = 0
             t0 = datetime.now()
             # Перебор всех файлов в папке
-            for filename in os.listdir(folder_path)[k:10000]:
+            for filename in os.listdir(folder_path)[k:]:
                 if filename.endswith('json'):  # Проверка, что файл имеет расширение .json
                     file_path = os.path.join(folder_path, filename)  # Полный путь к файлу
                     k += 1

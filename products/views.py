@@ -450,24 +450,14 @@ class LineTreeView(APIView):
 
             for i in range(len(tree)):
                 if tree[i]['view_name'].lower().startswith(q):
-                    tree[i]['is_show'] = True
                     start_tree.append(tree[i])
                 elif q in tree[i]['view_name'].lower():
-                    tree[i]['is_show'] = True
                     in_tree.append(tree[i])
                 else:
                     tree[i]['is_show'] = False
                     no_tree.append(tree[i])
             return Response(start_tree + in_tree + no_tree)
 
-            # for i in range(len(tree)):
-            #     if q in tree[i]['view_name'].lower():
-            #         tree[i]['is_show'] = True
-            #     else:
-            #         tree[i]["is_show"] = False
-        else:
-            for i in range(len(tree)):
-                tree[i]['is_show'] = True
         return Response(tree)
 
 

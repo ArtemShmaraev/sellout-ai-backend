@@ -51,9 +51,11 @@ def initiate_google_auth(request):
     # Формирование URL для авторизации
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     client_id = GOOGLE_OAUTH2_KEY # Замените на ваш реальный клиентский ID
-    redirect_uri = "http://127.0.0.1:8000/api/v1/user/auth/complete/google-oauth2/"
+    redirect_uri = "http://127.0.0.1:3000/products"
+    if HOST == "51.250.74.115":
+        redirect_uri = "http://sellout.su/products"
     scope = "email profile"
-    response_type = "code"
+    response_type = "id_token"
     nonce = "123"
 
     auth_url = f"{google_auth_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type={response_type}&scope={scope}&nonce={nonce}"
@@ -91,72 +93,46 @@ class GoogleAuth(generics.GenericAPIView):
         )
 
     def get(self, request, *args, **kwargs):
-        code = request.query_params.get('code')
-        if code:
-            # Создаем POST-запрос для обмена временного кода на токен
-            client_id = GOOGLE_OAUTH2_KEY
-            client_secret = GOOGLE_OAUTH2_SECRET
-            redirect_uri = "http://127.0.0.1:8000/api/v1/user/auth/complete/google-oauth2/"
-            grant_type = "authorization_code"
-
-            # Отправка POST-запроса
-            url = "https://oauth2.googleapis.com/token"
-            payload = {
-                "code": code,
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "redirect_uri": redirect_uri,
-                "grant_type": grant_type
-            }
-            response = requests.post(url, data=payload)
-
-            # Обработка ответа
-            if response.status_code == 200:
-                json_data = response.json()
-                access_token = json_data.get("access_token")
-                print("Access Token:", access_token)
-                if access_token:
-                    # Запрос к Google API для получения данных пользователя
-                    url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-                    headers = {'Authorization': f'Bearer {access_token}'}
-                    response = requests.get(url, headers=headers)
-
-                    if response.status_code == 200:
-                        data = {}
-                        user_data = response.json()
-                        data['first_name'] = user_data.get('given_name')
-                        data['last_name'] = user_data.get('family_name')
-                        data['username'] = user_data.get('email')
-                        data['is_mailing_list'] = False
-
-                        data['password'] = secret_password(user_data.get('email'))
-
-                        try:
-                            if not User.objects.filter(username=data['username']).exists():
-                                register_user(data)
-                            else:
-                                user = User.objects.get(username=data['username'])
-                                user.set_password(data['password'])
-                                user.save()
+        id_token = request.query_params.get('code')
 
 
-                            log_data = {'username': data["username"], 'password': data['password']}
-                            serializer = self.get_serializer(data=log_data)
-                            serializer.is_valid(raise_exception=True)
+        header_b64, payload_b64, signature_b64 = id_token.split('.')
 
-                            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        header = json.loads(base64.urlsafe_b64decode(header_b64 + '==').decode('utf-8'))
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64 + '==').decode('utf-8'))
 
-                        except exceptions.ValidationError as e:
-                            return Response({'error': str(e)}, status=status.HTTP_200_OK)
+        if payload:
+            data = {}
+            data['first_name'] = payload.get('given_name')
+            data['last_name'] = payload.get('family_name')
+            data['username'] = payload.get('email')
+            data['is_mailing_list'] = False
 
-                        except User.DoesNotExist:
-                            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            data['password'] = secret_password(payload.get('email'))
 
-                        except TokenError as e:
-                            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                if not User.objects.filter(username=data['username']).exists():
+                    register_user(data)
+                else:
+                    user = User.objects.get(username=data['username'])
+                    user.set_password(data['password'])
+                    user.save()
 
-            else:
-                return Response({'error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                log_data = {'username': data["username"], 'password': data['password']}
+                serializer = self.get_serializer(data=log_data)
+                serializer.is_valid(raise_exception=True)
+
+                return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+            except exceptions.ValidationError as e:
+                return Response({'error': str(e)}, status=status.HTTP_200_OK)
+
+            except User.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            except TokenError as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response({'error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

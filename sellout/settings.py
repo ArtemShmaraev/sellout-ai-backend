@@ -16,7 +16,7 @@ from datetime import timedelta
 from corsheaders.defaults import default_headers
 
 HOST = "51.250.74.115"
-# HOST = "localhost"
+# HOST = "127.0.0.1"
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -262,3 +262,18 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Set to True to always redirect HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Ensure secure handling of cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Enable HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+

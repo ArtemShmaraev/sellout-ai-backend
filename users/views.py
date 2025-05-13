@@ -56,7 +56,7 @@ def initiate_google_auth(request):
         redirect_uri = "http://sellout.su/products"
     scope = "email profile"
     response_type = "id_token"
-    nonce = "123"
+    nonce = "1213"
 
     auth_url = f"{google_auth_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type={response_type}&scope={scope}&nonce={nonce}"
 
@@ -93,24 +93,23 @@ class GoogleAuth(generics.GenericAPIView):
         )
 
     def get(self, request, *args, **kwargs):
-        id_token = request.query_params.get('code')
+        try:
+            id_token = request.query_params.get('id_token')
 
 
-        header_b64, payload_b64, signature_b64 = id_token.split('.')
+            header_b64, payload_b64, signature_b64 = id_token.split('.')
 
-        header = json.loads(base64.urlsafe_b64decode(header_b64 + '==').decode('utf-8'))
-        payload = json.loads(base64.urlsafe_b64decode(payload_b64 + '==').decode('utf-8'))
+            header = json.loads(base64.urlsafe_b64decode(header_b64 + '==').decode('utf-8'))
+            payload = json.loads(base64.urlsafe_b64decode(payload_b64 + '==').decode('utf-8'))
 
-        if payload:
-            data = {}
-            data['first_name'] = payload.get('given_name')
-            data['last_name'] = payload.get('family_name')
-            data['username'] = payload.get('email')
-            data['is_mailing_list'] = False
+            if payload:
+                data = {}
+                data['first_name'] = payload.get('given_name')
+                data['last_name'] = payload.get('family_name')
+                data['username'] = payload.get('email')
+                data['is_mailing_list'] = False
 
-            data['password'] = secret_password(payload.get('email'))
-
-            try:
+                data['password'] = secret_password(payload.get('email'))
                 if not User.objects.filter(username=data['username']).exists():
                     register_user(data)
                 else:
@@ -124,16 +123,16 @@ class GoogleAuth(generics.GenericAPIView):
 
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
-            except exceptions.ValidationError as e:
-                return Response({'error': str(e)}, status=status.HTTP_200_OK)
+        except exceptions.ValidationError as e:
+            return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
-            except User.DoesNotExist:
-                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-            except TokenError as e:
-                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except TokenError as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response({'error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 

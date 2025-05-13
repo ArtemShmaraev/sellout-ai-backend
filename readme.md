@@ -18,6 +18,8 @@ Anon)
 7. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
 8. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
 статус ответа 200 если токен валиден, иначе 401
+9. user/auth/google/ авторизацию гугл
+10. `[GET][Anon] user/auth/complete/google/?id_token={}` вернет токены
 -
 9. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 10. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)

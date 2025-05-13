@@ -52,7 +52,6 @@ def build_line_tree():
         if parent_line is None:
             # Если у линейки нет родительской линейки, она считается корневой линейкой
             del line['parent_line']
-            line["is_show"] = True
             root_lines.append(line)
         else:
             parent_id = parent_line['id']
@@ -152,6 +151,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
     rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
     manufactorer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", "")
     if SG_PRODUCTS.filter(manufacturer_sku=manufactorer_sku).exists() and not data.get('is_custom'):
+        return 0
         # Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku')).delete()
         product = Product.objects.get(manufacturer_sku=manufactorer_sku, is_custom=False)
         product.manufacturer_sku = data.get('manufacturer_sku')

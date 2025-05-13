@@ -51,7 +51,7 @@ def initiate_google_auth(request):
     # Формирование URL для авторизации
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     client_id = GOOGLE_OAUTH2_KEY # Замените на ваш реальный клиентский ID
-    redirect_uri = "http://127.0.0.1:3000/products"
+    redirect_uri = "http://localhost:3000/products"
     if HOST == "51.250.74.115":
         redirect_uri = "http://sellout.su/products"
     scope = "email profile"

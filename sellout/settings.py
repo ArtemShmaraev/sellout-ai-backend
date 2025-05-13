@@ -85,6 +85,7 @@ MIDDLEWARE = [
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'django.middleware.security.SecurityMiddleware'
 ]
 
 CORS_ALLOW_HEADERS = default_headers + (

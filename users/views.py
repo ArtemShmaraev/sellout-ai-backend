@@ -2,18 +2,12 @@ import base64
 import hashlib
 from datetime import datetime, timedelta
 
-import jwt
-from django.shortcuts import render
-from rest_framework.views import APIView
-from promotions.models import Bonuses
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer
 from .models import User, Gender
 from rest_framework import exceptions
-from social_django.views import complete as social_complete
 from products.models import Product, Brand, SizeTable
 from django.db import models
-from social_django.utils import psa
 from shipping.views import product_unit_product_main
 import json
 from shipping.models import AddressInfo
@@ -34,16 +28,8 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from django.shortcuts import redirect
-from social_django.utils import load_strategy
 from users.tools import secret_password
-from rest_framework.test import APIRequestFactory
-
-
-import os
 from django.shortcuts import redirect
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
 

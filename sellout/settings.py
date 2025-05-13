@@ -84,7 +84,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.security.SecurityMiddleware'
 ]
 

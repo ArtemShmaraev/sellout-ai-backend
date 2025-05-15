@@ -43,7 +43,7 @@ class User(AbstractUser):
     referral_promo = models.CharField(max_length=100, null=True, blank=True)
     ref_user = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
     bonuses = models.ForeignKey("promotions.Bonuses", on_delete=models.PROTECT, null=True, blank=True,
-                                related_name="users")
+                                related_name="user")
     preferred_size_grid = models.CharField(max_length=100, null=True, blank=True)
     # last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
     #                                               blank=True)

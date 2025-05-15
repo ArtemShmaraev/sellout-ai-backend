@@ -10,6 +10,8 @@ class BonusesAdmin(admin.ModelAdmin):
     list_display = ("total_amount", )
 
 
+
+
 class AccrualBonusAdmin(admin.ModelAdmin):
     list_display = ("amount", )
 

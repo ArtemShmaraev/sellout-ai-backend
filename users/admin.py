@@ -3,7 +3,12 @@ from .models import User, Gender
 # Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'id')
+    list_display = ('username', 'id', "get_bonuses_total_amount")
+
+    def get_bonuses_total_amount(self, obj):
+        if obj.bonuses is not None:
+            return obj.bonuses.total_amount
+        return -1
 
 
 class GenderAdmin(admin.ModelAdmin):

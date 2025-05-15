@@ -441,7 +441,7 @@ class LineTreeView(APIView):
 
     def get(self, request):
         q = self.request.query_params.get('q')
-        tree = build_line_tree()
+        tree = build_line_tree()[:]
         if q:
             q = q.lower()
             start_tree = []

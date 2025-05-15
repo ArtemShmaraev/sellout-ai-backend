@@ -37,6 +37,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://sellout.su:8080',
     'http://sellout.su:80',
     'http://51.250.74.115:80',
+    "https://sellout.su"
 ]
 
 INSTALLED_APPS = [
@@ -266,7 +267,7 @@ DATABASES = {
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Set to True to always redirect HTTP requests to HTTPS
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 # Ensure secure handling of cookies
 SESSION_COOKIE_SECURE = True

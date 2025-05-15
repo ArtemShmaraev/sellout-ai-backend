@@ -58,6 +58,9 @@ class Order(models.Model):
         self.order_units.add(order_unit)
 
 
+
+
+
 class ShoppingCart(models.Model):
     user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
                                 blank=False)

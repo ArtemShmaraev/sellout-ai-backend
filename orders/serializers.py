@@ -1,7 +1,7 @@
 from .models import ShoppingCart, Order
 from rest_framework import serializers
 from products.serializers import ProductMainPageSerializer
-from shipping.serializers import ProductUnitSerializer
+from shipping.serializers import ProductUnitSerializer, AddressInfoSerializer
 from promotions.serializers import PromoCodeSerializer
 from users.models import User
 from users.serializers import ForAnonUserSerializer, UserSerializer, UserOrderSerializer
@@ -43,7 +43,9 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    user = UserOrderSerializer
+    user = UserOrderSerializer()
+    address = AddressInfoSerializer()
+    product_units = ProductUnitSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = '__all__'

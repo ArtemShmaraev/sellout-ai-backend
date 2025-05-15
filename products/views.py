@@ -215,9 +215,9 @@ class ProductView(APIView):
                 return None  # Если общей родительской линейки не найдено
 
             # Пример использования
-            selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
-            oldest_line = find_common_ancestor(selected_lines)
-            print(oldest_line)
+            # selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
+            # oldest_line = find_common_ancestor(selected_lines)
+            # print(oldest_line)
 
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
@@ -245,9 +245,9 @@ class ProductView(APIView):
                     return categories[0]
                 return None
 
-            selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
-            oldest_cat = find_common_ancestor(selected_cat)
-            print(oldest_cat)
+            # selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
+            # oldest_cat = find_common_ancestor(selected_cat)
+            # print(oldest_cat)
 
         if gender:
             queryset = queryset.filter(gender__name__in=gender)

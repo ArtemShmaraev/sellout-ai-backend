@@ -38,6 +38,7 @@ class ShoppingCartUser(APIView):
                 product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
                 shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
                 shopping_cart.product_units.add(product_unit)
+                shopping_cart.save()
                 serializer = ProductUnitSerializer(product_unit)
                 return Response(serializer.data)
             else:

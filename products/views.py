@@ -115,8 +115,8 @@ class ProductSearchView(APIView):
         count = products.count()
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 60
-        queryset = products[start_index:start_index + 60]
+        start_index = (page_number - 1) * 96
+        queryset = products[start_index:start_index + 96]
         serializer = ProductMainPageSerializer(queryset, many=True)
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
 
@@ -180,7 +180,8 @@ class ProductView(APIView):
         if not custom:
             queryset = queryset.filter(is_custom=False)
         if collab:
-            if collab == "all":
+            print(collab)
+            if "all" in collab:
                 queryset = queryset.filter(is_collab=True)
             else:
                 queryset = queryset.filter(collab__query_name__in=collab)

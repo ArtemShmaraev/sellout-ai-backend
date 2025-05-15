@@ -41,7 +41,7 @@ class User(AbstractUser):
     # wishlist and shopping cart are described in Wishlist and ShoppingCart models
 
     referral_promo = models.CharField(max_length=100, null=True, blank=True)
-    ref_user = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
+    ref_user = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     bonuses = models.ForeignKey("promotions.Bonuses", on_delete=models.PROTECT, null=True, blank=True,
                                 related_name="user")
     preferred_size_grid = models.CharField(max_length=100, null=True, blank=True)
@@ -49,13 +49,13 @@ class User(AbstractUser):
     #                                               blank=True)
     last_viewed_products = models.JSONField(blank=True, null=True, default=list)
     happy_birthday = models.DateTimeField(auto_now=True)
-    preferred_shoes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.PROTECT, blank=True, null=True,
+    preferred_shoes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True, null=True,
                                                    related_name='users_with_shoes_table')
-    preferred_clothes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.PROTECT, blank=True,
+    preferred_clothes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True,
                                                      null=True, related_name='users_with_clothes_table')
-    shoes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.PROTECT, blank=True, null=True,
+    shoes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='users_with_shoes_size')
-    clothes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.PROTECT, blank=True, null=True,
+    clothes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.SET_NULL, blank=True, null=True,
                                      related_name='users_with_clothes_size')
     height = models.IntegerField(default=175)
     weight = models.IntegerField(default=60)

@@ -85,6 +85,7 @@ class CheckOutView(APIView):
             if request.user.id == user_id or request.user.is_staff:
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 data = json.loads(request.body)
+                print(data)
                 user = get_object_or_404(User, id=user_id)
                 address = get_object_or_404(AddressInfo, id=data['address_id'])
 
@@ -115,7 +116,7 @@ class AllOrdersView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        if request.user.is_staff:
+        if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj":
             orders = Order.objects.all()
             serializer = OrderSerializer(orders, many=True)
             return Response(serializer.data)

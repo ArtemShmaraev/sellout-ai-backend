@@ -4,6 +4,7 @@ from products.serializers import ProductMainPageSerializer
 from shipping.serializers import ProductUnitSerializer
 from promotions.serializers import PromoCodeSerializer
 from users.models import User
+from users.serializers import ForAnonUserSerializer, UserSerializer, UserOrderSerializer
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
@@ -42,6 +43,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    user = UserOrderSerializer
     class Meta:
         model = Order
         fields = '__all__'

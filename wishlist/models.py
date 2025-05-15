@@ -14,7 +14,7 @@ from django.db import models
 
 
 class Wishlist(models.Model):
-    user = models.ForeignKey("users.User", on_delete=models.PROTECT, null=False, blank=False,
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=False, blank=False,
                              related_name="wishlist")
     products = models.ManyToManyField("products.Product", blank=True)
 

@@ -130,8 +130,8 @@ class Collab(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # if not self.query_name:
-        self.query_name = "_".join(self.name.lower().split())
+        if not self.query_name:
+            self.query_name = "_".join(self.name.lower().split())
 
         super().save(*args, **kwargs)
 
@@ -182,7 +182,7 @@ class Product(models.Model):
                                         blank=True, db_index=True)
     lines = models.ManyToManyField("Line", related_name='products',
                                    blank=True, db_index=True)
-    main_line = models.ForeignKey("Line", on_delete=models.PROTECT, blank=True, null=True, related_name="main_products")
+    main_line = models.ForeignKey("Line", on_delete=models.SET_NULL, blank=True, null=True, related_name="main_products")
     # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
@@ -197,18 +197,18 @@ class Product(models.Model):
 
     is_custom = models.BooleanField(default=False, db_index=True)
     is_collab = models.BooleanField(default=False, db_index=True)
-    collab = models.ForeignKey("Collab", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
+    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products")
 
-    main_color = models.ForeignKey("Color", on_delete=models.PROTECT, blank=True, null=True,
+    main_color = models.ForeignKey("Color", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="products_main", db_index=True)
     colors = models.ManyToManyField("Color", related_name='products', blank=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
     gender = models.ManyToManyField("Gender", related_name='products', blank=True, db_index=True)
-    recommended_gender = models.ForeignKey("Gender", on_delete=models.PROTECT, blank=True, null=True)
-    size_table = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
+    recommended_gender = models.ForeignKey("Gender", on_delete=models.SET_NULL, blank=True, null=True)
+    size_table = models.ForeignKey("SizeTable", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='products')
-    size_table_platform = models.ForeignKey("SizeTable", on_delete=models.PROTECT, blank=True, null=True,
+    size_table_platform = models.ForeignKey("SizeTable", on_delete=models.SET_NULL, blank=True, null=True,
                                             related_name='products_platform')
 
     min_price = models.IntegerField(blank=True, null=True, db_index=True)
@@ -346,18 +346,39 @@ class SizeTranslationRows(models.Model):
         return f"{self.table} {self.id}"
 
 
-class HeaderPage(models.Model):
-    genders = models.ManyToManyField("Gender", related_name='headers', blank=True)
-    categories = models.ManyToManyField("Category", related_name='headers',
+class HeaderPhotos(models.Model):
+    genders = models.ManyToManyField("Gender", related_name='headers_photos', blank=True)
+    categories = models.ManyToManyField("Category", related_name='headers_photos',
                                         blank=True)
-    lines = models.ManyToManyField("Line", related_name='headers',
+    lines = models.ManyToManyField("Line", related_name='headers_photos',
                                    blank=True)
+    collabs = models.ManyToManyField("Collab", related_name='headers_photos')
+    type = models.CharField(max_length=64, default="")
+    photo = models.ForeignKey("Photo", related_name='headers_photos', blank=True, on_delete=models.CASCADE)
+
+
+class HeaderText(models.Model):
+    genders = models.ManyToManyField("Gender", related_name='headers_text', blank=True)
+    categories = models.ManyToManyField("Category", related_name='headers_text',
+                                        blank=True)
+    lines = models.ManyToManyField("Line", related_name='headers_text',
+                                   blank=True)
+    collabs = models.ManyToManyField("Collab", related_name='headers_text')
     title = models.CharField(max_length=256, default="")
     text = models.CharField(max_length=1024, default="")
-    photos_pc = models.ManyToManyField("Photo", related_name='headers_pc', blank=True)
-    photos_phone = models.ManyToManyField("Photo", related_name='headers_photos', blank=True)
-    font_color = models.CharField(max_length=512, default="")
-    background_color = models.CharField(max_length=512, default="")
-    button = models.BooleanField(default=False)
-    button_text = models.CharField(max_length=256, default="")
+
+
+
+class HeaderPage(models.Model):
+    text = models.ForeignKey("HeaderText", blank=True, null=True, on_delete=models.PROTECT)
+    photos = models.ForeignKey("HeaderPhotos", blank=True, null=True, on_delete=models.PROTECT)
+
+
+
+class MainPage(models.Model):
+    text = models.ForeignKey("HeaderText", blank=True, null=True, on_delete=models.PROTECT)
+    photos = models.ForeignKey("HeaderPhotos", blank=True, null=True, on_delete=models.PROTECT)
+    button = models.BooleanField(default=True)
+    button_text = models.CharField(max_length=64, default="")
+
 

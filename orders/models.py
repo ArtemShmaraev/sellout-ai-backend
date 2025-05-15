@@ -54,15 +54,16 @@ class Order(models.Model):
             is_fast_shipping=product_unit.is_fast_shipping,
             is_sale=product_unit.is_sale
         )
+        order_unit.save()
         self.order_units.add(order_unit)
 
 
 class ShoppingCart(models.Model):
-    user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.PROTECT,
+    user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
                                 blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
                                            related_name="shopping_carts")
-    promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
+    promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="carts")
     total_amount = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)

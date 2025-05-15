@@ -64,7 +64,7 @@ class MinPriceForSizeView(APIView):
                     if item.is_return:
                         prices_by_size[size]["is_return"] = True
                 else:
-                    prices_by_size[size]['price'].append(0)
+                    prices_by_size[size]['price'].append(999_999_999)
             min_prices_by_size = {}
             s = []
 

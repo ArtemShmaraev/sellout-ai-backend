@@ -263,10 +263,11 @@ class UserRegister(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
-            register_user(data)
-
             if User.objects.filter(username=data['username']).exists():
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
+            register_user(data)
+
+
 
             log_data = {'username': data["username"], 'password': data['password']}
             serializer = self.get_serializer(data=log_data)

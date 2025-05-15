@@ -11,8 +11,8 @@ class DeliveryType(models.Model):
 
 
 class Formula(models.Model):
-    brand = models.ForeignKey("products.Brand", on_delete=models.PROTECT, related_name="formulas")
-    delivery_type = models.ForeignKey("DeliveryType", on_delete=models.PROTECT, related_name="formulas")
+    brand = models.ForeignKey("products.Brand", on_delete=models.CASCADE, related_name="formulas")
+    delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name="formulas")
     moscow_del_price = models.IntegerField(null=False, blank=False)
     extra_charge_percentage = models.FloatField(null=False, blank=False)
     rounding_step = models.IntegerField(default=500)

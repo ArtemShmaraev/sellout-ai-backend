@@ -33,7 +33,7 @@ class Order(models.Model):
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
-                               related_name="orders", default=get_default_status)
+                               related_name="orders", default=get_default_status())
     fact_of_payment = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
 

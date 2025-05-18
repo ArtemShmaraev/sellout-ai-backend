@@ -2,9 +2,32 @@ import random
 import json
 from functools import lru_cache
 from datetime import datetime, date
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo
+from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText
 from products.serializers import LineSerializer
 
+
+
+def get_text(photo, category):
+    if photo.lines.exists():
+        line = photo.lines.all().order_by("-id").first()
+        texts = HeaderText.objects.all()
+        while line.parent_line is not None:
+            texts = HeaderText.objects.filter(lines=line)
+            if texts.count() > 0:
+                break
+            line = line.parent_line
+    elif photo.collabs.exists():
+        collab = photo.collabs.all().first()
+        texts = HeaderText.objects.filter(collabs=collab)
+    elif "shoes_category" in category or "sneakers" in category or "high_top_sneakers" in category or "low_top_sneakers" in category:
+        category = ["shoes_category", "sneakers"]
+        texts = HeaderText.objects.filter(categories__eng_name__in=category)
+
+    else:
+        texts = HeaderText.objects.filter(title="sellout")
+    count = texts.count()
+    text = texts[random.randint(0, count - 1)]
+    return {"title": text.title, "content": text.text}
 
 def build_category_tree(categories):
     category_dict = {}

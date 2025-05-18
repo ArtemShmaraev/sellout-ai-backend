@@ -48,6 +48,6 @@ class OrderSerializer(serializers.ModelSerializer):
     product_units = ProductUnitSerializer(many=True, read_only=True)
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ''
         # exclude = ("user",)
-        depth = 2
+        depth = 3

@@ -197,11 +197,11 @@ class Product(models.Model):
 
     is_custom = models.BooleanField(default=False, db_index=True)
     is_collab = models.BooleanField(default=False, db_index=True)
-    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products")
+    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products", db_index=True)
 
     main_color = models.ForeignKey("Color", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="products_main", db_index=True)
-    colors = models.ManyToManyField("Color", related_name='products', blank=True)
+    colors = models.ManyToManyField("Color", related_name='products', blank=True, db_index=True)
     designer_color = models.SlugField(max_length=255, blank=True)
 
     gender = models.ManyToManyField("Gender", related_name='products', blank=True, db_index=True)

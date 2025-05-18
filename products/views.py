@@ -20,7 +20,7 @@ from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product
+from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -31,7 +31,6 @@ from .search_tools import search_best_line, search_best_category, search_best_co
 from .documents import ProductDocument  # Импортируйте ваш документ
 
 
-
 class ProductSimilarView(APIView):
     def get(self, request, product_id):
         try:
@@ -40,6 +39,7 @@ class ProductSimilarView(APIView):
             return Response(ProductMainPageSerializer(similar, many=True).data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
 
 class DewuInfoListSpuIdView(APIView):
     def get(self, request):
@@ -219,13 +219,13 @@ class ProductView(APIView):
                 return None  # Если общей родительской линейки не найдено
 
             # Пример использования
-            selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
-            if len(selected_lines) > 0:
-                oldest_line = find_common_ancestor(selected_lines)
-                list_line.append(oldest_line)
-                while oldest_line.parent_line:
-                    list_line.append(oldest_line.parent_line)
-                    oldest_line = oldest_line.parent_line
+            # selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
+            # if len(selected_lines) > 0:
+            #     oldest_line = find_common_ancestor(selected_lines)
+            #     list_line.append(oldest_line)
+            #     while oldest_line.parent_line:
+            #         list_line.append(oldest_line.parent_line)
+            #         oldest_line = oldest_line.parent_line
 
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
@@ -260,7 +260,6 @@ class ProductView(APIView):
                 while oldest_cat.parent_category:
                     list_cat.append(oldest_cat.parent_category)
                     oldest_cat = oldest_cat.parent_category
-
 
         if gender:
             queryset = queryset.filter(gender__name__in=gender)
@@ -298,7 +297,6 @@ class ProductView(APIView):
             search = search_product(query, queryset)
             queryset = search['queryset']
             res['add_filter'] = search['url']
-
 
             # if 'category' in search:
             #     category.append(search['category'])
@@ -349,8 +347,8 @@ class ProductView(APIView):
 
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 96
-        queryset = queryset[start_index:start_index + 96]
+        start_index = (page_number - 1) * 48
+        queryset = queryset[start_index:start_index + 48]
 
         t6 = time()
         print("t5", t6 - t5)
@@ -366,26 +364,25 @@ class ProductView(APIView):
         res['results'] = serializer
         t9 = time()
         print("t8", t9 - t8)
-        print("t", t9 - t0)
+
         res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
         res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
         res['min_price'] = 0
         res['max_price'] = 1000000
-        print(list_line)
-        print(list_cat)
+
         header_photos = HeaderPhoto.objects.all()
         if category:
             header_photos = header_photos.filter(categories__eng_name__in=category)
 
-        if line:
-            header_photos = header_photos.filter(lines__full_eng_name__in=line)
-
-        # if len(list_cat) > 0:
-        #     header_photos = header_photos.filter(categories__in=list_cat)
-        # for line in list_line:
-        #     header_photos = header_photos.filter(lines=line)
-        #     if len(header_photos) > 0:
-        #         break
+        if line or collab:
+            if "all" in collab:
+                header_photos = header_photos.filter(
+                    Q(lines__full_eng_name__in=line) | ~Q(collab__query_name=None)
+                )
+            else:
+                header_photos = header_photos.filter(
+                    Q(lines__full_eng_name__in=line) | Q(collab__query_name__in=collab)
+                )
 
         header_photos = header_photos.filter(where="product_page")
         header_photos_desktop = header_photos.filter(type="desktop")
@@ -394,12 +391,12 @@ class ProductView(APIView):
             count = header_photos_desktop.count()
 
         else:
-            header_photos_mobile = HeaderPhoto.objects.filter(type="desktop")
-            count = header_photos_mobile.count()
+            header_photos_desktop = HeaderPhoto.objects.filter(type="desktop")
+            count = header_photos_desktop.count()
 
         photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
-        res["desktop_photo"] = photo_desktop.photo.url
-
+        res["desktop"] = get_text(photo_desktop, category)
+        res['desktop']['photo'] = photo_desktop.photo.url
 
         if header_photos_mobile.count() > 0:
             count = header_photos_mobile.count()
@@ -408,21 +405,12 @@ class ProductView(APIView):
             count = header_photos_mobile.count()
 
         photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
-        res["mobile_photo"] = photo_mobile.photo.url
+        res["mobile"] = get_text(photo_mobile, category)
+        res['mobile']['photo'] = photo_mobile.photo.url
 
-        line = photo_mobile.lines.all().order_by('-id').first()
-        print(line)
-        texts = HeaderText.objects.all()
-        while line.parent_line is not None:
-            texts = HeaderText.objects.filter(lines=line)
-            if texts.count() > 0:
-                break
-            line = line.parent_line
-        count = texts.count()
-        text = texts[random.randint(0, count - 1)]
-        res["text"] = {"title": text.title, "content": text.text}
-
-
+        t10 = time()
+        print("t9", t10 - t9)
+        print("t", t10 - t0)
 
         return Response(res)
 
@@ -442,8 +430,8 @@ class ProductSlugView(APIView):
             product.rel_num += 1
             product.save()
             serializer = ProductSerializer(product, context={"list_lines": True,
-                                                                     "wishlist": Wishlist.objects.get(user=User(
-                                                                         id=self.request.user.id)) if request.user.id else None})
+                                                             "wishlist": Wishlist.objects.get(user=User(
+                                                                 id=self.request.user.id)) if request.user.id else None})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -456,8 +444,8 @@ class ProductIdView(APIView):
         try:
             product = Product.objects.get(id=id)
             serializer = ProductSerializer(product, context={"list_lines": True,
-                                                                     "wishlist": Wishlist.objects.get(user=User(
-                                                                         id=self.request.user.id) if request.user.id else None)})
+                                                             "wishlist": Wishlist.objects.get(user=User(
+                                                                 id=self.request.user.id) if request.user.id else None)})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

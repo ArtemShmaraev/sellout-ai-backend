@@ -10,6 +10,9 @@ from products.models import Product
 from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
 
+
+
+
 class DeliveryForSizeView(APIView):
     def get(self, request, product_id, size):
         try:

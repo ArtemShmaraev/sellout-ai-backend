@@ -3,7 +3,7 @@ import json
 from django.shortcuts import render
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import ShoppingCart, Order
+from .models import ShoppingCart, Order, OrderUnit, Status
 # Create your views here.
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -17,6 +17,38 @@ from promotions.views import check_promo
 from users.models import User
 
 
+
+
+class ChangeStatusUnit(APIView):
+    def get(self, request, order_unit_id):
+        if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
+            try:
+                order_unit = OrderUnit.objects.get(id=order_unit_id)
+                return Response(order_unit.status.name, status=status.HTTP_200_OK)
+            except OrderUnit.DoesNotExist:
+                return Response("Order unit not found", status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
+    def post(self, request, order_unit_id):
+        if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
+            new_status_name = json.loads(request.body).get("status_name")  # Здесь предполагается, что вы передаете имя нового статуса в запросе POST
+            try:
+                order_unit = OrderUnit.objects.get(id=order_unit_id)
+                try:
+                    new_status = Status.objects.get(name=new_status_name)  # Предполагается, что у вас есть модель Status для статусов
+                    order_unit.status = new_status
+                    order_unit.save()
+                    order = order_unit.orders.first()
+                    order.change_status()
+                    return Response("Status changed successfully", status=status.HTTP_200_OK)
+                except Status.DoesNotExist:
+                    return Response("New status not found", status=status.HTTP_404_NOT_FOUND)
+            except OrderUnit.DoesNotExist:
+                return Response("Order unit not found", status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
 class ShoppingCartUser(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -24,7 +56,6 @@ class ShoppingCartUser(APIView):
         try:
             if request.user.id == user_id or request.user.is_staff:
                 shopping_cart = ShoppingCart.objects.get(user_id=user_id)
-                shopping_cart.save()
                 serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id})
                 return Response(serializer.data)
             else:
@@ -38,7 +69,7 @@ class ShoppingCartUser(APIView):
                 product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
                 shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
                 shopping_cart.product_units.add(product_unit)
-                shopping_cart.save()
+                shopping_cart.total()
                 serializer = ProductUnitSerializer(product_unit)
                 return Response(serializer.data)
             else:
@@ -52,6 +83,8 @@ class ShoppingCartUser(APIView):
                 product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
                 shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
                 shopping_cart.product_units.remove(product_unit)
+
+                shopping_cart.total()
                 serializer = ProductUnitSerializer(product_unit)
                 return Response(serializer.data)
             else:

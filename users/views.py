@@ -226,7 +226,13 @@ class UserInfoView(APIView):
 
 
 
-
+class UserForSpamEmail(APIView):
+    def get(self, request):
+        if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
+            emails = User.objects.filter(is_mailing_list=True).values("email")
+            return Response(emails)
+        else:
+            return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
 
 

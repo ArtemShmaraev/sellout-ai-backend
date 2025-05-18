@@ -51,14 +51,24 @@ def register_user(data):
 
     new_user.set_password(data['password'])
     new_user.save()
-    cart = ShoppingCart(user_id=new_user.id)
-    wl = Wishlist(user_id=new_user.id)
+
+    # Создайте корзину покупок, связанную с пользователем
+    cart = ShoppingCart(user=new_user)
+    cart.save()
+
+    # Создайте список желаний, связанный с пользователем
+    wl = Wishlist(user=new_user)
+    wl.save()
+
+    # Создайте и сохраните бонусы
     bonus = Bonuses()
     bonus.save()
+
+    # Присвойте бонусы пользователю и сохраните его снова
     new_user.bonuses = bonus
     new_user.save()
-    cart.save()
-    wl.save()
+
+
 
 # check_adress("белгород губкина 17б")
 

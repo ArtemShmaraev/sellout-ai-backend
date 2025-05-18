@@ -3,7 +3,7 @@ from rest_framework import routers
 from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
-    UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView,GoogleAuth, initiate_google_auth
+    UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView,GoogleAuth, initiate_google_auth, UserForSpamEmail
 
 
 router = routers.DefaultRouter()
@@ -26,6 +26,8 @@ urlpatterns.append(path('favorite_brand/<int:user_id>/<int:brand_id>', AddFavori
 urlpatterns.append(path('size_info', UserSizeInfo.as_view()))
 urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 
+urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
+
 
 urlpatterns.append(path('auth/complete/google/', GoogleAuth.as_view(), name='google-auth-callback'))
-urlpatterns.append(path('auth/google/', initiate_google_auth))
+urlpatterns.append(path('mailing_list', UserForSpamEmail.as_view()))

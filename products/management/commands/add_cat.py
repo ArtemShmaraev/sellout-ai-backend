@@ -4,7 +4,7 @@ import json
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
 from django.core.exceptions import ObjectDoesNotExist
 import users.models
-
+from orders.models import Status
 
 class Command(BaseCommand):
 
@@ -55,4 +55,11 @@ class Command(BaseCommand):
 
         all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
         self.create_categories(all_data)
+
+
+        statuses = ["В обработке", "Принят", "В пути", "На складе в Москве", "В курьерской службе", "Отменен"]
+        for status_name in statuses:
+            status = Status(name=status_name)
+            status.save()
+
         print('finished')

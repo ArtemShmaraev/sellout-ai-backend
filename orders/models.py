@@ -37,6 +37,13 @@ class Order(models.Model):
     fact_of_payment = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
 
+    def change_status(self):
+        min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
+        if min_status_id is not None:
+            self.status = Status.objects.get(id=min_status_id)
+            self.save()
+
+
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(
             product=product_unit.product,
@@ -62,7 +69,7 @@ class Order(models.Model):
 
 
 class ShoppingCart(models.Model):
-    user = models.OneToOneField("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
+    user = models.ForeignKey("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
                                 blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
                                            related_name="shopping_carts")
@@ -74,8 +81,8 @@ class ShoppingCart(models.Model):
     total_sale = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    def total(self):
+
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         for product_unit in self.product_units.all():
@@ -100,19 +107,20 @@ class ShoppingCart(models.Model):
             self.final_amount = self.total_amount
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale
+        self.save()
 
     def __str__(self):
         return f'{self.user}'
 
 
-class ProductOrderUnit(models.Model):
-    product_unit = models.ForeignKey("shipping.ProductUnit", blank=True, on_delete=models.PROTECT, )
-    start_price = models.IntegerField(blank=True, null=True)
-    final_price = models.IntegerField(blank=True, null=True)
-    status = models.CharField(default="", max_length=127)
-
-    def __str__(self):
-        return str(self.product_unit)
+# class ProductOrderUnit(models.Model):
+#     product_unit = models.ForeignKey("shipping.ProductUnit", blank=True, on_delete=models.PROTECT, )
+#     start_price = models.IntegerField(blank=True, null=True)
+#     final_price = models.IntegerField(blank=True, null=True)
+#     status = models.CharField(default="", max_length=127)
+#
+#     def __str__(self):
+#         return str(self.product_unit)
 
 
 class OrderUnit(models.Model):
@@ -140,3 +148,5 @@ class OrderUnit(models.Model):
     is_sale = models.BooleanField(default=False)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="order_units", default=get_default_status())
+
+

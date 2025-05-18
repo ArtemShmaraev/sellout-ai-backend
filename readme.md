@@ -93,6 +93,9 @@ Anon)
 1. `[GET] product/dewu_info` Вернуть всё (web_data=false вернёт товары у которых web_data пустая)
 2. `[GET] product/dewu_info/<spu_id>` Венуть по Spu Id
 3. `[POST] product/dewu_info/<spu_id>` Body: ```{"api_data": api_data, "web_data": web_data, "preprocessed_data": data}``` Можно передать не все параметры для заполнения
+4. `[GET] user/mailing_list` Список пользователей для рассылки (pwd=)
+5. `[GET] order/status_unit/<product_unit_id>` вернет статус (pwd=)
+6. `[POST] order/status_unit/<product_unit_id>` изменит статус data = {"status_name": status} (pwd=)
 # Поиск
 Запросы отправляются на сервер с elastic 
 ### 1. `[GET][Anon] <elastichost>/sellout/_search` поискв

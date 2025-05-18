@@ -1,3 +1,5 @@
+import random
+
 from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
@@ -13,7 +15,7 @@ from django.http import JsonResponse, FileResponse
 
 from users.models import User
 from wishlist.models import Wishlist
-from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab
+from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
@@ -135,13 +137,15 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    @method_decorator(cache_page(60 * 5))
+    # @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t0 = time()
         queryset = Product.objects.all()
         t1 = time()
         res = {}
+        list_cat = []
+        list_line = []
         print("t0", t1 - t0)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
 
@@ -203,7 +207,7 @@ class ProductView(APIView):
                     current_line = current_line.parent_line
 
                 # Переберите остальные выбранные линейки и найдите первую общую вершину
-                for line in selected_lines[1:]:
+                for line in lines[1:]:
                     current_line = line
                     while current_line:
                         if current_line in parent_lines:
@@ -215,9 +219,13 @@ class ProductView(APIView):
                 return None  # Если общей родительской линейки не найдено
 
             # Пример использования
-            # selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
-            # oldest_line = find_common_ancestor(selected_lines)
-            # print(oldest_line)
+            selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
+            if len(selected_lines) > 0:
+                oldest_line = find_common_ancestor(selected_lines)
+                list_line.append(oldest_line)
+                while oldest_line.parent_line:
+                    list_line.append(oldest_line.parent_line)
+                    oldest_line = oldest_line.parent_line
 
         if color:
             queryset = queryset.filter(Q(main_color__name__in=color))
@@ -245,9 +253,14 @@ class ProductView(APIView):
                     return categories[0]
                 return None
 
-            # selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
-            # oldest_cat = find_common_ancestor(selected_cat)
-            # print(oldest_cat)
+            selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
+            if len(selected_cat) > 0:
+                oldest_cat = find_common_ancestor(selected_cat)
+                list_cat.append(oldest_cat)
+                while oldest_cat.parent_category:
+                    list_cat.append(oldest_cat.parent_category)
+                    oldest_cat = oldest_cat.parent_category
+
 
         if gender:
             queryset = queryset.filter(gender__name__in=gender)
@@ -286,18 +299,6 @@ class ProductView(APIView):
             queryset = search['queryset']
             res['add_filter'] = search['url']
 
-            # product = queryset[:1]
-            # queryset = similar_product(product[0])
-            # # queryset = product | queryset
-            # from itertools import chain
-            # combined_queryset = list(chain(product, queryset))
-            # object_ids = [obj.id for obj in combined_queryset]
-            # queryset = Product.objects.filter(id__in=object_ids).order_by(
-            #     Case(*[When(id=obj_id, then=pos) for pos, obj_id in enumerate(object_ids)])
-            # )
-            # print(queryset)
-
-            # search_line(query.replace("_", " "))
 
             # if 'category' in search:
             #     category.append(search['category'])
@@ -348,8 +349,8 @@ class ProductView(APIView):
 
         page_number = self.request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 48
-        queryset = queryset[start_index:start_index + 48]
+        start_index = (page_number - 1) * 96
+        queryset = queryset[start_index:start_index + 96]
 
         t6 = time()
         print("t5", t6 - t5)
@@ -370,17 +371,24 @@ class ProductView(APIView):
         res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
         res['min_price'] = 0
         res['max_price'] = 1000000
-        res["products_page_header"] = " "
+        # print(list_line)
+        # print(list_cat)
+        # header_photos = HeaderPhoto.objects.all()
+        # if len(list_cat) > 0:
+        #     header_photos = header_photos.filter(categories__in=list_cat)
+        # for line in list_line:
+        #     header_photos = header_photos.filter(lines=line)
+        #     if len(header_photos) > 0:
+        #         break
+        #
+        # header_photos = header_photos.filter(where="product_page")
+        # header_photos_desktop = header_photos.filter(type="desktop")
+        # header_photos_mobile = header_photos.filter(type="mobile")
+        # if header_photos_desktop.count() > 0:
+        #     res["desktop_photo"] = random.choice(list(header_photos_desktop)).photo.url
+        # if header_photos_mobile.count() > 0:
+        #     res["mobile_photo"] = random.choice(list(header_photos_mobile)).photo.url
 
-        # line = ""
-        # cat = ""
-        # if lines:
-        #     tree = build_line_tree(LineSerializer(Line.objects.all(), many=True).data)
-        #     line = find_oldest_name(tree, lines, cat=False)
-        # if categories:
-        #     tree = build_category_tree(CategorySerializer(Category.objects.all(), many=True).data)
-        #     cat = find_oldest_name(tree, categories)
-        # response.data["products_page_header"] = str(line) + " " + str(cat)
 
         return Response(res)
 

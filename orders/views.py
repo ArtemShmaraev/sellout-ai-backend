@@ -151,10 +151,10 @@ class AllOrdersView(APIView):
 
     def get(self, request):
         if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj":
-            status = request.query_params.get("status")
+            order_status = request.query_params.get("status")
             orders = Order.objects.all()
-            if status:
-                orders = Order.objects.filter(status__name=status)
+            if order_status:
+                orders = Order.objects.filter(status__name=order_status)
             serializer = OrderSerializer(orders, many=True)
             return Response(serializer.data)
         else:

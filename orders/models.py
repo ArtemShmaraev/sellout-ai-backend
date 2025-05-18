@@ -12,7 +12,7 @@ class Status(models.Model):
 
 
 def get_default_status():
-    default_object = Status.objects.get_or_create(name="pending")[0]
+    default_object = Status.objects.get_or_create(name="В обработке")[0]
     return default_object.pk
 
 
@@ -32,7 +32,7 @@ class Order(models.Model):
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
-    status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
+    status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="orders", default=get_default_status())
     fact_of_payment = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
@@ -138,5 +138,5 @@ class OrderUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
-    status = models.ForeignKey("Status", on_delete=models.PROTECT, null=False, blank=False,
-                               related_name="order_units", default=get_default_status)
+    status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
+                               related_name="order_units", default=get_default_status())

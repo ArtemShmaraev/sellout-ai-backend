@@ -19,22 +19,19 @@ class Command(BaseCommand):
                     result.extend(flatten_lines(line["children"], parent_name=name))
             return result
 
-        all_data = json.load(open("lines.json", encoding="utf-8"))
+        all_data = json.load(open("line2.json", encoding="utf-8"))
         s = flatten_lines(all_data)
         for line in s:
-            if Line.objects.filter(name=line['name']).exists():
-                continue
-            else:
-                db_line = Line(name=line['name'], full_name=line['name'])
-                db_line.save()
-                if line['parent']:
-                    db_line.parent_line = Line.objects.get(name=line['parent'])
-                db_line.save()
+            db_line = Line.objects.get_or_create(name=line['name'])[0]
+            db_line.save()
+            if line['parent']:
+                db_line.parent_line = Line.objects.get(name=line['parent'])
+            db_line.save()
         brands = all_data
         for brand in brands:
             if Brand.objects.filter(name=brand['name']).exists():
                 continue
             else:
-                db_brand = Brand(name=brand['name'])
+                db_brand = Brand.objects.get_or_create(name=brand['name'])[0]
                 db_brand.save()
         print('finished')

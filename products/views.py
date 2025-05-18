@@ -371,23 +371,57 @@ class ProductView(APIView):
         res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
         res['min_price'] = 0
         res['max_price'] = 1000000
-        # print(list_line)
-        # print(list_cat)
-        # header_photos = HeaderPhoto.objects.all()
+        print(list_line)
+        print(list_cat)
+        header_photos = HeaderPhoto.objects.all()
+        if category:
+            header_photos = header_photos.filter(categories__eng_name__in=category)
+
+        if line:
+            header_photos = header_photos.filter(lines__full_eng_name__in=line)
+
         # if len(list_cat) > 0:
         #     header_photos = header_photos.filter(categories__in=list_cat)
         # for line in list_line:
         #     header_photos = header_photos.filter(lines=line)
         #     if len(header_photos) > 0:
         #         break
-        #
-        # header_photos = header_photos.filter(where="product_page")
-        # header_photos_desktop = header_photos.filter(type="desktop")
-        # header_photos_mobile = header_photos.filter(type="mobile")
-        # if header_photos_desktop.count() > 0:
-        #     res["desktop_photo"] = random.choice(list(header_photos_desktop)).photo.url
-        # if header_photos_mobile.count() > 0:
-        #     res["mobile_photo"] = random.choice(list(header_photos_mobile)).photo.url
+
+        header_photos = header_photos.filter(where="product_page")
+        header_photos_desktop = header_photos.filter(type="desktop")
+        header_photos_mobile = header_photos.filter(type="mobile")
+        if header_photos_desktop.count() > 0:
+            count = header_photos_desktop.count()
+
+        else:
+            header_photos_mobile = HeaderPhoto.objects.filter(type="desktop")
+            count = header_photos_mobile.count()
+
+        photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
+        res["desktop_photo"] = photo_desktop.photo.url
+
+
+        if header_photos_mobile.count() > 0:
+            count = header_photos_mobile.count()
+        else:
+            header_photos_mobile = HeaderPhoto.objects.filter(type="mobile")
+            count = header_photos_mobile.count()
+
+        photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
+        res["mobile_photo"] = photo_mobile.photo.url
+
+        line = photo_mobile.lines.all().order_by('-id').first()
+        print(line)
+        texts = HeaderText.objects.all()
+        while line.parent_line is not None:
+            texts = HeaderText.objects.filter(lines=line)
+            if texts.count() > 0:
+                break
+            line = line.parent_line
+        count = texts.count()
+        text = texts[random.randint(0, count - 1)]
+        res["text"] = {"title": text.title, "content": text.text}
+
 
 
         return Response(res)

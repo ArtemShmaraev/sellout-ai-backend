@@ -12,7 +12,7 @@ class Status(models.Model):
 
 
 def get_default_status():
-    default_object = Status.objects.get_or_create(name="В обработке")[0]
+    default_object = Status.objects.get_or_create(name="Ожидает подтверждения")[0]
     return default_object.pk
 
 

@@ -29,37 +29,38 @@ class Command(BaseCommand):
             self.create_categories(subcategories, parent=category)
 
     def handle(self, *args, **options):
-        gender = Gender(name="M")
-        gender.save()
-        gender = Gender(name="F")
-        gender.save()
-        gender = Gender(name="K")
-        gender.save()
-
-        gender = users.models.Gender(name="M")
-        gender.save()
-        gender = users.models.Gender(name="F")
-        gender.save()
-
-        collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
-        collab.save()
-        main_collab = json.load(open("collabs.json", encoding="utf-8"))
-
-        for collab_name in main_collab:
-            print(collab_name)
-            collab = Collab(name=collab_name, is_main_collab=True)
-            collab.save()
-
-        collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
-        collab.save()
-
-        all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
-        self.create_categories(all_data)
-
-
-        statuses = ["В обработке", "Принят", "В пути", "На складе в Москве", "В курьерской службе", "Отменен"]
+        # gender = Gender(name="M")
+        # gender.save()
+        # gender = Gender(name="F")
+        # gender.save()
+        # gender = Gender(name="K")
+        # gender.save()
+        #
+        # gender = users.models.Gender(name="M")
+        # gender.save()
+        # gender = users.models.Gender(name="F")
+        # gender.save()
+        #
+        # collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
+        # collab.save()
+        # main_collab = json.load(open("collabs.json", encoding="utf-8"))
+        #
+        # for collab_name in main_collab:
+        #     print(collab_name)
+        #     collab = Collab(name=collab_name, is_main_collab=True)
+        #     collab.save()
+        #
+        # collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
+        # collab.save()
+        #
+        # all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
+        # self.create_categories(all_data)
+        #
+        #
+        statuses = ["Ожидает подтверждения", "Заказ подтвержден", "В пути до международного склада", "В пути до склада в Москве",
+                    "Готово к выдаче в пункте самовывоза", "Передано в службу доставки", "Получено"]
         for status_name in statuses:
-            status = Status(name=status_name)
+            status = Status.objects.get_or_create(name=status_name)[0]
             status.save()
 
         print('finished')

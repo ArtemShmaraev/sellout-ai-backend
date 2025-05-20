@@ -4,13 +4,15 @@ from django.core.management.base import BaseCommand
 from products.models import Product  # Замените "your_app" на название вашего Django-приложения
 import requests
 
+from sellout.settings import HOST
+
 
 class Command(BaseCommand):
     help = 'Indexes products in Elasticsearch'
 
     def handle(self, *args, **options):
         # Установите подключение к Elasticsearch
-        es = Elasticsearch(['http://51.250.2.233:9200'])  # Замените 'localhost' на адрес вашего Elasticsearch-узла
+        es = Elasticsearch([f'http://{HOST}:9200'])  # Замените 'localhost' на адрес вашего Elasticsearch-узла
 
         # Получите все продукты из базы данных Django
         products = Product.objects.all()

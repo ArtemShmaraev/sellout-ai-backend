@@ -3,7 +3,7 @@ from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
     UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView, GoogleAuth, \
-    initiate_google_auth, UserForSpamEmail, confirm_email, get_url_set_password
+    initiate_google_auth, UserForSpamEmail, confirm_email, get_url_set_password, UserChangePasswordLK, send_verify_email
 
 router = routers.DefaultRouter()
 router.register("", UserViewSet, 'user')
@@ -16,6 +16,7 @@ urlpatterns.append(path('address/<int:user_id>/<int:address_id>', UserAddressVie
 urlpatterns.append(path('register', UserRegister.as_view(), name='register'))
 
 urlpatterns.append(path('change_pwd/<str:uidb64>/<str:token>', UserChangePassword.as_view()))
+urlpatterns.append(path('change_pwd_lk/<int:user_id>', UserChangePasswordLK.as_view()))
 
 urlpatterns.append(path('login', UserLoginView.as_view(), name='token_obtain_pair'))
 urlpatterns.append(path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'))  # кастом
@@ -29,3 +30,4 @@ urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 urlpatterns.append(path('auth/complete/google/', GoogleAuth.as_view(), name='google-auth-callback'))
 urlpatterns.append(path('mailing_list', UserForSpamEmail.as_view()))
 urlpatterns.append(path('send_set_pwd/<int:user_id>', get_url_set_password))
+urlpatterns.append(path('send_verify_email/<int:user_id>', send_verify_email))

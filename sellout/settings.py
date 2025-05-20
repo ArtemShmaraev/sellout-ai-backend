@@ -15,8 +15,16 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-HOST = "51.250.74.115"
+HOST = "sellout.su"
+BACKEND_HOST = "sellout.su"
+FRONTEND_HOST = "sellout.su"
+
+
 # HOST = "127.0.0.1"
+# BACKEND_HOST = "127.0.0.1:8000"
+# FRONTEND_HOST = "127.0.0.1:3000"
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -263,7 +271,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+#
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Set to True to always redirect HTTP requests to HTTPS

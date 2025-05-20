@@ -33,8 +33,13 @@ Anon)
 16. `[GET][User] user/size_info` Response: ```{"preferred_shoes_size_row": 1, "preferred_clothes_size_row": 43, "shoes_size": 8, "clothes_size": 55, "height": 175, "weight": 60 }```
 17. `[POST][User] user/size_info` Body: Верхний Response
 18. `[GET][User] user/get_size_table` Вернет две таблица для отображения в ЛК и ID размера пользователя, если в query содержится размер пользователя, то выделить эту кнопку
-19. `[GET][User] user/send_set_psw/<user_id>` отправиться письмо на почту для смены пароля
-20. `[POST][User] user/change_pwd/<`
+19. `[GET][User] user/send_set_psw/<user_id>` отправиться письмо на почту для смены пароля вида https://sellout.su/reset-password/{uidb64}/{token} по этому адресу надо разместить страничку востановления пароля
+20. `[POST][User] user/change_pwd/<uidb64>/<token>` сменить пароль Параметры взять из url строки и в data передать {"password": "1234"} 
+21. `[POST][User] user/change_pwd_lk/<user_id>` смена пароля в личном кабинете в data = {"old_password": "123", "new_password": "1234"} вернет Response("Старый пароль указан неверно.", status=status.HTTP_400_BAD_REQUEST)
+или Response("Пароль успешно изменен.") при удачной и неудачной смене пароля
+22. `[GET][User] user/send_verify_email/<user_id>?url={текущий url страницы}`  отправит письмо с подтверждением почты пользователю и при подтверждении почты пользователь перейдет обратно на страницу
+
+
 
 ## Product API
 

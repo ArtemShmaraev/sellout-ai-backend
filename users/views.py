@@ -6,10 +6,10 @@ from django.core import signing
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer
-from .models import User, Gender
+from .models import User, Gender, EmailConfirmation
 from rest_framework import exceptions
 from products.models import Product, Brand, SizeTable
 from django.db import models
@@ -28,7 +28,7 @@ from rest_framework_simplejwt.settings import api_settings
 from .tools import check_adress, register_user
 
 from shipping.views import ProductUnitProductMainView
-from sellout.settings import HOST
+from sellout.settings import HOST, FRONTEND_HOST
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,16 +39,24 @@ from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
 
 
+def send_verify_email(request, user_id):
+    url = request.GET.get("url")
+    user = User.objects.get(id=user_id)
+    email_confirmation = EmailConfirmation.objects.get(user=user)
+    print(f"http://{FRONTEND_HOST}/email_confirmated/{email_confirmation.token}?url={url}")
+
+
 def confirm_email(request, token):
     try:
+        url = request.GET.get("url")
         email = signing.loads(token)
         user = User.objects.filter(email=email).first()
         user.verify_email = True
         user.save()
         # Опционально: Удаляйте запись о подтверждении из базы данных
-        return redirect('https://sellout.su/email_good')  # Перенаправление на страницу с подтверждением
+        return redirect(url)  # Перенаправление на страницу с подтверждением
     except signing.BadSignature:
-        return redirect('https://sellout.su/email_bad')  # Перенаправление на страницу с ошибкой
+        return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой
 
 
 
@@ -66,7 +74,7 @@ def get_url_set_password(request, user_id):
     uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
 
     # Создайте ссылку с токеном и идентификатором пользователя
-    reset_password_link = f"https://sellout.su/reset-password/{uidb64}/{token}"
+    reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
     print(reset_password_link)
 
 
@@ -77,8 +85,9 @@ class UserChangePasswordLK(APIView):
         try:
             user = User.objects.get(id=user_id)
             data = json.loads(request.body)
-            old_password = data.get('old_password', '')
-            new_password = data.get('new_password', '')
+
+            old_password = data.get('old_password', '').strip()
+            new_password = data.get('new_password', '').strip()
 
             if not old_password or not new_password:
                 return Response("Не указаны старый или новый пароль.", status=status.HTTP_400_BAD_REQUEST)
@@ -105,23 +114,23 @@ class UserChangePassword(APIView):
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError):
-            return redirect('https://sellout.su/password_reset_invalid')
+            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
 
         try:
             if user and default_token_generator.check_token(user, token.strip()):
                 data = json.loads(request.body)
                 user.set_password(data.get('password', ''))
                 user.save()
-                return redirect('https://sellout.su/password_reset_success')
+                return redirect(f'https://{FRONTEND_HOST}/password_reset_success')
             else:
-                return redirect('https://sellout.su/password_reset_invalid')
+                return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
         except User.DoesNotExist:
-            return redirect('https://sellout.su/password_reset_invalid')
+            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
         except json.JSONDecodeError:
-            return redirect('https://sellout.su/password_reset_invalid')
+            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
         except Exception as e:
             # В этом месте можно обработать другие исключения, если необходимо
-            return redirect('https://sellout.su/password_reset_invalid')
+            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
 
 
 
@@ -130,7 +139,7 @@ def initiate_google_auth(request):
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     client_id = GOOGLE_OAUTH2_KEY # Замените на ваш реальный клиентский ID
     # redirect_uri = "http://localhost:3000"
-    redirect_uri = "https://sellout.su"
+    redirect_uri = f"https://{FRONTEND_HOST}"
     scope = "email profile"
     response_type = "id_token"
     nonce = "1213"

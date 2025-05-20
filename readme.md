@@ -89,6 +89,10 @@ Anon)
 10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```
 
 
+## Главня страница
+1. `[GET][User]` product/main_page вернет список блоков (есть два типо фотка или подборка) у фоток для desktop есть два варианта (left_photo и right_photo)
+у подборки товаров есть title и url(для кнопки посмотреть все)
+
 ## Dewu Info Для Дениса
 1. `[GET] product/dewu_info` Вернуть всё (web_data=false вернёт товары у которых web_data пустая)
 2. `[GET] product/dewu_info/<spu_id>` Венуть по Spu Id

@@ -4,11 +4,12 @@ import json
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab
 from django.core.exceptions import ObjectDoesNotExist
 
+from users.models import User
+
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        collabs = Collab.objects.all()
-        for collab in collabs:
-            collab.save()
+        users = User.objects.all()
+
 

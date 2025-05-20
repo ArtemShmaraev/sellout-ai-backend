@@ -6,7 +6,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
-    DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView
+    DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -52,4 +52,5 @@ urlpatterns = [
     path("product_search", ProductSearchView.as_view()),
     path("dewu_info/<int:spu_id>", DewuInfoView.as_view()), path("dewu_info", DewuInfoListView.as_view()),
     path("size_table", SizeTableForFilter.as_view()), path("collabs", CollabView.as_view()),
-    path("dewu_info_list", DewuInfoListSpuIdView.as_view()), path("suggest_search", SuggestSearch.as_view())]
+    path("dewu_info_list", DewuInfoListSpuIdView.as_view()), path("suggest_search", SuggestSearch.as_view()),
+    path("main_page", MainPageBlocks.as_view())]

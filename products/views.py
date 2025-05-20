@@ -29,6 +29,25 @@ from rest_framework.response import Response
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
     similar_product, suggest_search
 from .documents import ProductDocument  # Импортируйте ваш документ
+from random import randint
+from products.main_page import get_selection, get_photo
+
+
+
+class MainPageBlocks(APIView):
+    def get(self, request):
+        context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
+        res = []
+        last = "any"
+        for i in range(6):
+            type = random.randint(1, 2)
+            if type == 1:
+                res.append(get_selection(context))
+            elif type == 2:
+                photo, last = get_photo(last)
+                res.append(photo)
+        return Response(res)
+
 
 
 class ProductSimilarView(APIView):
@@ -377,7 +396,7 @@ class ProductView(APIView):
         if line or collab:
             if "all" in collab:
                 header_photos = header_photos.filter(
-                    Q(lines__full_eng_name__in=line) | ~Q(collab__query_name=None)
+                    Q(lines__full_eng_name__in=line) | ~Q(collab=None)
                 )
             else:
                 header_photos = header_photos.filter(
@@ -395,7 +414,8 @@ class ProductView(APIView):
             count = header_photos_desktop.count()
 
         photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
-        res["desktop"] = get_text(photo_desktop, category)
+        text_desktop = get_text(photo_desktop, category)
+        res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
         res['desktop']['photo'] = photo_desktop.photo.url
 
         if header_photos_mobile.count() > 0:
@@ -405,7 +425,8 @@ class ProductView(APIView):
             count = header_photos_mobile.count()
 
         photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
-        res["mobile"] = get_text(photo_mobile, category)
+        text_mobile = get_text(photo_mobile, category)
+        res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
         res['mobile']['photo'] = photo_mobile.photo.url
 
         t10 = time()

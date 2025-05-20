@@ -27,7 +27,7 @@ def get_text(photo, category):
         texts = HeaderText.objects.filter(title="sellout")
     count = texts.count()
     text = texts[random.randint(0, count - 1)]
-    return {"title": text.title, "content": text.text}
+    return text
 
 def build_category_tree(categories):
     category_dict = {}

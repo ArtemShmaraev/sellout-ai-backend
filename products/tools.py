@@ -13,7 +13,7 @@ def get_text(photo, category):
         texts = HeaderText.objects.all()
         while line.parent_line is not None:
             texts = HeaderText.objects.filter(lines=line)
-            if texts.count() > 0:
+            if texts.exists():
                 break
             line = line.parent_line
     elif photo.collabs.exists():
@@ -22,8 +22,10 @@ def get_text(photo, category):
     elif "shoes_category" in category or "sneakers" in category or "high_top_sneakers" in category or "low_top_sneakers" in category:
         category = ["shoes_category", "sneakers"]
         texts = HeaderText.objects.filter(categories__eng_name__in=category)
-
     else:
+        texts = HeaderText.objects.filter(title="sellout")
+
+    if not texts.exists():
         texts = HeaderText.objects.filter(title="sellout")
     count = texts.count()
     text = texts[random.randint(0, count - 1)]

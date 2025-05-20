@@ -63,12 +63,13 @@ class ProductUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="product_units",
                                 null=False, blank=False)
     size_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # размер с платформы
-    good_size_platform = models.CharField(max_length=255, null=True, blank=True,
+    view_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
-    size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
+    # size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
 
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="product_units",
                              null=True, blank=True)  # порядковый номер размера в таблице
+
     color = models.CharField(max_length=255, null=True, blank=True, default="")
     configuration = models.CharField(max_length=255, null=True, blank=True, default="")
 

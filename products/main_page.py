@@ -76,6 +76,30 @@ def get_selection(context):
     return res
 
 
+def get_sellout_photo(last):
+    type = ["left", "right"]
+    if last == "any":
+        last = type[randint(0, 1)]
+
+    photos_desk = HeaderPhoto.objects.filter(type="desktop")
+    photos_mobile = HeaderPhoto.objects.filter(type="mobile")
+    random_photo_desk = get_random(photos_desk)
+    random_photo_mobile = get_random(photos_mobile)
+    texts = HeaderText.objects.filter(title="sellout")
+    count = texts.count()
+    text = texts[randint(0, count - 1)]
+
+    type = 'right' if last == 'left' else 'left'
+    res = {'type': "photo",
+           "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
+                       "title": text.title,
+                       "content": text.text},
+           "mobile": {"photo": random_photo_mobile.photo.url,
+                      "title": text.title,
+                      "content": text.text}}
+    return res, type
+
+
 def get_photo(last):
     type = ["left", "right"]
     if last == "any":

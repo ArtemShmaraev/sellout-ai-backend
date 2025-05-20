@@ -36,6 +36,8 @@ class Order(models.Model):
                                related_name="orders", default=get_default_status())
     fact_of_payment = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
+    cancel = models.BooleanField(default=False)
+    cancel_reason = models.CharField(default="", max_length=1024)
 
     def change_status(self):
         min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
@@ -148,5 +150,7 @@ class OrderUnit(models.Model):
     is_sale = models.BooleanField(default=False)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="order_units", default=get_default_status())
+    cancel = models.BooleanField(default=False)
+    cancel_reason = models.CharField(default="", max_length=1024)
 
 

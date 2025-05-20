@@ -30,15 +30,17 @@ from .search_tools import search_best_line, search_best_category, search_best_co
     similar_product, suggest_search
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
-from products.main_page import get_selection, get_photo
-
+from products.main_page import get_selection, get_photo, get_sellout_photo
 
 
 class MainPageBlocks(APIView):
     def get(self, request):
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
+
         last = "any"
+        photo, last = get_sellout_photo(last)
+        res.append(photo)
         for i in range(6):
             type = random.randint(1, 2)
             if type == 1:
@@ -47,7 +49,6 @@ class MainPageBlocks(APIView):
                 photo, last = get_photo(last)
                 res.append(photo)
         return Response(res)
-
 
 
 class ProductSimilarView(APIView):
@@ -156,7 +157,7 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    @method_decorator(cache_page(60 * 5))
+    # @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t0 = time()
@@ -195,6 +196,8 @@ class ProductView(APIView):
         collab = self.request.query_params.getlist("collab")
         available = self.request.query_params.get("available")
         custom = self.request.query_params.get("custom")
+        new = self.request.query_params.get("new")
+        recommendations = self.request.query_params.get("recommendations")
 
         if not available:
             queryset = queryset.filter(available_flag=True)
@@ -390,10 +393,11 @@ class ProductView(APIView):
         res['max_price'] = 1000000
 
         header_photos = HeaderPhoto.objects.all()
+        header_photos = header_photos.filter(where="product_page")
         if category:
             header_photos = header_photos.filter(categories__eng_name__in=category)
 
-        if line or collab:
+        if line and collab:
             if "all" in collab:
                 header_photos = header_photos.filter(
                     Q(lines__full_eng_name__in=line) | ~Q(collabs=None)
@@ -402,8 +406,17 @@ class ProductView(APIView):
                 header_photos = header_photos.filter(
                     Q(lines__full_eng_name__in=line) | Q(collabs__query_name__in=collab)
                 )
+        elif line:
+            header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
 
-        header_photos = header_photos.filter(where="product_page")
+        elif collab:
+            if "all" in collab:
+                header_photos = header_photos.filter(~Q(collabs=None))
+            else:
+                header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
+
+
+
         header_photos_desktop = header_photos.filter(type="desktop")
         header_photos_mobile = header_photos.filter(type="mobile")
         if header_photos_desktop.count() > 0:
@@ -414,6 +427,7 @@ class ProductView(APIView):
             count = header_photos_desktop.count()
 
         photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
+
         text_desktop = get_text(photo_desktop, category)
         res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
         res['desktop']['photo'] = photo_desktop.photo.url
@@ -425,7 +439,10 @@ class ProductView(APIView):
             count = header_photos_mobile.count()
 
         photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
+        t11 = time()
         text_mobile = get_text(photo_mobile, category)
+        t12 = time()
+        print(t12-t11)
         res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
         res['mobile']['photo'] = photo_mobile.photo.url
 
@@ -594,7 +611,9 @@ class ProductUpdateView(APIView):
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
 
 
+
 class SizeTableForFilter(APIView):
+    @method_decorator(cache_page(60 * 60))
     def get(self, request):
         try:
             context = {}

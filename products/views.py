@@ -396,11 +396,11 @@ class ProductView(APIView):
         if line or collab:
             if "all" in collab:
                 header_photos = header_photos.filter(
-                    Q(lines__full_eng_name__in=line) | ~Q(collab=None)
+                    Q(lines__full_eng_name__in=line) | ~Q(collabs=None)
                 )
             else:
                 header_photos = header_photos.filter(
-                    Q(lines__full_eng_name__in=line) | Q(collab=collab)
+                    Q(lines__full_eng_name__in=line) | Q(collabs__query_name__in=collab)
                 )
 
         header_photos = header_photos.filter(where="product_page")

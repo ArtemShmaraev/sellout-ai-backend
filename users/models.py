@@ -78,6 +78,9 @@ class User(AbstractUser):
                 else:
                     self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
                     self.preferred_clothes_size_row = SizeRow.objects.get(id=19)
+            else:
+                self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+                self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
         super(User, self).save(*args, **kwargs)
 
 

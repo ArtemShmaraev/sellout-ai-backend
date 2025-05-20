@@ -2,6 +2,11 @@ import base64
 import hashlib
 from datetime import datetime, timedelta
 
+from django.core import signing
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.hashers import check_password
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer
 from .models import User, Gender
@@ -31,6 +36,93 @@ from rest_framework.response import Response
 from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
+
+
+
+def confirm_email(request, token):
+    try:
+        email = signing.loads(token)
+        user = User.objects.filter(email=email).first()
+        user.verify_email = True
+        user.save()
+        # Опционально: Удаляйте запись о подтверждении из базы данных
+        return redirect('https://sellout.su/email_good')  # Перенаправление на страницу с подтверждением
+    except signing.BadSignature:
+        return redirect('https://sellout.su/email_bad')  # Перенаправление на страницу с ошибкой
+
+
+
+
+
+def get_url_set_password(request, user_id):
+    user = User.objects.get(id=user_id)
+    print(user)
+
+    # Генерируйте токен и преобразуйте его в строку
+    token = default_token_generator.make_token(user)
+    print(token)
+    # Преобразуйте идентификатор пользователя в строку и закодируйте его
+    uid_str = str(user.pk)
+    uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
+
+    # Создайте ссылку с токеном и идентификатором пользователя
+    reset_password_link = f"https://sellout.su/reset-password/{uidb64}/{token}"
+    print(reset_password_link)
+
+
+
+class UserChangePasswordLK(APIView):
+
+    def post(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+            data = json.loads(request.body)
+            old_password = data.get('old_password', '')
+            new_password = data.get('new_password', '')
+
+            if not old_password or not new_password:
+                return Response("Не указаны старый или новый пароль.", status=status.HTTP_400_BAD_REQUEST)
+
+            if not check_password(old_password, user.password):
+                return Response("Старый пароль указан неверно.", status=status.HTTP_400_BAD_REQUEST)
+
+            user.set_password(new_password)
+            user.save()
+
+            return Response("Пароль успешно изменен.")
+        except User.DoesNotExist:
+            return Response("Пользователь не найден.", status=status.HTTP_404_NOT_FOUND)
+        except json.JSONDecodeError:
+            return Response("Неверный формат JSON.", status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class UserChangePassword(APIView):
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError):
+            return redirect('https://sellout.su/password_reset_invalid')
+
+        try:
+            if user and default_token_generator.check_token(user, token.strip()):
+                data = json.loads(request.body)
+                user.set_password(data.get('password', ''))
+                user.save()
+                return redirect('https://sellout.su/password_reset_success')
+            else:
+                return redirect('https://sellout.su/password_reset_invalid')
+        except User.DoesNotExist:
+            return redirect('https://sellout.su/password_reset_invalid')
+        except json.JSONDecodeError:
+            return redirect('https://sellout.su/password_reset_invalid')
+        except Exception as e:
+            # В этом месте можно обработать другие исключения, если необходимо
+            return redirect('https://sellout.su/password_reset_invalid')
+
 
 
 def initiate_google_auth(request):
@@ -405,22 +497,8 @@ class UserAddressView(APIView):
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
 
-class UserChangePassword(APIView):
-    authentication_classes = [JWTAuthentication]
 
-    def post(self, request):
-        try:
-            data = json.loads(request.body)
-            user = User.objects.get(id=request.user.id)
 
-            user.set_password(data['password'])
-            user.save()
-
-            return Response("Пароль успешно изменен")
-        except KeyError as e:
-            return Response(f"Отсутствует обязательное поле: {str(e)}", status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # класс из джанго

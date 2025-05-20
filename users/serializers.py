@@ -52,7 +52,7 @@ class ForAnonUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = '__all__'
-        fields = ("username",)
+        fields = ("email", "verify_email", "first_name", "last_name", "phone")
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 

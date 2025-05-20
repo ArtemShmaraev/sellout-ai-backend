@@ -3,6 +3,9 @@ from django.db import models
 from promotions.models import Bonuses
 from products.models import SizeRow
 
+from django.utils import timezone
+
+
 
 class User(AbstractUser):
     # Your custom fields and methods here
@@ -23,6 +26,7 @@ class User(AbstractUser):
         blank=True,
         related_name='my_users'
     )
+    verify_email = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20)
 
     gender = models.ForeignKey("Gender", on_delete=models.PROTECT, null=True, blank=True,
@@ -95,3 +99,8 @@ class Status(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class EmailConfirmation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)

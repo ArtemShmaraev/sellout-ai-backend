@@ -11,6 +11,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     promo_code = PromoCodeSerializer()
     product_units = ProductUnitSerializer(many=True, read_only=True)
     bonus = serializers.SerializerMethodField()
+    user = ForAnonUserSerializer()
     # Вычисляемое поле "сумма покупки"
     # total_amount = serializers.SerializerMethodField()
     #
@@ -37,7 +38,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ShoppingCart
-        exclude = ['user', ]
+        fields = "__all__"
         # fields = '__all__'
         depth = 3
 

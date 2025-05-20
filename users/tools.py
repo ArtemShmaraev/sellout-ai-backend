@@ -4,9 +4,9 @@ from dadata import Dadata
 
 from orders.models import ShoppingCart
 from promotions.models import Bonuses
-from users.models import User
+from users.models import User, EmailConfirmation
 from wishlist.models import Wishlist
-
+from django.core import signing
 
 def check_adress(text):
     token = "7b8466ea8df30fc6a906c7e351e1da4160766933"
@@ -67,6 +67,11 @@ def register_user(data):
     # Присвойте бонусы пользователю и сохраните его снова
     new_user.bonuses = bonus
     new_user.save()
+
+    email_confirmation = EmailConfirmation(user=new_user)
+    email_confirmation.token = signing.dumps(new_user.email)
+    email_confirmation.save()
+    print(f"http://127.0.0.1:8000/api/v1/user")
 
 
 

@@ -400,7 +400,7 @@ class ProductView(APIView):
                 )
             else:
                 header_photos = header_photos.filter(
-                    Q(lines__full_eng_name__in=line) | Q(collab__query_name__in=collab)
+                    Q(lines__full_eng_name__in=line) | Q(collab=collab)
                 )
 
         header_photos = header_photos.filter(where="product_page")

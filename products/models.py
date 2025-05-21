@@ -287,30 +287,30 @@ class Product(models.Model):
         # super(Product, self).save(*args, **kwargs)
         # print()
         super().save(*args, **kwargs)
-        if self.product_units.all():
-            product_units = self.product_units.all()
-            if len(self.sizes_prices) != len(product_units):
-                for product_unit in product_units:
-                    size = product_unit.size.id
-                    is_one_size = product_unit.size.is_one_size
-
-                    last = next(
-                        (size_data for size_data in self.sizes_prices
-                         if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
-                         and size_data.get("is_sale") == product_unit.is_sale
-                         and size_data.get("is_return") == product_unit.is_return
-                         and size_data.get("size") == size),
-                        None
-                    )
-                    if last:
-                        if product_unit.final_price < last['price']:
-                            last['price'] = product_unit.final_price
-                    else:
-                        self.sizes_prices.append({"size": product_unit.size.id,
-                                                  "price": product_unit.final_price,
-                                                  "is_fast_shipping": product_unit.is_fast_shipping,
-                                                  "is_sale": product_unit.is_sale,
-                                                  "is_return": product_unit.is_return})
+        # if self.product_units.all():
+        #     product_units = self.product_units.all()
+        #     if len(self.sizes_prices) != len(product_units):
+        #         for product_unit in product_units:
+        #             size = product_unit.size.id
+        #             is_one_size = product_unit.size.is_one_size
+        #
+        #             last = next(
+        #                 (size_data for size_data in self.sizes_prices
+        #                  if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
+        #                  and size_data.get("is_sale") == product_unit.is_sale
+        #                  and size_data.get("is_return") == product_unit.is_return
+        #                  and size_data.get("size") == size),
+        #                 None
+        #             )
+        #             if last:
+        #                 if product_unit.final_price < last['price']:
+        #                     last['price'] = product_unit.final_price
+        #             else:
+        #                 self.sizes_prices.append({"size": product_unit.size.id,
+        #                                           "price": product_unit.final_price,
+        #                                           "is_fast_shipping": product_unit.is_fast_shipping,
+        #                                           "is_sale": product_unit.is_sale,
+        #                                           "is_return": product_unit.is_return})
             # self.save()
 
     def __str__(self):

@@ -39,11 +39,23 @@ from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
 
 
-def send_verify_email(request, user_id):
-    url = request.GET.get("url")
-    user = User.objects.get(id=user_id)
-    email_confirmation = EmailConfirmation.objects.get(user=user)
-    print(f"http://{FRONTEND_HOST}/email_confirmated/{email_confirmation.token}?url={url}")
+class SendVerifyEmail(APIView):
+    def get(self, request, user_id):
+        url = request.GET.get("url")
+        user = User.objects.get(id=user_id)
+        email_confirmation = EmailConfirmation.objects.get(user=user)
+        check = f"https://{FRONTEND_HOST}/email_confirmated/{email_confirmation.token}?url={url}"
+        url = "https://sellout.su/mail/send_customer_service_mail/"
+        recipient_email = user.email
+        body = check
+
+        params = {
+            "recipient_email": recipient_email,
+            "body": body
+        }
+
+        requests.get(url, params=params)
+        return Response("ok")
 
 
 def confirm_email(request, token):
@@ -54,7 +66,9 @@ def confirm_email(request, token):
         user.verify_email = True
         user.save()
         # Опционально: Удаляйте запись о подтверждении из базы данных
-        return redirect(url)  # Перенаправление на страницу с подтверждением
+        if url != "None":
+            return redirect(url)  # Перенаправление на страницу с подтверждением
+        return redirect(FRONTEND_HOST)
     except signing.BadSignature:
         return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой
 
@@ -62,20 +76,22 @@ def confirm_email(request, token):
 
 
 
-def get_url_set_password(request, user_id):
-    user = User.objects.get(id=user_id)
-    print(user)
+class SendSetPassword(APIView):
+    def get(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        print(user)
 
-    # Генерируйте токен и преобразуйте его в строку
-    token = default_token_generator.make_token(user)
-    print(token)
-    # Преобразуйте идентификатор пользователя в строку и закодируйте его
-    uid_str = str(user.pk)
-    uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
+        # Генерируйте токен и преобразуйте его в строку
+        token = default_token_generator.make_token(user)
+        print(token)
+        # Преобразуйте идентификатор пользователя в строку и закодируйте его
+        uid_str = str(user.pk)
+        uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
 
-    # Создайте ссылку с токеном и идентификатором пользователя
-    reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
-    print(reset_password_link)
+        # Создайте ссылку с токеном и идентификатором пользователя
+        reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
+        print(reset_password_link)
+        return Response("ok")
 
 
 

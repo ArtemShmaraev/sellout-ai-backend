@@ -39,7 +39,7 @@ class Command(BaseCommand):
 
                 product_unit = ProductUnit.objects.create(
                     product=product,
-                    good_size_platform=size_rows[n].row['EU_sizes'],
+                    view_size_platform=size_rows[n].row['EU_sizes'],
                     size=size_rows[n],
                     # currency=currencies.first(),
                     start_price=start_price,

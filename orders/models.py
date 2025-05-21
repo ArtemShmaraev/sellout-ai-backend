@@ -49,7 +49,7 @@ class Order(models.Model):
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(
             product=product_unit.product,
-            good_size_platform=product_unit.good_size_platform,
+            view_size_platform=product_unit.view_size_platform,
             size_table_platform=product_unit.size_table_platform,
             color=product_unit.color,
             configuration=product_unit.configuration,
@@ -128,7 +128,7 @@ class ShoppingCart(models.Model):
 class OrderUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="order_units",
                                 null=False, blank=False)
-    good_size_platform = models.CharField(max_length=255, null=True, blank=True,
+    view_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
     size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="order_units",

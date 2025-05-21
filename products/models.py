@@ -175,7 +175,7 @@ class DewuInfo(models.Model):
 
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
-    dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
+    # dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
     brands = models.ManyToManyField("Brand", related_name='products',
                                     blank=True, db_index=True)
     categories = models.ManyToManyField("Category", related_name='products',

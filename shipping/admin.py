@@ -20,8 +20,7 @@ class PlatformAdmin(admin.ModelAdmin):
     list_display = ('platform', )
 
 
-class UnitBundleAdmin(admin.ModelAdmin):
-    list_display = ('size', )
+
 
 
 admin.site.register(ProductUnit, ProductUnitAdmin)

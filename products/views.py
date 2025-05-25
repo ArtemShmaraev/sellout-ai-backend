@@ -34,6 +34,7 @@ from products.main_page import get_selection, get_photo, get_sellout_photo
 
 
 class MainPageBlocks(APIView):
+
     def get(self, request):
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
@@ -157,7 +158,7 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    # @method_decorator(cache_page(60 * 5))
+    @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t0 = time()

@@ -41,7 +41,7 @@ class MainPageBlocks(APIView):
         last = "any"
         photo, last = get_sellout_photo(last)
         res.append(photo)
-        for i in range(6):
+        for i in range(10):
             type = random.randint(1, 2)
             if type == 1:
                 res.append(get_selection(context))

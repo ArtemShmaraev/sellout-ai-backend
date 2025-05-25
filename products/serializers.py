@@ -134,7 +134,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        exclude = ["platform_info", "sizes_prices", "russian_name", "dewu_info", "spu_id"]
+        exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id"]
         depth = 2
 
     def get_list_lines(self, obj):

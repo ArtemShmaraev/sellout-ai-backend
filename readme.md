@@ -17,29 +17,40 @@ Anon)
 6. `[POST][Anon] user/login` вход в систему [⬇️](#log)
 7. `[POST][User] user/token/refresh/` рефреш токена [⬇️](#refresh)
 8. `[POST][User] user/token/verify/` валиден ли токен (передать access токен {"token": "тут access токен")
-статус ответа 200 если токен валиден, иначе 401
+   статус ответа 200 если токен валиден, иначе 401
 9. user/auth/google/ авторизацию гугл
 10. `[GET][Anon] user/auth/complete/google/?id_token={}` вернет токены
+
 -
+
 9. `[GET][User] user/address/<user_id>` адреса пользователя [⬇️](#address)
 10. `[POST][User] user/address/<user_id>` добавление адреса пользователя [⬇️](#add_address)
 11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя [⬇️](#edit_address)
 12. `[DELETE][User] user/address/<user_id>/<address_id>`удаление адреса пользователя [⬇️](#del_address)
-13. `[POST][Anon] https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address` Header: ```Authorization: Token 7b8466ea8df30fc6a906c7e351e1da4160766933``` Body: ```{ "query": "москва хабар" }``` Response: Список словарей, нужная подсказка  dict["value"]
+13. `[POST][Anon] https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address`
+    Header: ```Authorization: Token 7b8466ea8df30fc6a906c7e351e1da4160766933``` Body: ```{ "query": "москва хабар" }```
+    Response: Список словарей, нужная подсказка dict["value"]
+
 -
+
 13. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 14. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
 15. `[GET][User] user/favorite_brand/<user_id>/<brand_id>` добавить любимый бренд, чтобы удалить метод Delete
-16. `[GET][User] user/size_info` Response: ```{"preferred_shoes_size_row": 1, "preferred_clothes_size_row": 43, "shoes_size": 8, "clothes_size": 55, "height": 175, "weight": 60 }```
+16. `[GET][User] user/size_info`
+    Response: ```{"preferred_shoes_size_row": 1, "preferred_clothes_size_row": 43, "shoes_size": 8, "clothes_size": 55, "height": 175, "weight": 60 }```
 17. `[POST][User] user/size_info` Body: Верхний Response
-18. `[GET][User] user/get_size_table` Вернет две таблица для отображения в ЛК и ID размера пользователя, если в query содержится размер пользователя, то выделить эту кнопку
-19. `[GET][User] user/send_set_psw/<user_id>` отправиться письмо на почту для смены пароля вида https://sellout.su/reset-password/{uidb64}/{token} по этому адресу надо разместить страничку востановления пароля
-20. `[POST][User] user/change_pwd/<uidb64>/<token>` сменить пароль Параметры взять из url строки и в data передать {"password": "1234"} 
-21. `[POST][User] user/change_pwd_lk/<user_id>` смена пароля в личном кабинете в data = {"old_password": "123", "new_password": "1234"} вернет Response("Старый пароль указан неверно.", status=status.HTTP_400_BAD_REQUEST)
-или Response("Пароль успешно изменен.") при удачной и неудачной смене пароля
-22. `[GET][User] user/send_verify_email/<user_id>?url={текущий url страницы}`  отправит письмо с подтверждением почты пользователю и при подтверждении почты пользователь перейдет обратно на страницу
-
-
+18. `[GET][User] user/get_size_table` Вернет две таблица для отображения в ЛК и ID размера пользователя, если в query
+    содержится размер пользователя, то выделить эту кнопку
+19. `[GET][User] user/send_set_psw/<user_id>` отправиться письмо на почту для смены пароля
+    вида https://sellout.su/reset-password/{uidb64}/{token} по этому адресу надо разместить страничку востановления
+    пароля
+20. `[POST][User] user/change_pwd/<uidb64>/<token>` сменить пароль Параметры взять из url строки и в data передать {"
+    password": "1234"}
+21. `[POST][User] user/change_pwd_lk/<user_id>` смена пароля в личном кабинете в data = {"old_password": "123", "
+    new_password": "1234"} вернет Response("Старый пароль указан неверно.", status=status.HTTP_400_BAD_REQUEST)
+    или Response("Пароль успешно изменен.") при удачной и неудачной смене пароля
+22. `[GET][User] user/send_verify_email/<user_id>?url={текущий url страницы}`  отправит письмо с подтверждением почты
+    пользователю и при подтверждении почты пользователь перейдет обратно на страницу
 
 ## Product API
 
@@ -52,12 +63,13 @@ Anon)
 7. `[GET][Anon] product/size_table`таблица размеров для фильтра [⬇️](#product_size_table)
 
 ## Category, Line, Color, Brand API
+
 у каждой сущности есть все виды запросов [GET]
+
 1. `[GET][Anon] product/[categories|lines|colors|brands|collections]` вернет все сущности [⬇️](#clcb)
 2. `[GET][Anon] product/cat_no_child` список всех категорий для админки
 3. `[GET][Anon] product/line_no_child` список всех линеек для админки
 4. `[GET][Anon] product/similar/<product_id>` вернет список похожих товаров
-
 
 ## Shipping API
 
@@ -69,8 +81,10 @@ Anon)
 6. `[POST][Anon] product_unit/list` Body: ```{"product_unit_list": [2, 3]}``` Response Список product_unit
 7. `[POST][Anon] product_unit/total_amount_list` Body: ```{"product_unit_list": [2, 3]}``` Response: Сумма
 
-5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру [⬇️](#product_min_price)
-6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цены [⬇️](#product_delivery)
+5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому
+   размеру [⬇️](#product_min_price)
+6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной
+   цены [⬇️](#product_delivery)
 
 ## WishList API
 
@@ -91,90 +105,111 @@ Anon)
 6. `[GET][User] order/user_orders/<user_id>` все заказы пользователя [⬇️](#user_orders)
 7. `[GET][User] order/<order_id>` информация о заказе [⬇️](#order)
    <a name="user"></a>
-8. `[POST]User order/cart_list/<user_id>` Body: ```{"product_unit_list": [2, 3]}``` Response (добавление в корзину или исключение)
-9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}``` Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
-10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}``` Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```
-
+8. `[POST]User order/cart_list/<user_id>` Body: ```{"product_unit_list": [2, 3]}``` Response (добавление в корзину или
+   исключение)
+9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}```
+   Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
+10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}```
+    Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```
 
 ## Главня страница
-1. `[GET][User]` product/main_page вернет список блоков (есть два типо фотка или подборка) у фоток для desktop есть два варианта (left_photo и right_photo)
-у подборки товаров есть title и url(для кнопки посмотреть все)
+
+1. `[GET][User]` product/main_page вернет список блоков (есть два типо фотка или подборка) у фоток для desktop есть два
+   варианта (left_photo и right_photo)
+   у подборки товаров есть title и url(для кнопки посмотреть все)
+2. `[GET][User]` product/header_photo Response: {
+   "brand": "http://drive.google.com/uc?export=vi,
+   "shoes": "http://drive.google.com/uc?export=view&id=1OO",
+   "clothes": "http://drive.google.com/uc?export=view&id=1MA",
+   "accessories": "http://drive.google.com/uc?export=view&id=15ts5"
+   }
 
 ## Dewu Info Для Дениса
+
 1. `[GET] product/dewu_info` Вернуть всё (web_data=false вернёт товары у которых web_data пустая)
 2. `[GET] product/dewu_info/<spu_id>` Венуть по Spu Id
-3. `[POST] product/dewu_info/<spu_id>` Body: ```{"api_data": api_data, "web_data": web_data, "preprocessed_data": data}``` Можно передать не все параметры для заполнения
+3. `[POST] product/dewu_info/<spu_id>`
+   Body: ```{"api_data": api_data, "web_data": web_data, "preprocessed_data": data}``` Можно передать не все параметры
+   для заполнения
 4. `[GET] user/mailing_list` Список пользователей для рассылки (pwd=)
 5. `[GET] order/status_unit/<product_unit_id>` вернет статус (pwd=)
 6. `[POST] order/status_unit/<product_unit_id>` изменит статус data = {"status_name": status} (pwd=)
+
 # Поиск
-Запросы отправляются на сервер с elastic 
+
+Запросы отправляются на сервер с elastic
+
 ### 1. `[GET][Anon] <elastichost>/sellout/_search` поискв
 
 Body:
+
 ```json
 {
   "query": {
     "multi_match": {
-       "query": "Тут запрос например <Nike>",
-       "fields": ["name", "brands.name", "categories.name", "tags.name", "description"],
-       "fuzziness": 2
+      "query": "Тут запрос например <Nike>",
+      "fields": [
+        "name",
+        "brands.name",
+        "categories.name",
+        "tags.name",
+        "description"
+      ],
+      "fuzziness": 2
     }
   }
 }
 ```
 
 Response:
+
 ```json
 {
-   "took": 9,
-   "timed_out": false,
-   "_shards": {
-      "total": 1,
-      "successful": 1,
-      "failed": 0
-   },
-   "hits": {
-      "total": 2,
-      "max_score": 1.0,
-      "hits": [
-         {
-            "_index": "sellout",
-            "_type": "doc",
-            "_id": "1",
-            "_score": 1.0,
-            "_source": {
-               "name": "Air Force 1",
-               "description": "desc",
-               "brands": [
-                  {
-                     "id": 1,
-                     "name": "Nike"
-                  }
-               ],
-               "categories": [
-                  {
-                     "id": 1,
-                     "name": "Sport"
-                  }
-               ],
-               "tags": [
-                  {
-                     "id": 1,
-                     "name": "Style"
-                  }
-               ],
-               "id": 1
+  "took": 9,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "failed": 0
+  },
+  "hits": {
+    "total": 2,
+    "max_score": 1.0,
+    "hits": [
+      {
+        "_index": "sellout",
+        "_type": "doc",
+        "_id": "1",
+        "_score": 1.0,
+        "_source": {
+          "name": "Air Force 1",
+          "description": "desc",
+          "brands": [
+            {
+              "id": 1,
+              "name": "Nike"
             }
-         }
-      ]
-   }
+          ],
+          "categories": [
+            {
+              "id": 1,
+              "name": "Sport"
+            }
+          ],
+          "tags": [
+            {
+              "id": 1,
+              "name": "Style"
+            }
+          ],
+          "id": 1
+        }
+      }
+    ]
+  }
 }
 
 ```
-
-
-
 
 ## User API
 
@@ -318,8 +353,11 @@ Response:
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
 <a name="edit_user_id"></a>
+
 ### 5 `[POST][User] user/user_info/<user_id>` Изменить данные пользователя
+
 Body: передать измененные параметры
+
 ```json
 {
   "username": "new_username",
@@ -328,6 +366,7 @@ Body: передать измененные параметры
   "email": "new_email@example.com"
 }
 ```
+
 Response: Данные пользователя
 
 <a name="reg"></a>
@@ -352,11 +391,11 @@ Response:
 
 ```json
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
-    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
-    "username": "arteddm@mail.ru",
-    "first_name": "artem",
-    "last_name": "sh"
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
+  "username": "arteddm@mail.ru",
+  "first_name": "artem",
+  "last_name": "sh"
 }
 ```
 
@@ -379,11 +418,11 @@ Response:
 
 ```json
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
-    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
-    "username": "arteddm@mail.ru",
-    "first_name": "sd",
-    "last_name": "dsf"
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4Nzc5MjIzNSwiaWF0IjoxNjg3MTg3NDM1LCJqdGkiOiI3MWFkMWVmMzk1OTk0YjM0YjhjMjc3ZWJlYTk0NmYyOCIsInVzZXJfaWQiOjIsInVzZXJuYW1lIjoiYXJ0ZWRkbUBtYWlsLnJ1IiwiZmlyc3RfbmFtZSI6InNkIiwibGFzdF9uYW1lIjoiZHNmIn0.YsRislGTVld_1c0dgT8OTVGXX7n21DVa2h4gaqDiLWA",
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTg3NTU1LCJpYXQiOjE2ODcxODc0MzUsImp0aSI6ImZkZjg3YzI1NDUwYTRlYmU4OGI3MzA2NWMyNjNmNmUzIiwidXNlcl9pZCI6MiwidXNlcm5hbWUiOiJhcnRlZGRtQG1haWwucnUiLCJmaXJzdF9uYW1lIjoic2QiLCJsYXN0X25hbWUiOiJkc2YifQ.3MMCus1wbBr5OO-rZvGkMOCRI5ieoScoLqeBIv_aIco",
+  "username": "arteddm@mail.ru",
+  "first_name": "sd",
+  "last_name": "dsf"
 }
 ```
 
@@ -391,24 +430,27 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="refresh"></a>
+
 ### 8. `[POST][User] user/token/refresh/` обновление токена
+
 Body:
+
 ```json
 {
-    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4NzcxMzc4NywiaWF0IjoxNjg3MTA4OTg3LCJqdGkiOiJhNzBiN2YxMDg5OTI0ZTMyYmM2YmRiZWU4YWQ2YzY1ZiIsInVzZXJfaWQiOjF9.zyIWDnxf3qU9P5A-JXcTI_XXDJP41hu12VvofqTwJRA",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTY4NzcxMzc4NywiaWF0IjoxNjg3MTA4OTg3LCJqdGkiOiJhNzBiN2YxMDg5OTI0ZTMyYmM2YmRiZWU4YWQ2YzY1ZiIsInVzZXJfaWQiOjF9.zyIWDnxf3qU9P5A-JXcTI_XXDJP41hu12VvofqTwJRA"
 }
 ```
+
 Response:
+
 ````json
 {
-    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTk1NDg0LCJpYXQiOjE2ODcxMDg5ODcsImp0aSI6IjkzNTEyMzFiNjA4MjRjZWJhOWY3ZDExNDc1OGE4YjYxIiwidXNlcl9pZCI6MX0.RmAOgVudnrfclAapeLEpQSK7Ji-93ECBnCJnz2TzvEQ"
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjg3MTk1NDg0LCJpYXQiOjE2ODcxMDg5ODcsImp0aSI6IjkzNTEyMzFiNjA4MjRjZWJhOWY3ZDExNDc1OGE4YjYxIiwidXNlcl9pZCI6MX0.RmAOgVudnrfclAapeLEpQSK7Ji-93ECBnCJnz2TzvEQ"
 }
 ````
 
-
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
-
 
 <a name="address"></a>
 
@@ -423,7 +465,7 @@ Response:
     "name": "name",
     "address": "Проспект Мира 111",
     "post_index": "308033",
-     "is_main": true
+    "is_main": true
   }
 ]
 ```
@@ -434,69 +476,73 @@ Response:
 <a name="add_address"></a>
 
 ### 10. `[POST][User] user/address/<user_id>` добавление адреса пользователя
+
 Body:
-```json
-{
-  "name": "name",
-  "address": "Проспект Мира 111",
-  "post_index": "308033", 
-   "is_main": true
-}
 
-```
-Response:
-
-```json
-  {
-    "id": 1,
-    "name": "name",
-    "address": "Проспект Мира 111",
-    "post_index": "308033",
-   "is_main": true
-  }
-```
-
-[:arrow_up:User API](#user)
-[:arrow_up:SellOut API](#up)
-
-
-<a name="edit_address"></a>
-
-### 11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя
-Body:
 ```json
 {
   "name": "name",
   "address": "Проспект Мира 111",
   "post_index": "308033",
-   "is_main": true
+  "is_main": true
 }
 
 ```
+
 Response:
 
 ```json
   {
-    "id": 1,
-    "name": "name",
-    "address": "Проспект Мира 111",
-    "post_index": "308033",
-   "is_main": true
-  }
+  "id": 1,
+  "name": "name",
+  "address": "Проспект Мира 111",
+  "post_index": "308033",
+  "is_main": true
+}
 ```
 
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
 
+<a name="edit_address"></a>
 
-<a name="del_address"></a>
+### 11. `[PUT][User] user/address/<user_id>/<address_id>` редактирование адреса пользователя
 
-### 12. `[DELETE][User] user/address/<user_id>/<address_id>` удаление адреса пользователя
-Response("Адрес успешно удален")
+Body:
+
+```json
+{
+  "name": "name",
+  "address": "Проспект Мира 111",
+  "post_index": "308033",
+  "is_main": true
+}
+
+```
+
+Response:
+
+```json
+  {
+  "id": 1,
+  "name": "name",
+  "address": "Проспект Мира 111",
+  "post_index": "308033",
+  "is_main": true
+}
+```
 
 [:arrow_up:User API](#user)
 [:arrow_up:SellOut API](#up)
 
+<a name="del_address"></a>
+
+### 12. `[DELETE][User] user/address/<user_id>/<address_id>` удаление адреса пользователя
+
+Response("Адрес успешно удален")
+
+[:arrow_up:User API](#user)
+[:arrow_up:SellOut API](#up)
 
 <a name="last"></a>
 
@@ -585,13 +631,17 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="add_last"></a>
+
 ### 14. `[POST][User] user/last_seen/<user_id>` Добавление товара в просмотренные
+
 Body:
+
 ```json
 {
-   "product_id": id
+  "product_id": id
 }
 ```
+
 Response("Продукт успешно добавлен в список последних просмотров")
 Статус ответа 200 иначе ошибка
 
@@ -601,8 +651,8 @@ Response("Продукт успешно добавлен в список пос�
 <a name="product"></a>
 
 ## Product APi
-[:arrow_up:SellOut API](#up)
 
+[:arrow_up:SellOut API](#up)
 
 <a name="product_id"></a>
 
@@ -612,167 +662,167 @@ Response:
 
 ```json
 {
-    "id": 516,
-    "in_wishlist": false,
-    "min_price_product_unit": 83490,
-    "main_line": "Nike | Air Force 1 | Low",
-    "model": "Louis Vuitton Air Force 1 Low",
-    "colorway": "Virgil Abloh - BLACK/BLACK",
-    "russian_name": "Louis Vuitton Air Force 1 Low",
-    "slug": "nike-louis-vuitton-louis-vuitton-air-force-1-low-virgil-abloh-blackblack-516",
-    "manufacturer_sku": "1A9VD6",
-    "description": "",
-    "bucket_link": "",
-    "designer_color": "",
-    "min_price": 83490,
-    "available_flag": true,
-    "last_upd": "2023-06-16T11:41:11.705314Z",
-    "add_date": "2023-06-16",
-    "release_date": "2023-06-16",
-    "fit": 0,
-    "rel_num": 0,
-    "main_color": {
-        "id": 5,
-        "name": "black",
-        "is_main_color": true,
-        "russian_name": "Р§РµСЂРЅС‹Р№",
-        "hex": "#000000"
+  "id": 516,
+  "in_wishlist": false,
+  "min_price_product_unit": 83490,
+  "main_line": "Nike | Air Force 1 | Low",
+  "model": "Louis Vuitton Air Force 1 Low",
+  "colorway": "Virgil Abloh - BLACK/BLACK",
+  "russian_name": "Louis Vuitton Air Force 1 Low",
+  "slug": "nike-louis-vuitton-louis-vuitton-air-force-1-low-virgil-abloh-blackblack-516",
+  "manufacturer_sku": "1A9VD6",
+  "description": "",
+  "bucket_link": "",
+  "designer_color": "",
+  "min_price": 83490,
+  "available_flag": true,
+  "last_upd": "2023-06-16T11:41:11.705314Z",
+  "add_date": "2023-06-16",
+  "release_date": "2023-06-16",
+  "fit": 0,
+  "rel_num": 0,
+  "main_color": {
+    "id": 5,
+    "name": "black",
+    "is_main_color": true,
+    "russian_name": "Р§РµСЂРЅС‹Р№",
+    "hex": "#000000"
+  },
+  "recommended_gender": {
+    "id": 1,
+    "name": "M"
+  },
+  "size_table": null,
+  "brands": [
+    {
+      "id": 8,
+      "name": "Nike"
     },
-    "recommended_gender": {
-        "id": 1,
-        "name": "M"
+    {
+      "id": 23,
+      "name": "Louis Vuitton"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Обувь",
+      "eng_name": "shoes_category",
+      "full_name": "Обувь",
+      "parent_category": null
+    }
+  ],
+  "lines": [
+    {
+      "id": 3,
+      "name": "Nike",
+      "full_name": "Nike",
+      "full_eng_name": "nike",
+      "parent_line": null,
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
     },
-    "size_table": null,
-    "brands": [
-        {
-            "id": 8,
-            "name": "Nike"
-        },
-        {
-            "id": 23,
-            "name": "Louis Vuitton"
-        }
-    ],
-    "categories": [
-        {
-            "id": 1,
-            "name": "Обувь",
-            "eng_name": "shoes_category",
-            "full_name": "Обувь",
-            "parent_category": null
-        }
-    ],
-    "lines": [
-        {
-            "id": 3,
-            "name": "Nike",
-            "full_name": "Nike",
-            "full_eng_name": "nike",
-            "parent_line": null,
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        },
-        {
-            "id": 5,
-            "name": "Все Nike",
-            "full_name": "Nike | Все Nike",
-            "full_eng_name": "nike",
-            "parent_line": {
-                "id": 3,
-                "name": "Nike",
-                "full_name": "Nike",
-                "full_eng_name": "nike",
-                "parent_line": null,
-                "brand": 8
-            },
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        },
-        {
-            "id": 18,
-            "name": "Air Force 1",
-            "full_name": "Nike | Air Force 1",
-            "full_eng_name": "nike_air_force_1",
-            "parent_line": {
-                "id": 3,
-                "name": "Nike",
-                "full_name": "Nike",
-                "full_eng_name": "nike",
-                "parent_line": null,
-                "brand": 8
-            },
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        },
-        {
-            "id": 19,
-            "name": "Low",
-            "full_name": "Nike | Air Force 1 | Low",
-            "full_eng_name": "nike_air_force_1_low",
-            "parent_line": {
-                "id": 18,
-                "name": "Air Force 1",
-                "full_name": "Nike | Air Force 1",
-                "full_eng_name": "nike_air_force_1",
-                "parent_line": 3,
-                "brand": 8
-            },
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        },
-        {
-            "id": 20,
-            "name": "Все Air Force 1",
-            "full_name": "Nike | Air Force 1 | Все Air Force 1",
-            "full_eng_name": "nike_air_force_1",
-            "parent_line": {
-                "id": 18,
-                "name": "Air Force 1",
-                "full_name": "Nike | Air Force 1",
-                "full_eng_name": "nike_air_force_1",
-                "parent_line": 3,
-                "brand": 8
-            },
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        }
-    ],
-    "collections": [
-        {
-            "id": 3,
-            "name": "Nike x Louis Vuitton"
-        }
-    ],
-    "tags": [],
-    "colors": [
-        {
-            "id": 531,
-            "name": "noir",
-            "is_main_color": false,
-            "russian_name": "",
-            "hex": ""
-        }
-    ],
-    "gender": [
-        {
-            "id": 1,
-            "name": "M"
-        },
-        {
-            "id": 2,
-            "name": "F"
-        }
-    ]
+    {
+      "id": 5,
+      "name": "Все Nike",
+      "full_name": "Nike | Все Nike",
+      "full_eng_name": "nike",
+      "parent_line": {
+        "id": 3,
+        "name": "Nike",
+        "full_name": "Nike",
+        "full_eng_name": "nike",
+        "parent_line": null,
+        "brand": 8
+      },
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
+    },
+    {
+      "id": 18,
+      "name": "Air Force 1",
+      "full_name": "Nike | Air Force 1",
+      "full_eng_name": "nike_air_force_1",
+      "parent_line": {
+        "id": 3,
+        "name": "Nike",
+        "full_name": "Nike",
+        "full_eng_name": "nike",
+        "parent_line": null,
+        "brand": 8
+      },
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
+    },
+    {
+      "id": 19,
+      "name": "Low",
+      "full_name": "Nike | Air Force 1 | Low",
+      "full_eng_name": "nike_air_force_1_low",
+      "parent_line": {
+        "id": 18,
+        "name": "Air Force 1",
+        "full_name": "Nike | Air Force 1",
+        "full_eng_name": "nike_air_force_1",
+        "parent_line": 3,
+        "brand": 8
+      },
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
+    },
+    {
+      "id": 20,
+      "name": "Все Air Force 1",
+      "full_name": "Nike | Air Force 1 | Все Air Force 1",
+      "full_eng_name": "nike_air_force_1",
+      "parent_line": {
+        "id": 18,
+        "name": "Air Force 1",
+        "full_name": "Nike | Air Force 1",
+        "full_eng_name": "nike_air_force_1",
+        "parent_line": 3,
+        "brand": 8
+      },
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
+    }
+  ],
+  "collections": [
+    {
+      "id": 3,
+      "name": "Nike x Louis Vuitton"
+    }
+  ],
+  "tags": [],
+  "colors": [
+    {
+      "id": 531,
+      "name": "noir",
+      "is_main_color": false,
+      "russian_name": "",
+      "hex": ""
+    }
+  ],
+  "gender": [
+    {
+      "id": 1,
+      "name": "M"
+    },
+    {
+      "id": 2,
+      "name": "F"
+    }
+  ]
 }
 ```
 
@@ -787,70 +837,71 @@ Response:
 
 ```json
 {
-    "id": 712,
-    "is_favorite": false,
-    "model": "Flight Legacy",
-    "colorway": "Lakers",
-    "russian_name": "Flight Legacy",
-    "slug": "nike-flight-legacy-lakers-712",
-    "manufacturer_sku": "BQ4212102",
-    "description": "",
-    "bucket_link": "",
-    "designer_color": "",
-    "min_price": null,
-    "available_flag": true,
-    "last_upd": "2023-06-07T13:35:34.003607Z",
-    "add_date": "2023-06-07",
-    "release_date": "2023-06-07",
-    "fit": 0,
-    "rel_num": 0,
-    "main_color": {
-        "id": 7,
-        "name": "white"
+  "id": 712,
+  "is_favorite": false,
+  "model": "Flight Legacy",
+  "colorway": "Lakers",
+  "russian_name": "Flight Legacy",
+  "slug": "nike-flight-legacy-lakers-712",
+  "manufacturer_sku": "BQ4212102",
+  "description": "",
+  "bucket_link": "",
+  "designer_color": "",
+  "min_price": null,
+  "available_flag": true,
+  "last_upd": "2023-06-07T13:35:34.003607Z",
+  "add_date": "2023-06-07",
+  "release_date": "2023-06-07",
+  "fit": 0,
+  "rel_num": 0,
+  "main_color": {
+    "id": 7,
+    "name": "white"
+  },
+  "recommended_gender": {
+    "id": 1,
+    "name": "M"
+  },
+  "size_table": null,
+  "brands": [
+    {
+      "id": 8,
+      "name": "Nike"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Обувь",
+      "parent_category": null
+    }
+  ],
+  "lines": [],
+  "collections": [],
+  "tags": [],
+  "colors": [
+    {
+      "id": 91,
+      "name": "102 white"
     },
-    "recommended_gender": {
-        "id": 1,
-        "name": "M"
+    {
+      "id": 718,
+      "name": "regency purple"
+    }
+  ],
+  "gender": [
+    {
+      "id": 1,
+      "name": "M"
     },
-    "size_table": null,
-    "brands": [
-        {
-            "id": 8,
-            "name": "Nike"
-        }
-    ],
-    "categories": [
-        {
-            "id": 1,
-            "name": "Обувь",
-            "parent_category": null
-        }
-    ],
-    "lines": [],
-    "collections": [],
-    "tags": [],
-    "colors": [
-        {
-            "id": 91,
-            "name": "102 white"
-        },
-        {
-            "id": 718,
-            "name": "regency purple"
-        }
-    ],
-    "gender": [
-        {
-            "id": 1,
-            "name": "M"
-        },
-        {
-            "id": 2,
-            "name": "F"
-        }
-    ]
+    {
+      "id": 2,
+      "name": "F"
+    }
+  ]
 }
 ```
+
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
 
@@ -862,76 +913,76 @@ Response:
 
 ```json
 {
-    "count": 16400,
-    "next": "http://127.0.0.1:8000/api/v1/product/?page=2",
-    "previous": null,
-    "results": [
+  "count": 16400,
+  "next": "http://127.0.0.1:8000/api/v1/product/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 722,
+      "is_favorite": false,
+      "model": "0 To 60 STMT Human Race",
+      "colorway": "Triple Black",
+      "russian_name": "0 To 60 STMT Human Race",
+      "slug": "adidas-0-to-60-stmt-human-race-triple-black-722",
+      "manufacturer_sku": "GX2486",
+      "description": "",
+      "bucket_link": "",
+      "designer_color": "",
+      "min_price": null,
+      "available_flag": true,
+      "last_upd": "2023-05-29T14:37:02.605662Z",
+      "add_date": "2023-05-29",
+      "release_date": "2023-05-29",
+      "fit": 0,
+      "rel_num": 0,
+      "main_color": {
+        "id": 5,
+        "name": "black"
+      },
+      "recommended_gender": {
+        "id": 1,
+        "name": "M"
+      },
+      "size_table": null,
+      "brands": [
         {
-            "id": 722,
-            "is_favorite": false,
-            "model": "0 To 60 STMT Human Race",
-            "colorway": "Triple Black",
-            "russian_name": "0 To 60 STMT Human Race",
-            "slug": "adidas-0-to-60-stmt-human-race-triple-black-722",
-            "manufacturer_sku": "GX2486",
-            "description": "",
-            "bucket_link": "",
-            "designer_color": "",
-            "min_price": null,
-            "available_flag": true,
-            "last_upd": "2023-05-29T14:37:02.605662Z",
-            "add_date": "2023-05-29",
-            "release_date": "2023-05-29",
-            "fit": 0,
-            "rel_num": 0,
-            "main_color": {
-                "id": 5,
-                "name": "black"
-            },
-            "recommended_gender": {
-                "id": 1,
-                "name": "M"
-            },
-            "size_table": null,
-            "brands": [
-                {
-                    "id": 1,
-                    "name": "Adidas"
-                }
-            ],
-            "categories": [
-                {
-                    "id": 1,
-                    "name": "Обувь",
-                    "parent_category": null
-                }
-            ],
-            "lines": [],
-            "collections": [],
-            "tags": [],
-            "colors": [
-                {
-                    "id": 5,
-                    "name": "black"
-                },
-                {
-                    "id": 103,
-                    "name": "black-black"
-                }
-            ],
-            "gender": [
-                {
-                    "id": 1,
-                    "name": "M"
-                },
-                {
-                    "id": 2,
-                    "name": "F"
-                }
-            ]
+          "id": 1,
+          "name": "Adidas"
+        }
+      ],
+      "categories": [
+        {
+          "id": 1,
+          "name": "Обувь",
+          "parent_category": null
+        }
+      ],
+      "lines": [],
+      "collections": [],
+      "tags": [],
+      "colors": [
+        {
+          "id": 5,
+          "name": "black"
         },
-       ...
-    ]
+        {
+          "id": 103,
+          "name": "black-black"
+        }
+      ],
+      "gender": [
+        {
+          "id": 1,
+          "name": "M"
+        },
+        {
+          "id": 2,
+          "name": "F"
+        }
+      ]
+    },
+    ...
+  ]
 }
 ```
 
@@ -940,430 +991,459 @@ Response:
 <a name="product_update"></a>
 
 4. `[PUT] product/update/<product_id>` редактироване товара
-можно передавать
+   можно передавать
+
 ```json
 {
-    "categories": ["список id категорий"],
-    "lines": ["список id линеек"],
-    "brands": ["список id брендов"],
-    "model": "название",
-    "colorway": "название",
-    "russian_name": "название",
-    "description": "описание",
-    "main_color": "id нового main_color",
+  "categories": [
+    "список id категорий"
+  ],
+  "lines": [
+    "список id линеек"
+  ],
+  "brands": [
+    "список id брендов"
+  ],
+  "model": "название",
+  "colorway": "название",
+  "russian_name": "название",
+  "description": "описание",
+  "main_color": "id нового main_color"
 }
 ```
+
 Все параметры необязательные, можно предавать только те, которые меняются
 
 Запрос http://127.0.0.1:8000/api/v1/product/update/2
 
-
 Body
+
 ```json
 {
-    "model": "название",
-    "colorway": "название",
-    "russian_name": "название",
-    "description": "описание",
-    "main_color": 5
+  "model": "название",
+  "colorway": "название",
+  "russian_name": "название",
+  "description": "описание",
+  "main_color": 5
 }
 ```
+
 Response
+
 ```json
 {
-    "id": 2,
-    "in_wishlist": false,
-    "min_price_product_unit": 91990,
-    "main_line": "Nike",
-    "model": "название",
-    "colorway": "название",
-    "russian_name": "название",
-    "slug": "nike-2",
-    "manufacturer_sku": "CZ8100600",
-    "description": "описание",
-    "bucket_link": "",
-    "designer_color": "",
-    "min_price": 91990,
-    "available_flag": true,
-    "last_upd": "2023-06-17T09:51:38.737920Z",
-    "add_date": "2023-06-17",
-    "release_date": "2023-06-17",
-    "fit": 0,
-    "rel_num": 0,
-    "main_color": {
-        "id": 5,
-        "name": "orange",
-        "is_main_color": true,
-        "russian_name": "РћСЂР°РЅР¶РµРІС‹Р№",
-        "hex": "#ff9e39"
+  "id": 2,
+  "in_wishlist": false,
+  "min_price_product_unit": 91990,
+  "main_line": "Nike",
+  "model": "название",
+  "colorway": "название",
+  "russian_name": "название",
+  "slug": "nike-2",
+  "manufacturer_sku": "CZ8100600",
+  "description": "описание",
+  "bucket_link": "",
+  "designer_color": "",
+  "min_price": 91990,
+  "available_flag": true,
+  "last_upd": "2023-06-17T09:51:38.737920Z",
+  "add_date": "2023-06-17",
+  "release_date": "2023-06-17",
+  "fit": 0,
+  "rel_num": 0,
+  "main_color": {
+    "id": 5,
+    "name": "orange",
+    "is_main_color": true,
+    "russian_name": "РћСЂР°РЅР¶РµРІС‹Р№",
+    "hex": "#ff9e39"
+  },
+  "recommended_gender": {
+    "id": 1,
+    "name": "M"
+  },
+  "size_table": null,
+  "brands": [
+    {
+      "id": 8,
+      "name": "Nike"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Обувь",
+      "eng_name": "shoes_category",
+      "full_name": "Обувь",
+      "parent_category": null
+    }
+  ],
+  "lines": [
+    {
+      "id": 2,
+      "name": "Nike",
+      "is_all": false,
+      "view_name": "Nike",
+      "full_name": "Nike",
+      "full_eng_name": "nike",
+      "parent_line": null,
+      "brand": {
+        "id": 8,
+        "name": "Nike"
+      }
+    }
+  ],
+  "collections": [],
+  "tags": [],
+  "colors": [
+    {
+      "id": 3,
+      "name": "600 bright crimson",
+      "is_main_color": false,
+      "russian_name": "",
+      "hex": ""
     },
-    "recommended_gender": {
-        "id": 1,
-        "name": "M"
+    {
+      "id": 4,
+      "name": "obsidian",
+      "is_main_color": false,
+      "russian_name": "",
+      "hex": ""
+    }
+  ],
+  "gender": [
+    {
+      "id": 1,
+      "name": "M"
     },
-    "size_table": null,
-    "brands": [
-        {
-            "id": 8,
-            "name": "Nike"
-        }
-    ],
-    "categories": [
-        {
-            "id": 1,
-            "name": "Обувь",
-            "eng_name": "shoes_category",
-            "full_name": "Обувь",
-            "parent_category": null
-        }
-    ],
-    "lines": [
-        {
-            "id": 2,
-            "name": "Nike",
-            "is_all": false,
-            "view_name": "Nike",
-            "full_name": "Nike",
-            "full_eng_name": "nike",
-            "parent_line": null,
-            "brand": {
-                "id": 8,
-                "name": "Nike"
-            }
-        }
-    ],
-    "collections": [],
-    "tags": [],
-    "colors": [
-        {
-            "id": 3,
-            "name": "600 bright crimson",
-            "is_main_color": false,
-            "russian_name": "",
-            "hex": ""
-        },
-        {
-            "id": 4,
-            "name": "obsidian",
-            "is_main_color": false,
-            "russian_name": "",
-            "hex": ""
-        }
-    ],
-    "gender": [
-        {
-            "id": 1,
-            "name": "M"
-        },
-        {
-            "id": 2,
-            "name": "F"
-        }
-    ]
+    {
+      "id": 2,
+      "name": "F"
+    }
+  ]
 }
 ```
+
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
 
 <a name="clcb"></a>
+
 ## Категории, Линейки, Цвета, Бренды
-### Категории  
+
+### Категории
+
 `[GET][Anon] product/categories`
 Response Категория
+
 ```json
 [
-    {
-        "id": 1,
-        "name": "Обувь",
-        "parent_category":null
-    },
-    {
+  {
+    "id": 1,
+    "name": "Обувь",
+    "parent_category": null
+  },
+  {
+    "id": 2,
+    "name": "Вся обувь",
+    "parent_category": 1
+  }
+]
+```
+
+### также есть запрос для отображения "красивого дерева" категорий
+
+`[GET][Anon] product/tree_cat`
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Обувь",
+    "parent_category": null,
+    "subcategories": [
+      {
         "id": 2,
         "name": "Вся обувь",
         "parent_category": 1
-    }
-]
-```
-### также есть запрос для отображения "красивого дерева" категорий
-`[GET][Anon] product/tree_cat`
-```json
-[
-   {
-      "id": 1,
-      "name": "Обувь",
-      "parent_category": null,
-      "subcategories": [
-         {
-            "id": 2,
-            "name": "Вся обувь",
-            "parent_category": 1
-         },
-         {
-            "id": 3,
-            "name": "Кроссовки",
-            "parent_category": 1,
-            "subcategories": [
-               {
-                  "id": 4,
-                  "name": "Все кроссовки",
-                  "parent_category": 3
-               }
-            ]
-         }
-      ]
-   }
+      },
+      {
+        "id": 3,
+        "name": "Кроссовки",
+        "parent_category": 1,
+        "subcategories": [
+          {
+            "id": 4,
+            "name": "Все кроссовки",
+            "parent_category": 3
+          }
+        ]
+      }
+    ]
+  }
 ]
 
 ```
 
 ### Линейки
+
 `[GET][Anon] product/lines`
 Response:
+
 ```json
 [
-    {
-        "id": 1,
-        "name": "Jordan",
-        "parent_line": null,
-        "brand": {
-            "id": 5,
-            "name": "Jordan"
-        }
-    },
-    {
-        "id": 2,
-        "name": "Другие Jordan",
-        "parent_line": {
-            "id": 1,
-            "name": "Jordan",
-            "parent_line": null,
-            "brand": 5
-        },
-        "brand": {
-            "id": 5,
-            "name": "Jordan"
-        }
+  {
+    "id": 1,
+    "name": "Jordan",
+    "parent_line": null,
+    "brand": {
+      "id": 5,
+      "name": "Jordan"
     }
+  },
+  {
+    "id": 2,
+    "name": "Другие Jordan",
+    "parent_line": {
+      "id": 1,
+      "name": "Jordan",
+      "parent_line": null,
+      "brand": 5
+    },
+    "brand": {
+      "id": 5,
+      "name": "Jordan"
+    }
+  }
 ]
 ```
+
 ### Есть дерево ленеек
+
 `[GET][Anon] product/tree_line?q=чтото`
 Можно передать параметр q
 Вернёт подходящие под поиск линейки
 Response:
+
 ```json
 [
-    {
-        "id": 1,
-        "name": "Jordan",
-        "parent_line": null,
-        "brand": {
-            "id": 5,
-            "name": "Jordan"
-        },
-        "children": [
-            {
-                "id": 2,
-                "name": "Другие Jordan",
-                "parent_line": {
-                    "id": 1,
-                    "name": "Jordan",
-                    "parent_line": null,
-                    "brand": 5
-                },
-                "brand": {
-                    "id": 5,
-                    "name": "Jordan"
-                }
-            }
-        ]
+  {
+    "id": 1,
+    "name": "Jordan",
+    "parent_line": null,
+    "brand": {
+      "id": 5,
+      "name": "Jordan"
     },
-    {
-        "id": 3,
-        "name": "New Balance",
-        "parent_line": null,
-        "brand": {
-            "id": 7,
-            "name": "New Balance"
+    "children": [
+      {
+        "id": 2,
+        "name": "Другие Jordan",
+        "parent_line": {
+          "id": 1,
+          "name": "Jordan",
+          "parent_line": null,
+          "brand": 5
         },
-        "children": [
-            {
-                "id": 4,
-                "name": "1906R",
-                "parent_line": {
-                    "id": 3,
-                    "name": "New Balance",
-                    "parent_line": null,
-                    "brand": 7
-                },
-                "brand": {
-                    "id": 7,
-                    "name": "New Balance"
-                }
-            },
-            {
-                "id": 5,
-                "name": "2002R",
-                "parent_line": {
-                    "id": 3,
-                    "name": "New Balance",
-                    "parent_line": null,
-                    "brand": 7
-                },
-                "brand": {
-                    "id": 7,
-                    "name": "New Balance"
-                }
-            }
-        ]
-    }
+        "brand": {
+          "id": 5,
+          "name": "Jordan"
+        }
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "New Balance",
+    "parent_line": null,
+    "brand": {
+      "id": 7,
+      "name": "New Balance"
+    },
+    "children": [
+      {
+        "id": 4,
+        "name": "1906R",
+        "parent_line": {
+          "id": 3,
+          "name": "New Balance",
+          "parent_line": null,
+          "brand": 7
+        },
+        "brand": {
+          "id": 7,
+          "name": "New Balance"
+        }
+      },
+      {
+        "id": 5,
+        "name": "2002R",
+        "parent_line": {
+          "id": 3,
+          "name": "New Balance",
+          "parent_line": null,
+          "brand": 7
+        },
+        "brand": {
+          "id": 7,
+          "name": "New Balance"
+        }
+      }
+    ]
+  }
 ]
 ```
 
 ### Бренды
+
 `[GET][Anon] product/brands`
 Response:
+
 ```json
 [
-    {
-        "id": 1,
-        "name": "Adidas"
-    },
-    {
-        "id": 2,
-        "name": "Asics"
-    },
-    {
-        "id": 3,
-        "name": "Converse"
-    },
-    {
-        "id": 4,
-        "name": "Fila"
-    },
-    {
-        "id": 5,
-        "name": "Jordan"
-    },
-    {
-        "id": 6,
-        "name": "Karhu"
-    },
-    {
-        "id": 7,
-        "name": "New Balance"
-    }
+  {
+    "id": 1,
+    "name": "Adidas"
+  },
+  {
+    "id": 2,
+    "name": "Asics"
+  },
+  {
+    "id": 3,
+    "name": "Converse"
+  },
+  {
+    "id": 4,
+    "name": "Fila"
+  },
+  {
+    "id": 5,
+    "name": "Jordan"
+  },
+  {
+    "id": 6,
+    "name": "Karhu"
+  },
+  {
+    "id": 7,
+    "name": "New Balance"
+  }
 ]
 ```
 
 ### Цвета
-`[GET][Anon] product/colors` 
+
+`[GET][Anon] product/colors`
 Response:
+
 ```json
 [
-    {
-        "id": 1,
-        "name": "black",
-        "is_main_color": true
-    },
-    {
-        "id": 5,
-        "name": "orange",
-        "is_main_color": true
-    },
-    {
-        "id": 8,
-        "name": "blue",
-        "is_main_color": true
-    },
-    {
-        "id": 10,
-        "name": "grey",
-        "is_main_color": true
-    },
-    {
-        "id": 13,
-        "name": "neutrals",
-        "is_main_color": true
-    },
-    {
-        "id": 18,
-        "name": "white",
-        "is_main_color": true
-    }
+  {
+    "id": 1,
+    "name": "black",
+    "is_main_color": true
+  },
+  {
+    "id": 5,
+    "name": "orange",
+    "is_main_color": true
+  },
+  {
+    "id": 8,
+    "name": "blue",
+    "is_main_color": true
+  },
+  {
+    "id": 10,
+    "name": "grey",
+    "is_main_color": true
+  },
+  {
+    "id": 13,
+    "name": "neutrals",
+    "is_main_color": true
+  },
+  {
+    "id": 18,
+    "name": "white",
+    "is_main_color": true
+  }
 ]
 ```
+
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
-
 
 <a name="product_size_table"></a>
-### `[GET][Anon] product/size_table`таблица размеров для фильтра 
+
+### `[GET][Anon] product/size_table`таблица размеров для фильтра
+
 Можно передать параметры в строке запроса `product/size_table?gender=F&category=shoes_category `
 gender и category
-по умолчанию отображать "is_user_main": true, ту у которой 
+по умолчанию отображать "is_user_main": true, ту у которой
 Response:
+
 ```json
 [
-   {
-      "id": 3,
-      "size_rows": [
-         {
-            "id": 19,
-            "is_main": false,
-            "filter_name": "Итальянский(IT)",
-            "filter_logo": "-",
-            "sizes": [
-               {
-                  "size": "XXS",
-                  "query": [
-                     212,
-                     213
-                  ]
-               },
-               {
-                  "size": "XS",
-                  "query": [
-                     214,
-                     215
-                  ]
-               },
-               {
-                  "size": "S",
-                  "query": [
-                     216,
-                     217
-                  ]
-               }
+  {
+    "id": 3,
+    "size_rows": [
+      {
+        "id": 19,
+        "is_main": false,
+        "filter_name": "Итальянский(IT)",
+        "filter_logo": "-",
+        "sizes": [
+          {
+            "size": "XXS",
+            "query": [
+              212,
+              213
             ]
-         }
-      ],
-      "name": "Clothes_Women",
-      "filter_name": "Женская одежда",
-      "standard": true,
-      "category": [
-         {
-            "id": 21,
-            "name": "Одежда",
-            "eng_name": "clothes",
-            "is_all": false,
-            "full_name": "Одежда",
-            "parent_category": null
-         }
-      ],
-      "gender": [
-         {
-            "id": 2,
-            "name": "F"
-         }
-      ]
-   }
+          },
+          {
+            "size": "XS",
+            "query": [
+              214,
+              215
+            ]
+          },
+          {
+            "size": "S",
+            "query": [
+              216,
+              217
+            ]
+          }
+        ]
+      }
+    ],
+    "name": "Clothes_Women",
+    "filter_name": "Женская одежда",
+    "standard": true,
+    "category": [
+      {
+        "id": 21,
+        "name": "Одежда",
+        "eng_name": "clothes",
+        "is_all": false,
+        "full_name": "Одежда",
+        "parent_category": null
+      }
+    ],
+    "gender": [
+      {
+        "id": 2,
+        "name": "F"
+      }
+    ]
+  }
 ]
 ```
 
 [:arrow_up:Product API](#product)
 [:arrow_up:SellOut API](#up)
-
 
 <a name="shipping"></a>
 
@@ -1514,9 +1594,10 @@ Response:
 [:arrow_up:Shipping API](#shipping)
 [:arrow_up:SellOut API](#up)
 
-
 <a name="product_filter"></a>
+
 ### 3. `[GET][Anon] product` фильтрация товаров
+
 параметры пример: `product/?brands=Nike&gender=F&colors=white&categories=Обувь&brands=Supreme`
 
     category = Фильтр по категориям (eng_name)
@@ -1531,174 +1612,178 @@ Response:
     ordering = (min_price, -min_price, release_date)
 
 Response:
+
 ```json
 {
-    "count": 1,
-    "next": null,
-    "previous": null,
-    "results": [
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1164,
+      "is_favorite": false,
+      "model": "Air Bakin SP",
+      "colorway": "Supreme - Black",
+      "russian_name": "Air Bakin SP",
+      "slug": "nike-supreme-air-bakin-sp-supreme-black-1164",
+      "manufacturer_sku": "DX3292001",
+      "description": "",
+      "bucket_link": "",
+      "designer_color": "",
+      "min_price": null,
+      "available_flag": true,
+      "last_upd": "2023-05-18T15:37:08.902726Z",
+      "add_date": "2023-05-18",
+      "release_date": "2023-05-18",
+      "fit": 0,
+      "rel_num": 0,
+      "main_color": {
+        "id": 2,
+        "name": "black"
+      },
+      "recommended_gender": {
+        "id": 1,
+        "name": "M"
+      },
+      "brands": [
         {
-            "id": 1164,
-            "is_favorite": false,
-            "model": "Air Bakin SP",
-            "colorway": "Supreme - Black",
-            "russian_name": "Air Bakin SP",
-            "slug": "nike-supreme-air-bakin-sp-supreme-black-1164",
-            "manufacturer_sku": "DX3292001",
-            "description": "",
-            "bucket_link": "",
-            "designer_color": "",
-            "min_price": null,
-            "available_flag": true,
-            "last_upd": "2023-05-18T15:37:08.902726Z",
-            "add_date": "2023-05-18",
-            "release_date": "2023-05-18",
-            "fit": 0,
-            "rel_num": 0,
-            "main_color": {
-                "id": 2,
-                "name": "black"
-            },
-            "recommended_gender": {
-                "id": 1,
-                "name": "M"
-            },
-            "brands": [
-                {
-                    "id": 8,
-                    "name": "Supreme"
-                },
-                {
-                    "id": 3,
-                    "name": "Nike"
-                }
-            ],
-            "categories": [
-                {
-                    "id": 2,
-                    "name": "Обувь",
-                    "parent_category": null
-                }
-            ],
-            "lines": [],
-            "collections": [
-                {
-                    "id": 1,
-                    "name": "Nike x Supreme"
-                }
-            ],
-            "tags": [],
-            "colors": [
-                {
-                    "id": 2,
-                    "name": "black"
-                },
-                {
-                    "id": 612,
-                    "name": "speed red-multi-color"
-                }
-            ],
-            "gender": [
-                {
-                    "id": 1,
-                    "name": "M"
-                },
-                {
-                    "id": 2,
-                    "name": "F"
-                }
-            ]
+          "id": 8,
+          "name": "Supreme"
+        },
+        {
+          "id": 3,
+          "name": "Nike"
         }
-    ]
+      ],
+      "categories": [
+        {
+          "id": 2,
+          "name": "Обувь",
+          "parent_category": null
+        }
+      ],
+      "lines": [],
+      "collections": [
+        {
+          "id": 1,
+          "name": "Nike x Supreme"
+        }
+      ],
+      "tags": [],
+      "colors": [
+        {
+          "id": 2,
+          "name": "black"
+        },
+        {
+          "id": 612,
+          "name": "speed red-multi-color"
+        }
+      ],
+      "gender": [
+        {
+          "id": 1,
+          "name": "M"
+        },
+        {
+          "id": 2,
+          "name": "F"
+        }
+      ]
+    }
+  ]
 }
 ```
+
 [:arrow_up:Shipping API](#shipping)
 [:arrow_up:SellOut API](#up)
 
-
 <a name="product_min_price"></a>
-### 5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру 
+
+### 5. `[GET][Anon] product_unit/min_price/<product_id>` Вернет цены для отображения по каждому размеру
+
 Response:
+
 ```json
 [
-    {
-        "min_price": 79990,
-        "size": {
-            "id": 87,
-            "US": "9.5",
-            "UK": "8.5",
-            "EU": "43",
-            "RU": "42",
-            "CM": null,
-            "table": 6
-        },
-        "view_size": "43"
+  {
+    "min_price": 79990,
+    "size": {
+      "id": 87,
+      "US": "9.5",
+      "UK": "8.5",
+      "EU": "43",
+      "RU": "42",
+      "CM": null,
+      "table": 6
     },
-    {
-        "min_price": 60490,
-        "size": {
-            "id": 73,
-            "US": "6",
-            "UK": "4",
-            "EU": "36.5",
-            "RU": "35.5",
-            "CM": null,
-            "table": 5
-        },
-        "view_size": "36.5"
+    "view_size": "43"
+  },
+  {
+    "min_price": 60490,
+    "size": {
+      "id": 73,
+      "US": "6",
+      "UK": "4",
+      "EU": "36.5",
+      "RU": "35.5",
+      "CM": null,
+      "table": 5
     },
-    {
-        "min_price": 44490,
-        "size": {
-            "id": 76,
-            "US": "7.5",
-            "UK": "5.5",
-            "EU": "38",
-            "RU": "37",
-            "CM": null,
-            "table": 5
-        },
-        "view_size": "38"
+    "view_size": "36.5"
+  },
+  {
+    "min_price": 44490,
+    "size": {
+      "id": 76,
+      "US": "7.5",
+      "UK": "5.5",
+      "EU": "38",
+      "RU": "37",
+      "CM": null,
+      "table": 5
     },
-    {
-        "min_price": 34490,
-        "size": {
-            "id": 41,
-            "US": "12",
-            "UK": "10.5",
-            "EU": "45 1/3",
-            "RU": "44",
-            "CM": null,
-            "table": 2
-        },
-        "view_size": "45 1/3"
+    "view_size": "38"
+  },
+  {
+    "min_price": 34490,
+    "size": {
+      "id": 41,
+      "US": "12",
+      "UK": "10.5",
+      "EU": "45 1/3",
+      "RU": "44",
+      "CM": null,
+      "table": 2
     },
-    {
-        "min_price": 76990,
-        "size": {
-            "id": 7,
-            "US": "6.5",
-            "UK": "6",
-            "EU": "39 1/3",
-            "RU": "38",
-            "CM": null,
-            "table": 1
-        },
-        "view_size": "39 1/3"
+    "view_size": "45 1/3"
+  },
+  {
+    "min_price": 76990,
+    "size": {
+      "id": 7,
+      "US": "6.5",
+      "UK": "6",
+      "EU": "39 1/3",
+      "RU": "38",
+      "CM": null,
+      "table": 1
     },
-    {
-        "min_price": 36990,
-        "size": {
-            "id": 57,
-            "US": "5",
-            "UK": "4",
-            "EU": "37",
-            "RU": "36",
-            "CM": null,
-            "table": 4
-        },
-        "view_size": "37"
-    }
+    "view_size": "39 1/3"
+  },
+  {
+    "min_price": 36990,
+    "size": {
+      "id": 57,
+      "US": "5",
+      "UK": "4",
+      "EU": "37",
+      "RU": "36",
+      "CM": null,
+      "table": 4
+    },
+    "view_size": "37"
+  }
 ]
 ```
 
@@ -1706,21 +1791,25 @@ Response:
 [:arrow_up:SellOut API](#up)
 
 <a name="product_delivery"></a>
+
 ### 6. `[GET][Anon] product_unit/delivery/<product_id>/<size_id>` Вернет способы доставки для определенной цен
+
 Response:
+
 ```json
 [
-    {
-        "id": 1,
-        "final_price": 79990,
-        "start_price": 79990,
-        "delivery": {
-            "id": 1,
-            "name": "poizon"
-        }
+  {
+    "id": 1,
+    "final_price": 79990,
+    "start_price": 79990,
+    "delivery": {
+      "id": 1,
+      "name": "poizon"
     }
+  }
 ]
 ```
+
 [:arrow_up:Shipping API](#shipping)
 [:arrow_up:SellOut API](#up)
 
@@ -1877,12 +1966,13 @@ Response:
 <a name="add_wl"></a>
 
 ### 2. `[POST][User] wishlist/add/<user_id>` добавление в вишлист
+
 Body:
+
 ```json
 {
-   
-   "product_id": id,
-   "size_id": id
+  "product_id": id,
+  "size_id": id
 }
 ```
 
@@ -1890,6 +1980,7 @@ Response: карточку вишлиста
 <a name="del_wl"></a>
 
 ### 3. `[delete][User] wishlist/delete/<wishlist_unit_id>` Удаление из вишлиста
+
 Response("Элемент успешно удален из списка желаний")
 
 Response: карточку вишлиста
@@ -1914,383 +2005,383 @@ Response:
 
 ```json
 {
+  "id": 1,
+  "promo_code": {
     "id": 1,
-    "promo_code": {
+    "owner": null,
+    "string_representation": "PENIS",
+    "discount_percentage": 50,
+    "discount_absolute": 0,
+    "activation_count": 0,
+    "max_activation_count": 1,
+    "active_status": true,
+    "active_until_date": "2023-08-02"
+  },
+  "product_units": [
+    {
+      "id": 3,
+      "product": {
         "id": 1,
-        "owner": null,
-        "string_representation": "PENIS",
-        "discount_percentage": 50,
-        "discount_absolute": 0,
-        "activation_count": 0,
-        "max_activation_count": 1,
-        "active_status": true,
-        "active_until_date": "2023-08-02"
-    },
-    "product_units": [
-        {
-            "id": 3,
-            "product": {
-                "id": 1,
-                "in_wishlist": false,
-                "min_price_product_unit": 32990,
-                "model": "Баскетбольные шорты",
-                "colorway": "SS18 Bolt Basketball Short Black",
-                "russian_name": "SS18 Bolt Basketball Short Black",
-                "slug": "supreme-ss18-bolt-basketball-short-black-1",
-                "manufacturer_sku": "SUP-SS18-407",
-                "description": "",
-                "is_custom": false,
-                "is_collab": false,
-                "designer_color": "",
-                "min_price": 32990,
-                "available_flag": true,
-                "has_many_sizes": false,
-                "has_many_colors": false,
-                "has_many_configurations": false,
-                "exact_date": "2018-06-07",
-                "approximate_date": "07.06.2018",
-                "fit": 0,
-                "rel_num": 442,
-                "main_line": null,
-                "collab": null,
-                "main_color": {
-                    "id": 1,
-                    "name": "multicolour",
-                    "is_main_color": false,
-                    "russian_name": "",
-                    "hex": ""
-                },
-                "recommended_gender": null,
-                "size_table_platform": null,
-                "brands": [
-                    {
-                        "id": 1,
-                        "name": "Supreme",
-                        "query_name": "supreme"
-                    }
-                ],
-                "categories": [
-                    {
-                        "id": 21,
-                        "name": "Одежда",
-                        "eng_name": "clothes",
-                        "is_all": false,
-                        "full_name": "Одежда",
-                        "parent_category": null
-                    },
-                    {
-                        "id": 22,
-                        "name": "Вся одежда",
-                        "eng_name": "clothes",
-                        "is_all": true,
-                        "full_name": "Одежда | Вся одежда",
-                        "parent_category": {
-                            "id": 21,
-                            "name": "Одежда",
-                            "eng_name": "clothes",
-                            "is_all": false,
-                            "full_name": "Одежда",
-                            "parent_category": null
-                        }
-                    },
-                    {
-                        "id": 39,
-                        "name": "Спортивная одежда",
-                        "eng_name": "sport_clothes",
-                        "is_all": false,
-                        "full_name": "Одежда | Спортивная одежда",
-                        "parent_category": {
-                            "id": 21,
-                            "name": "Одежда",
-                            "eng_name": "clothes",
-                            "is_all": false,
-                            "full_name": "Одежда",
-                            "parent_category": null
-                        }
-                    },
-                    {
-                        "id": 40,
-                        "name": "Вся спортивная одежда",
-                        "eng_name": "sport_clothes",
-                        "is_all": true,
-                        "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
-                        "parent_category": {
-                            "id": 39,
-                            "name": "Спортивная одежда",
-                            "eng_name": "sport_clothes",
-                            "is_all": false,
-                            "full_name": "Одежда | Спортивная одежда",
-                            "parent_category": 21
-                        }
-                    },
-                    {
-                        "id": 42,
-                        "name": "Баскетбольные шорты",
-                        "eng_name": "basketball_shorts",
-                        "is_all": false,
-                        "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
-                        "parent_category": {
-                            "id": 39,
-                            "name": "Спортивная одежда",
-                            "eng_name": "sport_clothes",
-                            "is_all": false,
-                            "full_name": "Одежда | Спортивная одежда",
-                            "parent_category": 21
-                        }
-                    }
-                ],
-                "lines": [
-                    {
-                        "id": 224,
-                        "name": "Supreme",
-                        "is_all": false,
-                        "view_name": "Supreme",
-                        "full_name": "Supreme",
-                        "full_eng_name": "supreme",
-                        "parent_line": null
-                    }
-                ],
-                "tags": [],
-                "bucket_link": [
-                    {
-                        "id": 1,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
-                    },
-                    {
-                        "id": 2,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
-                    },
-                    {
-                        "id": 3,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
-                    }
-                ],
-                "colors": [],
-                "gender": [
-                    {
-                        "id": 1,
-                        "name": "M"
-                    },
-                    {
-                        "id": 2,
-                        "name": "F"
-                    }
-                ]
-            },
-            "size_platform": "",
-            "good_size_platform": "36.5",
-            "size_table_platform": "",
-            "color": "",
-            "configuration": "",
-            "start_price": 65990,
-            "final_price": 65990,
-            "url": "",
-            "availability": true,
-            "warehouse": false,
-            "is_multiple": false,
-            "is_return": true,
-            "is_fast_shipping": false,
-            "is_sale": false,
-            "currency": {
-                "id": 1,
-                "name": "pending"
-            },
-            "delivery_type": {
-                "id": 4,
-                "name": "до 30 дней",
-                "view_name": null
-            },
-            "platform": {
-                "id": 2,
-                "platform": "poizon",
-                "site": "poizon"
-            }
+        "in_wishlist": false,
+        "min_price_product_unit": 32990,
+        "model": "Баскетбольные шорты",
+        "colorway": "SS18 Bolt Basketball Short Black",
+        "russian_name": "SS18 Bolt Basketball Short Black",
+        "slug": "supreme-ss18-bolt-basketball-short-black-1",
+        "manufacturer_sku": "SUP-SS18-407",
+        "description": "",
+        "is_custom": false,
+        "is_collab": false,
+        "designer_color": "",
+        "min_price": 32990,
+        "available_flag": true,
+        "has_many_sizes": false,
+        "has_many_colors": false,
+        "has_many_configurations": false,
+        "exact_date": "2018-06-07",
+        "approximate_date": "07.06.2018",
+        "fit": 0,
+        "rel_num": 442,
+        "main_line": null,
+        "collab": null,
+        "main_color": {
+          "id": 1,
+          "name": "multicolour",
+          "is_main_color": false,
+          "russian_name": "",
+          "hex": ""
         },
-        {
-            "id": 4,
-            "product": {
-                "id": 1,
-                "in_wishlist": false,
-                "min_price_product_unit": 32990,
-                "model": "Баскетбольные шорты",
-                "colorway": "SS18 Bolt Basketball Short Black",
-                "russian_name": "SS18 Bolt Basketball Short Black",
-                "slug": "supreme-ss18-bolt-basketball-short-black-1",
-                "manufacturer_sku": "SUP-SS18-407",
-                "description": "",
-                "is_custom": false,
-                "is_collab": false,
-                "designer_color": "",
-                "min_price": 32990,
-                "available_flag": true,
-                "has_many_sizes": false,
-                "has_many_colors": false,
-                "has_many_configurations": false,
-                "exact_date": "2018-06-07",
-                "approximate_date": "07.06.2018",
-                "fit": 0,
-                "rel_num": 442,
-                "main_line": null,
-                "collab": null,
-                "main_color": {
-                    "id": 1,
-                    "name": "multicolour",
-                    "is_main_color": false,
-                    "russian_name": "",
-                    "hex": ""
-                },
-                "recommended_gender": null,
-                "size_table_platform": null,
-                "brands": [
-                    {
-                        "id": 1,
-                        "name": "Supreme",
-                        "query_name": "supreme"
-                    }
-                ],
-                "categories": [
-                    {
-                        "id": 21,
-                        "name": "Одежда",
-                        "eng_name": "clothes",
-                        "is_all": false,
-                        "full_name": "Одежда",
-                        "parent_category": null
-                    },
-                    {
-                        "id": 22,
-                        "name": "Вся одежда",
-                        "eng_name": "clothes",
-                        "is_all": true,
-                        "full_name": "Одежда | Вся одежда",
-                        "parent_category": {
-                            "id": 21,
-                            "name": "Одежда",
-                            "eng_name": "clothes",
-                            "is_all": false,
-                            "full_name": "Одежда",
-                            "parent_category": null
-                        }
-                    },
-                    {
-                        "id": 39,
-                        "name": "Спортивная одежда",
-                        "eng_name": "sport_clothes",
-                        "is_all": false,
-                        "full_name": "Одежда | Спортивная одежда",
-                        "parent_category": {
-                            "id": 21,
-                            "name": "Одежда",
-                            "eng_name": "clothes",
-                            "is_all": false,
-                            "full_name": "Одежда",
-                            "parent_category": null
-                        }
-                    },
-                    {
-                        "id": 40,
-                        "name": "Вся спортивная одежда",
-                        "eng_name": "sport_clothes",
-                        "is_all": true,
-                        "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
-                        "parent_category": {
-                            "id": 39,
-                            "name": "Спортивная одежда",
-                            "eng_name": "sport_clothes",
-                            "is_all": false,
-                            "full_name": "Одежда | Спортивная одежда",
-                            "parent_category": 21
-                        }
-                    },
-                    {
-                        "id": 42,
-                        "name": "Баскетбольные шорты",
-                        "eng_name": "basketball_shorts",
-                        "is_all": false,
-                        "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
-                        "parent_category": {
-                            "id": 39,
-                            "name": "Спортивная одежда",
-                            "eng_name": "sport_clothes",
-                            "is_all": false,
-                            "full_name": "Одежда | Спортивная одежда",
-                            "parent_category": 21
-                        }
-                    }
-                ],
-                "lines": [
-                    {
-                        "id": 224,
-                        "name": "Supreme",
-                        "is_all": false,
-                        "view_name": "Supreme",
-                        "full_name": "Supreme",
-                        "full_eng_name": "supreme",
-                        "parent_line": null
-                    }
-                ],
-                "tags": [],
-                "bucket_link": [
-                    {
-                        "id": 1,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
-                    },
-                    {
-                        "id": 2,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
-                    },
-                    {
-                        "id": 3,
-                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
-                    }
-                ],
-                "colors": [],
-                "gender": [
-                    {
-                        "id": 1,
-                        "name": "M"
-                    },
-                    {
-                        "id": 2,
-                        "name": "F"
-                    }
-                ]
-            },
-            "size_platform": "",
-            "good_size_platform": "36",
-            "size_table_platform": "",
-            "color": "",
-            "configuration": "",
-            "start_price": 32990,
-            "final_price": 32990,
-            "url": "",
-            "availability": false,
-            "warehouse": false,
-            "is_multiple": false,
-            "is_return": true,
-            "is_fast_shipping": true,
-            "is_sale": true,
-            "currency": {
-                "id": 1,
-                "name": "pending"
-            },
-            "delivery_type": {
-                "id": 4,
-                "name": "до 30 дней",
-                "view_name": null
-            },
-            "platform": {
-                "id": 2,
-                "platform": "poizon",
-                "site": "poizon"
+        "recommended_gender": null,
+        "size_table_platform": null,
+        "brands": [
+          {
+            "id": 1,
+            "name": "Supreme",
+            "query_name": "supreme"
+          }
+        ],
+        "categories": [
+          {
+            "id": 21,
+            "name": "Одежда",
+            "eng_name": "clothes",
+            "is_all": false,
+            "full_name": "Одежда",
+            "parent_category": null
+          },
+          {
+            "id": 22,
+            "name": "Вся одежда",
+            "eng_name": "clothes",
+            "is_all": true,
+            "full_name": "Одежда | Вся одежда",
+            "parent_category": {
+              "id": 21,
+              "name": "Одежда",
+              "eng_name": "clothes",
+              "is_all": false,
+              "full_name": "Одежда",
+              "parent_category": null
             }
-        }
-    ],
-    "bonus": 0,
-    "total_amount": 98980,
-    "bonus_sale": 0,
-    "promo_sale": 49490,
-    "final_amount": 49490
+          },
+          {
+            "id": 39,
+            "name": "Спортивная одежда",
+            "eng_name": "sport_clothes",
+            "is_all": false,
+            "full_name": "Одежда | Спортивная одежда",
+            "parent_category": {
+              "id": 21,
+              "name": "Одежда",
+              "eng_name": "clothes",
+              "is_all": false,
+              "full_name": "Одежда",
+              "parent_category": null
+            }
+          },
+          {
+            "id": 40,
+            "name": "Вся спортивная одежда",
+            "eng_name": "sport_clothes",
+            "is_all": true,
+            "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
+            "parent_category": {
+              "id": 39,
+              "name": "Спортивная одежда",
+              "eng_name": "sport_clothes",
+              "is_all": false,
+              "full_name": "Одежда | Спортивная одежда",
+              "parent_category": 21
+            }
+          },
+          {
+            "id": 42,
+            "name": "Баскетбольные шорты",
+            "eng_name": "basketball_shorts",
+            "is_all": false,
+            "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
+            "parent_category": {
+              "id": 39,
+              "name": "Спортивная одежда",
+              "eng_name": "sport_clothes",
+              "is_all": false,
+              "full_name": "Одежда | Спортивная одежда",
+              "parent_category": 21
+            }
+          }
+        ],
+        "lines": [
+          {
+            "id": 224,
+            "name": "Supreme",
+            "is_all": false,
+            "view_name": "Supreme",
+            "full_name": "Supreme",
+            "full_eng_name": "supreme",
+            "parent_line": null
+          }
+        ],
+        "tags": [],
+        "bucket_link": [
+          {
+            "id": 1,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
+          },
+          {
+            "id": 2,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
+          },
+          {
+            "id": 3,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
+          }
+        ],
+        "colors": [],
+        "gender": [
+          {
+            "id": 1,
+            "name": "M"
+          },
+          {
+            "id": 2,
+            "name": "F"
+          }
+        ]
+      },
+      "size_platform": "",
+      "good_size_platform": "36.5",
+      "size_table_platform": "",
+      "color": "",
+      "configuration": "",
+      "start_price": 65990,
+      "final_price": 65990,
+      "url": "",
+      "availability": true,
+      "warehouse": false,
+      "is_multiple": false,
+      "is_return": true,
+      "is_fast_shipping": false,
+      "is_sale": false,
+      "currency": {
+        "id": 1,
+        "name": "pending"
+      },
+      "delivery_type": {
+        "id": 4,
+        "name": "до 30 дней",
+        "view_name": null
+      },
+      "platform": {
+        "id": 2,
+        "platform": "poizon",
+        "site": "poizon"
+      }
+    },
+    {
+      "id": 4,
+      "product": {
+        "id": 1,
+        "in_wishlist": false,
+        "min_price_product_unit": 32990,
+        "model": "Баскетбольные шорты",
+        "colorway": "SS18 Bolt Basketball Short Black",
+        "russian_name": "SS18 Bolt Basketball Short Black",
+        "slug": "supreme-ss18-bolt-basketball-short-black-1",
+        "manufacturer_sku": "SUP-SS18-407",
+        "description": "",
+        "is_custom": false,
+        "is_collab": false,
+        "designer_color": "",
+        "min_price": 32990,
+        "available_flag": true,
+        "has_many_sizes": false,
+        "has_many_colors": false,
+        "has_many_configurations": false,
+        "exact_date": "2018-06-07",
+        "approximate_date": "07.06.2018",
+        "fit": 0,
+        "rel_num": 442,
+        "main_line": null,
+        "collab": null,
+        "main_color": {
+          "id": 1,
+          "name": "multicolour",
+          "is_main_color": false,
+          "russian_name": "",
+          "hex": ""
+        },
+        "recommended_gender": null,
+        "size_table_platform": null,
+        "brands": [
+          {
+            "id": 1,
+            "name": "Supreme",
+            "query_name": "supreme"
+          }
+        ],
+        "categories": [
+          {
+            "id": 21,
+            "name": "Одежда",
+            "eng_name": "clothes",
+            "is_all": false,
+            "full_name": "Одежда",
+            "parent_category": null
+          },
+          {
+            "id": 22,
+            "name": "Вся одежда",
+            "eng_name": "clothes",
+            "is_all": true,
+            "full_name": "Одежда | Вся одежда",
+            "parent_category": {
+              "id": 21,
+              "name": "Одежда",
+              "eng_name": "clothes",
+              "is_all": false,
+              "full_name": "Одежда",
+              "parent_category": null
+            }
+          },
+          {
+            "id": 39,
+            "name": "Спортивная одежда",
+            "eng_name": "sport_clothes",
+            "is_all": false,
+            "full_name": "Одежда | Спортивная одежда",
+            "parent_category": {
+              "id": 21,
+              "name": "Одежда",
+              "eng_name": "clothes",
+              "is_all": false,
+              "full_name": "Одежда",
+              "parent_category": null
+            }
+          },
+          {
+            "id": 40,
+            "name": "Вся спортивная одежда",
+            "eng_name": "sport_clothes",
+            "is_all": true,
+            "full_name": "Одежда | Спортивная одежда | Вся спортивная одежда",
+            "parent_category": {
+              "id": 39,
+              "name": "Спортивная одежда",
+              "eng_name": "sport_clothes",
+              "is_all": false,
+              "full_name": "Одежда | Спортивная одежда",
+              "parent_category": 21
+            }
+          },
+          {
+            "id": 42,
+            "name": "Баскетбольные шорты",
+            "eng_name": "basketball_shorts",
+            "is_all": false,
+            "full_name": "Одежда | Спортивная одежда | Баскетбольные шорты",
+            "parent_category": {
+              "id": 39,
+              "name": "Спортивная одежда",
+              "eng_name": "sport_clothes",
+              "is_all": false,
+              "full_name": "Одежда | Спортивная одежда",
+              "parent_category": 21
+            }
+          }
+        ],
+        "lines": [
+          {
+            "id": 224,
+            "name": "Supreme",
+            "is_all": false,
+            "view_name": "Supreme",
+            "full_name": "Supreme",
+            "full_eng_name": "supreme",
+            "parent_line": null
+          }
+        ],
+        "tags": [],
+        "bucket_link": [
+          {
+            "id": 1,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/8aee0879b67c44d6aaadb7e1543f3c83.jpg"
+          },
+          {
+            "id": 2,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/673a05450cef44a6b6fd0f8a309b4694.jpg"
+          },
+          {
+            "id": 3,
+            "url": "https://cdn.poizon.com/pro-img/origin-img/20220602/baaed7d7c48d4156860e578e241e3d99.jpg"
+          }
+        ],
+        "colors": [],
+        "gender": [
+          {
+            "id": 1,
+            "name": "M"
+          },
+          {
+            "id": 2,
+            "name": "F"
+          }
+        ]
+      },
+      "size_platform": "",
+      "good_size_platform": "36",
+      "size_table_platform": "",
+      "color": "",
+      "configuration": "",
+      "start_price": 32990,
+      "final_price": 32990,
+      "url": "",
+      "availability": false,
+      "warehouse": false,
+      "is_multiple": false,
+      "is_return": true,
+      "is_fast_shipping": true,
+      "is_sale": true,
+      "currency": {
+        "id": 1,
+        "name": "pending"
+      },
+      "delivery_type": {
+        "id": 4,
+        "name": "до 30 дней",
+        "view_name": null
+      },
+      "platform": {
+        "id": 2,
+        "platform": "poizon",
+        "site": "poizon"
+      }
+    }
+  ],
+  "bonus": 0,
+  "total_amount": 98980,
+  "bonus_sale": 0,
+  "promo_sale": 49490,
+  "final_amount": 49490
 }
 ```
 

@@ -30,8 +30,13 @@ from .search_tools import search_best_line, search_best_category, search_best_co
     similar_product, suggest_search
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
-from products.main_page import get_selection, get_photo, get_sellout_photo
+from products.main_page import get_selection, get_photo, get_sellout_photo, get_header_photo
 
+
+
+class GetHeaderPhoto(APIView):
+    def get(self, request):
+        return Response(get_header_photo())
 
 class MainPageBlocks(APIView):
 

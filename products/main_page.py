@@ -11,6 +11,19 @@ from products.serializers import LineSerializer, ProductMainPageSerializer
 from products.tools import get_text
 
 
+def get_header_photo():
+    header = HeaderPhoto.objects.exclude(where='product_page')
+    brand = get_random(header)
+    shoes = get_random(header.filter(categories__eng_name="shoes_category"))
+    clothes = get_random(header.filter(categories__eng_name="clothes"))
+    accessories = get_random(header.filter(categories__eng_name="accessories"))
+    res = {"brand": brand.photo.url,
+           "shoes": shoes.photo.url,
+           "clothes": clothes.photo.url,
+           "accessories": accessories.photo.url}
+    return res
+
+
 def get_random(queryset):
     total_records = queryset.count()
     random_index = randint(0, total_records - 1)

@@ -12,8 +12,11 @@ from users.models import User, EmailConfirmation
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        pr = ProductUnit.objects.all()
+        pr = HeaderPhoto.objects.all()
+        k = 0
         for p in pr:
-            print(p.view_size_platform)
-
+            k += 1
+            if "p" not in p.where:
+                print(p.where)
+        print(k)
 

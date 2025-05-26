@@ -155,6 +155,6 @@ def get_photo(last):
            "mobile": {"photo": random_photo_mobile.photo.url,
                       "title": text_mobile.title,
                       "content": text_mobile.text,
-                      "url_mobile": url_mobile}}
+                      "url": url_mobile}}
 
     return res, type

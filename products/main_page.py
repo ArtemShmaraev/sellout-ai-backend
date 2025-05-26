@@ -23,7 +23,7 @@ def get_line_selection():
     random_line = get_random(lines)
     products = Product.objects.filter(lines=random_line)
     if not products.exists():
-        return get_brand_and_category_selection()
+        return get_line_selection()
     else:
         products = products.order_by("-rel_num")[:30]
         title = f"{random_line.name}"
@@ -36,7 +36,7 @@ def get_collab_selection():
     random_collab = get_random(collabs)
     products = Product.objects.filter(collab=random_collab)
     if not products.exists():
-        return get_brand_and_category_selection()
+        return get_collab_selection()
     else:
         products = products.order_by("-rel_num")[:30]
         title = f"{random_collab.name}"
@@ -93,10 +93,12 @@ def get_sellout_photo(last):
     res = {'type': "photo",
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
                        "title": text.title,
-                       "content": text.text},
+                       "content": text.text,
+                       "url": ""},
            "mobile": {"photo": random_photo_mobile.photo.url,
                       "title": text.title,
-                      "content": text.text}}
+                      "content": text.text,
+                      "url": ""}}
     return res, type
 
 
@@ -111,13 +113,35 @@ def get_photo(last):
     random_photo_mobile = get_random(photos_mobile)
     text_desk = get_text(random_photo_desk, list(random_photo_desk.categories.values_list("eng_name", flat=True)))
     text_mobile = get_text(random_photo_mobile, list(random_photo_desk.categories.values_list("eng_name", flat=True)))
+
+    if random_photo_mobile.lines.exists():
+        line = random_photo_mobile.lines.all().order_by("-id").first()
+        url_mobile = f"line={line.full_eng_name}"
+    elif random_photo_mobile.collabs.exists():
+        collab = random_photo_mobile.collabs.first()
+        url_mobile = f"collab={collab.query_name}"
+    else:
+        url_mobile = ""
+
+    if random_photo_desk.lines.exists():
+        line = random_photo_desk.lines.all().order_by("-id").first()
+        url_desk = f"line={line.full_eng_name}"
+    elif random_photo_desk.collabs.exists():
+        collab = random_photo_desk.collabs.first()
+        url_desk = f"collab={collab.query_name}"
+    else:
+        url_desk = ""
+
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
                        "title": text_desk.title,
-                       "content": text_desk.text},
+                       "content": text_desk.text,
+                       "url": url_desk},
+
            "mobile": {"photo": random_photo_mobile.photo.url,
                       "title": text_mobile.title,
-                      "content": text_mobile.text}}
+                      "content": text_mobile.text,
+                      "url_mobile": url_mobile}}
 
     return res, type

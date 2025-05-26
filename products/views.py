@@ -36,12 +36,14 @@ from products.main_page import get_selection, get_photo, get_sellout_photo
 class MainPageBlocks(APIView):
 
     def get(self, request):
+        more = request.query_params.get("more")
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
 
         last = "any"
-        photo, last = get_sellout_photo(last)
-        res.append(photo)
+        if not more:
+            photo, last = get_sellout_photo(last)
+            res.append(photo)
         for i in range(10):
             type = random.randint(1, 2)
             if type == 1:

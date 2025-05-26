@@ -61,7 +61,7 @@ def get_brand_and_category_selection():
     brands = Brand.objects.all()
     random_brand = get_random(brands)
 
-    category = Category.objects.all()
+    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
     random_category = get_random(category)
 
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))

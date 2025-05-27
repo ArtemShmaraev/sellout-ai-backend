@@ -11,6 +11,26 @@ from products.serializers import LineSerializer
 
 
 
+class RandomGenerator:
+    def __init__(self):
+        self.last_value = None
+        self.same_count = 0
+
+    def generate(self):
+        while True:
+            value = random.randint(0, 1)
+            if value != self.last_value:
+                self.last_value = value
+                self.same_count = 1
+                return value
+            else:
+                self.same_count += 1
+                if (value == 0 and self.same_count >= 3) or (value == 1 and self.same_count >= 5):
+                    self.last_value = 1 - value
+                    self.same_count = 1
+                    return self.last_value
+
+
 def get_product_page_photo(params):
     line = params.getlist('line')
     category = params.getlist("category")
@@ -237,6 +257,20 @@ def check_color_in_list(color_name):
         if color['name'] == color_name:
             return color
     return False
+
+
+def add_product2(data):
+    rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
+    product, create = Product.objects.get_or_create(
+        model=data.get('model'),
+        manufacturer_sku=data.get('manufacturer_sku'),
+        russian_name=data.get('model'),
+        slug=data.get('manufacturer_sku') + str(random.randint(1, 50)),
+        rel_num=int(rel_num if rel_num else 0),
+        is_collab=data.get('is_collab'),
+        main_color=Color.objects.get_or_create(name="multicolour")[0]
+    )
+    # if not create:
 
 
 def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):

@@ -205,7 +205,12 @@ class ProductView(APIView):
         available = self.request.query_params.get("available")
         custom = self.request.query_params.get("custom")
         new = self.request.query_params.get("new")
+        if new:
+            queryset = queryset.order_by('-exact_date').filter()[:1000]
+
         recommendations = self.request.query_params.get("recommendations")
+        if recommendations:
+            queryset = queryset.order_by('-rel_num').filter()[:1000]
 
         if not available:
             queryset = queryset.filter(available_flag=True)
@@ -225,28 +230,28 @@ class ProductView(APIView):
         if line:
             queryset = queryset.filter(lines__full_eng_name__in=line)
 
-            def find_common_ancestor(lines):
-                # Создаем множество для хранения всех родительских линеек
-                # Добавляем все родительские линейки в множество
-                current_line = lines[0]
-                parent_lines = set()
-                parent_lines.add(current_line)
-
-                while current_line.parent_line:
-                    parent_lines.add(current_line.parent_line)
-                    current_line = current_line.parent_line
-
-                # Переберите остальные выбранные линейки и найдите первую общую вершину
-                for line in lines[1:]:
-                    current_line = line
-                    while current_line:
-                        if current_line in parent_lines:
-                            return current_line
-                        current_line = current_line.parent_line
-                print(parent_lines)
-                if len(lines) == 1:
-                    return lines[0]
-                return None  # Если общей родительской линейки не найдено
+            # def find_common_ancestor(lines):
+            #     # Создаем множество для хранения всех родительских линеек
+            #     # Добавляем все родительские линейки в множество
+            #     current_line = lines[0]
+            #     parent_lines = set()
+            #     parent_lines.add(current_line)
+            #
+            #     while current_line.parent_line:
+            #         parent_lines.add(current_line.parent_line)
+            #         current_line = current_line.parent_line
+            #
+            #     # Переберите остальные выбранные линейки и найдите первую общую вершину
+            #     for line in lines[1:]:
+            #         current_line = line
+            #         while current_line:
+            #             if current_line in parent_lines:
+            #                 return current_line
+            #             current_line = current_line.parent_line
+            #     print(parent_lines)
+            #     if len(lines) == 1:
+            #         return lines[0]
+            #     return None  # Если общей родительской линейки не найдено
 
             # Пример использования
             # selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
@@ -262,34 +267,34 @@ class ProductView(APIView):
         if category:
             queryset = queryset.filter(categories__eng_name__in=category)
 
-            def find_common_ancestor(categories):
-
-                current_cat = categories[0]
-                parent_cats = set()
-                parent_cats.add(current_cat)
-
-                while current_cat.parent_category:
-                    parent_cats.add(current_cat.parent_category)
-                    current_cat = current_cat.parent_category
-
-                # Переберите остальные выбранные линейки и найдите первую общую вершину
-                for cat in categories[1:]:
-                    current_cat = cat
-                    while current_cat:
-                        if current_cat in parent_cats:
-                            return current_cat
-                        current_cat = current_cat.parent_category
-                if len(categories) == 1:
-                    return categories[0]
-                return None
-
-            selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
-            if len(selected_cat) > 0:
-                oldest_cat = find_common_ancestor(selected_cat)
-                list_cat.append(oldest_cat)
-                while oldest_cat.parent_category:
-                    list_cat.append(oldest_cat.parent_category)
-                    oldest_cat = oldest_cat.parent_category
+            # def find_common_ancestor(categories):
+            #
+            #     current_cat = categories[0]
+            #     parent_cats = set()
+            #     parent_cats.add(current_cat)
+            #
+            #     while current_cat.parent_category:
+            #         parent_cats.add(current_cat.parent_category)
+            #         current_cat = current_cat.parent_category
+            #
+            #     # Переберите остальные выбранные линейки и найдите первую общую вершину
+            #     for cat in categories[1:]:
+            #         current_cat = cat
+            #         while current_cat:
+            #             if current_cat in parent_cats:
+            #                 return current_cat
+            #             current_cat = current_cat.parent_category
+            #     if len(categories) == 1:
+            #         return categories[0]
+            #     return None
+            #
+            # selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
+            # if len(selected_cat) > 0:
+            #     oldest_cat = find_common_ancestor(selected_cat)
+            #     list_cat.append(oldest_cat)
+            #     while oldest_cat.parent_category:
+            #         list_cat.append(oldest_cat.parent_category)
+            #         oldest_cat = oldest_cat.parent_category
 
         if gender:
             queryset = queryset.filter(gender__name__in=gender)

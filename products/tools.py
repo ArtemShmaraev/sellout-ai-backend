@@ -2,9 +2,78 @@ import random
 import json
 from functools import lru_cache
 from datetime import datetime, date
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText
+
+from django.db.models import Q
+
+from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
+    HeaderPhoto
 from products.serializers import LineSerializer
 
+
+
+def get_product_page_photo(params):
+    line = params.getlist('line')
+    category = params.getlist("category")
+    collab = params.getlist("collab")
+    res = {}
+    header_photos = HeaderPhoto.objects.all()
+    header_photos = header_photos.filter(where="product_page")
+    text = False
+    if category:
+        header_photos = header_photos.filter(categories__eng_name__in=category)
+
+    if line and collab:
+        if "all" in collab:
+            header_photos = header_photos.filter(
+                Q(lines__full_eng_name__in=line) | ~Q(collabs=None)
+            )
+        else:
+            header_photos = header_photos.filter(
+                Q(lines__full_eng_name__in=line) | Q(collabs__query_name__in=collab)
+            )
+    elif line:
+        header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
+
+    elif collab:
+        if "all" in collab:
+            header_photos = header_photos.filter(~Q(collabs=None))
+        else:
+            header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
+    else:
+        text = HeaderText.objects.filter(title="sellout")[random.randint(0, 4)]
+
+    header_photos_desktop = header_photos.filter(type="desktop")
+    header_photos_mobile = header_photos.filter(type="mobile")
+    if header_photos_desktop.count() > 0:
+        count = header_photos_desktop.count()
+    else:
+        header_photos_desktop = HeaderPhoto.objects.filter(type="desktop")
+        count = header_photos_desktop.count()
+
+    photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
+
+    if not text:
+        text_desktop = get_text(photo_desktop, category)
+    else:
+        text_desktop = text
+    res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
+    res['desktop']['photo'] = photo_desktop.photo.url
+
+    if header_photos_mobile.count() > 0:
+        count = header_photos_mobile.count()
+    else:
+        header_photos_mobile = HeaderPhoto.objects.filter(type="mobile")
+        count = header_photos_mobile.count()
+
+    photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
+    if not text:
+        text_mobile = get_text(photo_mobile, category)
+    else:
+        text_mobile = text
+
+    res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
+    res['mobile']['photo'] = photo_mobile.photo.url
+    return res
 
 
 def get_text(photo, category):

@@ -20,7 +20,7 @@ from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text
+from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, get_product_page_photo
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -204,6 +204,16 @@ class ProductView(APIView):
         collab = self.request.query_params.getlist("collab")
         available = self.request.query_params.get("available")
         custom = self.request.query_params.get("custom")
+
+
+        if not available:
+            queryset = queryset.filter(available_flag=True)
+            queryset = queryset.filter(product_units__availability=True)
+            queryset = queryset.distinct()
+        if not custom:
+            queryset = queryset.filter(is_custom=False)
+
+
         new = self.request.query_params.get("new")
         if new:
             queryset = queryset.order_by('-exact_date').filter()[:1000]
@@ -212,12 +222,7 @@ class ProductView(APIView):
         if recommendations:
             queryset = queryset.order_by('-rel_num').filter()[:1000]
 
-        if not available:
-            queryset = queryset.filter(available_flag=True)
-            queryset = queryset.filter(product_units__availability=True)
-            queryset = queryset.distinct()
-        if not custom:
-            queryset = queryset.filter(is_custom=False)
+
         if collab:
             print(collab)
             if "all" in collab:
@@ -432,8 +437,6 @@ class ProductView(APIView):
             text = HeaderText.objects.filter(title="sellout")[randint(0, 4)]
 
 
-
-
         header_photos_desktop = header_photos.filter(type="desktop")
         header_photos_mobile = header_photos.filter(type="mobile")
         if header_photos_desktop.count() > 0:
@@ -462,9 +465,13 @@ class ProductView(APIView):
             text_mobile = get_text(photo_mobile, category)
         else:
             text_mobile = text
-
         res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
         res['mobile']['photo'] = photo_mobile.photo.url
+
+
+        # photos = get_product_page_photo(self.request.query_params)
+        # res["mobile"] = photos['mobile']
+        # res["desktop"] = photos['desktop']
 
         t10 = time()
         print("t9", t10 - t9)

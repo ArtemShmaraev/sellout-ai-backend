@@ -20,7 +20,7 @@ from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, get_product_page_photo
+from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, get_product_page_photo, RandomGenerator
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -41,6 +41,7 @@ class GetHeaderPhoto(APIView):
 class MainPageBlocks(APIView):
 
     def get(self, request):
+        generator = RandomGenerator()
         more = request.query_params.get("more")
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
@@ -50,12 +51,14 @@ class MainPageBlocks(APIView):
             photo, last = get_sellout_photo(last)
             res.append(photo)
         for i in range(10):
-            type = random.randint(1, 2)
+            type = generator.generate()
+            print(type)
             if type == 1:
                 res.append(get_selection(context))
-            elif type == 2:
+            elif type == 0:
                 photo, last = get_photo(last)
                 res.append(photo)
+        del generator
         return Response(res)
 
 

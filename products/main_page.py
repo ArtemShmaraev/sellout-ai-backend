@@ -93,16 +93,33 @@ def get_selection(context):
     return res
 
 
-def get_sellout_photo(last):
+
+def get_photo():
+    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
+    random_photo_desk = get_random(photos_desk)
+    line_desk = random_photo_desk.lines.order_by("-id").first()
+    collab_desk = random_photo_desk.collabs.first()
+
+    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
+
+    if line_desk is not None:
+        photos_mobile = photos_mobile.filter(lines=line_desk)
+    elif collab_desk is not None:
+        photos_mobile = photos_mobile.filter(collabs=collab_desk)
+
+    if not photos_mobile.exists():
+        photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
+
+    random_photo_mobile = get_random(photos_mobile)
+    return random_photo_desk, random_photo_mobile
+
+def get_sellout_photo_text(last):
     type = ["left", "right"]
     if last == "any":
         last = type[randint(0, 1)]
 
+    random_photo_desk, random_photo_mobile = get_photo()
 
-    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
-    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
-    random_photo_desk = get_random(photos_desk)
-    random_photo_mobile = get_random(photos_mobile)
     texts = HeaderText.objects.filter(title="sellout")
     count = texts.count()
     text = texts[randint(0, count - 1)]
@@ -120,17 +137,13 @@ def get_sellout_photo(last):
     return res, type
 
 
-def get_photo(last):
+def get_photo_text(last):
     type = ["left", "right"]
     if last == "any":
         last = type[randint(0, 1)]
 
-    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
-    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
-    random_photo_desk = get_random(photos_desk)
-    random_photo_mobile = get_random(photos_mobile)
-    text_desk = get_text(random_photo_desk, list(random_photo_desk.categories.values_list("eng_name", flat=True)))
-    text_mobile = get_text(random_photo_mobile, list(random_photo_desk.categories.values_list("eng_name", flat=True)))
+    random_photo_desk, random_photo_mobile = get_photo()
+
 
     if random_photo_mobile.lines.exists():
         line = random_photo_mobile.lines.all().order_by("-id").first()
@@ -140,6 +153,7 @@ def get_photo(last):
         url_mobile = f"collab={collab.query_name}"
     else:
         url_mobile = ""
+
 
     if random_photo_desk.lines.exists():
         line = random_photo_desk.lines.all().order_by("-id").first()
@@ -153,13 +167,13 @@ def get_photo(last):
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
-                       "title": text_desk.title,
-                       "content": text_desk.text,
+                       "title": random_photo_desk.header_text.title,
+                       "content": random_photo_desk.header_text.text,
                        "url": url_desk},
 
            "mobile": {"photo": random_photo_mobile.photo.url,
-                      "title": text_mobile.title,
-                      "content": text_mobile.text,
+                      "title": random_photo_mobile.header_text.title,
+                      "content": random_photo_mobile.header_text.text,
                       "url": url_mobile}}
 
     return res, type

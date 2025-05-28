@@ -356,6 +356,7 @@ class HeaderPhoto(models.Model):
     type = models.CharField(max_length=64, default="")
     where = models.CharField(max_length=64, default="")
     photo = models.ForeignKey("Photo", related_name='headers_photo', blank=True, on_delete=models.CASCADE)
+    header_text = models.ForeignKey("HeaderText", related_name='headers_photo', blank=True, on_delete=models.CASCADE, null=True)
 
 
 class HeaderText(models.Model):

@@ -30,7 +30,7 @@ from .search_tools import search_best_line, search_best_category, search_best_co
     similar_product, suggest_search
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
-from products.main_page import get_selection, get_photo, get_sellout_photo, get_header_photo
+from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 
 
 
@@ -48,7 +48,7 @@ class MainPageBlocks(APIView):
 
         last = "any"
         if not more:
-            photo, last = get_sellout_photo(last)
+            photo, last = get_sellout_photo_text(last)
             res.append(photo)
             res.append(get_selection(context))
         for i in range(8):
@@ -57,7 +57,7 @@ class MainPageBlocks(APIView):
             if type == 1:
                 res.append(get_selection(context))
             elif type == 0:
-                photo, last = get_photo(last)
+                photo, last = get_photo_text(last)
                 res.append(photo)
         del generator
         return Response(res)
@@ -416,7 +416,6 @@ class ProductView(APIView):
 
         header_photos = HeaderPhoto.objects.all()
         header_photos = header_photos.filter(where="product_page")
-        text = False
         if category:
             header_photos = header_photos.filter(categories__eng_name__in=category)
 
@@ -437,8 +436,7 @@ class ProductView(APIView):
                 header_photos = header_photos.filter(~Q(collabs=None))
             else:
                 header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
-        else:
-            text = HeaderText.objects.filter(title="sellout")[randint(0, 4)]
+
 
 
         header_photos_desktop = header_photos.filter(type="desktop")
@@ -451,11 +449,7 @@ class ProductView(APIView):
 
         photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
 
-        if not text:
-            text_desktop = get_text(photo_desktop, category)
-        else:
-            text_desktop = text
-        res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
+        res["desktop"] = {"title": photo_desktop.header_text.title, "content": photo_desktop.header_text.text}
         res['desktop']['photo'] = photo_desktop.photo.url
 
         if header_photos_mobile.count() > 0:
@@ -465,11 +459,8 @@ class ProductView(APIView):
             count = header_photos_mobile.count()
 
         photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
-        if not text:
-            text_mobile = get_text(photo_mobile, category)
-        else:
-            text_mobile = text
-        res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
+
+        res["mobile"] = {"title": photo_mobile.header_text.title, "content": photo_mobile.header_text.text}
         res['mobile']['photo'] = photo_mobile.photo.url
 
 

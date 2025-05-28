@@ -252,12 +252,16 @@ class SizeTableInLK(APIView):
             if user.clothes_size is not None:
                 res["user_clothes_size"] = user.clothes_size.id
 
-            if user.gender.name == "M":
-                size_tables = SizeTableSerializer(
-                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
+            if user.gender:
+                if user.gender.name == "M":
+                    size_tables = SizeTableSerializer(
+                        SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
+                else:
+                    size_tables = SizeTableSerializer(
+                        SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data
             else:
                 size_tables = SizeTableSerializer(
-                    SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data
+                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
             res['size_tables'] = size_tables
             return Response(res)
         except User.DoesNotExist:

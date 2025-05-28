@@ -50,7 +50,8 @@ class MainPageBlocks(APIView):
         if not more:
             photo, last = get_sellout_photo(last)
             res.append(photo)
-        for i in range(10):
+            res.append(get_selection(context))
+        for i in range(8):
             type = generator.generate()
             print(type)
             if type == 1:

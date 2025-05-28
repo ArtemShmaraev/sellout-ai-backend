@@ -99,9 +99,8 @@ def get_sellout_photo(last):
         last = type[randint(0, 1)]
 
 
-
-    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="test")
-    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="test")
+    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
+    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
     random_photo_desk = get_random(photos_desk)
     random_photo_mobile = get_random(photos_mobile)
     texts = HeaderText.objects.filter(title="sellout")

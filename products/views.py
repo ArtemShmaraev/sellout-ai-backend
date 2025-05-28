@@ -487,6 +487,8 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
+
+
             product.rel_num += 1
             product.save()
             serializer = ProductSerializer(product, context={"list_lines": True,

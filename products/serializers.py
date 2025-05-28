@@ -83,6 +83,15 @@ class LineSerializer(serializers.ModelSerializer):
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
 
 
+
+class LineMinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Line
+        # fields = '__all__'
+        exclude = ['full_name', "parent_line"]
+        depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
 class BrandSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
 
@@ -125,16 +134,15 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
-    min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
-
     # is_sale = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()
     # is_return = serializers.SerializerMethodField()
     list_lines = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Product
-        exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id"]
+        exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]
         depth = 2
 
     def get_list_lines(self, obj):
@@ -150,7 +158,7 @@ class ProductSerializer(serializers.ModelSerializer):
             return parents[::-1]
 
         if list_lines:
-            s = LineSerializer(get_line_parents(obj.main_line), many=True).data
+            s = LineMinSerializer(get_line_parents(obj.main_line), many=True).data
         return s
 
     # def get_is_return(self, obj):
@@ -162,27 +170,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # def get_is_sale(self, obj):
     #     return obj.product_units.filter(is_sale=True).exists()
 
-    def get_min_price_product_unit(self, obj):
-        size = self.context.get('size')
-        price_max = self.context.get('price_max')
-        price_min = self.context.get('price_min')
 
-        # Проверьте, соответствуют ли значения фильтров product_unit
-        filters = Q(availability=True)
-
-        if size:
-            filters &= Q(size__in=size)
-
-        if price_max:
-            filters &= Q(final_price__lte=price_max)
-
-        if price_min:
-            filters &= Q(final_price__gte=price_min)
-
-        if filters:
-            return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-        else:
-            return obj.min_price
 
     def get_in_wishlist(self, product):
         # user_id = self.context.get('user_id')

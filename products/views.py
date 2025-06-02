@@ -55,7 +55,6 @@ class MainPageBlocks(APIView):
         res.append(get_selection(context))
         for i in range(8):
             type = generator.generate()
-            print(type)
             if type == 1:
                 res.append(get_selection(context))
             elif type == 0:
@@ -230,7 +229,6 @@ class ProductView(APIView):
 
 
         if collab:
-            print(collab)
             if "all" in collab:
                 queryset = queryset.filter(is_collab=True)
             else:
@@ -480,6 +478,7 @@ class ProductView(APIView):
         t10 = time()
         print("t9", t10 - t9)
         print("t", t10 - t0)
+        print(res['mobile']['photo'])
 
         return Response(res)
 

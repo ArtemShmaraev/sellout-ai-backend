@@ -193,39 +193,31 @@ def build_line_tree():
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
 
-    # def sort_children(data):
-    #     order = {'low': 0, 'mid': 1, 'high': 2, "air jordan 1": 3,
-    #              "air jordan 2": 4, "air jordan 3": 5, "air jordan 4": 6,
-    #              "air jordan 5": 7, "air jordan 6": 8, "air jordan 7": 9,
-    #              "air jordan 8": 10, "air jordan 9": 11, "air jordan 10": 12,
-    #              "air jordan 11": 13, "air jordan 12": 14, "air jordan 13": 15,
-    #              "air jordan 14": 16, "air jordan 15": 17}
-    #
-    #     def sort_key(child):
-    #         name = child['name'].lower()
-    #         if 'все' in name:
-    #             return 0, '', ''
-    #         elif name.isdigit():
-    #             return (1, int(name), '')
-    #         return 1, order.get(name, float('inf')), name
-    #
-    #     # for item in data:
-    #     #     children = item.get('children')
-    #     #     if children:
-    #     #         item['children'] = sorted(children, key=sort_key)
-    #     #         sort_children(item['children'])
-    #     return data
+    def sort_children(data):
+        for item in data:
+            children = item.get('children')
+            if children:
+                # Сначала сортируем элементы, исключая "Другие"
+                sorted_children = sorted([child for child in children if "Другие" not in child['name']],
+                                         key=lambda x: x["id"])
+                # Добавляем элементы с именем "Другие" в конец
+                other_children = [child for child in children if "Другие" in child['name']]
+                sorted_children += other_children
+                item['children'] = sorted_children
+                # Рекурсивно сортируем дочерние элементы
+                sort_children(item['children'])
+        return data
 
-    # root_lines = sort_children(root_lines)
+    root_lines = sort_children(root_lines)
     with_children = [x for x in root_lines if x.get('children')]
     without_children = [x for x in root_lines if not x.get('children')]
 
-    # sorted_data_with_children = sorted(with_children, key=lambda x: x['name'].lower())
+    sorted_data_with_children = sorted(with_children, key=lambda x: x["id"])
 
     # Сортируем оставшиеся элементы
     sorted_data_without_children = sorted(without_children, key=lambda x: x['view_name'].lower())
     # Объединяем отсортированные части
-    sorted_data = with_children + sorted_data_without_children
+    sorted_data = sorted_data_with_children + sorted_data_without_children
     return sorted_data
 
 

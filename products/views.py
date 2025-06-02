@@ -355,7 +355,7 @@ class ProductView(APIView):
         print("t2", t3 - t2)
 
         ordering = self.request.query_params.get('ordering', '-rel_num')
-        if ordering in ['exact_date', 'rel_num', '-rel_num']:
+        if ordering in ['exact_date', 'rel_num', '-rel_num', "-exact_date"]:
             queryset = queryset.order_by(ordering)
         elif ordering == "min_price" or ordering == "-min_price":
             if size:

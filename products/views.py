@@ -3,6 +3,7 @@ import random
 from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
+
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case
 # from haystack.query import SearchQuerySet
 from rest_framework.decorators import api_view, action
@@ -51,7 +52,7 @@ class MainPageBlocks(APIView):
         if not more:
             photo, last = get_sellout_photo_text(last)
             res.append(photo)
-            res.append(get_selection(context))
+        res.append(get_selection(context))
         for i in range(8):
             type = generator.generate()
             print(type)
@@ -385,8 +386,9 @@ class ProductView(APIView):
         # res = paginator.get_paginated_response(serializer)
 
         # res["count"] = queryset.count()
+        res['count'] = queryset.values('id').count()
 
-        res["count"] = 1000
+        # res["count"] = 1000
         t5 = time()
         print("t4", t5 - t4)
 

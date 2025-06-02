@@ -20,7 +20,8 @@ from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, get_product_page_photo, RandomGenerator
+from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
+    get_product_page_photo, RandomGenerator, get_product_text
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -169,7 +170,7 @@ class ProductSearchView(APIView):
 
 class ProductView(APIView):
 
-    @method_decorator(cache_page(60 * 5))
+    # @method_decorator(cache_page(60 * 5))
     def get(self, request):
 
         t0 = time()
@@ -448,8 +449,11 @@ class ProductView(APIView):
             count = header_photos_desktop.count()
 
         photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
+        text_desktop = get_product_text(line, collab, category)
+        if text_desktop is None:
+            text_desktop = photo_desktop.header_text
 
-        res["desktop"] = {"title": photo_desktop.header_text.title, "content": photo_desktop.header_text.text}
+        res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
         res['desktop']['photo'] = photo_desktop.photo.url
 
         if header_photos_mobile.count() > 0:
@@ -459,8 +463,11 @@ class ProductView(APIView):
             count = header_photos_mobile.count()
 
         photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
+        text_mobile = get_product_text(line, collab, category)
+        if text_mobile is None:
+            text_mobile = photo_mobile.header_text
 
-        res["mobile"] = {"title": photo_mobile.header_text.title, "content": photo_mobile.header_text.text}
+        res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
         res['mobile']['photo'] = photo_mobile.photo.url
 
 

@@ -5,6 +5,7 @@ from datetime import datetime, date
 
 from django.db.models import Q
 
+from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto
 from products.serializers import LineSerializer
@@ -94,6 +95,20 @@ def get_product_page_photo(params):
     res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
     res['mobile']['photo'] = photo_mobile.photo.url
     return res
+
+
+def get_product_text(line, collab, category):
+    texts = HeaderText.objects.all()
+    if line:
+        texts = texts.filter(Q(lines__full_eng_name__in=line))
+    elif collab:
+        texts = texts.filter(Q(collabs__query_name__in=collab))
+    elif category:
+        texts = texts.filter(categories__eng_name__in=category)
+    text = get_random(texts)
+    return text
+
+
 
 
 def get_text(photo, category):

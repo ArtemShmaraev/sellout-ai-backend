@@ -8,10 +8,6 @@ from django.db.models import Q
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto
 from products.serializers import LineSerializer, ProductMainPageSerializer
-from products.tools import get_text
-
-
-
 
 
 
@@ -29,10 +25,13 @@ def get_header_photo():
 
 
 def get_random(queryset):
-    total_records = queryset.count()
-    random_index = randint(0, total_records - 1)
-    random_obj = queryset[random_index]
-    return random_obj
+    try:
+        total_records = queryset.count()
+        random_index = randint(0, total_records - 1)
+        random_obj = queryset[random_index]
+        return random_obj
+    except:
+        return None
 
 
 def get_line_selection():

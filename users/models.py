@@ -27,7 +27,7 @@ class User(AbstractUser):
         related_name='my_users'
     )
     verify_email = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, default="")
 
     gender = models.ForeignKey("Gender", on_delete=models.PROTECT, null=True, blank=True,
                                related_name="users")

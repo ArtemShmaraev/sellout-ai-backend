@@ -10,7 +10,6 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from products.serializers import LineSerializer, ProductMainPageSerializer
 
 
-
 def get_header_photo():
     header = HeaderPhoto.objects.exclude(where='product_page')
     brand = get_random(header)
@@ -92,7 +91,6 @@ def get_selection(context):
     return res
 
 
-
 def get_photo():
     photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
     random_photo_desk = get_random(photos_desk)
@@ -112,6 +110,7 @@ def get_photo():
     random_photo_mobile = get_random(photos_mobile)
     return random_photo_desk, random_photo_mobile
 
+
 def get_sellout_photo_text(last):
     type = ["left", "right"]
     if last == "any":
@@ -128,11 +127,13 @@ def get_sellout_photo_text(last):
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
                        "title": text.title,
                        "content": text.text,
-                       "url": ""},
+                       "url": "",
+                       "button": "Все товары"},
            "mobile": {"photo": random_photo_mobile.photo.url,
                       "title": text.title,
                       "content": text.text,
-                      "url": ""}}
+                      "url": "",
+                      "button": "Все товары"}}
     return res, type
 
 
@@ -143,7 +144,6 @@ def get_photo_text(last):
 
     random_photo_desk, random_photo_mobile = get_photo()
 
-
     if random_photo_mobile.lines.exists():
         line = random_photo_mobile.lines.all().order_by("-id").first()
         url_mobile = f"line={line.full_eng_name}"
@@ -152,7 +152,6 @@ def get_photo_text(last):
         url_mobile = f"collab={collab.query_name}"
     else:
         url_mobile = ""
-
 
     if random_photo_desk.lines.exists():
         line = random_photo_desk.lines.all().order_by("-id").first()
@@ -168,11 +167,14 @@ def get_photo_text(last):
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
                        "title": random_photo_desk.header_text.title,
                        "content": random_photo_desk.header_text.text,
-                       "url": url_desk},
+                       "url": url_desk,
+                       "button": "Посмотреть все"},
 
            "mobile": {"photo": random_photo_mobile.photo.url,
                       "title": random_photo_mobile.header_text.title,
                       "content": random_photo_mobile.header_text.text,
-                      "url": url_mobile}}
+                      "url": url_mobile,
+                      "button": "Посмотреть все"
+                      }}
 
     return res, type

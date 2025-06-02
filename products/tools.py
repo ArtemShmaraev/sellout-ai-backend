@@ -105,7 +105,10 @@ def get_product_text(line, collab, category):
         texts = texts.filter(Q(collabs__query_name__in=collab))
     elif category:
         texts = texts.filter(categories__eng_name__in=category)
+    elif not line and not collab and not category:
+        texts = texts.filter(title="sellout")
     text = get_random(texts)
+
     return text
 
 

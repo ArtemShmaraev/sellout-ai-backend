@@ -12,6 +12,8 @@ from products.serializers import LineSerializer
 
 
 
+
+
 class RandomGenerator:
     def __init__(self):
         self.last_value = None

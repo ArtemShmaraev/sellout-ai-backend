@@ -221,11 +221,11 @@ class ProductView(APIView):
 
         new = self.request.query_params.get("new")
         if new:
-            queryset = queryset.order_by('-exact_date').filter()[:1000]
+            new_q = queryset.order_by('-exact_date')[:1000]
 
         recommendations = self.request.query_params.get("recommendations")
         if recommendations:
-            queryset = queryset.order_by('-rel_num').filter()[:1000]
+            recommendations_q = queryset.order_by('-rel_num')[:1000]
 
 
         if collab:
@@ -333,6 +333,12 @@ class ProductView(APIView):
             # Выполняем фильтрацию
             queryset = queryset.filter(filters)
         queryset = queryset.distinct()
+
+        if new:
+            queryset = queryset & new_q
+
+        if recommendations:
+            queryset = queryset & recommendations_q
 
         t2 = time()
         print("t1", t2 - t1)

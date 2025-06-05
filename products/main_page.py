@@ -76,7 +76,7 @@ def get_brand_and_category_selection():
         return title, products, url
 
 
-def get_selection(context):
+def get_selection():
     type = randint(1, 3)
     if type == 1:
         title, queryset, url = get_brand_and_category_selection()
@@ -85,10 +85,7 @@ def get_selection(context):
     else:
         title, queryset, url = get_line_selection()
     res = {"type": "selection", "title": title, "url": url}
-
-    products = ProductMainPageSerializer(queryset, many=True, context=context).data
-    res["products"] = products
-    return res
+    return queryset, res
 
 
 def get_photo():

@@ -47,27 +47,58 @@ class GetHeaderPhoto(APIView):
 class MainPageBlocks(APIView):
 
     def get(self, request):
-
-
-        generator = RandomGenerator()
         more = request.query_params.get("more")
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
+        s = [2, 1, 1, 0, 1, 1, 0, 0, 1]
 
         last = "any"
         if not more:
-            photo, last = get_sellout_photo_text(last)
-            res.append(photo)
-        # res.append(get_selection(context))
-        for i in range(20):
-            type = generator.generate()
-            type = 0
-            if type == 1:
-                res.append(get_selection(context))
-            elif type == 0:
-                photo, last = get_photo_text(last)
-                res.append(photo)
-        del generator
+            for i in range(9):
+                type = s[i]
+                if type == 0:
+                    cache_photo_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_photo_key)
+
+                    if cached_data is not None:
+                        photo, last = cached_data
+                    else:
+                        photo, last = get_photo_text(last)
+                        cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
+                    res.append(photo)
+
+                elif type == 1:
+                    cache_sellection_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_sellection_key)
+
+                    if cached_data is not None:
+                        queryset, selection = cached_data
+                    else:
+                        queryset, selection = get_selection()
+                        cache.set(cache_sellection_key, (queryset, selection), 60 * 60 * 5)
+                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+                    res.append(selection)
+                else:
+                    cache_photo_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_photo_key)
+                    if cached_data is not None:
+                        photo, last = cached_data
+                    else:
+                        photo, last = get_sellout_photo_text(last)
+                        cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
+                    res.append(photo)
+        else:
+            generator = RandomGenerator()
+            for i in range(9):
+                type = generator.generate()
+                if type == 1:
+                    queryset, selection = get_selection()
+                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+                    res.append(selection)
+                elif type == 0:
+                    photo, last = get_photo_text(last)
+                    res.append(photo)
+            del generator
         return Response(res)
 
 

@@ -187,13 +187,13 @@ class Product(models.Model):
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
 
-    model = models.CharField(max_length=255, null=False, blank=True)
-    colorway = models.CharField(max_length=255, null=False, blank=True)
+    model = models.CharField(max_length=255, null=False, blank=True, db_index=True)
+    colorway = models.CharField(max_length=255, null=False, blank=True, db_index=True)
     russian_name = models.CharField(max_length=255, null=False, blank=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
     manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
-    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True)
+    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True, db_index=True)
 
     is_custom = models.BooleanField(default=False, db_index=True)
     is_collab = models.BooleanField(default=False, db_index=True)

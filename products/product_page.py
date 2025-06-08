@@ -89,7 +89,7 @@ def get_product_page(request):
     t0 = time()
     queryset = Product.objects.all()
     t1 = time()
-    res = {}
+    res = {'add_filter': ""}
     print("t0", t1 - t0)
 
     query = params.get('q')

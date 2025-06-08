@@ -15,11 +15,12 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
+
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
 FRONTEND_HOST = "sellout.su"
 
-
+#
 # HOST = "127.0.0.1"
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
@@ -66,7 +67,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_slugify_processor',
-    'django_filters'
+    'django_filters',
+    # "social_django"
 ]
 
 
@@ -271,7 +273,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-#
+# #
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Set to True to always redirect HTTP requests to HTTPS
@@ -286,3 +288,12 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": "51.250.74.115:11211",
+        'TIMEOUT': 60
+    }
+}

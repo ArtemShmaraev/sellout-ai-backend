@@ -121,6 +121,8 @@ def search_product(query, queryset, page_number=1):
     # )
 
     search = search[:1000]
+    print(search)
+    print(100)
 
     response = search.execute()
     # Определите пороговое значение для подходящих результатов (50% от max_score)
@@ -131,7 +133,7 @@ def search_product(query, queryset, page_number=1):
     #     json.dump(response.to_dict(), f, indent=4)
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
-    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.75]
+    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
     queryset = Product.objects.filter(id__in=product_ids)
 
     # Определение порядка объектов в queryset
@@ -153,24 +155,26 @@ def search_product(query, queryset, page_number=1):
     # product_ids = [hit.meta.id for hit in queryset]
     # queryset = Product.objects.filter(id__in=product_ids).order_by('id')
 
-    # search_line = search_best_line(query)
-    # search_category = search_best_category(query)
-    # search_color = search_best_color(query)
-    # search_collab = search_best_collab(query)
+
+
+    search_line = search_best_line(query)
+    search_category = search_best_category(query)
+    search_color = search_best_color(query)
+    search_collab = search_best_collab(query)
     res = {"queryset": queryset}
     url = "?"
-    # if search_collab:
-    #     url += f"collab={search_collab.name}&"
-    #     res['collab'] = search_collab.name
-    # if search_category:
-    #     url += f"category={search_category.eng_name}&"
-    #     res['category'] = search_category.eng_name
-    # if search_line:
-    #     url += f"line={search_line.full_eng_name}&"
-    #     res['line'] = search_line.full_eng_name
-    # if search_color:
-    #     url += f"color={search_color.name}&"
-    #     res['color'] = search_color.name
+    if search_collab:
+        url += f"collab={search_collab.name}&"
+        res['collab'] = search_collab.name
+    if search_category:
+        url += f"category={search_category.eng_name}&"
+        res['category'] = search_category.eng_name
+    if search_line:
+        url += f"line={search_line.full_eng_name}&"
+        res['line'] = search_line.full_eng_name
+    if search_color:
+        url += f"color={search_color.name}&"
+        res['color'] = search_color.name
     res['url'] = url
     return res
 

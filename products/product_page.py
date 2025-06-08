@@ -247,19 +247,21 @@ def get_product_page(request):
         queryset = search['queryset']
         res['add_filter'] = search['url']
 
-        # if 'category' in search:
-        #     category.append(search['category'])
-        # if 'collab' in search:
-        #     collab.append(search['collab'])
-        # if 'line' in search:
-        #     line.append(search['line'])
-        # if 'color' in search:
-        #     color.append(search['color'])
+        if 'category' in search:
+            category.append(search['category'])
+        if 'collab' in search:
+            collab.append(search['collab'])
+        if 'line' in search:
+            line.append(search['line'])
+        if 'color' in search:
+            color.append(search['color'])
+        print(search)
+        print()
 
     t3 = time()
     print("t2", t3 - t2)
 
-    ordering = params.get('ordering', '-rel_num')
+    ordering = params.get('ordering', '-rel_num' if not query else "")
     if ordering in ['exact_date', 'rel_num', '-rel_num', "-exact_date"]:
         queryset = queryset.order_by(ordering)
     elif ordering == "min_price" or ordering == "-min_price":

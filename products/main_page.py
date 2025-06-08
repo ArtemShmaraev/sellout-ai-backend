@@ -2,6 +2,7 @@ from random import randint
 import json
 from functools import lru_cache
 from datetime import datetime, date
+from time import time
 
 from django.db.models import Q
 
@@ -11,21 +12,24 @@ from products.serializers import LineSerializer, ProductMainPageSerializer
 
 
 def get_header_photo():
+    t = time()
     header = HeaderPhoto.objects.exclude(where='product_page')
-    brand = get_random(header)
-    shoes = get_random(header.filter(categories__eng_name="shoes_category"))
-    clothes = get_random(header.filter(categories__eng_name="clothes"))
-    accessories = get_random(header.filter(categories__eng_name="accessories"))
+    brand = header[randint(0, 663)]
+    shoes = header.filter(categories__eng_name="shoes_category")[randint(0, 591)]
+    clothes = header.filter(categories__eng_name="clothes")[randint(0, 42)]
+    accessories = header.filter(categories__eng_name="accessories")[randint(0, 23)]
     res = {"brand": brand.photo.url,
            "shoes": shoes.photo.url,
            "clothes": clothes.photo.url,
            "accessories": accessories.photo.url}
+    t1 = time()
+    print(t1-t)
     return res
 
 
 def get_random(queryset):
     try:
-        total_records = queryset.count()
+        total_records = queryset.values("id").count()
         random_index = randint(0, total_records - 1)
         random_obj = queryset[random_index]
         return random_obj

@@ -255,8 +255,7 @@ def get_product_page(request):
             line.append(search['line'])
         if 'color' in search:
             color.append(search['color'])
-        print(search)
-        print()
+
 
     t3 = time()
     print("t2", t3 - t2)

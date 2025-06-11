@@ -245,6 +245,8 @@ class ProductView(APIView):
         print("t6", t7 - t6)
         serializer = serializer.data
         res["results"] = serializer
+        t8 = time()
+        print("t7", t8 - t7)
 
         cache_header_key = f"product_header:{url_hash}"  # Уникальный ключ для каждой URL
         cached_header = cache.get(cache_header_key)
@@ -257,7 +259,7 @@ class ProductView(APIView):
         res["desktop"] = photos['desktop']
 
         t10 = time()
-        print("t9", t10 - t7)
+        print("t9", t10 - t8)
         print("t", t10 - t0)
 
         return Response(res)

@@ -99,21 +99,36 @@ def get_product_page_photo(params):
     return res
 
 
-def get_product_text(line, collab, category):
+def get_product_text(line, collab, category, new, recommendations):
     texts = HeaderText.objects.all()
     if line:
         texts = texts.filter(Q(lines__full_eng_name__in=line))
     elif collab:
         texts = texts.filter(Q(collabs__query_name__in=collab))
     elif category:
-        texts = texts.filter(categories__eng_name__in=category)
-    elif not line and not collab and not category:
+        categories = Category.objects.filter(eng_name__in=category)
+        list_cat = []
+        for cat in categories:
+            list_cat.append(cat.eng_name)
+            curent = cat
+            while curent.parent_category is not None:
+                curent = curent.parent_category
+                list_cat.append(curent.eng_name)
+        if "sneakers" in list_cat:
+            texts = texts.filter(title="Кроссовки")
+        elif "shoes_category" in list_cat:
+            texts = texts.filter(title="Обувь")
+        else:
+            texts = texts.filter(title="sellout")
+    elif new:
+        texts = texts.filter(title="Новинки")
+    elif recommendations:
+        texts = texts.filter(title="Рекомендации")
+    elif not line and not collab and not category and not new and not recommendations:
         texts = texts.filter(title="sellout")
     text = get_random(texts)
 
     return text
-
-
 
 
 def get_text(photo, category):

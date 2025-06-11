@@ -233,6 +233,10 @@ class Product(models.Model):
     platform_info = models.JSONField(blank=True, null=True)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
+    parameters = models.JSONField(blank=True, null=True, default=dict)  # {параметр: {значение: value, is_show: true}}
+    
+
+
     objects = ProductManager()
 
     def save(self, *args, **kwargs):

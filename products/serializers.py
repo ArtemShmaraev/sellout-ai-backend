@@ -190,7 +190,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "min_price_product_unit", "in_wishlist", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link"]
+        fields = ["id", "exact_date", "min_price_product_unit", "in_wishlist", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",

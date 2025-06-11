@@ -28,6 +28,8 @@ def get_product_page_header(request):
     line = request.query_params.getlist('line')
     category = request.query_params.getlist("category")
     collab = request.query_params.getlist("collab")
+    new = request.query_params.get("new")
+    recommendations = request.query_params.get("recommendations")
     header_photos = HeaderPhoto.objects.all()
     header_photos = header_photos.filter(where="product_page")
     if category:
@@ -53,14 +55,12 @@ def get_product_page_header(request):
 
     header_photos_desktop = header_photos.filter(type="desktop")
     header_photos_mobile = header_photos.filter(type="mobile")
-    if header_photos_desktop.count() > 0:
-        count = header_photos_desktop.count()
-    else:
+    if not header_photos_desktop.exists():
         header_photos_desktop = HeaderPhoto.objects.filter(type="desktop")
-        count = header_photos_desktop.count()
+    count = header_photos_desktop.count()
 
     photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
-    text_desktop = get_product_text(line, collab, category)
+    text_desktop = get_product_text(line, collab, category, new, recommendations)
     if text_desktop is None:
         text_desktop = photo_desktop.header_text
 
@@ -74,7 +74,7 @@ def get_product_page_header(request):
         count = header_photos_mobile.count()
 
     photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
-    text_mobile = get_product_text(line, collab, category)
+    text_mobile = get_product_text(line, collab, category, new, recommendations)
     if text_mobile is None:
         text_mobile = photo_mobile.header_text
 
@@ -119,12 +119,14 @@ def get_product_page(request):
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
+
+
     new = params.get("new")
-    if new:
+    if new and not query:
         new_q = queryset.order_by('-exact_date')[:1000]
 
     recommendations = params.get("recommendations")
-    if recommendations:
+    if recommendations and not query:
         recommendations_q = queryset.order_by('-rel_num')[:1000]
 
     if collab:
@@ -233,11 +235,14 @@ def get_product_page(request):
         queryset = queryset.filter(filters)
     queryset = queryset.distinct()
 
-    if new:
-        queryset = queryset & new_q
 
-    if recommendations:
-        queryset = queryset & recommendations_q
+    if new and not query:
+        queryset = queryset.filter(id__in=new_q)
+
+
+    if recommendations and not query:
+        queryset = queryset.filter(id__in=recommendations_q)
+
 
     t2 = time()
     print("t1", t2 - t1)
@@ -255,6 +260,8 @@ def get_product_page(request):
             line.append(search['line'])
         if 'color' in search:
             color.append(search['color'])
+
+
 
 
     t3 = time()

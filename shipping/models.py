@@ -88,6 +88,8 @@ class ProductUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
+
+    dimensions = models.JSONField(default=dict)
     history_price = models.JSONField(default=list)
 
     def __str__(self):

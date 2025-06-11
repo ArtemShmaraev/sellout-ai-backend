@@ -289,11 +289,9 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
 CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://51.250.74.11:6379/1",  # Укажите ваш адрес Redis-сервера
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+    'default': {
+        'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
+        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+        'TIMEOUT': 60 * 15,  # Время жизни кэша (в секундах)
     }
 }

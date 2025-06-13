@@ -126,6 +126,10 @@ def get_product_text(line, collab, category, new, recommendations):
         texts = texts.filter(title="Рекомендации")
     elif not line and not collab and not category and not new and not recommendations:
         texts = texts.filter(title="sellout")
+    if not texts.exists():
+        texts = HeaderText.objects.filter(title="sellout")
+
+
     text = get_random(texts)
 
     return text

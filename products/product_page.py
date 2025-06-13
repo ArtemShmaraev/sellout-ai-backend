@@ -123,11 +123,11 @@ def get_product_page(request):
 
     new = params.get("new")
     if new and not query:
-        new_q = queryset.order_by('-exact_date')[:1000]
+        new_q = queryset.order_by('-exact_date')[:250]
 
     recommendations = params.get("recommendations")
     if recommendations and not query:
-        recommendations_q = queryset.order_by('-rel_num')[:1000]
+        recommendations_q = queryset.order_by('-rel_num')[:250]
 
     if collab:
         if "all" in collab:
@@ -262,12 +262,15 @@ def get_product_page(request):
             color.append(search['color'])
 
 
-
-
     t3 = time()
     print("t2", t3 - t2)
+    default_ordering = "-rel_num"
+    if new:
+        default_ordering = "-exact_date"
+    if query:
+        default_ordering = ""
 
-    ordering = params.get('ordering', '-rel_num' if not query else "")
+    ordering = params.get('ordering', default_ordering)
     if ordering in ['exact_date', 'rel_num', '-rel_num', "-exact_date"]:
         queryset = queryset.order_by(ordering)
     elif ordering == "min_price" or ordering == "-min_price":

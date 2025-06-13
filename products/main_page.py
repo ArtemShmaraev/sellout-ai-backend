@@ -41,6 +41,8 @@ def get_line_selection():
     lines = Line.objects.filter(~Q(parent_line=None))
     random_line = get_random(lines)
     products = Product.objects.filter(lines=random_line)
+    filters = Q(product_units__availability=True)
+    products = products.filter(filters).distinct()
     if not products.exists():
         return get_line_selection()
     else:

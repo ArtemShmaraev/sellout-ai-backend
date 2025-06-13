@@ -77,27 +77,31 @@ def confirm_email(request, token):
 
 
 class SendSetPassword(APIView):
-    def get(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        # Генерируйте токен и преобразуйте его в строку
-        token = default_token_generator.make_token(user)
-        # Преобразуйте идентификатор пользователя в строку и закодируйте его
-        uid_str = str(user.pk)
-        uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
+    def get(self, request, email):
+        try:
+            user = User.objects.get(email=email)
+            # Генерируйте токен и преобразуйте его в строку
+            token = default_token_generator.make_token(user)
+            # Преобразуйте идентификатор пользователя в строку и закодируйте его
+            uid_str = str(user.pk)
+            uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
 
-        # Создайте ссылку с токеном и идентификатором пользователя
-        reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
-        url = "https://sellout.su/mail/send_customer_service_mail/"
-        recipient_email = user.email
-        body = reset_password_link
+            # Создайте ссылку с токеном и идентификатором пользователя
+            reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
+            url = "https://sellout.su/mail/send_customer_service_mail/"
+            recipient_email = user.email
+            body = reset_password_link
 
-        params = {
-            "recipient_email": recipient_email,
-            "body": body
-        }
+            params = {
+                "recipient_email": recipient_email,
+                "body": body
+            }
 
-        requests.get(url, params=params)
-        return Response("ok")
+            requests.get(url, params=params)
+            return Response("ok")
+
+        except User.DoesNotExist:
+            return Response("Пользователь не найден.", status=status.HTTP_404_NOT_FOUND)
 
 
 class UserChangePasswordLK(APIView):

@@ -79,20 +79,25 @@ def confirm_email(request, token):
 class SendSetPassword(APIView):
     def get(self, request, user_id):
         user = User.objects.get(id=user_id)
-        print(user)
-
         # Генерируйте токен и преобразуйте его в строку
         token = default_token_generator.make_token(user)
-        print(token)
         # Преобразуйте идентификатор пользователя в строку и закодируйте его
         uid_str = str(user.pk)
         uidb64 = urlsafe_base64_encode(force_bytes(uid_str))
 
         # Создайте ссылку с токеном и идентификатором пользователя
         reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
-        print(reset_password_link)
-        return Response("ok")
+        url = "https://sellout.su/mail/send_customer_service_mail/"
+        recipient_email = user.email
+        body = reset_password_link
 
+        params = {
+            "recipient_email": recipient_email,
+            "body": body
+        }
+
+        requests.get(url, params=params)
+        return Response("ok")
 
 
 class UserChangePasswordLK(APIView):

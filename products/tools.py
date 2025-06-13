@@ -310,6 +310,7 @@ def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
     rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
     manufactorer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", "")
     if SG_PRODUCTS.filter(manufacturer_sku=manufactorer_sku).exists() and not data.get('is_custom'):
+        print("повтор")
         return 0
         # Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku')).delete()
         product = Product.objects.get(manufacturer_sku=manufactorer_sku, is_custom=False)

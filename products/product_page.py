@@ -32,8 +32,8 @@ def get_product_page_header(request):
     recommendations = request.query_params.get("recommendations")
     header_photos = HeaderPhoto.objects.all()
     header_photos = header_photos.filter(where="product_page")
-    if category:
-        header_photos = header_photos.filter(categories__eng_name__in=category)
+    # if category:
+    #     header_photos = header_photos.filter(categories__eng_name__in=category)
 
     if line and collab:
         if "all" in collab:
@@ -60,7 +60,7 @@ def get_product_page_header(request):
     count = header_photos_desktop.count()
 
     photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
-    text_desktop = get_product_text(line, collab, category, new, recommendations)
+    text_desktop = get_product_text(photo_desktop, line, collab, category, new, recommendations)
     if text_desktop is None:
         text_desktop = photo_desktop.header_text
 
@@ -74,7 +74,7 @@ def get_product_page_header(request):
         count = header_photos_mobile.count()
 
     photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
-    text_mobile = get_product_text(line, collab, category, new, recommendations)
+    text_mobile = get_product_text(photo_mobile, line, collab, category, new, recommendations)
     if text_mobile is None:
         text_mobile = photo_mobile.header_text
 

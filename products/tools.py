@@ -99,12 +99,12 @@ def get_product_page_photo(params):
     return res
 
 
-def get_product_text(line, collab, category, new, recommendations):
+def get_product_text(photo, line, collab, category, new, recommendations):
     texts = HeaderText.objects.all()
-    if line:
-        texts = texts.filter(Q(lines__full_eng_name__in=line))
-    elif collab:
-        texts = texts.filter(Q(collabs__query_name__in=collab))
+    if photo.lines.exists():
+        texts = texts.filter(lines__in=photo.lines.all())
+    elif photo.collabs.exists():
+        texts = texts.filter(collabs__in=photo.collabs.all())
     elif category:
         categories = Category.objects.filter(eng_name__in=category)
         list_cat = []

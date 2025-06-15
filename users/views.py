@@ -179,6 +179,7 @@ class UserChangePassword(generics.GenericAPIView):
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
             else:
                 return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
+
         except User.DoesNotExist:
             return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
         except json.JSONDecodeError:

@@ -139,23 +139,23 @@ class UserChangePassword(APIView):
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError):
-            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
+            return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         try:
             if user and default_token_generator.check_token(user, token.strip()):
                 data = json.loads(request.body)
                 user.set_password(data.get('password', ''))
                 user.save()
-                return redirect(f'https://{FRONTEND_HOST}/password_reset_success')
+                return Response("Пароль успешно изменен.")
             else:
                 return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
         except User.DoesNotExist:
-            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
+            return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
         except json.JSONDecodeError:
-            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
+            return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             # В этом месте можно обработать другие исключения, если необходимо
-            return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
+            return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
 
 

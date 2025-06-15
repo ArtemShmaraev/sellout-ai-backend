@@ -66,9 +66,9 @@ def confirm_email(request, token):
         user.verify_email = True
         user.save()
         # Опционально: Удаляйте запись о подтверждении из базы данных
-        if url != "None":
+        if url != None:
             return redirect(url)  # Перенаправление на страницу с подтверждением
-        return redirect(FRONTEND_HOST)
+        return redirect(f"https://{FRONTEND_HOST}")
     except signing.BadSignature:
         return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой
 

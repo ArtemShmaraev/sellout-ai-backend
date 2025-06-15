@@ -132,7 +132,33 @@ class UserChangePasswordLK(APIView):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class UserChangePassword(APIView):
+class UserChangePassword(generics.GenericAPIView):
+    permission_classes = ()
+    authentication_classes = ()
+
+    serializer_class = None
+    _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
+
+    www_authenticate_realm = "api"
+
+    def get_serializer_class(self):
+        """
+        If serializer_class is set, use it directly. Otherwise get the class from settings.
+        """
+
+        if self.serializer_class:
+            return self.serializer_class
+        try:
+            return import_string(self._serializer_class)
+        except ImportError:
+            msg = "Could not import serializer '%s'" % self._serializer_class
+            raise ImportError(msg)
+
+    def get_authenticate_header(self, request):
+        return '{} realm="{}"'.format(
+            AUTH_HEADER_TYPES[0],
+            self.www_authenticate_realm,
+        )
 
     def post(self, request, uidb64, token):
         try:
@@ -146,7 +172,11 @@ class UserChangePassword(APIView):
                 data = json.loads(request.body)
                 user.set_password(data.get('password', ''))
                 user.save()
-                return Response("Пароль успешно изменен.")
+                log_data = {'username': user.email, 'password': data.get('password', '')}
+                serializer = self.get_serializer(data=log_data)
+                serializer.is_valid(raise_exception=True)
+
+                return Response(serializer.validated_data, status=status.HTTP_200_OK)
             else:
                 return redirect(f'https://{FRONTEND_HOST}/password_reset_invalid')
         except User.DoesNotExist:

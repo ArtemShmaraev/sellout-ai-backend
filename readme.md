@@ -36,6 +36,8 @@ Anon)
 13. `[GET][User] user/last_seen/<user_id>` последние 7 просмотренных товаров пользователя [⬇️](#last)
 14. `[POST][User] user/last_seen/<user_id>` добавление товара в просмотренные [⬇️](#add_last)
 15. `[GET][User] user/favorite_brand/<user_id>/<brand_id>` добавить любимый бренд, чтобы удалить метод Delete
+15.1 `[GET][User] user/favorite_brand/<user_id>'` вернет список любимых брендов пользователя 
+
 16. `[GET][User] user/size_info`
     Response: ```{"preferred_shoes_size_row": 1, "preferred_clothes_size_row": 43, "shoes_size": 8, "clothes_size": 55, "height": 175, "weight": 60 }```
 17. `[POST][User] user/size_info` Body: Верхний Response
@@ -52,7 +54,8 @@ Anon)
 22. `[GET][User] user/send_verify_email/<user_id>?url={текущий url страницы}`  отправит письмо с подтверждением почты
     пользователю и при подтверждении почты пользователь перейдет обратно на страницу
 
-23. `[POST][User] user/waiting_list/<product_unit_id>` добавить юнит в список ожидания
+23. `[POST][User] user/waiting_list/<product_id>`добавить юнит в список ожидания
+в data передать size=[]
 
 ## Product API
 

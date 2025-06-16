@@ -38,6 +38,7 @@ from .search_tools import search_best_line, search_best_category, search_best_co
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
+from sellout.settings import CACHE_TIME
 
 
 class MakeRansomRequest(APIView):
@@ -64,9 +65,12 @@ class MakeRansomRequest(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
+
 class GetHeaderPhoto(APIView):
+    @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
         return Response(get_header_photo())
+
 
 class MainPageBlocks(APIView):
 
@@ -127,6 +131,7 @@ class MainPageBlocks(APIView):
 
 
 class ProductSimilarView(APIView):
+
     def get(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
@@ -247,7 +252,6 @@ class ProductView(APIView):
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
 
-
         url = request.build_absolute_uri()
         url_hash = hashlib.md5(url.encode()).hexdigest()
 
@@ -258,8 +262,7 @@ class ProductView(APIView):
             queryset, res = cached_data
         else:
             queryset, res = get_product_page(request)
-            cache.set(cache_product_key, (queryset, res), 60 * 15)
-
+            cache.set(cache_product_key, (queryset, res), CACHE_TIME)
 
         t6 = time()
         print("t5", t6 - t0)
@@ -274,11 +277,11 @@ class ProductView(APIView):
 
         cache_header_key = f"product_header:{url_hash}"  # Уникальный ключ для каждой URL
         cached_header = cache.get(cache_header_key)
-        if cached_data is not None:
+        if cached_header is not None:
             photos = cached_header
         else:
             photos = get_product_page_header(request)
-            cache.set(cache_header_key, (photos), 60 * 15)
+            cache.set(cache_header_key, (photos), CACHE_TIME)
         res["mobile"] = photos['mobile']
         res["desktop"] = photos['desktop']
 
@@ -301,7 +304,6 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-
 
             product.rel_num += 1
             product.save()
@@ -329,7 +331,7 @@ class ProductIdView(APIView):
 
 class CategoryTreeView(APIView):
     # authentication_classes = [JWTAuthentication]
-
+    @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
         return Response(build_category_tree(cats))
@@ -337,7 +339,7 @@ class CategoryTreeView(APIView):
 
 class CategoryNoChildView(APIView):
     # authentication_classes = [JWTAuthentication]
-
+    @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
         cats = CategorySerializer(Category.objects.all(), many=True).data
         return Response(category_no_child(build_category_tree(cats)))
@@ -449,9 +451,8 @@ class ProductUpdateView(APIView):
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
 
 
-
 class SizeTableForFilter(APIView):
-    @method_decorator(cache_page(60 * 60))
+    @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
         try:
             context = {}
@@ -508,9 +509,23 @@ class ListProductView(APIView):
     def post(self, request):
         try:
             s_products = json.loads(request.body)["products"]
-            products = Product.objects.filter(id__in=s_products).order_by(
-                models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
-            )
+            product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
+            product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
+
+            # Используем хеш-сумму в качестве ключа кэша
+            cache_product_key = f"product_list_{product_list_hash}"
+
+            cached_data = cache.get(cache_product_key)
+
+            if cached_data is not None:
+                products = cached_data
+            else:
+                products = Product.objects.filter(id__in=s_products).order_by(
+                    models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
+                )
+                cache.set(cache_product_key, products, CACHE_TIME)
+
+
             return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(
                 user=User(id=self.request.user.id)) if request.user.id else None}).data)
         except json.JSONDecodeError:

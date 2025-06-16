@@ -54,7 +54,8 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
-                    prices_by_size[size] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False}
+                    prices_by_size[size] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False, "size_sellout": []}
+                prices_by_size[size]["size_sellout"].append(item.size.id)
 
 
                 if available:
@@ -66,6 +67,7 @@ class MinPriceForSizeView(APIView):
                         prices_by_size[size]["is_sale"] = True
                     if item.is_return:
                         prices_by_size[size]["is_return"] = True
+
                 else:
                     prices_by_size[size]['price'].append(999_999_999)
             min_prices_by_size = {}
@@ -82,11 +84,11 @@ class MinPriceForSizeView(APIView):
                     d['is_fast_shipping'] = prices['is_fast_shipping']
                     d['is_sale'] = prices['is_sale']
                     d['is_return'] = prices['is_return']
-                    d['size'] = size
+                    d['size'] = list(set(prices["size_sellout"]))
                     d['view_size'] = size
                 min_prices_by_size[size] = d
                 s.append(d)
-            return Response(sorted(s, key=lambda x: float(x['size']) if x['size'].replace(".", "").isdigit() else x['size']))
+            return Response(sorted(s, key=lambda x: float(x['view_size']) if x['view_size'].replace(".", "").isdigit() else x['view_size']))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

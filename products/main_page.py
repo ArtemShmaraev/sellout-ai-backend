@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 import json
 from functools import lru_cache
 from datetime import datetime, date
@@ -14,10 +14,10 @@ from products.serializers import LineSerializer, ProductMainPageSerializer
 def get_header_photo():
     t = time()
     header = HeaderPhoto.objects.exclude(where='product_page')
-    brand = header[randint(0, 663)]
-    shoes = header.filter(categories__eng_name="shoes_category")[randint(0, 591)]
-    clothes = header.filter(categories__eng_name="clothes")[randint(0, 42)]
-    accessories = header.filter(categories__eng_name="accessories")[randint(0, 23)]
+    brand = choice(header)
+    shoes = choice(header.filter(categories__eng_name="shoes_category"))
+    clothes = choice(header.filter(categories__eng_name="clothes"))
+    accessories = choice(header.filter(categories__eng_name="accessories"))
     res = {"brand": brand.photo.url,
            "shoes": shoes.photo.url,
            "clothes": clothes.photo.url,

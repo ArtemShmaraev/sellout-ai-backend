@@ -305,8 +305,8 @@ def get_product_page(request):
 
     page_number = params.get("page")
     page_number = int(page_number if page_number else 1)
-    start_index = (page_number - 1) * 60
-    queryset = queryset[start_index:start_index + 60]
+    start_index = (page_number - 1) * 48
+    queryset = queryset[start_index:start_index + 48]
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0

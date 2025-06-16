@@ -2,6 +2,14 @@ from django.db import models
 from utils.models import Currency
 
 
+
+class ConfigurationUnit(models.Model):
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="config_units",
+                                null=False, blank=False)
+
+    size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="config_units",
+                             null=True, blank=True)  # порядковый номер размера в таблице
+
 class DeliveryType(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     view_name = models.CharField(max_length=100, null=True, blank=True)

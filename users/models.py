@@ -64,7 +64,7 @@ class User(AbstractUser):
     height = models.IntegerField(default=175)
     weight = models.IntegerField(default=60)
 
-    wait_list = models.ManyToManyField('shipping.ProductUnit', blank=True,
+    wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True,
                                              related_name="wait_list_users")
 
     def __str__(self):

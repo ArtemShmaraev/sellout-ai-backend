@@ -4,18 +4,19 @@ from datetime import datetime, timedelta
 
 from django.core import signing
 from django.contrib.auth.tokens import default_token_generator
+from django.core.cache import cache
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import check_password, make_password
 from .serializers import UserSerializer, UserSizeSerializer
-from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer
+from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer, BrandSerializer
 from .models import User, Gender, EmailConfirmation
 from rest_framework import exceptions
-from products.models import Product, Brand, SizeTable
+from products.models import Product, Brand, SizeTable, SizeTranslationRows
 from django.db import models
 from shipping.views import product_unit_product_main
 import json
-from shipping.models import AddressInfo, ProductUnit
+from shipping.models import AddressInfo, ProductUnit, ConfigurationUnit
 from shipping.serializers import AddressInfoSerializer
 from wishlist.models import Wishlist
 from orders.models import ShoppingCart
@@ -28,7 +29,7 @@ from rest_framework_simplejwt.settings import api_settings
 from .tools import check_adress, register_user
 
 from shipping.views import ProductUnitProductMainView
-from sellout.settings import HOST, FRONTEND_HOST
+from sellout.settings import HOST, FRONTEND_HOST, CACHE_TIME
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,26 +40,33 @@ from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
 
 
+
 class WaitList(APIView):
     def get(self, request):
         try:
+
             user = User.objects.get(id=request.user.id)
             wait_list = user.wait_list.values_list("id", flat=True)
             return Response(wait_list)
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, product_unit_id):
+    def post(self, request, product_id):
         try:
+            data = json.loads(request.body)
+            size = data.get("size", [])
             user = User.objects.get(id=request.user.id)
-            user.wait_list.add(ProductUnit.objects.get(id=product_unit_id))
+            product = Product.objects.get(id=product_id)
+            sizes = SizeTranslationRows.objects.filter(id__in=size)
+            for size in sizes:
+                config = ConfigurationUnit.objects.get_or_create(product=product, size=size)[0]
+                user.wait_list.add(config)
             user.save()
             return Response(status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
         except ProductUnit.DoesNotExist:
             return Response({"error": "ProductUnit not found."}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class SendVerifyEmail(APIView):
@@ -93,9 +101,6 @@ def confirm_email(request, token):
         return redirect(f"https://{FRONTEND_HOST}/email_success")
     except signing.BadSignature:
         return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой
-
-
-
 
 
 class SendSetPassword(APIView):
@@ -211,11 +216,10 @@ class UserChangePassword(generics.GenericAPIView):
             return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
 
-
 def initiate_google_auth(request):
     # Формирование URL для авторизации
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
-    client_id = GOOGLE_OAUTH2_KEY # Замените на ваш реальный клиентский ID
+    client_id = GOOGLE_OAUTH2_KEY  # Замените на ваш реальный клиентский ID
     # redirect_uri = "http://localhost:3000"
     redirect_uri = f"https://{FRONTEND_HOST}"
     scope = "email profile"
@@ -260,7 +264,6 @@ class GoogleAuth(generics.GenericAPIView):
         try:
             id_token = request.query_params.get('id_token')
 
-
             header_b64, payload_b64, signature_b64 = id_token.split('.')
 
             header = json.loads(base64.urlsafe_b64decode(header_b64 + '==').decode('utf-8'))
@@ -295,12 +298,6 @@ class GoogleAuth(generics.GenericAPIView):
 
         except TokenError as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-
 
 
 class SizeTableInLK(APIView):
@@ -406,8 +403,6 @@ class UserInfoView(APIView):
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 class UserForSpamEmail(APIView):
     def get(self, request):
         if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
@@ -415,7 +410,6 @@ class UserForSpamEmail(APIView):
             return Response(emails)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
-
 
 
 class UserRegister(generics.GenericAPIView):
@@ -446,16 +440,12 @@ class UserRegister(generics.GenericAPIView):
             self.www_authenticate_realm,
         )
 
-
-
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
             if User.objects.filter(username=data['username']).exists():
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
             register_user(data)
-
-
 
             log_data = {'username': data["username"], 'password': data['password']}
             serializer = self.get_serializer(data=log_data)
@@ -485,10 +475,29 @@ class UserLastSeenView(APIView):
         try:
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
-                products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
-                    models.Case(*[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
-                )
-                return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}).data)
+
+                s_products = user.last_viewed_products
+                product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
+                product_list_hash = hashlib.sha256(
+                    product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
+                # Используем хеш-сумму в качестве ключа кэша
+                cache_product_key = f"last_{product_list_hash}"
+
+                cached_data = cache.get(cache_product_key)
+
+                if cached_data is not None:
+                    products = cached_data
+                else:
+                    products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
+                        models.Case(
+                            *[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
+                    )
+                    cache.set(cache_product_key, products, CACHE_TIME)
+
+
+                return Response(ProductMainPageSerializer(products, many=True, context={
+                    "wishlist": Wishlist.objects.get(
+                        user=User(id=self.request.user.id)) if request.user.id else None}).data)
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
@@ -588,10 +597,6 @@ class UserAddressView(APIView):
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
 
-
-
-
-
 # класс из джанго
 class TokenViewBase(generics.GenericAPIView):
     permission_classes = ()
@@ -641,9 +646,6 @@ class UserLoginView(TokenViewBase):
     _serializer_class = api_settings.TOKEN_OBTAIN_SERIALIZER
 
 
-
-
-
 class TokenVerifyView(TokenViewBase):
     """
     Takes a token and indicates if it is valid.  This view provides no
@@ -660,6 +662,18 @@ class TokenRefreshView(TokenViewBase):
     """
 
     _serializer_class = api_settings.TOKEN_REFRESH_SERIALIZER
+
+class FavoriteBrands(APIView):
+    def get(self, request, user_id):
+        if request.user.id == user_id or request.user.is_staff:
+            try:
+                user = User.objects.get(id=user_id)
+                return Response(BrandSerializer(user.favorite_brands.all(), many=True, context={'user_id': user_id}).data)
+
+            except User.DoesNotExist:
+                return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
 
 
 class AddFavoriteBrands(APIView):

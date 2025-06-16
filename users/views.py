@@ -44,7 +44,7 @@ class SendVerifyEmail(APIView):
         url = request.GET.get("url")
         user = User.objects.get(id=user_id)
         email_confirmation = EmailConfirmation.objects.get(user=user)
-        check = f"https://{FRONTEND_HOST}/email_confirmated/{email_confirmation.token}?url={url}"
+        check = f"https://{FRONTEND_HOST}/email_confirmed/{email_confirmation.token}?url={url}"
         url = "https://sellout.su/mail/send_customer_service_mail/"
         recipient_email = user.email
         body = check
@@ -68,7 +68,7 @@ def confirm_email(request, token):
         # Опционально: Удаляйте запись о подтверждении из базы данных
         if url != None:
             return redirect(url)  # Перенаправление на страницу с подтверждением
-        return redirect(f"https://{FRONTEND_HOST}")
+        return redirect(f"https://{FRONTEND_HOST}/email_success")
     except signing.BadSignature:
         return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой
 

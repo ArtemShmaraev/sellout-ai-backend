@@ -101,25 +101,32 @@ def get_product_page_photo(params):
 
 def get_product_text(photo, line, collab, category, new, recommendations):
     texts = HeaderText.objects.all()
-    if photo.lines.exists():
-        texts = texts.filter(lines__in=photo.lines.all())
-    elif photo.collabs.exists():
-        texts = texts.filter(collabs__in=photo.collabs.all())
-    elif category:
+    # if photo.lines.exists():
+    #     texts = texts.filter(lines__in=photo.lines.all())
+    # elif photo.collabs.exists():
+    #     texts = texts.filter(collabs__in=photo.collabs.all())
+
+    if category:
         categories = Category.objects.filter(eng_name__in=category)
-        list_cat = []
+        list_cat = set()
         for cat in categories:
-            list_cat.append(cat.eng_name)
+            list_cat.add(cat.eng_name)
             curent = cat
             while curent.parent_category is not None:
                 curent = curent.parent_category
-                list_cat.append(curent.eng_name)
+                list_cat.add(curent.eng_name)
         if "sneakers" in list_cat:
             texts = texts.filter(title="Кроссовки")
         elif "shoes_category" in list_cat:
             texts = texts.filter(title="Обувь")
         else:
             texts = texts.filter(title="sellout")
+
+    elif line:
+        texts = texts.filter(lines__in=photo.lines.all())
+    elif collab:
+        texts = texts.filter(collabs__in=photo.collabs.all())
+
     elif new:
         texts = texts.filter(title="Новинки")
     elif recommendations:
@@ -128,8 +135,6 @@ def get_product_text(photo, line, collab, category, new, recommendations):
         texts = texts.filter(title="sellout")
     if not texts.exists():
         texts = HeaderText.objects.filter(title="sellout")
-
-
     text = get_random(texts)
 
     return text

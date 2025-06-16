@@ -258,7 +258,7 @@ class ProductView(APIView):
             queryset, res = cached_data
         else:
             queryset, res = get_product_page(request)
-            cache.set(cache_product_key, (queryset, res), 60 * 60 * 5)
+            cache.set(cache_product_key, (queryset, res), 60 * 15)
 
 
         t6 = time()
@@ -278,7 +278,7 @@ class ProductView(APIView):
             photos = cached_header
         else:
             photos = get_product_page_header(request)
-            cache.set(cache_header_key, (photos), 60 * 60 * 5)
+            cache.set(cache_header_key, (photos), 60 * 15)
         res["mobile"] = photos['mobile']
         res["desktop"] = photos['desktop']
 

@@ -15,12 +15,12 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-
+#
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
 FRONTEND_HOST = "sellout.su"
 
-#
+# #
 # HOST = "127.0.0.1"
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
@@ -287,6 +287,7 @@ CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
 
 CACHES = {
     'default': {

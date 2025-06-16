@@ -52,6 +52,8 @@ Anon)
 22. `[GET][User] user/send_verify_email/<user_id>?url={текущий url страницы}`  отправит письмо с подтверждением почты
     пользователю и при подтверждении почты пользователь перейдет обратно на страницу
 
+23. `[POST][User] user/waiting_list/<product_unit_id>` добавить юнит в список ожидания
+
 ## Product API
 
 1. `[GET][Anon] product/products/<product_id>` данные одного товара [⬇️](#product_id)
@@ -61,6 +63,7 @@ Anon)
 5. `[DELETE][Anon] product/update/<product_id>` удаление товара по id
 6. `[POST][Anon] product/list_product` карточки товаров по массиву {"products": [1, 2]}
 7. `[GET][Anon] product/size_table`таблица размеров для фильтра [⬇️](#product_size_table)
+8. `[POST][Anon] product/ransom_request` составить заявку на выкуп в data передать данные
 
 ## Category, Line, Color, Brand API
 

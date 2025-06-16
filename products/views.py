@@ -18,7 +18,8 @@ from django.http import JsonResponse, FileResponse
 
 from users.models import User
 from wishlist.models import Wishlist
-from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText
+from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
+    RansomRequest
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header
@@ -39,6 +40,29 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 
 
+class MakeRansomRequest(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        name = data.get('name')
+        tg_name = data.get('tg_name')
+        phone_number = data.get('phone_number')
+        email = data.get('email')
+        url = data.get('url')
+        photo = data.get('photo')
+        info = data.get('info')
+
+        ransom_request = RansomRequest.objects.create(
+            name=name,
+            tg_name=tg_name,
+            phone_number=phone_number,
+            email=email,
+            url=url,
+            photo=photo,
+            info=info
+        )
+        ransom_request.save()
+
+        return Response(status=status.HTTP_201_CREATED)
 
 class GetHeaderPhoto(APIView):
     def get(self, request):

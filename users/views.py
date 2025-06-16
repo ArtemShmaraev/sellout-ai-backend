@@ -15,7 +15,7 @@ from products.models import Product, Brand, SizeTable
 from django.db import models
 from shipping.views import product_unit_product_main
 import json
-from shipping.models import AddressInfo
+from shipping.models import AddressInfo, ProductUnit
 from shipping.serializers import AddressInfoSerializer
 from wishlist.models import Wishlist
 from orders.models import ShoppingCart
@@ -36,6 +36,28 @@ from rest_framework.response import Response
 from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
+
+
+
+class WaitList(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.get(id=request.user.id)
+            wait_list = user.wait_list.values_list("id", flat=True)
+            return Response(wait_list)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, product_unit_id):
+        try:
+            user = User.objects.get(id=request.user.id)
+            user.wait_list.add(ProductUnit.objects.get(id=product_unit_id))
+            user.save()
+            return Response(status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        except ProductUnit.DoesNotExist:
+            return Response({"error": "ProductUnit not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 

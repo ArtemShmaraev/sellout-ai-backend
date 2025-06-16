@@ -150,15 +150,25 @@ class ProductSerializer(serializers.ModelSerializer):
         s = []
 
         def get_line_parents(line):
-            parents = [line]
+            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name}"}]
             current_line = line
             while current_line.parent_line is not None:
                 current_line = current_line.parent_line
-                parents.append(current_line)
+                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name}"})
+            return parents[::-1]
+
+        def get_cat_parents(cat, line):
+            parents = [{"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"}]
+            current_cat = cat
+            while current_cat.parent_category is not None:
+                current_cat = current_cat.parent_category
+                parents.append({"name": f"{current_cat.name} {line.full_eng_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
             return parents[::-1]
 
         if list_lines:
-            s = LineMinSerializer(get_line_parents(obj.main_line), many=True).data
+            s = get_line_parents(obj.main_line)
+            if len(s) == 1:
+                s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
         return s
 
     # def get_is_return(self, obj):

@@ -388,3 +388,15 @@ class MainPage(models.Model):
     button_text = models.CharField(max_length=64, default="")
 
 
+
+class RansomRequest(models.Model):
+    name = models.CharField(max_length=128, default="")
+    tg_name = models.CharField(max_length=128, default="")
+    phone_number = models.CharField(max_length=64, default="")
+    email = models.CharField(max_length=128, default="")
+    url = models.CharField(max_length=512, default="")
+    photo = models.CharField(max_length=128, default="")
+    info = models.CharField(max_length=1024, default="")
+
+
+

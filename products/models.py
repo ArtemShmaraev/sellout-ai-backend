@@ -173,6 +173,10 @@ class DewuInfo(models.Model):
     web_data = models.JSONField(default=dict)
 
 
+class SGInfo(models.Model):
+    manufacturer_sku = models.CharField(max_length=256, default="")
+    data = models.JSONField(default=dict)
+
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
     # dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")

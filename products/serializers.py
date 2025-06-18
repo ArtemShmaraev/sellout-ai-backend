@@ -1,7 +1,7 @@
 from users.models import User
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
-    SizeTranslationRows, Collab
+    SizeTranslationRows, Collab, SGInfo
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min, Q
@@ -56,6 +56,11 @@ class DewuInfoSerializer(serializers.ModelSerializer):
         model = DewuInfo
         fields = '__all__'
 
+
+class SGInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SGInfo
+        fields = '__all__'
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

@@ -19,13 +19,13 @@ from django.http import JsonResponse, FileResponse
 from users.models import User
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest
+    RansomRequest, SGInfo
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer
+    DewuInfoSerializer, CollabSerializer, SGInfoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text
 
@@ -40,6 +40,57 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 
+
+
+class SGInfoListSkuView(APIView):
+    def get(self, request):
+        sg_infos = SGInfo.objects.values_list('manufacturer_sku', flat=True)
+        return Response(sg_infos, status=status.HTTP_200_OK)
+
+
+# Create your views here.
+class SGInfoListView(APIView):
+    def get(self, request):
+        sg_infos = SGInfo.objects.all()
+        # count = dewu_infos.count()
+        count = 1
+        page_number = request.query_params.get("page")
+        page_number = int(page_number if page_number else 1)
+        start_index = (page_number - 1) * 100
+        queryset = sg_infos[start_index:start_index + 100]
+        serializer = SGInfoSerializer(queryset, many=True)
+        res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
+        return Response(res, status=status.HTTP_200_OK)
+
+
+class SGInfoView(APIView):
+    def get(self, request, sku):
+        sg_info = SGInfo.objects.filter(manufacturer_sku=sku)
+        serializer = SGInfoSerializer(sg_info, many=True)
+        # Замените на вашу сериализацию
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, sku):
+        data = json.loads(request.body)
+        if SGInfo.objects.filter(manufacturer_sku=sku).exists():
+            sg_info =SGInfo.objects.get(manufacturer_sku=sku)
+        else:
+            sg_info = SGInfo(manufacturer_sku=sku)
+
+        if "data" in data:
+            sg_info.data = data['data']
+
+        sg_info.save()
+        return Response(SGInfoSerializer(sg_info).data)
+
+    def delete(self, request, sku):
+        try:
+            sg_info = SGInfo.objects.filter(manufacturer_sku=sku)
+            sg_info.delete()
+
+            return Response("Удален", status=status.HTTP_200_OK)
+        except DewuInfo.DoesNotExist:
+            return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
 class MakeRansomRequest(APIView):
     def post(self, request):
@@ -161,7 +212,8 @@ class DewuInfoListView(APIView):
                 dewu_infos = DewuInfo.objects.all()
         else:
             dewu_infos = DewuInfo.objects.all().order_by('spu_id')
-        count = dewu_infos.count()
+        # count = dewu_infos.count()
+        count = 1
         page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
         start_index = (page_number - 1) * 100
@@ -510,6 +562,7 @@ class ListProductView(APIView):
         try:
             s_products = json.loads(request.body)["products"]
             product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
+            product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
             product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
 
             # Используем хеш-сумму в качестве ключа кэша

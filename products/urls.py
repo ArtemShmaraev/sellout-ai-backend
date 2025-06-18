@@ -56,4 +56,4 @@ urlpatterns = [
     path("dewu_info_list", DewuInfoListSpuIdView.as_view()), path("suggest_search", SuggestSearch.as_view()),
     path("main_page", MainPageBlocks.as_view()), path("header_photo", GetHeaderPhoto.as_view()),
     path("ransom_request", MakeRansomRequest.as_view()), path("sg_info_list", SGInfoListSkuView.as_view()),
-    path("sg_info", SGInfoListView.as_view()), path("sg_info/<str: sku>", SGInfoView.as_view())]
+    path("sg_info", SGInfoListView.as_view()), path("sg_info/<str:sku>", SGInfoView.as_view())]

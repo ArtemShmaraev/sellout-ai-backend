@@ -124,7 +124,7 @@ def get_product_text(photo, line, collab, category, new, recommendations):
 
     elif line:
         texts = texts.filter(lines__in=photo.lines.all())
-        texts = texts.filter(lines__eng_name__in=line)
+        texts = texts.filter(lines__full_eng_name__in=line)
 
     elif collab:
         texts = texts.filter(collabs__in=photo.collabs.all())
@@ -139,7 +139,7 @@ def get_product_text(photo, line, collab, category, new, recommendations):
     if not texts.exists():
         texts = HeaderText.objects.filter(title="sellout")
     text = get_random(texts)
- 
+
     return text
 
 

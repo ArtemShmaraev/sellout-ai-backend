@@ -256,45 +256,45 @@ SIMPLE_JWT = {
 
 
 # Не удаляй
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'sellout_db',
-#         'USER': 'app',
-#         'PASSWORD': 'apppassword2023',
-#         'HOST': '158.160.56.73',
-#         'PORT': '5432',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sellout_db',
+        'USER': 'app',
+        'PASSWORD': 'apppassword2023',
+        'HOST': '158.160.56.73',
+        'PORT': '5432',
+    }
+}
 # # #
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-#
-# # Set to True to always redirect HTTP requests to HTTPS
-# SECURE_SSL_REDIRECT = False
-#
-# # Ensure secure handling of cookies
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-#
-# # Enable HTTP Strict Transport Security (HSTS)
-# SECURE_HSTS_SECONDS = 31536000  # 1 year
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-#
-#
-# CACHES = {
-#     'default': {
-#         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-#         'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
-#         'TIMEOUT': 60 * 15,  # Время жизни кэша (в секундах)
-#     }
-# }
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Set to True to always redirect HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = False
+
+# Ensure secure handling of cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Enable HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+
+CACHES = {
+    'default': {
+        'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
+        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+        'TIMEOUT': 60 * 15,  # Время жизни кэша (в секундах)
+    }
+}

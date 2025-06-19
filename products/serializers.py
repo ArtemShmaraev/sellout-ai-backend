@@ -167,7 +167,7 @@ class ProductSerializer(serializers.ModelSerializer):
             current_cat = cat
             while current_cat.parent_category is not None:
                 current_cat = current_cat.parent_category
-                parents.append({"name": f"{current_cat.name} {line.full_eng_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
+                parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
             return parents[::-1]
 
         if list_lines:

@@ -216,8 +216,8 @@ class DewuInfoListView(APIView):
         count = 1
         page_number = request.query_params.get("page")
         page_number = int(page_number if page_number else 1)
-        start_index = (page_number - 1) * 100
-        queryset = dewu_infos[start_index:start_index + 100]
+        start_index = (page_number - 1) * 30
+        queryset = dewu_infos[start_index:start_index + 30]
         serializer = DewuInfoSerializer(queryset, many=True)
         res = {'count': count, "results": serializer.data}  # Замените на вашу сериализацию
         return Response(res, status=status.HTTP_200_OK)
@@ -226,6 +226,7 @@ class DewuInfoListView(APIView):
 class DewuInfoView(APIView):
     def get(self, request, spu_id):
         dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
+        print(dewu_info.web_data['size_table'])
         serializer = DewuInfoSerializer(dewu_info, many=True)
         # Замените на вашу сериализацию
         return Response(serializer.data, status=status.HTTP_200_OK)

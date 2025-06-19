@@ -167,7 +167,7 @@ class ProductManager(models.Manager):
 
 
 class DewuInfo(models.Model):
-    spu_id = models.IntegerField(default=0)
+    spu_id = models.IntegerField(default=0, db_index=True)
     api_data = models.JSONField(default=dict)
     preprocessed_data = models.JSONField(default=dict)
     web_data = models.JSONField(default=dict)

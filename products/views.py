@@ -184,10 +184,13 @@ class MainPageBlocks(APIView):
 class ProductSimilarView(APIView):
 
     def get(self, request, product_id):
+        context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
+        res = []
         try:
             product = Product.objects.get(id=product_id)
             similar = similar_product(product)
-            return Response(ProductMainPageSerializer(similar, many=True).data)
+            res.append({"name": "Похожие товары", "products": ProductMainPageSerializer(similar, many=True, context=context).data})
+            return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

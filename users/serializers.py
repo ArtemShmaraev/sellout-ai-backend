@@ -59,5 +59,7 @@ class ForAnonUserSerializer(serializers.ModelSerializer):
 class UserOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ("preferred_shoes_size_row", "preferred_clothes_size_row", "password", "address", "wait_list")
+        exclude = ("preferred_shoes_size_row", "preferred_clothes_size_row", "password", "address", "wait_list", "date_joined",
+                   "phone_number", "is_mailing_list", "happy_birthday", "last_viewed_products", "preferred_size_grid", "referral_promo", "verify_email", "is_active", "is_superuser", "last_login", "shoes_size", "clothes_size", "user_permissions",
+                   "my_groups", "favorite_brands")
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)

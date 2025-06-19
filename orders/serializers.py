@@ -1,6 +1,6 @@
-from .models import ShoppingCart, Order
+from .models import ShoppingCart, Order, OrderUnit
 from rest_framework import serializers
-from products.serializers import ProductMainPageSerializer
+from products.serializers import ProductMainPageSerializer, ProductSerializer
 from shipping.serializers import ProductUnitSerializer, AddressInfoSerializer
 from promotions.serializers import PromoCodeSerializer
 from users.models import User
@@ -43,12 +43,21 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         depth = 3
 
 
+class OrderUnitSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    class Meta:
+        model = OrderUnit
+        # fields = '__all__'
+        exclude = ["size",]
+        depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
+
+
 class OrderSerializer(serializers.ModelSerializer):
     user = UserOrderSerializer()
     address = AddressInfoSerializer()
-    product_units = ProductUnitSerializer(many=True, read_only=True)
+    order_units = OrderUnitSerializer(many=True, read_only=True)
     class Meta:
         model = Order
-        fields = ''
+        fields = '__all__'
         # exclude = ("user",)
         depth = 3

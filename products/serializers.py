@@ -163,11 +163,14 @@ class ProductSerializer(serializers.ModelSerializer):
             return parents[::-1]
 
         def get_cat_parents(cat, line):
-            parents = [{"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"}]
+            parents = []
+            if "Вс" not in cat.name:
+                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"})
             current_cat = cat
             while current_cat.parent_category is not None:
                 current_cat = current_cat.parent_category
-                parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
+                if "Вс" not in current_cat.name:
+                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
             return parents[::-1]
 
         if list_lines:

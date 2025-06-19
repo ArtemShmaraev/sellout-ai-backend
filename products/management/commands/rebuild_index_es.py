@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
 
     def handle(self, *args, **options):
-        hosts = [HOST]
+        hosts = [f"{HOST}:9200"]
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index

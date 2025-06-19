@@ -17,8 +17,6 @@ from promotions.views import check_promo
 from users.models import User
 
 
-
-
 class ChangeStatusUnit(APIView):
     def get(self, request, order_unit_id):
         if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
@@ -32,11 +30,13 @@ class ChangeStatusUnit(APIView):
 
     def post(self, request, order_unit_id):
         if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
-            new_status_name = json.loads(request.body).get("status_name")  # Здесь предполагается, что вы передаете имя нового статуса в запросе POST
+            new_status_name = json.loads(request.body).get(
+                "status_name")  # Здесь предполагается, что вы передаете имя нового статуса в запросе POST
             try:
                 order_unit = OrderUnit.objects.get(id=order_unit_id)
                 try:
-                    new_status = Status.objects.get(name=new_status_name)  # Предполагается, что у вас есть модель Status для статусов
+                    new_status = Status.objects.get(
+                        name=new_status_name)  # Предполагается, что у вас есть модель Status для статусов
                     order_unit.status = new_status
                     order_unit.save()
                     order = order_unit.orders.first()
@@ -48,6 +48,7 @@ class ChangeStatusUnit(APIView):
                 return Response("Order unit not found", status=status.HTTP_404_NOT_FOUND)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+
 
 class ShoppingCartUser(APIView):
     # authentication_classes = [JWTAuthentication]
@@ -110,7 +111,6 @@ class UseBonus(APIView):
             return Response("Пользователь не найден", status=status.HTTP_404_NOT_FOUND)
 
 
-
 class CheckOutView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -119,14 +119,20 @@ class CheckOutView(APIView):
             if request.user.id == user_id or request.user.is_staff:
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 data = json.loads(request.body)
-                print(data)
+                # print(data)
                 user = get_object_or_404(User, id=user_id)
-                address = get_object_or_404(AddressInfo, id=data['address_id'])
 
-                order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount, promo_code=cart.promo_code,
-                              email=data['email'], tel=data['phone'],
-                              name=data['first_name'], surname=data['last_name'],
-                              address=address, status_id=1, fact_of_payment=False)
+
+                address = get_object_or_404(AddressInfo, id=data['address_id'])
+                status = Status.objects.get(name="В обработке")
+
+
+                order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
+                              promo_code=cart.promo_code,
+                              email=data['email'], phone=data['phone'],
+                              name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
+                              address=address, status=status, fact_of_payment=False, promo_sale=cart.promo_sale,
+                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, delivery=data['delivery'])
                 order.save()
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit)

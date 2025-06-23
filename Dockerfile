@@ -23,11 +23,8 @@ COPY . /app/
 
 RUN python manage.py collectstatic --noinput
 
-RUN apt-get update && apt-get install -y nginx
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 # Expose the port your Django app will run on
 EXPOSE 8000
 
 # Run the application using Gunicorn
-CMD service nginx start && gunicorn sellout.wsgi:application --bind 127.0.0.1:8000
+CMD gunicorn sellout.wsgi:application --bind 0.0.0.0:8000

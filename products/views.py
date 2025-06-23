@@ -19,13 +19,13 @@ from django.http import JsonResponse, FileResponse
 from users.models import User
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo
+    RansomRequest, SGInfo, Brand
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer, SGInfoSerializer
+    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text
 
@@ -40,6 +40,22 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 
+
+
+
+class BrandSearchView(APIView):
+    def get(self, request):
+        context = {"user_id": request.user.id if request.user.id else None}
+        search_query = request.query_params.get('q', '')  # Получаем параметр "q" из запроса
+
+        # Используем исключение try-except для обработки ошибок
+        try:
+            # Ищем бренды, чьи имена содержат поисковой запрос
+            brands = Brand.objects.filter(name__icontains=search_query)
+            serializer = BrandSerializer(brands, many=True, context=context)  # Сериализуем найденные бренды
+            return Response(serializer.data)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SGInfoListSkuView(APIView):
@@ -190,7 +206,7 @@ class ProductSimilarView(APIView):
             product = Product.objects.get(id=product_id)
             similar = similar_product(product)
             res.append({"name": "Похожие товары", "products": ProductMainPageSerializer(similar, many=True, context=context).data})
-            return Response(res)
+            return Response(ProductMainPageSerializer(similar, many=True, context=context).data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

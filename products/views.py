@@ -206,7 +206,7 @@ class ProductSimilarView(APIView):
             product = Product.objects.get(id=product_id)
             similar = similar_product(product)
             res.append({"name": "Похожие товары", "products": ProductMainPageSerializer(similar, many=True, context=context).data})
-            return Response(ProductMainPageSerializer(similar, many=True, context=context).data)
+            return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

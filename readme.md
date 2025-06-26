@@ -61,6 +61,7 @@ Anon)
 
 1. `[GET][Anon] product/products/<product_id>` данные одного товара [⬇️](#product_id)
 2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
+2. `[GET][Anon] product/slug/<slug>` данные товара по slug [⬇️](#product_slug)
 3. `[GET][Anon] product/products/&page=n` страница товаров [⬇️](#product_all)
 4. `[PUT][Anon] product/update/<product_id>` редактирование товара [⬇️](#product_update)
 5. `[DELETE][Anon] product/update/<product_id>` удаление товара по id
@@ -2504,17 +2505,13 @@ Body:
 
 ```json
 {
-  "product_unit": [
-    1,
-    2
-  ],
   "email": "mail@mail.ru",
-  "tel": 77777777777,
-  "first_name": "Имя",
-  "last_name": "Фамилия",
+  "phone": 77777777777,
+  "name": "Имя",
+  "surname": "Фамилия",
+  "patronymic": "Отчество",
   "address_id": 1,
-  "promo_code": "SALE",
-  "total_amount": 10000
+  "delivery": "Способ доставки"
 }
 ```
 
@@ -2522,228 +2519,408 @@ Response:
 
 ```json
 {
-  "id": 13,
-  "total_amount": 10000,
-  "email": "mail@mail.ru",
-  "tel": "77777777777",
-  "name": "Имя",
-  "surname": "Фамилия",
-  "fact_of_payment": false,
-  "user": {
-    "id": 1,
-    "last_login": "2023-04-12T15:14:50.148633Z",
-    "is_superuser": true,
-    "username": "artem",
-    "first_name": "",
-    "last_name": "",
-    "email": "arten@mail.ru",
-    "is_staff": true,
-    "is_active": true,
-    "date_joined": "2023-04-07T15:26:38Z",
-    "all_purchase_amount": 0,
-    "personal_discount_percentage": 0,
-    "referral_link": null,
-    "preferred_size_grid": null,
-    "gender": null,
-    "ref_user": null,
-    "groups": [],
-    "user_permissions": [],
-    "my_groups": [],
-    "address": [],
-    "last_viewed_products": [
-      {
-        "id": 1,
-        "name": "Air Force 1",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "air_force_1",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:28:17Z",
-        "add_date": "2023-04-07",
-        "fit": 1,
-        "rel_num": 1,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      },
-      {
-        "id": 2,
-        "name": "Dunk",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "sku",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:59:39Z",
-        "add_date": "2023-04-07",
-        "fit": 0,
-        "rel_num": 0,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      }
-    ]
-  },
-  "address": {
-    "id": 1,
-    "address": "Проспект Мира 111",
-    "post_index": "308033"
-  },
-  "promo_code": {
-    "id": 1,
-    "string_representation": "SALE",
-    "discount_percentage": 15,
-    "discount_absolute": 0,
-    "activation_count": 6,
-    "max_activation_count": 10,
-    "active_status": true,
-    "active_until_date": "2023-04-18",
-    "owner": {
-      "id": 1,
-      "last_login": "2023-04-12T15:14:50.148633Z",
-      "is_superuser": true,
-      "username": "artem",
-      "first_name": "",
-      "last_name": "",
-      "email": "arten@mail.ru",
-      "is_staff": true,
-      "is_active": true,
-      "date_joined": "2023-04-07T15:26:38Z",
-      "all_purchase_amount": 0,
-      "personal_discount_percentage": 0,
-      "referral_link": null,
-      "preferred_size_grid": null,
-      "gender": null,
-      "ref_user": null,
-      "groups": [],
-      "user_permissions": [],
-      "my_groups": [],
-      "address": [],
-      "last_viewed_products": [
-        1,
-        2
-      ]
-    }
-  },
-  "status": {
-    "id": 1,
-    "name": "pending"
-  },
-  "product_unit": [
-    {
-      "id": 1,
-      "final_price": 7,
-      "availability": true,
-      "product": {
-        "id": 1,
-        "name": "Air Force 1",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "air_force_1",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:28:17Z",
-        "add_date": "2023-04-07",
-        "fit": 1,
-        "rel_num": 1,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      },
-      "size": {
-        "id": 1,
-        "INT": "12",
-        "US": "12",
-        "UK": "12",
-        "EU": "12",
-        "IT": "12",
-        "RU": "12",
-        "product": 1
-      },
-      "currency": {
-        "id": 2,
-        "name": "pending"
-      },
-      "delivery_type": {
-        "id": 1,
-        "name": "Самолёт"
-      },
-      "platform": {
-        "id": 1,
-        "platform": "Poizon",
-        "site": "/poizon"
-      }
+    "id": 10,
+    "user": {
+        "id": 20,
+        "username": "adaasaa",
+        "first_name": "qweq",
+        "last_name": "eqq",
+        "email": "adaasaa",
+        "is_staff": false,
+        "all_purchase_amount": 0,
+        "personal_discount_percentage": 0,
+        "height": 175,
+        "weight": 60,
+        "gender": {
+            "id": 1,
+            "name": "M"
+        },
+        "ref_user": null,
+        "bonuses": {
+            "id": 12,
+            "total_amount": 0,
+            "accrual": []
+        },
+        "groups": []
     },
-    {
-      "id": 2,
-      "final_price": 100,
-      "availability": true,
-      "product": {
+    "address": {
         "id": 2,
-        "name": "Dunk",
-        "bucket_link": "/buck",
-        "description": "desc",
-        "sku": "sku",
-        "available_flag": true,
-        "last_upd": "2023-04-07T15:59:39Z",
-        "add_date": "2023-04-07",
-        "fit": 0,
-        "rel_num": 0,
-        "gender": 1,
-        "brands": [
-          1
-        ],
-        "categories": [
-          1
-        ],
-        "tags": [
-          1
-        ]
-      },
-      "size": {
-        "id": 1,
-        "INT": "12",
-        "US": "12",
-        "UK": "12",
-        "EU": "12",
-        "IT": "12",
-        "RU": "12",
-        "product": 1
-      },
-      "currency": {
+        "name": "Дом",
+        "address": "г Белгород, ул Губкина, д 17б",
+        "post_index": "308033",
+        "is_main": true
+    },
+    "order_units": [
+        {
+            "id": 15,
+            "product": {
+                "id": 1,
+                "in_wishlist": false,
+                "list_lines": [],
+                "model": "",
+                "colorway": "Yeezy boost 750 'Triple Black'",
+                "slug": "adidas-yeezy-boost-750-triple-black-1",
+                "manufacturer_sku": "BB1839",
+                "description": "",
+                "is_custom": false,
+                "is_collab": true,
+                "designer_color": "",
+                "min_price": 6490,
+                "available_flag": true,
+                "has_many_sizes": false,
+                "has_many_colors": false,
+                "has_many_configurations": false,
+                "exact_date": "2015-12-19",
+                "approximate_date": "19.12.2015",
+                "fit": 0,
+                "rel_num": 26252,
+                "parameters": {},
+                "main_line": {
+                    "id": 1,
+                    "name": "adidas",
+                    "is_all": false,
+                    "view_name": "adidas",
+                    "full_name": "adidas",
+                    "full_eng_name": "adidas",
+                    "parent_line": null
+                },
+                "collab": {
+                    "id": 2,
+                    "name": "adidas Yeezy",
+                    "query_name": "adidas_yeezy",
+                    "is_main_collab": true,
+                    "is_all": false
+                },
+                "main_color": {
+                    "id": 143,
+                    "name": "multicolour",
+                    "is_main_color": true,
+                    "russian_name": "Разноцветный",
+                    "hex": "conic-gradient(red, orange, yellow, green, skyblue, blue, red)"
+                },
+                "recommended_gender": null,
+                "size_table_platform": null,
+                "brands": [
+                    {
+                        "id": 1,
+                        "name": "adidas",
+                        "query_name": "adidas"
+                    }
+                ],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "Обувь",
+                        "eng_name": "shoes_category",
+                        "is_all": false,
+                        "full_name": "Обувь",
+                        "parent_category": null
+                    },
+                    {
+                        "id": 2,
+                        "name": "Вся обувь",
+                        "eng_name": "shoes_category",
+                        "is_all": true,
+                        "full_name": "Обувь | Вся обувь",
+                        "parent_category": {
+                            "id": 1,
+                            "name": "Обувь",
+                            "eng_name": "shoes_category",
+                            "is_all": false,
+                            "full_name": "Обувь",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 3,
+                        "name": "Кроссовки",
+                        "eng_name": "sneakers",
+                        "is_all": false,
+                        "full_name": "Обувь | Кроссовки",
+                        "parent_category": {
+                            "id": 1,
+                            "name": "Обувь",
+                            "eng_name": "shoes_category",
+                            "is_all": false,
+                            "full_name": "Обувь",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 4,
+                        "name": "Все кроссовки",
+                        "eng_name": "sneakers",
+                        "is_all": true,
+                        "full_name": "Обувь | Кроссовки | Все кроссовки",
+                        "parent_category": {
+                            "id": 3,
+                            "name": "Кроссовки",
+                            "eng_name": "sneakers",
+                            "is_all": false,
+                            "full_name": "Обувь | Кроссовки",
+                            "parent_category": 1
+                        }
+                    }
+                ],
+                "tags": [],
+                "bucket_link": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/34e2dbe96d3f45be94fa71746653db47.jpg"
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20221129/088473247ad14bd2afdcbfda68bc8bb8.jpg"
+                    },
+                    {
+                        "id": 3,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/da8ce7d8bfc042fb892a4e701e74cdd5.jpg"
+                    },
+                    {
+                        "id": 4,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20221129/2e5570bcd4914c6f9c6ee2b44234e6f2.jpg"
+                    },
+                    {
+                        "id": 5,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/a06ca6b424204ba280d4550840151f97.jpg"
+                    }
+                ],
+                "colors": [],
+                "gender": [
+                    {
+                        "id": 1,
+                        "name": "M"
+                    },
+                    {
+                        "id": 2,
+                        "name": "F"
+                    }
+                ]
+            },
+            "view_size_platform": "39",
+            "size_table_platform": "",
+            "color": "",
+            "configuration": "",
+            "start_price": 75490,
+            "final_price": 75490,
+            "url": "",
+            "warehouse": false,
+            "is_return": true,
+            "is_fast_shipping": false,
+            "is_sale": true,
+            "cancel": false,
+            "cancel_reason": "",
+            "delivery_type": {
+                "id": 2,
+                "name": "до 30 дней",
+                "view_name": null
+            },
+            "platform": {
+                "id": 1,
+                "platform": "poizon",
+                "site": "poizon"
+            },
+            "status": {
+                "id": 3,
+                "name": "Ожидает подтверждения"
+            }
+        },
+        {
+            "id": 16,
+            "product": {
+                "id": 1,
+                "in_wishlist": false,
+                "list_lines": [],
+                "model": "",
+                "colorway": "Yeezy boost 750 'Triple Black'",
+                "slug": "adidas-yeezy-boost-750-triple-black-1",
+                "manufacturer_sku": "BB1839",
+                "description": "",
+                "is_custom": false,
+                "is_collab": true,
+                "designer_color": "",
+                "min_price": 6490,
+                "available_flag": true,
+                "has_many_sizes": false,
+                "has_many_colors": false,
+                "has_many_configurations": false,
+                "exact_date": "2015-12-19",
+                "approximate_date": "19.12.2015",
+                "fit": 0,
+                "rel_num": 26252,
+                "parameters": {},
+                "main_line": {
+                    "id": 1,
+                    "name": "adidas",
+                    "is_all": false,
+                    "view_name": "adidas",
+                    "full_name": "adidas",
+                    "full_eng_name": "adidas",
+                    "parent_line": null
+                },
+                "collab": {
+                    "id": 2,
+                    "name": "adidas Yeezy",
+                    "query_name": "adidas_yeezy",
+                    "is_main_collab": true,
+                    "is_all": false
+                },
+                "main_color": {
+                    "id": 143,
+                    "name": "multicolour",
+                    "is_main_color": true,
+                    "russian_name": "Разноцветный",
+                    "hex": "conic-gradient(red, orange, yellow, green, skyblue, blue, red)"
+                },
+                "recommended_gender": null,
+                "size_table_platform": null,
+                "brands": [
+                    {
+                        "id": 1,
+                        "name": "adidas",
+                        "query_name": "adidas"
+                    }
+                ],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "Обувь",
+                        "eng_name": "shoes_category",
+                        "is_all": false,
+                        "full_name": "Обувь",
+                        "parent_category": null
+                    },
+                    {
+                        "id": 2,
+                        "name": "Вся обувь",
+                        "eng_name": "shoes_category",
+                        "is_all": true,
+                        "full_name": "Обувь | Вся обувь",
+                        "parent_category": {
+                            "id": 1,
+                            "name": "Обувь",
+                            "eng_name": "shoes_category",
+                            "is_all": false,
+                            "full_name": "Обувь",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 3,
+                        "name": "Кроссовки",
+                        "eng_name": "sneakers",
+                        "is_all": false,
+                        "full_name": "Обувь | Кроссовки",
+                        "parent_category": {
+                            "id": 1,
+                            "name": "Обувь",
+                            "eng_name": "shoes_category",
+                            "is_all": false,
+                            "full_name": "Обувь",
+                            "parent_category": null
+                        }
+                    },
+                    {
+                        "id": 4,
+                        "name": "Все кроссовки",
+                        "eng_name": "sneakers",
+                        "is_all": true,
+                        "full_name": "Обувь | Кроссовки | Все кроссовки",
+                        "parent_category": {
+                            "id": 3,
+                            "name": "Кроссовки",
+                            "eng_name": "sneakers",
+                            "is_all": false,
+                            "full_name": "Обувь | Кроссовки",
+                            "parent_category": 1
+                        }
+                    }
+                ],
+                "tags": [],
+                "bucket_link": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/34e2dbe96d3f45be94fa71746653db47.jpg"
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20221129/088473247ad14bd2afdcbfda68bc8bb8.jpg"
+                    },
+                    {
+                        "id": 3,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/da8ce7d8bfc042fb892a4e701e74cdd5.jpg"
+                    },
+                    {
+                        "id": 4,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20221129/2e5570bcd4914c6f9c6ee2b44234e6f2.jpg"
+                    },
+                    {
+                        "id": 5,
+                        "url": "https://cdn.poizon.com/pro-img/origin-img/20220212/a06ca6b424204ba280d4550840151f97.jpg"
+                    }
+                ],
+                "colors": [],
+                "gender": [
+                    {
+                        "id": 1,
+                        "name": "M"
+                    },
+                    {
+                        "id": 2,
+                        "name": "F"
+                    }
+                ]
+            },
+            "view_size_platform": "38.5",
+            "size_table_platform": "",
+            "color": "",
+            "configuration": "",
+            "start_price": 69990,
+            "final_price": 69990,
+            "url": "",
+            "warehouse": false,
+            "is_return": true,
+            "is_fast_shipping": false,
+            "is_sale": true,
+            "cancel": false,
+            "cancel_reason": "",
+            "delivery_type": {
+                "id": 2,
+                "name": "до 30 дней",
+                "view_name": null
+            },
+            "platform": {
+                "id": 1,
+                "platform": "poizon",
+                "site": "poizon"
+            },
+            "status": {
+                "id": 3,
+                "name": "Ожидает подтверждения"
+            }
+        }
+    ],
+    "total_amount": 145480,
+    "final_amount": 145480,
+    "email": "mail@mail.ru",
+    "phone": "123",
+    "name": "Имя",
+    "surname": "Фамилия",
+    "patronymic": "Отчество",
+    "delivery": "сам",
+    "bonus_sale": 0,
+    "promo_sale": 0,
+    "total_sale": 0,
+    "payment": "",
+    "fact_of_payment": false,
+    "date": "2023-08-29T11:33:43.412088Z",
+    "cancel": false,
+    "cancel_reason": "",
+    "promo_code": null,
+    "status": {
         "id": 2,
-        "name": "pending"
-      },
-      "delivery_type": {
-        "id": 1,
-        "name": "Самолёт"
-      },
-      "platform": {
-        "id": 1,
-        "platform": "Poizon",
-        "site": "/poizon"
-      }
+        "name": "В обработке"
     }
-  ]
 }
 ```
 

@@ -12,6 +12,7 @@ class ConfigurationUnit(models.Model):
 
 class DeliveryType(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
+    days = models.IntegerField(default=0)
     view_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):

@@ -23,9 +23,11 @@ class Order(models.Model):
     total_amount = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
     email = models.EmailField(null=False, blank=False)
-    tel = models.CharField(max_length=20, null=False, blank=False)
+    phone = models.CharField(max_length=20, null=False, blank=False)
     name = models.CharField(max_length=100, null=False, blank=False)
     surname = models.CharField(max_length=100, null=False, blank=False)
+    patronymic = models.CharField(max_length=100, default="")
+    delivery = models.CharField(max_length=100, default="")
     address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders")
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
@@ -34,6 +36,7 @@ class Order(models.Model):
     total_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="orders", default=get_default_status())
+    payment = models.CharField(max_length=100, default="")
     fact_of_payment = models.BooleanField(default=False)
     date = models.DateTimeField(default=timezone.now)
     cancel = models.BooleanField(default=False)
@@ -50,7 +53,7 @@ class Order(models.Model):
         order_unit = OrderUnit(
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
-            size_table_platform=product_unit.size_table_platform,
+            # size_table_platform=product_unit.size_table_platform,
             color=product_unit.color,
             configuration=product_unit.configuration,
             start_price=product_unit.start_price,
@@ -65,8 +68,6 @@ class Order(models.Model):
         )
         order_unit.save()
         self.order_units.add(order_unit)
-
-
 
 
 

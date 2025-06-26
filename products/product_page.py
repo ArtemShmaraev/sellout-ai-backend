@@ -22,6 +22,10 @@ from django.views.decorators.cache import cache_page
 
 # Используйте декоратор с заданным временем жизни (в секундах)
 
+
+
+
+
 def get_product_page_header(request):
     res = {}
 

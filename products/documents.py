@@ -5,7 +5,7 @@ from elasticsearch_dsl import analyzer, token_filter
 from sellout.settings import HOST
 
 # connections.create_connection(hosts=['51.250.74.115'])  # Укажите адрес вашего Elasticsearch-сервера
-connections.create_connection(hosts=[HOST])
+connections.create_connection(hosts=[f"{HOST}:9200"])
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
 russian_stemmer = token_filter('russian_stemmer', type='stemmer', language='russian')

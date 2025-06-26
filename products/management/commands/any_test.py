@@ -27,7 +27,9 @@ class Command(BaseCommand):
             for unit in cart.product_units.all():
                 s.append(unit.id)
             cart.unit_order = s
+            cart.total()
             cart.save()
+            print(cart.user, cart.final_amount, cart.product_units.count())
 
 
 

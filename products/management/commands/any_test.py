@@ -3,6 +3,8 @@ from itertools import count
 from django.core import signing
 from django.core.management.base import BaseCommand
 import json
+
+from orders.models import ShoppingCart
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,15 +21,15 @@ class Command(BaseCommand):
         # clothes = header.filter(categories__eng_name="clothes").count()
         # accessories = header.filter(categories__eng_name="accessories").count()
         # print(brand, shoes, clothes, accessories)
-        dvs = DewuInfo.objects.all()
-        k= 0
-        for dv in dvs:
-            k += 1
-            if k % 1000 == 0:
-                print(k)
-            if dv.spu_id == 1178815:
-                # dv = DewuInfo.objects.get(spu_id=1178815)
-                print(dv.web_data['size_table'])
+        carts = ShoppingCart.objects.all()
+        for cart in carts:
+            s = []
+            for unit in cart.product_units.all():
+                s.append(unit.id)
+            cart.unit_order = s
+            cart.save()
+
+
 
 
 

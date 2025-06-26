@@ -70,6 +70,7 @@ class ShoppingCartUser(APIView):
                 product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
                 shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
                 shopping_cart.product_units.add(product_unit)
+                shopping_cart.unit_order.append(product_unit_id)
                 shopping_cart.total()
                 serializer = ProductUnitSerializer(product_unit)
                 return Response(serializer.data)
@@ -84,7 +85,23 @@ class ShoppingCartUser(APIView):
                 product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
                 shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
                 shopping_cart.product_units.remove(product_unit)
+                shopping_cart.unit_order.remove(product_unit_id)
+                shopping_cart.total()
+                serializer = ProductUnitSerializer(product_unit)
+                return Response(serializer.data)
+            else:
+                return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
+        except ProductUnit.DoesNotExist:
+            return Response("ProductUnit не найден", status=status.HTTP_404_NOT_FOUND)
 
+    def put(self, request, user_id, product_unit_id, new_product_unit_id):
+        try:
+            if request.user.id == user_id or request.user.is_staff:
+                product_unit = get_object_or_404(ProductUnit, id=product_unit_id)
+                shopping_cart = get_object_or_404(ShoppingCart, user_id=user_id)
+                shopping_cart.product_units.remove(product_unit)
+                s = shopping_cart.unit_order
+                shopping_cart.unit_order = [new_product_unit_id if x == product_unit_id else x for x in s]
                 shopping_cart.total()
                 serializer = ProductUnitSerializer(product_unit)
                 return Response(serializer.data)

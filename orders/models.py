@@ -76,7 +76,7 @@ class ShoppingCart(models.Model):
                                 blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
                                            related_name="shopping_carts")
-    # unit_order = models.JSONField(default=list)
+    unit_order = models.JSONField(default=list)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="carts")
     total_amount = models.IntegerField(default=0)

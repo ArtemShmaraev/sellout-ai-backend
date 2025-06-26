@@ -8,6 +8,7 @@ router.register("", ShoppingCartViewSet, 'cart')
 
 urlpatterns = router.urls
 urlpatterns.append(path('cart/<int:user_id>/<int:product_unit_id>', ShoppingCartUser.as_view()))
+urlpatterns.append(path('cart/<int:user_id>/<int:product_unit_id>/<int:new_product_unit_id>', ShoppingCartUser.as_view()))
 urlpatterns.append(path('cart/<int:user_id>', ShoppingCartUser.as_view()))
 urlpatterns.append(path('cart_list/<int:user_id>', ListProductUnitOrderView.as_view()))
 

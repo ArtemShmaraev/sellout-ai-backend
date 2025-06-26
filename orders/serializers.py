@@ -7,20 +7,22 @@ from users.models import User
 from users.serializers import ForAnonUserSerializer, UserSerializer, UserOrderSerializer
 
 
+
 class ShoppingCartSerializer(serializers.ModelSerializer):
     promo_code = PromoCodeSerializer()
     product_units = ProductUnitSerializer(many=True, read_only=True)
     bonus = serializers.SerializerMethodField()
     user = ForAnonUserSerializer()
-    # Вычисляемое поле "сумма покупки"
-    # total_amount = serializers.SerializerMethodField()
-    #
-    # def get_total_amount(self, obj):
-    #     # Выполняем вычисление суммы покупки
-    #     # Здесь вы можете использовать любую логику, основанную на других полях модели
-    #     # В примере суммируем значения полей "price" для каждого товара в корзине
-    #     total = sum(unit.final_price for unit in obj.product_units.all())
-    #     return total
+    class Meta:
+        model = ShoppingCart
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        unit_order = instance.unit_order
+        ordered_product_units = sorted(representation['product_units'], key=lambda x: unit_order.index(x['id']))
+        representation['product_units'] = ordered_product_units
+        return representation
 
 
     def get_bonus(self, obj):
@@ -36,11 +38,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 pass
         return False
 
-    class Meta:
-        model = ShoppingCart
-        fields = "__all__"
-        # fields = '__all__'
-        depth = 3
 
 
 class OrderUnitSerializer(serializers.ModelSerializer):

@@ -33,7 +33,7 @@ class Formula(models.Model):
 class AddressInfo(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     address = models.CharField(max_length=255, null=False, blank=False)
-    post_index = models.CharField(max_length=10, null=False, blank=False)
+    post_index = models.CharField(max_length=10, null=False, blank=False, default=0)
     is_main = models.BooleanField(default=False)
     other_info = models.JSONField(default=dict)
 

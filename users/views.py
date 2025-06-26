@@ -544,10 +544,9 @@ class UserAddressView(APIView):
             data = json.loads(request.body)
             address_info = check_adress(data['address'])
             if address_info:
-                address = AddressInfo(name=data['name'], address=address_info['value'], post_index=data['post_index'],
-                                      other_info=address_info)
+                address = AddressInfo(name=data['name'], address=address_info['value'], other_info=address_info)
             else:
-                address = AddressInfo(name=data['name'], address=data['address'], post_index=data['post_index'])
+                address = AddressInfo(name=data['name'], address=data['address'])
 
             address.save()
             request.user.address.add(address)
@@ -575,7 +574,7 @@ class UserAddressView(APIView):
                     address.other_info = address_info
                 else:
                     address.address = data['address']
-            address.post_index = data.get('post_index', address.post_index)
+
             address.is_main = data.get('is_main', address.is_main)
             address.save()
 

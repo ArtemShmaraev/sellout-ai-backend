@@ -245,7 +245,7 @@ class DewuInfoListView(APIView):
 class DewuInfoView(APIView):
     def get(self, request, spu_id):
         dewu_info = DewuInfo.objects.filter(spu_id=spu_id)
-        print(dewu_info.web_data['size_table'])
+        # print(dewu_info.web_data['size_table'])
         serializer = DewuInfoSerializer(dewu_info, many=True)
         # Замените на вашу сериализацию
         return Response(serializer.data, status=status.HTTP_200_OK)

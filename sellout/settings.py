@@ -15,7 +15,6 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-
 CACHE_TIME = 60 * 15
 #
 HOST = "sellout.su"
@@ -73,7 +72,6 @@ INSTALLED_APPS = [
     # "social_django"
 ]
 
-
 GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
 GOOGLE_OAUTH2_SECRET = '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'
 
@@ -89,6 +87,7 @@ ELASTICSEARCH_DSL = {
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -96,7 +95,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware'
 ]
 
@@ -290,7 +288,6 @@ CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-
 
 CACHES = {
     'default': {

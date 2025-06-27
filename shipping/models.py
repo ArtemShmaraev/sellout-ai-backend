@@ -40,14 +40,7 @@ class AddressInfo(models.Model):
     def __str__(self):
         return self.address
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.is_main:
-            user = self.users.first()
-            if user:
-                addresses = user.address.filter(is_main=True)
-                for address in addresses:
-                    address.is_main = False
+
 
 
 class Platform(models.Model):

@@ -554,6 +554,12 @@ class UserAddressView(APIView):
             if data['is_main']:
                 address.is_main = True
                 address.save()
+
+            if address.is_main:
+                for ad in User.objects.get(id=user_id).address.all():
+                    if ad.is_main and ad != address:
+                        ad.is_main = False
+                        ad.save()
             return Response(AddressInfoSerializer(address).data)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
@@ -576,6 +582,11 @@ class UserAddressView(APIView):
                     address.address = data['address']
 
             address.is_main = data.get('is_main', address.is_main)
+            if address.is_main:
+                for ad in User.objects.get(id=user_id).address.all():
+                    if ad.is_main and ad != address:
+                        ad.is_main = False
+                        ad.save()
             address.save()
 
             return Response(AddressInfoSerializer(address).data)

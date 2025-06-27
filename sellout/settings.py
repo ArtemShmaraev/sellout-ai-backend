@@ -113,6 +113,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_METHODS = True
 
 ROOT_URLCONF = 'sellout.urls'
 
@@ -275,7 +276,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-# # #
+# # # #
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Set to True to always redirect HTTP requests to HTTPS

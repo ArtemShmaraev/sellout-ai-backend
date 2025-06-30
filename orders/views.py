@@ -227,6 +227,9 @@ class ListProductUnitOrderView(APIView):
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 for product_unit in product_units:
                     cart.product_units.add(product_unit)
+                    if product_unit.id not in cart.unit_order:
+                        cart.unit_order.append(product_unit.id)
+                cart.total()
                 return Response(cart.product_units.values_list('id', flat=True))
             except json.JSONDecodeError:
                 return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)

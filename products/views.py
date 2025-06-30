@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import random
 
@@ -42,7 +43,19 @@ from sellout.settings import CACHE_TIME
 
 
 
-
+# class BrandView(APIView):
+#     def get(self, request):
+#         context = {"user_id": request.user.id if request.user.id else None}
+#         search_query = request.query_params.get('q', '')  # Получаем параметр "q" из запроса
+#
+#         # Используем исключение try-except для обработки ошибок
+#         try:
+#             # Ищем бренды, чьи имена содержат поисковой запрос
+#             brands = Brand.objects.filter(name__icontains=search_query)
+#             serializer = BrandSerializer(brands, many=True, context=context)  # Сериализуем найденные бренды
+#             return Response(serializer.data)
+#         except Exception as e:
+#             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -425,7 +438,7 @@ class LineTreeView(APIView):
 
     def get(self, request):
         q = self.request.query_params.get('q')
-        tree = build_line_tree()[:]
+        tree = copy.deepcopy(build_line_tree())
         if q:
             q = q.lower()
             start_tree = []

@@ -213,12 +213,14 @@ def build_line_tree():
         if parent_line is None:
             # Если у линейки нет родительской линейки, она считается корневой линейкой
             del line['parent_line']
+            line["is_show"] = True
             root_lines.append(line)
         else:
             parent_id = parent_line['id']
             parent_line = line_dict.get(parent_id)
             if parent_line:
                 del line['parent_line']
+                # line["is_show"] = True
                 # Если родительская линейка найдена, добавляем текущую линейку в список её дочерних линеек
                 parent_line.setdefault('children', []).append(line)
 

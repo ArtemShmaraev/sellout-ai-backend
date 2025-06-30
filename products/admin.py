@@ -64,11 +64,11 @@ class CollectionAdmin(admin.ModelAdmin):
 
 
 class SizeTableAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ("id", 'name',)
 
 
 class SizeRowAdmin(admin.ModelAdmin):
-    list_display = ('filter_name', "sizes")
+    list_display = ("id", 'filter_name', "sizes")
 
 
 admin.site.register(Product, ProductAdmin)

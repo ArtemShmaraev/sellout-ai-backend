@@ -1,0 +1,16 @@
+{
+  "feather": "Пух",
+  "cotton": "Хлопок",
+  "leather": "Кожа",
+  "cashmere": "Кашемир",
+  "wool": "Шерсть",
+  "nylon": "Нейлон",
+  "polyester": "Полиэстер",
+  "fabric": "Ткань",
+  "denim": "Деним",
+  "silk": "Шёлк",
+  "suede": "Замша",
+  "fur": "Мех",
+  "satin": "Атлас",
+  "other_material": "Другой"
+}

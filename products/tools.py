@@ -282,7 +282,7 @@ def line_no_child(lines):
             else:
                 children = line['children']
                 result.extend(get_lines_without_children(children))
-        result.sort(key=lambda x: x['full_name'])
+        result.sort(key=lambda x: x['name'])
         return result
 
     return get_lines_without_children(root_lines)

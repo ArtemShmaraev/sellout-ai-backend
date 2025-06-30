@@ -37,32 +37,52 @@ def get_random(queryset):
         return None
 
 
-def get_line_selection():
-    lines = Line.objects.filter(~Q(parent_line=None))
-    random_line = get_random(lines)
-    products = Product.objects.filter(lines=random_line)
-    filters = Q(product_units__availability=True)
-    products = products.filter(filters).distinct()
-    if not products.exists():
-        return get_line_selection()
+def get_line_selection(line=None):
+    if line is None:
+        lines = Line.objects.filter(~Q(parent_line=None))
+        line = get_random(lines)
+        products = Product.objects.filter(lines=line)
+        filters = Q(product_units__availability=True)
+        products = products.filter(filters).distinct()
+        if not products.exists():
+            return get_line_selection()
+        else:
+            products = products.order_by("-rel_num")[:30]
+            title = f"{line.name}"
+            url = f"line={line.full_eng_name}"
     else:
-        products = products.order_by("-rel_num")[:30]
-        title = f"{random_line.name}"
-        url = f"line={random_line.full_eng_name}"
-        return title, products, url
+        products = Product.objects.filter(lines=line)
+        filters = Q(product_units__availability=True)
+        products = products.filter(filters).distinct()
+        if products.exists():
+            products = products.order_by("-rel_num")[:30]
+        title = f"{line.name}"
+        url = f"line={line.full_eng_name}"
+    return title, products, url
 
 
-def get_collab_selection():
-    collabs = Collab.objects.all()
-    random_collab = get_random(collabs)
-    products = Product.objects.filter(collab=random_collab)
-    if not products.exists():
-        return get_collab_selection()
+def get_collab_selection(collab=None):
+    if collab is None:
+        collabs = Collab.objects.all()
+        collab = get_random(collabs)
+        products = Product.objects.filter(collab=collab)
+        filters = Q(product_units__availability=True)
+        products = products.filter(filters).distinct()
+        if not products.exists():
+            return get_collab_selection()
+        else:
+            products = products.order_by("-rel_num")[:30]
+            title = f"{collab.name}"
+            url = f"collab={collab.query_name}"
     else:
-        products = products.order_by("-rel_num")[:30]
-        title = f"{random_collab.name}"
-        url = f"collab={random_collab.query_name}"
-        return title, products, url
+        products = Product.objects.filter(collab=collab)
+        filters = Q(product_units__availability=True)
+        products = products.filter(filters).distinct()
+        if products.exists():
+            products = products.order_by("-rel_num")[:30]
+        title = f"{collab.name}"
+        url = f"collab={collab.query_name}"
+    return title, products, url
 
 
 def get_brand_and_category_selection():
@@ -101,11 +121,12 @@ def get_photo():
     collab_desk = random_photo_desk.collabs.first()
 
     photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
-
     if line_desk is not None:
         photos_mobile = photos_mobile.filter(lines=line_desk)
+
     elif collab_desk is not None:
         photos_mobile = photos_mobile.filter(collabs=collab_desk)
+
 
     if not photos_mobile.exists():
         photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
@@ -147,14 +168,21 @@ def get_photo_text(last):
 
     random_photo_desk, random_photo_mobile = get_photo()
 
+    f = True
     if random_photo_mobile.lines.exists():
         line = random_photo_mobile.lines.all().order_by("-id").first()
         url_mobile = f"line={line.full_eng_name}"
+        title, queryset, url = get_line_selection(line=line)
     elif random_photo_mobile.collabs.exists():
         collab = random_photo_mobile.collabs.first()
         url_mobile = f"collab={collab.query_name}"
+        title, queryset, url = get_collab_selection(collab=collab)
+
     else:
         url_mobile = ""
+        f = False
+
+
 
     if random_photo_desk.lines.exists():
         line = random_photo_desk.lines.all().order_by("-id").first()
@@ -164,6 +192,10 @@ def get_photo_text(last):
         url_desk = f"collab={collab.query_name}"
     else:
         url_desk = ""
+
+    selection = []
+    if f:
+        selection = queryset
 
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
@@ -180,4 +212,4 @@ def get_photo_text(last):
                       "button": "Посмотреть все"
                       }}
 
-    return res, type
+    return res, type, selection

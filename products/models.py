@@ -146,6 +146,14 @@ class Color(models.Model):
         return self.name
 
 
+class Material(models.Model):
+    name = models.CharField(max_length=255)
+    eng_name = models.CharField(max_length=255, default="")
+
+    def __str__(self):
+        return self.name
+
+
 class Gender(models.Model):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -207,6 +215,8 @@ class Product(models.Model):
                                    related_name="products_main", db_index=True)
     colors = models.ManyToManyField("Color", related_name='products', blank=True, db_index=True)
     designer_color = models.SlugField(max_length=255, blank=True)
+
+    materials = models.ManyToManyField("Material", related_name='products', blank=True, db_index=True)
 
     gender = models.ManyToManyField("Gender", related_name='products', blank=True, db_index=True)
     recommended_gender = models.ForeignKey("Gender", on_delete=models.SET_NULL, blank=True, null=True)

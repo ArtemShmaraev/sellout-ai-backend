@@ -110,6 +110,7 @@ def get_product_page(request):
     is_sale = params.get("is_sale")
     is_return = params.get("is_return")
     category = params.getlist("category")
+    material = params.getlist("material")
     gender = params.getlist("gender")
     brand = params.getlist("brand")
     collab = params.getlist("collab")
@@ -138,6 +139,8 @@ def get_product_page(request):
             queryset = queryset.filter(is_collab=True)
         else:
             queryset = queryset.filter(collab__query_name__in=collab)
+    if material:
+        queryset = queryset.filter(materials__eng_name__in=material)
     if brand:
         for brand_name in brand:
             queryset = queryset.filter(brands__query_name=brand_name)

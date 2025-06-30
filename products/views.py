@@ -42,7 +42,6 @@ from products.main_page import get_selection, get_photo_text, get_sellout_photo_
 from sellout.settings import CACHE_TIME
 
 
-
 # class BrandView(APIView):
 #     def get(self, request):
 #         context = {"user_id": request.user.id if request.user.id else None}
@@ -56,7 +55,6 @@ from sellout.settings import CACHE_TIME
 #             return Response(serializer.data)
 #         except Exception as e:
 #             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 class BrandSearchView(APIView):
@@ -105,7 +103,7 @@ class SGInfoView(APIView):
     def post(self, request, sku):
         data = json.loads(request.body)
         if SGInfo.objects.filter(manufacturer_sku=sku).exists():
-            sg_info =SGInfo.objects.get(manufacturer_sku=sku)
+            sg_info = SGInfo.objects.get(manufacturer_sku=sku)
         else:
             sg_info = SGInfo(manufacturer_sku=sku)
 
@@ -123,6 +121,7 @@ class SGInfoView(APIView):
             return Response("Удален", status=status.HTTP_200_OK)
         except DewuInfo.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
 
 class MakeRansomRequest(APIView):
     def post(self, request):
@@ -158,58 +157,52 @@ class GetHeaderPhoto(APIView):
 class MainPageBlocks(APIView):
 
     def get(self, request):
-        more = request.query_params.get("more")
+        page = request.query_params.get("page", 1)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
         s = [2, 1, 1, 0, 1, 1, 0, 0, 1]
 
         last = "any"
-        if not more:
-            for i in range(9):
-                type = s[i]
-                if type == 0:
-                    cache_photo_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_photo_key)
+        for i in range(9):
+            type = s[i]
+            if type == 0:
+                cache_photo_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cached_data = cache.get(cache_photo_key)
 
-                    if cached_data is not None:
-                        photo, last = cached_data
-                    else:
-                        photo, last = get_photo_text(last)
-                        cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
-                    res.append(photo)
-
-                elif type == 1:
-                    cache_sellection_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_sellection_key)
-
-                    if cached_data is not None:
-                        queryset, selection = cached_data
-                    else:
-                        queryset, selection = get_selection()
-                        cache.set(cache_sellection_key, (queryset, selection), 60 * 60 * 5)
-                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
-                    res.append(selection)
+                if cached_data is not None:
+                    photo, last, queryset = cached_data
                 else:
-                    cache_photo_key = f"main_page:{i}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_photo_key)
-                    if cached_data is not None:
-                        photo, last = cached_data
-                    else:
-                        photo, last = get_sellout_photo_text(last)
-                        cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
+                    photo, last, queryset = get_photo_text(last)
+                    cache.set(cache_photo_key, (photo, last, queryset), 60 * 60 * 5)
+                if queryset.exists():
                     res.append(photo)
-        else:
-            generator = RandomGenerator()
-            for i in range(9):
-                type = generator.generate()
-                if type == 1:
-                    queryset, selection = get_selection()
-                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+                    selection = {"type": "selection", "title": photo['mobile']['title'],
+                                 "url": photo['mobile']['url'],
+                                 'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
                     res.append(selection)
-                elif type == 0:
-                    photo, last = get_photo_text(last)
-                    res.append(photo)
-            del generator
+
+            elif type == 1:
+                cache_sellection_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cached_data = cache.get(cache_sellection_key)
+
+                if cached_data is not None:
+                    queryset, selection = cached_data
+                else:
+                    queryset, selection = get_selection()
+                    cache.set(cache_sellection_key, (queryset, selection), 60 * 60 * 5)
+                selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+                res.append(selection)
+            else:
+                cache_photo_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cached_data = cache.get(cache_photo_key)
+                if cached_data is not None:
+                    photo, last = cached_data
+                else:
+                    photo, last = get_sellout_photo_text(last)
+                    cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
+                res.append(photo)
+
+
         return Response(res)
 
 
@@ -221,7 +214,8 @@ class ProductSimilarView(APIView):
         try:
             product = Product.objects.get(id=product_id)
             similar = similar_product(product)
-            res.append({"name": "Похожие товары", "products": ProductMainPageSerializer(similar, many=True, context=context).data})
+            res.append({"name": "Похожие товары",
+                        "products": ProductMainPageSerializer(similar, many=True, context=context).data})
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -613,7 +607,6 @@ class ListProductView(APIView):
                     models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
                 )
                 cache.set(cache_product_key, products, CACHE_TIME)
-
 
             return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(
                 user=User(id=self.request.user.id)) if request.user.id else None}).data)

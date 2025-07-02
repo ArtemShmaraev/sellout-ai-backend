@@ -272,6 +272,8 @@ class DewuInfoView(APIView):
             dewu_info.preprocessed_data = data['preprocessed_data']
         if "web_data" in data:
             dewu_info.web_data = data['web_data']
+        if "processed_data" in data:
+            dewu_info.processed_data = data['processed_data']
         dewu_info.save()
         return Response(DewuInfoSerializer(dewu_info).data)
 

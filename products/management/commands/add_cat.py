@@ -53,14 +53,14 @@ class Command(BaseCommand):
         collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
         collab.save()
         #
-        all_data = json.load(open("category.json", encoding="utf-8"))["categories"]
+        all_data = json.load(open("category.json", encoding="utf-8"))
         self.create_categories(all_data)
         #
         #
-        statuses = ["Ожидает подтверждения", "Заказ подтвержден", "В пути до международного склада", "В пути до склада в Москве",
-                    "Готово к выдаче в пункте самовывоза", "Передано в службу доставки", "Получено"]
-        for status_name in statuses:
-            status = Status.objects.get_or_create(name=status_name)[0]
-            status.save()
+        # statuses = ["Ожидает подтверждения", "Заказ подтвержден", "В пути до международного склада", "В пути до склада в Москве",
+        #             "Готово к выдаче в пункте самовывоза", "Передано в службу доставки", "Получено"]
+        # for status_name in statuses:
+        #     status = Status.objects.get_or_create(name=status_name)[0]
+        #     status.save()
 
         print('finished')

@@ -55,7 +55,7 @@ class MinPriceForSizeView(APIView):
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
                     prices_by_size[size] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False, "size_sellout": []}
-                prices_by_size[size]["size_sellout"].append(item.size.id)
+                prices_by_size[size]["size_sellout"].extend(item.size.all().values_list("id"))
 
 
                 if available:

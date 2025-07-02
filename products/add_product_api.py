@@ -7,181 +7,165 @@ from django.db.models import Q
 
 from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
-    HeaderPhoto
+    HeaderPhoto, Material, SizeTable, SizeTranslationRows
 from products.serializers import LineSerializer
+from shipping.models import DeliveryType, ProductUnit, Platform
+from utils.models import Currency
+
+
+def add_product_api(data):
+    spu_id = data.get("spuId")
+    property_id = data.get("propertyId")
+    manufacturer_sku = data.get("manufacturer_sku")
+
+    print(property_id)
+
+    product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id,
+                                                    manufacturer_sku=manufacturer_sku)
+    if create:
+
+
+        product.is_collab = data["is_collab"]
+        if data["is_collab"]:
+            collab, create = Collab.objects.get_or_create(name=data['collab_names'][0])
+            product.collab = collab
+
+        product.model = data['model']
+        product.colorway = data['colorway']
+        product.is_custom = data['custom']
+
+        genders = data.get('gender', [])
+        product.gender.set(Gender.objects.filter(name__in=genders))
+
+        if data['date']:
+            product.exact_date = datetime.strptime(data['date'], "%d.%m.%Y").date()
+
+        if data['approximate_date']:
+            product.approximate_date = data['approximate_date']
+
+        for i in range(len(data['lines'])):
+            for line in data['lines'][i]:
+                line_db = Line.objects.get(name=line)
+                product.lines.add(line_db)
+                if Line.objects.filter(name=f"Все {line}").exists():
+                    line_db = Line.objects.get(name=f"Все {line}")
+                    product.lines.add(line_db)
+
+
+        for brand in data['brands']:
+            brand_db, create = Brand.objects.get_or_create(name=brand)
+            product.brands.add(brand_db)
+
+            line, create = Line.objects.get_or_create(name=brand)
+            product.lines.add(line)
+            if Line.objects.filter(name=f"Все {brand}").exists():
+                product.lines.add(Line.objects.get(name=f"Все {brand}"))
 
 
 
-print()
-colors_data = json.load(open("colors.json", encoding="utf-8"))
-singular_data = json.load(open("categories_singular.json", encoding="utf-8"))
 
 
-def check_color_in_list(color_name):
-    for color in colors_data:
-        if color['name'] == color_name:
-            return color
-    return False
+
+        for cat in data['categories']:
+            category = Category.objects.get(name=cat)
+            product.categories.add(category)
+            if Category.objects.filter(name=f"Все {category.name.lower()}").exists():
+                category_is_all = Category.objects.get(name=f"Все {category.name.lower()}")
+                product.categories.add(category_is_all)
+            elif Category.objects.filter(name=f"Вся {category.name.lower()}").exists():
+                category_is_all = Category.objects.get(name=f"Вся {category.name.lower()}")
+                product.categories.add(category_is_all)
+
+            while category.parent_category is not None:
+                category = category.parent_category
+                product.categories.add(category)
+
+                if Category.objects.filter(name=f"Все {category.name.lower()}").exists():
+                    category_is_all = Category.objects.get(name=f"Все {category.name.lower()}")
+                    product.categories.add(category_is_all)
+                elif Category.objects.filter(name=f"Вся {category.name.lower()}").exists():
+                    category_is_all = Category.objects.get(name=f"Вся {category.name.lower()}")
+                    product.categories.add(category_is_all)
+
+        product.parameters = data['parameters_to_show_in_product']
+        product.platform_info = data['platform_info']
+        product.rel_num = data["poizon_likes_count"]
+        product.similar_product = data.get("similar_products", [])
+        product.another_configuration = data.get("another_configuration", [])
+
+        for img in data["images"]:
+            photo = Photo(url=img["url"])
+            photo.save()
+            product.bucket_link.add(photo)
+
+        for color in data["parameters_to_use_in_filters"]['colors']:
+            color_db, create = Color.objects.get_or_create(name=color)
+            product.colors.add(color_db)
+
+        for material in data["parameters_to_use_in_filters"]['material']:
+            if Material.objects.filter(eng_name=material).exists():
+                material_db = Material.objects.get(eng_name=material)
+                product.materials.add(material_db)
+
+        product.size_table_platform = data['size_tables']
+        product.save(custom_param=True)
 
 
-def add_product2(data):
-    rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
-    product, create = Product.objects.get_or_create(
-        model=data.get('model'),
-        manufacturer_sku=data.get('manufacturer_sku'),
-        russian_name=data.get('model'),
-        slug=data.get('manufacturer_sku') + str(random.randint(1, 50)),
-        rel_num=int(rel_num if rel_num else 0),
-        is_collab=data.get('is_collab'),
-        main_color=Color.objects.get_or_create(name="multicolour")[0]
-    )
-    # if not create:
+
+        for unit in data['units']:
+
+            sizes = []
+            for size in unit["size_table_info"]:
+                if size['size_table'] == "undefined" or size['size_table_row_value'] == 'undefined':
+                    row = SizeTranslationRows.objects.filter(is_one_size=True).first()
+                    sizes.append(row.id)
 
 
-def add_product(data, SG_PRODUCTS=Product.objects.filter(id__lte=19000)):
+
+                table = SizeTable.objects.get(name=size['size_table'])
+                rows = table.rows.all()
+                for size_row in rows:
+                    if size_row.row[size["size_table_row"]] == size["size_table_row_value"]:
+                        sizes.append(size_row.id)
+                        break
 
 
-    # print(data)
-    rel_num = data.get('platform_info').get("poizon").get("detail").get('likesCount', 0)
-    manufactorer_sku = data.get('manufacturer_sku').replace(" ", "").replace("-", "")
-    if SG_PRODUCTS.filter(manufacturer_sku=manufactorer_sku).exists() and not data.get('is_custom'):
-        print("повтор")
-        return 0
-        # Product.objects.filter(manufacturer_sku=data.get('manufacturer_sku')).delete()
-        product = Product.objects.get(manufacturer_sku=manufactorer_sku, is_custom=False)
-        product.manufacturer_sku = data.get('manufacturer_sku')
-        product.available_flag = True
-        product.rel_num = int(rel_num if rel_num else 0)
-        product.is_collab = data.get('is_collab')
 
-    else:
-        # Создание нового продукта
-        product = Product.objects.create(
-            model=data.get('model'),
-            manufacturer_sku=data.get('manufacturer_sku'),
-            russian_name=data.get('model'),
-            slug=data.get('manufacturer_sku') + str(random.randint(1, 50)),
-            rel_num=int(rel_num if rel_num else 0),
-            is_collab=data.get('is_collab'),
-            main_color=Color.objects.get_or_create(name="multicolour")[0]
-        )
-        # product.save()
+            for i in range(len(unit['offers'])):
+                dilivery, create = DeliveryType.objects.get_or_create(
+                    name=unit['offers'][i]["delivery_additional_info"],
+                    view_name=unit['offers'][i]["delivery_additional_info"],
+                    days_min=unit["offers"][i]["delivery_info_first"],
+                    days_max=unit["offers"][i]["delivery_info_last"])
 
-        # Обработка брендов
-        brands = data.get('brands', [])
-        for brand_name in brands:
-            brand, _ = Brand.objects.get_or_create(name=brand_name)
-            product.brands.add(brand)
-        # Обработка цветов
+                platform_info = unit["platform_info"]
+                poizon_info = platform_info["poizon_info"]
+                del poizon_info['offers']
+                platform_info['poizon_info'] = poizon_info
+                platform_info['delivery_info'] = unit["offers"][i]["delivery_info"]
+                platform_info["additional_info"] = unit["offers"][i]["additional_info"]
 
-        # colors = data.get('colors', [])
-        # for color_name in colors:
-        #     color, _ = Color.objects.get_or_create(name=color_name)
-        #     product.colors.add(color)
-        #
-        # # Обработка основного цвета
-        # main_color = data.get('main_color')
-        # if main_color:
-        #     color_in = check_color_in_list(main_color)
-        #     if color_in:
-        #         main_color, _ = Color.objects.get_or_create(name=main_color)
-        #         main_color.hex = color_in['hex']
-        #         main_color.russian_name = color_in['russian_name']
-        #     else:
-        #         main_color, _ = Color.objects.get_or_create(name=main_color)
-        #     main_color.is_main_color = True
-        #     main_color.save()
-        #     product.main_color = main_color
 
-        # print(product.main_line.view_name)
 
-    categories = data.get('categories')
-    if not isinstance(categories, list):
-        categories = [categories]
-    for category_name in categories:
-        category = Category.objects.get(name=category_name)
-        product.categories.add(category)
+                product_unit = ProductUnit.objects.create(
+                    product=product,
+                    size_platform=unit['unit_name'],
+                    view_size_platform=unit['unit_name_with_size'],
+                    original_price=unit["offers"][i]['price'],
+                    start_price=unit["offers"][i]['price'],
+                    final_price=unit["offers"][i]['price'],
+                    delivery_type=dilivery,
+                    platform=Platform.objects.get_or_create(platform='poizon', site="poizon")[0],
+                    url=data['platform_info']["poizon_info"]['url'],
+                    availability=True,
+                    currency=Currency.objects.get_or_create(name=unit["offers"][i]["currency"])[0],
+                    platform_info=platform_info
+                )
+                product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
+                product_unit.update_history()
+        product.update_price()
 
-    product.platform_info = json.dumps(data.get("platform_info"))
 
-    product.is_custom = data.get('is_custom', False)
-    # Обработка пола
-    genders = data.get('gender', [])
-    product.gender.set(Gender.objects.filter(name__in=genders))
-
-    if data['date']:
-        product.exact_date = datetime.strptime(data['date'], "%d.%m.%Y").date()
-
-    if data['approximate_date']:
-        product.approximate_date = data['approximate_date']
-
-    lines = data.get('lines', [])
-    if len(lines) != 0:
-        lines = lines[0]
-
-    f = True
-    # проверка что линека уже существует
-    for line in lines:
-        if not Line.objects.filter(view_name=line).exists():
-            f = False
-    if f:  # если линейка уже существует
-        for line in lines:
-            product.lines.add(Line.objects.get(view_name=line))
-    else:
-        # линейка всегда существует, сюда код не дойдет
-        print("ПИЗДАААААААА")
-        # parent_line = None
-        # for line_name in lines:
-        #     if Line.objects.filter(name=line_name, parent_line=parent_line).exists():
-        #         line = Line.objects.get(name=line_name, parent_line=parent_line)
-        #     else:
-        #         line = Line(name=line_name, parent_line=parent_line, full_name=line_name)
-        #         line.save()
-        #     if parent_line is not None:
-        #         if Line.objects.filter(name=f"Все {parent_line.name}",
-        #                                parent_line=parent_line).exists():
-        #             line_all = Line.objects.get(name=f"Все {parent_line.name}", parent_line=parent_line, )
-        #         else:
-        #             line_all = Line(name=f"Все {parent_line.name}", parent_line=parent_line,
-        #                             full_name=line_name)
-        #             line_all.save()
-        #         product.lines.add(line_all)
-        #     parent_line = line
-        #     product.lines.add(line)
-
-    # product.slug = ""
-    product.save(custom_param=True)
-
-    if product.main_line is not None:
-        brands = data.get('brands', [])
-        model = product.main_line.view_name
-        for brand in brands:
-            model = model.replace(brand, "") if brand != "Jordan" and "Air" not in model else model
-        model = " ".join(model.split())
-        if not Brand.objects.filter(name=model).exists():
-            product.model = model
-
-            product.colorway = data.get('model')
-
-    # # Обработка рекомендованного пола Возможно тут список из одного элемента!!!
-    # recommended_gender = data.get('recommended_gender')
-    # product.recommended_gender = Gender.objects.get(name=recommended_gender)
-    photos = data.get('bucket_link', [])
-    for photo in photos:
-        photo, _ = Photo.objects.get_or_create(url=photo)
-        product.bucket_link.add(photo)
-
-    if product.is_collab:
-        collab, _ = Collab.objects.get_or_create(name=data.get('collab_name'))
-        product.collab = collab
-
-    if "кроссовки" not in "_".join(categories):
-        product.colorway = product.model
-        product.model = singular_data[categories[0]]
-    product.save()
-    print(product)
     return product
 
     # self.stdout.write(self.style.SUCCESS(product))
-
-

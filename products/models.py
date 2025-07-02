@@ -179,6 +179,7 @@ class DewuInfo(models.Model):
     api_data = models.JSONField(default=dict)
     preprocessed_data = models.JSONField(default=dict)
     web_data = models.JSONField(default=dict)
+    processed_data = models.JSONField(default=dict)
 
 
 class SGInfo(models.Model):
@@ -187,7 +188,7 @@ class SGInfo(models.Model):
 
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
-    property_id = models.IntegerField(default=0, db_index=True)
+    property_id = models.IntegerField(default=0, db_index=True, )
     # dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
     brands = models.ManyToManyField("Brand", related_name='products',
                                     blank=True, db_index=True)
@@ -223,8 +224,7 @@ class Product(models.Model):
     recommended_gender = models.ForeignKey("Gender", on_delete=models.SET_NULL, blank=True, null=True)
     size_table = models.ForeignKey("SizeTable", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='products')
-    size_table_platform = models.ForeignKey("SizeTable", on_delete=models.SET_NULL, blank=True, null=True,
-                                            related_name='products_platform')
+    size_table_platform = models.JSONField(default=dict)
 
     min_price = models.IntegerField(blank=True, null=True, db_index=True)
 
@@ -254,34 +254,26 @@ class Product(models.Model):
 
     objects = ProductManager()
 
+    def update_min_price(self):
+        if self.product_units.all():
+            product_units = self.product_units.all()
+            for product_unit in product_units:
+                if product_unit.final_price < self.min_price and product_unit.availability:
+                    self.min_price = product_unit.final_price
+
+        self.save()
+
     def save(self, *args, **kwargs):
-        # def add_categories_to_product(category):
-        #     self.categories.add(category)
-        #     # Добавляем текущую категорию к товару
-        #
-        #     if category.parent_category:
-        #         if Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
-        #             category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}",
-        #                                                    parent_category=category.parent_category)
-        #             self.categories.add(category_is_all)
-        #         elif Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}").exists():
-        #             category_is_all = Category.objects.get(name=f"Вся {category.parent_category.name.lower()}",
-        #                                                    parent_category=category.parent_category)
-        #             self.categories.add(category_is_all)
-        #         add_categories_to_product(category.parent_category)
-        #
-        # def add_lines_to_product(line):
-        #     self.lines.add(line)
-        #     if line.parent_line:
-        #         if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
-        #             line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}", parent_line=line.parent_line)
-        #             self.lines.add(line_is_all)
-        #         add_lines_to_product(line.parent_line)
+
 
         custom_param = kwargs.pop('custom_param', False)
         if custom_param:
             self.slug = slugify(
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
+
+            lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+            if lines:
+                self.main_line = lines.order_by('-id').first()
 
             # for line in self.lines.all():
             #     add_lines_to_product(line)
@@ -293,12 +285,12 @@ class Product(models.Model):
             #     if not self.main_color.is_main_color:
             #         self.main_color.is_main_color = True
 
-            for brand in self.brands.all():
-                line, _ = Line.objects.get_or_create(name=brand.name)
-                line.save()
-                self.lines.add(line)
-                if Line.objects.filter(name=f"Все {brand.name}").exists():
-                    self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
+            # for brand in self.brands.all():
+            #     line, _ = Line.objects.get_or_create(name=brand.name)
+            #     line.save()
+            #     self.lines.add(line)
+            #     if Line.objects.filter(name=f"Все {brand.name}").exists():
+            #         self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
 
             # lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
             # if lines:
@@ -307,31 +299,7 @@ class Product(models.Model):
         # super(Product, self).save(*args, **kwargs)
         # print()
         super().save(*args, **kwargs)
-        # if self.product_units.all():
-        #     product_units = self.product_units.all()
-        #     if len(self.sizes_prices) != len(product_units):
-        #         for product_unit in product_units:
-        #             size = product_unit.size.id
-        #             is_one_size = product_unit.size.is_one_size
-        #
-        #             last = next(
-        #                 (size_data for size_data in self.sizes_prices
-        #                  if size_data.get("is_fast_shipping") == product_unit.is_fast_shipping
-        #                  and size_data.get("is_sale") == product_unit.is_sale
-        #                  and size_data.get("is_return") == product_unit.is_return
-        #                  and size_data.get("size") == size),
-        #                 None
-        #             )
-        #             if last:
-        #                 if product_unit.final_price < last['price']:
-        #                     last['price'] = product_unit.final_price
-        #             else:
-        #                 self.sizes_prices.append({"size": product_unit.size.id,
-        #                                           "price": product_unit.final_price,
-        #                                           "is_fast_shipping": product_unit.is_fast_shipping,
-        #                                           "is_sale": product_unit.is_sale,
-        #                                           "is_return": product_unit.is_return})
-            # self.save()
+
 
     def __str__(self):
         return self.model

@@ -70,11 +70,8 @@ class ProductUnit(models.Model):
                                           default="")  # обработанный размер с платформы
     # size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
 
-    size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="product_units",
+    size = models.ManyToManyField("products.SizeTranslationRows", related_name="product_units",
                              null=True, blank=True)  # порядковый номер размера в таблице
-
-    color = models.CharField(max_length=255, null=True, blank=True, default="")
-    configuration = models.CharField(max_length=255, null=True, blank=True, default="")
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)
@@ -96,6 +93,7 @@ class ProductUnit(models.Model):
 
     dimensions = models.JSONField(default=dict)
     history_price = models.JSONField(default=list)
+    platform_info = models.JSONField(default=dict)
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"

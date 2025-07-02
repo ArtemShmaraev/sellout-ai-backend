@@ -78,7 +78,6 @@ class Command(BaseCommand):
         # Цикл для перебора файлов в папке
         def upload_files_to_cloud(local_path, cloud_path):
             global k
-            destination_folder = r"C:\Users\artem\OneDrive\Рабочий стол\Мусор2"
             for item in os.listdir(local_path):
                 full_local_path = os.path.join(local_path, item)
                 full_cloud_path = os.path.join(cloud_path, item)
@@ -87,10 +86,6 @@ class Command(BaseCommand):
                 if os.path.isfile(full_local_path):
                     # Если это файл, отправляем его на облако
                     path = full_cloud_path.replace("\\", "/")
-
-
-
-
                     url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
                     # print(url)
                     if not HeaderPhoto.objects.filter(photo__url=url).exists():
@@ -141,7 +136,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-
+        hp = HeaderPhoto.objects.all()
+        hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

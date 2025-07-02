@@ -16,7 +16,7 @@ from django.views.decorators.cache import cache_page
 import json
 from time import time
 from django.http import JsonResponse, FileResponse
-
+from .add_product_api import add_product_api
 from users.models import User
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
@@ -160,13 +160,14 @@ class MainPageBlocks(APIView):
         page = request.query_params.get("page", 1)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
-        s = [2 if page == 1 else 0, 1, 1, 0, 1, 1, 0, 0, 1]
+        s = [2 if (page == 1 or page == "1") else 0, 1, 1, 0, 1, 1, 0, 0, 1]
+        print(s, page)
 
         last = "any"
         for i in range(9):
             type = s[i]
             if type == 0:
-                cache_photo_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
                 cached_data = cache.get(cache_photo_key)
 
                 if cached_data is not None:
@@ -182,7 +183,7 @@ class MainPageBlocks(APIView):
                     res.append(selection)
 
             elif type == 1:
-                cache_sellection_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cache_sellection_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
                 cached_data = cache.get(cache_sellection_key)
 
                 if cached_data is not None:
@@ -193,7 +194,7 @@ class MainPageBlocks(APIView):
                 selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
                 res.append(selection)
             else:
-                cache_photo_key = f"main_page:{i}{page}"  # Уникальный ключ для каждой URL
+                cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
                 cached_data = cache.get(cache_photo_key)
                 if cached_data is not None:
                     photo, last = cached_data
@@ -201,8 +202,6 @@ class MainPageBlocks(APIView):
                     photo, last = get_sellout_photo_text(last)
                     cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
                 res.append(photo)
-
-
         return Response(res)
 
 
@@ -581,8 +580,8 @@ class ProductSizeView(APIView):
 class AddProductView(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        product = add_product(data)
-        return Response(product.manufacturer_sku)
+        product = add_product_api(data)
+        return Response(product.slug)
 
 
 class ListProductView(APIView):

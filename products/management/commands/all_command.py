@@ -6,24 +6,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Выполнение команды python manage.py makemigrations
-        call_command('flush')
 
-        # call_command('delete_migrations')
-
-        # call_command('makemigrations')
-
-        # Выполнение команды python manage.py migrate
-        call_command('migrate')
 
         # Выполнение команды python manage.py add_cat
+
+        call_command('delete_db')
         call_command('add_cat')
-
         call_command('add_line')
-
         # Выполнение команды python manage.py add_size_table
-        call_command('add_size_table')
 
         call_command('add_color')
+        call_command('add_material')
+        call_command('add_size_table')
+        call_command('add_text_for_header')
 
         # Выполнение команды python manage.py add_sg
         # call_command('add_sg')

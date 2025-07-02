@@ -179,7 +179,7 @@ class DewuInfo(models.Model):
     api_data = models.JSONField(default=dict)
     preprocessed_data = models.JSONField(default=dict)
     web_data = models.JSONField(default=dict)
-    processed_data = models.JSONField(default=dict)
+    processed_data = models.JSONField(default=list)
 
 
 class SGInfo(models.Model):

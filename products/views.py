@@ -160,7 +160,7 @@ class MainPageBlocks(APIView):
         page = request.query_params.get("page", 1)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
-        s = [2, 1, 1, 0, 1, 1, 0, 0, 1]
+        s = [2 if page == 1 else 0, 1, 1, 0, 1, 1, 0, 0, 1]
 
         last = "any"
         for i in range(9):

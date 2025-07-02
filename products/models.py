@@ -187,6 +187,7 @@ class SGInfo(models.Model):
 
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
+    property_id = models.IntegerField(default=0, db_index=True)
     # dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
     brands = models.ManyToManyField("Brand", related_name='products',
                                     blank=True, db_index=True)
@@ -247,49 +248,50 @@ class Product(models.Model):
     platform_info = models.JSONField(blank=True, null=True)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
-    parameters = models.JSONField(blank=True, null=True, default=dict)  # {параметр: {значение: value, is_show: true}}
+    parameters = models.JSONField(blank=True, null=True, default=dict)
     
 
 
     objects = ProductManager()
 
     def save(self, *args, **kwargs):
-        def add_categories_to_product(category):
-            self.categories.add(category)
-            # Добавляем текущую категорию к товару
-            if category.parent_category:
-                if Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
-                    category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}",
-                                                           parent_category=category.parent_category)
-                    self.categories.add(category_is_all)
-                elif Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}").exists():
-                    category_is_all = Category.objects.get(name=f"Вся {category.parent_category.name.lower()}",
-                                                           parent_category=category.parent_category)
-                    self.categories.add(category_is_all)
-                add_categories_to_product(category.parent_category)
-
-        def add_lines_to_product(line):
-            self.lines.add(line)
-            if line.parent_line:
-                if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
-                    line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}", parent_line=line.parent_line)
-                    self.lines.add(line_is_all)
-                add_lines_to_product(line.parent_line)
+        # def add_categories_to_product(category):
+        #     self.categories.add(category)
+        #     # Добавляем текущую категорию к товару
+        #
+        #     if category.parent_category:
+        #         if Category.objects.filter(name=f"Все {category.parent_category.name.lower()}").exists():
+        #             category_is_all = Category.objects.get(name=f"Все {category.parent_category.name.lower()}",
+        #                                                    parent_category=category.parent_category)
+        #             self.categories.add(category_is_all)
+        #         elif Category.objects.filter(name=f"Вся {category.parent_category.name.lower()}").exists():
+        #             category_is_all = Category.objects.get(name=f"Вся {category.parent_category.name.lower()}",
+        #                                                    parent_category=category.parent_category)
+        #             self.categories.add(category_is_all)
+        #         add_categories_to_product(category.parent_category)
+        #
+        # def add_lines_to_product(line):
+        #     self.lines.add(line)
+        #     if line.parent_line:
+        #         if Line.objects.filter(name=f"Все {line.parent_line.name}").exists():
+        #             line_is_all = Line.objects.get(name=f"Все {line.parent_line.name}", parent_line=line.parent_line)
+        #             self.lines.add(line_is_all)
+        #         add_lines_to_product(line.parent_line)
 
         custom_param = kwargs.pop('custom_param', False)
         if custom_param:
             self.slug = slugify(
                 f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
 
-            for line in self.lines.all():
-                add_lines_to_product(line)
+            # for line in self.lines.all():
+            #     add_lines_to_product(line)
+            #
+            # for cat in self.categories.all():
+            #     add_categories_to_product(cat)
 
-            for cat in self.categories.all():
-                add_categories_to_product(cat)
-
-            if self.main_color:
-                if not self.main_color.is_main_color:
-                    self.main_color.is_main_color = True
+            # if self.main_color:
+            #     if not self.main_color.is_main_color:
+            #         self.main_color.is_main_color = True
 
             for brand in self.brands.all():
                 line, _ = Line.objects.get_or_create(name=brand.name)
@@ -298,9 +300,9 @@ class Product(models.Model):
                 if Line.objects.filter(name=f"Все {brand.name}").exists():
                     self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
 
-            lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-            if lines:
-                self.main_line = lines.order_by('-id').first()
+            # lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+            # if lines:
+            #     self.main_line = lines.order_by('-id').first()
 
         # super(Product, self).save(*args, **kwargs)
         # print()

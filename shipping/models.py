@@ -12,7 +12,8 @@ class ConfigurationUnit(models.Model):
 
 class DeliveryType(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    days = models.IntegerField(default=0)
+    days_min = models.IntegerField(default=0)
+    days_max = models.IntegerField(default=0)
     view_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
@@ -77,6 +78,7 @@ class ProductUnit(models.Model):
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)
+    original_price = models.IntegerField(null=False, blank=False)
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False)  # Новая цена
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
@@ -84,6 +86,7 @@ class ProductUnit(models.Model):
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
     url = models.CharField(max_length=255, null=True, blank=True, default="")
+
     availability = models.BooleanField(default=True)
     warehouse = models.BooleanField(default=False)  # на руках ли товар
     is_multiple = models.BooleanField(default=False)  # можно ли несколько позиций взять
@@ -96,6 +99,10 @@ class ProductUnit(models.Model):
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"
+
+    def update_history(self):
+        self.history_price.append(self.final_price)
+        self.save()
 
     def save(self, *args, **kwargs):
         if (not self.product.min_price or self.final_price < self.product.min_price) and self.availability:

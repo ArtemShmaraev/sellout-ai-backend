@@ -228,7 +228,7 @@ def get_product_page(request):
 
     # Фильтр по размеру
     if size:
-        filters &= Q(product_units__size__in=size)
+        filters &= (Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))
 
     # Фильтр по наличию скидки
     if is_sale:

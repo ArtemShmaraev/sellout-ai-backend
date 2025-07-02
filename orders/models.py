@@ -17,7 +17,7 @@ def get_default_status():
 
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=False, blank=False,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=False,
                              related_name="orders")
     order_units = models.ManyToManyField("OrderUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)

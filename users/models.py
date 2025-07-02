@@ -71,18 +71,18 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         # Если гендер мужской, установите значение по умолчанию для мужского размера обуви
-        size_info = kwargs.pop('size_info', False)
-        if not size_info:
-            if self.gender is not None:
-                if self.gender.name == 'M':
-                    self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-                    self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
-                else:
-                    self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-                    self.preferred_clothes_size_row = SizeRow.objects.get(id=19)
-            else:
-                self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-                self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
+        # size_info = kwargs.pop('size_info', False)
+        # if not size_info:
+        #     if self.gender is not None:
+        #         if self.gender.name == 'M':
+        #             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+        #             self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
+        #         else:
+        #             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+        #             self.preferred_clothes_size_row = SizeRow.objects.get(id=19)
+        #     else:
+        #         self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
+        #         self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
         super(User, self).save(*args, **kwargs)
 
 

@@ -249,8 +249,8 @@ class Product(models.Model):
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
     parameters = models.JSONField(blank=True, null=True, default=dict)
-    
-
+    similar_product = models.JSONField(blank=True, null=True, default=list)
+    another_configuration = models.JSONField(blank=True, null=True, default=list)
 
     objects = ProductManager()
 
@@ -358,7 +358,7 @@ class SizeRow(models.Model):
 
 
 class SizeTranslationRows(models.Model):
-    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.PROTECT, related_name="rows")
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows")
     row = models.JSONField(blank=True, null=True)
     is_one_size = models.BooleanField(default=False)
 

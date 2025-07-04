@@ -2,6 +2,7 @@ import random
 import json
 from functools import lru_cache
 from datetime import datetime, date
+from time import time
 
 from django.db.models import Q
 
@@ -19,9 +20,11 @@ def add_product_api(data):
     manufacturer_sku = data.get("manufacturer_sku")
 
     print(property_id)
+    t1 = time()
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id,
                                                     manufacturer_sku=manufacturer_sku)
+    t2 = time()
     if create:
 
 

@@ -15,7 +15,7 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-CACHE_TIME = 60 * 15
+CACHE_TIME = 15
 #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
@@ -293,6 +293,6 @@ CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
         'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
-        'TIMEOUT': 60 * 15,  # Время жизни кэша (в секундах)
+        'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
     }
 }

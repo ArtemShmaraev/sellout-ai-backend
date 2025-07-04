@@ -161,7 +161,6 @@ class MainPageBlocks(APIView):
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
         s = [2 if (page == 1 or page == "1") else 0, 1, 1, 0, 1, 1, 0, 0, 1]
-        print(s, page)
 
         last = "any"
         for i in range(9):
@@ -273,6 +272,9 @@ class DewuInfoView(APIView):
         if "web_data" in data:
             dewu_info.web_data = data['web_data']
         if "processed_data" in data:
+            if dewu_info.processed_data == {}:
+                dewu_info.processed_data = []
+                dewu_info.save()
             dewu_info.processed_data.append(data["processed_data"])
         dewu_info.save()
         return Response(DewuInfoSerializer(dewu_info).data)

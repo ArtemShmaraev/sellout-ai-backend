@@ -18,8 +18,7 @@ class Command(BaseCommand):
         hps = HeaderPhoto.objects.all()
         for h in hps:
             h.header_text = get_text(h, [])
-
-
+            h.save()
 
 
 

@@ -89,13 +89,13 @@ class Command(BaseCommand):
                     url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
                     # print(url)
                     if not HeaderPhoto.objects.filter(photo__url=url).exists():
-                        content_type = 'image/png'
-                        s3_client.upload_file(
-                            full_local_path,
-                            bucket_name,
-                            path,
-                            ExtraArgs={'ContentType': content_type}
-                        )
+                        # content_type = 'image/png'
+                        # s3_client.upload_file(
+                        #     full_local_path,
+                        #     bucket_name,
+                        #     path,
+                        #     ExtraArgs={'ContentType': content_type}
+                        # )
 
                         try:
                             if "Mobile" in path:
@@ -136,8 +136,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-        hp = HeaderPhoto.objects.all()
-        hp.delete()
+        # hp = HeaderPhoto.objects.all()
+        # hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

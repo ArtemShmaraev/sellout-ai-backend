@@ -174,7 +174,7 @@ class MainPageBlocks(APIView):
                     photo, last, queryset = cached_data
                 else:
                     photo, last, queryset = get_photo_text(last)
-                    cache.set(cache_photo_key, (photo, last, queryset), 60 * 60 * 5)
+                    cache.set(cache_photo_key, (photo, last, queryset), CACHE_TIME)
                 if queryset.exists():
                     res.append(photo)
                     selection = {"type": "selection", "title": photo['mobile']['title'],
@@ -190,7 +190,7 @@ class MainPageBlocks(APIView):
                     queryset, selection = cached_data
                 else:
                     queryset, selection = get_selection()
-                    cache.set(cache_sellection_key, (queryset, selection), 60 * 60 * 5)
+                    cache.set(cache_sellection_key, (queryset, selection), CACHE_TIME)
                 selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
                 res.append(selection)
             else:

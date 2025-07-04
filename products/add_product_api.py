@@ -129,6 +129,10 @@ def add_product_api(data):
                         sizes.append(size_row.id)
                         break
 
+            platform_info = unit["platform_info"]
+            poizon_info = platform_info["poizon_info"]
+            del poizon_info['offers']
+            platform_info['poizon_info'] = poizon_info
 
 
             for i in range(len(unit['offers'])):
@@ -138,10 +142,7 @@ def add_product_api(data):
                     days_min=unit["offers"][i]["delivery_info_first"],
                     days_max=unit["offers"][i]["delivery_info_last"])
 
-                platform_info = unit["platform_info"]
-                poizon_info = platform_info["poizon_info"]
-                del poizon_info['offers']
-                platform_info['poizon_info'] = poizon_info
+
                 platform_info['delivery_info'] = unit["offers"][i]["delivery_info"]
                 platform_info["additional_info"] = unit["offers"][i]["additional_info"]
 
@@ -163,7 +164,8 @@ def add_product_api(data):
                 )
                 product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
                 product_unit.update_history()
-        product.update_price()
+        product.update_min_price()
+
 
 
     return product

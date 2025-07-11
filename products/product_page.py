@@ -257,16 +257,6 @@ def get_product_page(request):
         query = query.replace("_", " ")
         search = search_product(query, queryset)
         queryset = search['queryset']
-        res['add_filter'] = search['url']
-
-        if 'category' in search:
-            category.append(search['category'])
-        if 'collab' in search:
-            collab.append(search['collab'])
-        if 'line' in search:
-            line.append(search['line'])
-        if 'color' in search:
-            color.append(search['color'])
 
 
     t3 = time()

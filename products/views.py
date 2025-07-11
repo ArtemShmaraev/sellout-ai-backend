@@ -35,26 +35,20 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
-    similar_product, suggest_search
+    similar_product, suggest_search, add_filter_search
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 
 
-# class BrandView(APIView):
-#     def get(self, request):
-#         context = {"user_id": request.user.id if request.user.id else None}
-#         search_query = request.query_params.get('q', '')  # Получаем параметр "q" из запроса
-#
-#         # Используем исключение try-except для обработки ошибок
-#         try:
-#             # Ищем бренды, чьи имена содержат поисковой запрос
-#             brands = Brand.objects.filter(name__icontains=search_query)
-#             serializer = BrandSerializer(brands, many=True, context=context)  # Сериализуем найденные бренды
-#             return Response(serializer.data)
-#         except Exception as e:
-#             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AddFilterSearch(APIView):
+    def get(self, request):
+        search_query = request.query_params.get('q', '')
+        return Response(add_filter_search(search_query))
+
+
 
 
 class BrandSearchView(APIView):

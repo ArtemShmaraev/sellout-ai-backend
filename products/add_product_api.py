@@ -184,14 +184,14 @@ def add_product_api(data):
         product.update_min_price()
 
     t8 = time()
-    print(t2-t1)
-    print(t3-t2)
-    print(t4-t3)
-    print(t5-t4)
-    print(t6-t5)
-    print(t7-t6)
-    print(t8-t7)
-    print(t8-t1)
+    # print(t2-t1)
+    # print(t3-t2)
+    # print(t4-t3)
+    # print(t5-t4)
+    # print(t6-t5)
+    # print(t7-t6)
+    # print(t8-t7)
+    # print(t8-t1)
 
 
 

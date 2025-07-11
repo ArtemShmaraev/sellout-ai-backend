@@ -26,6 +26,8 @@ def add_product_api(data):
                                                     manufacturer_sku=manufacturer_sku)
     t2 = time()
     if create:
+        product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+
 
 
         product.is_collab = data["is_collab"]
@@ -37,6 +39,8 @@ def add_product_api(data):
         product.colorway = data['colorway']
         product.is_custom = data['custom']
 
+
+
         genders = data.get('gender', [])
         product.gender.set(Gender.objects.filter(name__in=genders))
 
@@ -45,6 +49,7 @@ def add_product_api(data):
 
         if data['approximate_date']:
             product.approximate_date = data['approximate_date']
+        t3 = time()
 
         for i in range(len(data['lines'])):
             for line in data['lines'][i]:
@@ -63,6 +68,8 @@ def add_product_api(data):
             product.lines.add(line)
             if Line.objects.filter(name=f"Все {brand}").exists():
                 product.lines.add(Line.objects.get(name=f"Все {brand}"))
+
+        t4 = time()
 
 
 
@@ -96,6 +103,8 @@ def add_product_api(data):
         product.similar_product = data.get("similar_products", [])
         product.another_configuration = data.get("another_configuration", [])
 
+        t5 = time()
+
         for img in data["images"]:
             photo = Photo(url=img["url"])
             photo.save()
@@ -108,10 +117,15 @@ def add_product_api(data):
         for material in data["parameters_to_use_in_filters"]['material']:
             if Material.objects.filter(eng_name=material).exists():
                 material_db = Material.objects.get(eng_name=material)
-                product.materials.add(material_db)
+                product.materials.add(material_db)\
+
+        t6 = time()
 
         product.size_table_platform = data['size_tables']
+
         product.save(custom_param=True)
+
+        t7 = time()
 
 
 
@@ -168,6 +182,16 @@ def add_product_api(data):
                 product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
                 product_unit.update_history()
         product.update_min_price()
+
+    t8 = time()
+    print(t2-t1)
+    print(t3-t2)
+    print(t4-t3)
+    print(t5-t4)
+    print(t6-t5)
+    print(t7-t6)
+    print(t8-t7)
+    print(t8-t1)
 
 
 

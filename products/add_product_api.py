@@ -24,11 +24,11 @@ def add_product_api(data):
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id,
                                                     manufacturer_sku=manufacturer_sku)
+
     t2 = time()
     if create:
         product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
-
-
+        product.save()
 
         product.is_collab = data["is_collab"]
         if data["is_collab"]:

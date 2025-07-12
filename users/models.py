@@ -6,7 +6,6 @@ from products.models import SizeRow
 from django.utils import timezone
 
 
-
 class User(AbstractUser):
     # Your custom fields and methods here
 
@@ -26,7 +25,7 @@ class User(AbstractUser):
         blank=True,
         related_name='my_users'
     )
-    patronymic = models.CharField(max_length=100, default="")
+    patronymic = models.CharField(max_length=100, default="", null=True, blank=True)
     verify_email = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, default="")
 
@@ -55,9 +54,9 @@ class User(AbstractUser):
     last_viewed_products = models.JSONField(blank=True, null=True, default=list)
     happy_birthday = models.DateTimeField(auto_now=True)
     preferred_shoes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True, null=True,
-                                                   related_name='users_with_shoes_table')
+                                                 related_name='users_with_shoes_table')
     preferred_clothes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True,
-                                                     null=True, related_name='users_with_clothes_table')
+                                                   null=True, related_name='users_with_clothes_table')
     shoes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='users_with_shoes_size')
     clothes_size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.SET_NULL, blank=True, null=True,

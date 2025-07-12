@@ -8,17 +8,24 @@ from orders.models import ShoppingCart
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo
 from django.core.exceptions import ObjectDoesNotExist
-from shipping.models import ProductUnit
+from shipping.models import ProductUnit, DeliveryType
 from users.models import User, EmailConfirmation
 from products.tools import get_text
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        hps = HeaderPhoto.objects.all()
-        for h in hps:
-            h.header_text = get_text(h, [])
-            h.save()
+        di = DeliveryType.objects.all()
+        for d in di:
+            d.view_name = f"{d.days_min}-{d.days_max}"
+            d.save()
+        # ps = Product.objects.all()
+        # ps.delete()
+
+
+
+
+
 
 
 

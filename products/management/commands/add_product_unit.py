@@ -52,7 +52,8 @@ class Command(BaseCommand):
                     is_multiple=False,
                     is_return=((randint(1, 10) % 3) > 0),
                     is_fast_shipping=((randint(1, 10) % 3) > 0),
-                    is_sale=((randint(1, 10) % 3) > 0)
+                    is_sale=((randint(1, 10) % 3) > 0),
+
 
                 )
                 self.stdout.write(self.style.SUCCESS(f'Successfully created ProductUnit: {product_unit}'))

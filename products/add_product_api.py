@@ -110,14 +110,25 @@ def add_product_api(data):
             photo.save()
             product.bucket_link.add(photo)
 
-        for color in data["parameters_to_use_in_filters"]['colors']:
-            color_db, create = Color.objects.get_or_create(name=color)
-            product.colors.add(color_db)
 
-        for material in data["parameters_to_use_in_filters"]['material']:
-            if Material.objects.filter(eng_name=material).exists():
-                material_db = Material.objects.get(eng_name=material)
-                product.materials.add(material_db)\
+        if "colors" in data["parameters_to_use_in_filters"]:
+            for color in data["parameters_to_use_in_filters"]['colors']:
+                color_db, create = Color.objects.get_or_create(name=color)
+                product.colors.add(color_db)
+        else:
+            color = Color.objects.get(name="multicolour")
+            product.colors.add(color)
+
+
+        if "material" in data["parameters_to_use_in_filters"]:
+            for material in data["parameters_to_use_in_filters"]['material']:
+                if Material.objects.filter(eng_name=material).exists():
+                    material_db = Material.objects.get(eng_name=material)
+                    product.materials.add(material_db)
+        else:
+            material = Material.objects.get(eng_name="other_material")
+            product.materials.add(material)
+
 
         t6 = time()
 

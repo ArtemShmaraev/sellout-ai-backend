@@ -141,10 +141,8 @@ class CheckOutView(APIView):
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
 
-
                 address = get_object_or_404(AddressInfo, id=data['address_id'])
                 status = Status.objects.get(name="В обработке")
-
 
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,

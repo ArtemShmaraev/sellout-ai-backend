@@ -65,7 +65,7 @@ class Command(BaseCommand):
             for i in range(len_table):
                 d = dict()
                 for key in keys:
-                    d[key["filter_logo"]] = table['all_sizes'][key]['sizes'][i]['size']
+                    d[table['all_sizes'][key]["filter_name"]] = table['all_sizes'][key]['sizes'][i]['size']
                 is_one_size = table['all_sizes'][first_key]['sizes'][i]['size'].lower() == "один размер"
                 if SizeTranslationRows.objects.filter(table=size_table, row=d, is_one_size=is_one_size).exists():
                     continue

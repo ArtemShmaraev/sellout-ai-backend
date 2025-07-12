@@ -155,7 +155,7 @@ def add_product_api(data):
             for i in range(len(unit['offers'])):
                 dilivery, create = DeliveryType.objects.get_or_create(
                     name=unit['offers'][i]["delivery_additional_info"],
-                    view_name=unit['offers'][i]["delivery_additional_info"],
+                    view_name=f'{unit["offers"][i]["delivery_info_first"]}-{unit["offers"][i]["delivery_info_last"]}',
                     days_min=unit["offers"][i]["delivery_info_first"],
                     days_max=unit["offers"][i]["delivery_info_last"])
 

@@ -90,22 +90,19 @@ def add_filter_search(query):
     search_category = search_best_category(query)
     search_color = search_best_color(query)
     search_collab = search_best_collab(query)
-
-    url = "?"
-    res = {}
+    res = {"collab": "",
+           "category": "",
+           "line": "",
+           "color": ""}
     if search_collab:
-        url += f"collab={search_collab.name}&"
         res['collab'] = search_collab.name
     if search_category:
-        url += f"category={search_category.eng_name}&"
         res['category'] = search_category.eng_name
     if search_line:
-        url += f"line={search_line.full_eng_name}&"
         res['line'] = search_line.full_eng_name
     if search_color:
-        url += f"color={search_color.name}&"
         res['color'] = search_color.name
-    return url
+    return res
 
 
 
@@ -196,7 +193,9 @@ def search_best_line(query_string):
     response = search.execute()
 
     if response:
-        print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
+        print(response.hits[0].meta.id)
+
+        # print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
         return Line.objects.get(id=response.hits[0].meta.id)
 
     return None

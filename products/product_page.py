@@ -180,7 +180,9 @@ def get_product_page(request):
         #         oldest_line = oldest_line.parent_line
 
     if color:
-        queryset = queryset.filter(Q(main_color__name__in=color))
+        print(queryset.count())
+        queryset = queryset.filter(colors__name__in=color)
+        print(queryset.count())
     if category:
         queryset = queryset.filter(categories__eng_name__in=category)
 

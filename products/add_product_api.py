@@ -53,6 +53,7 @@ def add_product_api(data):
 
         for i in range(len(data['lines'])):
             for line in data['lines'][i]:
+                print(line)
                 line_db = Line.objects.get(name=line)
                 product.lines.add(line_db)
                 if Line.objects.filter(name=f"Все {line}").exists():
@@ -133,6 +134,10 @@ def add_product_api(data):
         t6 = time()
 
         product.size_table_platform = data['size_tables']
+
+        product.main_size_row_of_unit = data.get('main_size_row_of_unit', "")
+        product.main_size_row = data.get('main_size_row', "")
+        product.unit_common_name = data.get('unit_common_name', "")
 
         product.save(custom_param=True)
 

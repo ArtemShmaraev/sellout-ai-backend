@@ -15,12 +15,22 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        di = DeliveryType.objects.all()
-        for d in di:
-            d.view_name = f"{d.days_min}-{d.days_max}"
-            d.save()
-        # ps = Product.objects.all()
+
+
+        # di = DeliveryType.objects.all()
+        # for d in di:
+        #     d.view_name = f"{d.days_min}-{d.days_max}"
+        #     d.save()
+        ps = Product.objects.all()
         # ps.delete()
+        s = set()
+        # ps.delete()
+        for p in ps:
+            if not p.brands.exists():
+                s.add(p.spu_id)
+        print(sorted(s))
+
+
 
 
 

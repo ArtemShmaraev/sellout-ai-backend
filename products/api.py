@@ -1,9 +1,9 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Product, Category, Line, Brand, Color, Collection, Collab
+from .models import Product, Category, Line, Brand, Color, Collection, Collab, Material
 from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
-    BrandSerializer, ColorSerializer, CollectionSerializer
+    BrandSerializer, ColorSerializer, CollectionSerializer, MaterialSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from shipping.models import ProductUnit
@@ -29,6 +29,14 @@ class ColorViewSet(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = ColorSerializer
+
+
+class MaterialViewSet(viewsets.ModelViewSet):
+    # authentication_classes = [JWTAuthentication]
+    queryset = Material.objects.filter()
+    # permission_classes = [permissions.IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    serializer_class = MaterialSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

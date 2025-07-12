@@ -214,7 +214,7 @@ def search_best_category(query_string):
     response = search.execute()
 
     if response:
-        print("Category", Category.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
+        # print("Category", Category.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
         return Category.objects.get(id=response.hits[0].meta.id)
     return None
 

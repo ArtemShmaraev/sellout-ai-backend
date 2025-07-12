@@ -574,7 +574,7 @@ class ProductSizeView(APIView):
 
 class AddProductView(APIView):
     def post(self, request):
-        data = copy.deepcopy(json.loads(request.body))
+        data = json.loads(request.body)
         product = add_product_api(data)
         return Response(product.slug)
 

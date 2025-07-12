@@ -1,6 +1,6 @@
 from rest_framework import routers
 from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
-    CollabViewSet
+    CollabViewSet, MaterialViewSet
 from django.urls import include, path
 from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, \
     ProductIdView, CategoryTreeView, \
@@ -39,9 +39,14 @@ router_color.register("colors", ColorViewSet, basename="colors")
 router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")
 
+
+router_material = routers.DefaultRouter()
+router_material.register("materials", MaterialViewSet, basename="materials")
+
 urlpatterns = [
     path("products/", ProductView.as_view(), name="home"),
     path("", include(router_collection.urls)),
+    path("", include(router_material.urls)),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),

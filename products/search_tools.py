@@ -193,10 +193,11 @@ def search_best_line(query_string):
     response = search.execute()
 
     if response:
-        print(response.hits[0].meta.id)
+        print(response.hits[0].meta)
+        print(response.hits[0].name)
 
         # print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
-        return Line.objects.get(id=response.hits[0].meta.id)
+        return Line.objects.get(name=response.hits[0].name)
 
     return None
 

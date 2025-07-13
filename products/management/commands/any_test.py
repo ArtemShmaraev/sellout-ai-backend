@@ -24,7 +24,7 @@ class Command(BaseCommand):
         ps = Product.objects.all()
         # ps.delete()
         s = set()
-        ps.delete()
+        # ps.delete()
         for p in ps:
             if not p.brands.exists():
                 s.add(p.spu_id)

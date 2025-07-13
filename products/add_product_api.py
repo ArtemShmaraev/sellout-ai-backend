@@ -31,7 +31,7 @@ def add_product_api(data):
         product.save()
 
         product.is_collab = data["is_collab"]
-        if data["is_collab"]:
+        if data["is_collab"] and len(data['collab_names']) > 0:
             collab, create = Collab.objects.get_or_create(name=data['collab_names'][0])
             product.collab = collab
 

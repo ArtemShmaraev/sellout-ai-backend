@@ -587,7 +587,6 @@ class ListProductView(APIView):
             s_products = json.loads(request.body)["products"]
             product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
             product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
-            product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
 
             # Используем хеш-сумму в качестве ключа кэша
             cache_product_key = f"product_list_{product_list_hash}"

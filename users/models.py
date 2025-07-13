@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from promotions.models import Bonuses
-from products.models import SizeRow
+from products.models import SizeRow, SizeTable
 
 from django.utils import timezone
 
@@ -71,18 +71,28 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         # Если гендер мужской, установите значение по умолчанию для мужского размера обуви
-        # size_info = kwargs.pop('size_info', False)
-        # if not size_info:
-        #     if self.gender is not None:
-        #         if self.gender.name == 'M':
-        #             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-        #             self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
-        #         else:
-        #             self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-        #             self.preferred_clothes_size_row = SizeRow.objects.get(id=19)
-        #     else:
-        #         self.preferred_shoes_size_row = SizeRow.objects.get(id=1)
-        #         self.preferred_clothes_size_row = SizeRow.objects.get(id=8)
+        size_info = kwargs.pop('size_info', False)
+        if not size_info:
+            if self.gender is not None:
+                if self.gender.name == 'M':
+                    shoes_table = SizeTable.objects.get(name="Shoes_Adults").size_rows.all()
+                    self.preferred_shoes_size_row = shoes_table.get(filter_name="Европейский(EU)")
+
+                    clothes_table = SizeTable.objects.get(name="Clothes_Men").size_rows.all()
+                    self.preferred_clothes_size_row = clothes_table.get(filter_name="Международный(INT)")
+                else:
+                    shoes_table = SizeTable.objects.get(name="Shoes_Adults").size_rows.all()
+                    self.preferred_shoes_size_row = shoes_table.get(filter_name="Европейский(EU)")
+
+                    clothes_table = SizeTable.objects.get(name="Clothes_Women").size_rows.all()
+                    self.preferred_clothes_size_row = clothes_table.get(filter_name="Международный(INT)")
+
+            else:
+                shoes_table = SizeTable.objects.get(name="Shoes_Adults").size_rows.all()
+                self.preferred_shoes_size_row = shoes_table.get(filter_name="Европейский(EU)")
+
+                clothes_table = SizeTable.objects.get(name="Clothes_Men").size_rows.all()
+                self.preferred_clothes_size_row = clothes_table.get(filter_name="Международный(INT)")
         super(User, self).save(*args, **kwargs)
 
 

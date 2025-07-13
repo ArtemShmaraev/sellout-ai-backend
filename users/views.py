@@ -314,13 +314,13 @@ class SizeTableInLK(APIView):
             if user.gender:
                 if user.gender.name == "M":
                     size_tables = SizeTableSerializer(
-                        SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
+                        SizeTable.objects.filter(name__in=["Shoes_Adults", "Clothes_Men"]), many=True, context={"user": user}).data
                 else:
                     size_tables = SizeTableSerializer(
-                        SizeTable.objects.filter(id__in=[1, 3]), many=True, context={"user": user}).data
+                        SizeTable.objects.filter(name__in=["Shoes_Adults", "Clothes_Women"]), many=True, context={"user": user}).data
             else:
                 size_tables = SizeTableSerializer(
-                    SizeTable.objects.filter(id__in=[1, 2]), many=True, context={"user": user}).data
+                    SizeTable.objects.filter(name__in=["Shoes_Adults", "Clothes_Men"]), many=True, context={"user": user}).data
             res['size_tables'] = size_tables
             return Response(res)
         except User.DoesNotExist:

@@ -26,7 +26,6 @@ urlpatterns.append(path('favorite_brand/<int:user_id>', FavoriteBrands.as_view()
 urlpatterns.append(path('size_info', UserSizeInfo.as_view()))
 urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 
-urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 
 urlpatterns.append(path('auth/complete/google/', GoogleAuth.as_view(), name='google-auth-callback'))
 urlpatterns.append(path('mailing_list', UserForSpamEmail.as_view()))

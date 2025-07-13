@@ -26,7 +26,7 @@ def add_product_api(data):
                                                     manufacturer_sku=manufacturer_sku)
 
     t2 = time()
-    if create:
+    if True:
         product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
         product.save()
 

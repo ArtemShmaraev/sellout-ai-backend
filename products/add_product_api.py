@@ -148,19 +148,23 @@ def add_product_api(data):
         for unit in data['units']:
 
             sizes = []
-            for size in unit["size_table_info"]:
-                if size['size_table'] == "undefined" or size['size_table_row_value'] == 'undefined':
-                    row = SizeTranslationRows.objects.filter(is_one_size=True).first()
-                    sizes.append(row.id)
+            if "size_table_info" in unit:
+                for size in unit["size_table_info"]:
+                    if size['size_table'] == "undefined" or size['size_table_row_value'] == 'undefined':
+                        row = SizeTranslationRows.objects.filter(is_one_size=True).first()
+                        sizes.append(row.id)
 
 
 
-                table = SizeTable.objects.get(name=size['size_table'])
-                rows = table.rows.all()
-                for size_row in rows:
-                    if size_row.row[size["size_table_row"]] == size["size_table_row_value"]:
-                        sizes.append(size_row.id)
-                        break
+                    table = SizeTable.objects.get(name=size['size_table'])
+                    rows = table.rows.all()
+                    for size_row in rows:
+                        if size_row.row[size["size_table_row"]] == size["size_table_row_value"]:
+                            sizes.append(size_row.id)
+                            break
+            else:
+                row = SizeTranslationRows.objects.filter(is_one_size=True).first()
+                sizes.append(row.id)
 
             platform_info = unit["platform_info"]
             poizon_info = platform_info["poizon_info"]

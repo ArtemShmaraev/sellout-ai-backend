@@ -19,7 +19,6 @@ def add_product_api(data):
     property_id = data.get("propertyId")
     manufacturer_sku = data.get("manufacturer_sku")
 
-    print(property_id)
     t1 = time()
     prs = Product.objects.filter(spu_id=spu_id, property_id=property_id,
                                  manufacturer_sku=manufacturer_sku)
@@ -54,7 +53,6 @@ def add_product_api(data):
 
     for i in range(len(data['lines'])):
         for line in data['lines'][i]:
-            print(line)
             line_db = Line.objects.get(name=line)
             product.lines.add(line_db)
             if Line.objects.filter(name=f"Все {line}").exists():

@@ -20,7 +20,7 @@ def get_header_photo():
     accessories = choice(header.filter(categories__eng_name="accessories"))
     res = {"brand": brand.photo,
            "shoes": shoes.photo,
-           "clothes": clothes.photol,
+           "clothes": clothes.photo,
            "accessories": accessories.photo}
     t1 = time()
     print(t1-t)

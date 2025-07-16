@@ -80,7 +80,7 @@ def get_product_page_photo(params):
     else:
         text_desktop = text
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
-    res['desktop']['photo'] = photo_desktop.photo.url
+    res['desktop']['photo'] = photo_desktop.photo
 
     if header_photos_mobile.count() > 0:
         count = header_photos_mobile.count()
@@ -95,7 +95,7 @@ def get_product_page_photo(params):
         text_mobile = text
 
     res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
-    res['mobile']['photo'] = photo_mobile.photo.url
+    res['mobile']['photo'] = photo_mobile.photo
     return res
 
 

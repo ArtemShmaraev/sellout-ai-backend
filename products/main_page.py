@@ -18,10 +18,10 @@ def get_header_photo():
     shoes = choice(header.filter(categories__eng_name="shoes_category"))
     clothes = choice(header.filter(categories__eng_name="clothes"))
     accessories = choice(header.filter(categories__eng_name="accessories"))
-    res = {"brand": brand.photo.url,
-           "shoes": shoes.photo.url,
-           "clothes": clothes.photo.url,
-           "accessories": accessories.photo.url}
+    res = {"brand": brand.photo,
+           "shoes": shoes.photo,
+           "clothes": clothes.photol,
+           "accessories": accessories.photo}
     t1 = time()
     print(t1-t)
     return res
@@ -148,12 +148,12 @@ def get_sellout_photo_text(last):
 
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
-           "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
+           "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo,
                        "title": text.title,
                        "content": text.text,
                        "url": "",
                        "button": "Все товары"},
-           "mobile": {"photo": random_photo_mobile.photo.url,
+           "mobile": {"photo": random_photo_mobile.photo,
                       "title": text.title,
                       "content": text.text,
                       "url": "",
@@ -199,13 +199,13 @@ def get_photo_text(last):
 
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
-           "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo.url,
+           "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo,
                        "title": random_photo_desk.header_text.title,
                        "content": random_photo_desk.header_text.text,
                        "url": url_desk,
                        "button": "Посмотреть все"},
 
-           "mobile": {"photo": random_photo_mobile.photo.url,
+           "mobile": {"photo": random_photo_mobile.photo,
                       "title": random_photo_mobile.header_text.title,
                       "content": random_photo_mobile.header_text.text,
                       "url": url_mobile,

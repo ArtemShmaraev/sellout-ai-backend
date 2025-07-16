@@ -346,7 +346,7 @@ class HeaderPhoto(models.Model):
     collabs = models.ManyToManyField("Collab", related_name='headers_photos', blank=True)
     type = models.CharField(max_length=64, default="")
     where = models.CharField(max_length=64, default="")
-    photo = models.ForeignKey("Photo", related_name='headers_photo', blank=True, on_delete=models.CASCADE)
+    photo = models.CharField(max_length=1024, default="")
     header_text = models.ForeignKey("HeaderText", related_name='headers_photo', blank=True, on_delete=models.CASCADE, null=True)
 
 

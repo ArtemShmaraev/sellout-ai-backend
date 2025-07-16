@@ -23,9 +23,8 @@ class Command(BaseCommand):
             gender_f = Gender.objects.get(id=2)
             gender_k = Gender.objects.get(id=3)
 
-            photo = Photo(url=url)
-            photo.save()
-            header_photo = HeaderPhoto(photo=photo, type=type, where=where)
+
+            header_photo = HeaderPhoto(photo=url, type=type, where=where)
             header_photo.save()
 
             header_photo.genders.add(gender_m)
@@ -88,7 +87,7 @@ class Command(BaseCommand):
                     path = full_cloud_path.replace("\\", "/")
                     url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
                     # print(url)
-                    if not HeaderPhoto.objects.filter(photo__url=url).exists():
+                    if not HeaderPhoto.objects.filter(photo=url).exists():
                         # content_type = 'image/png'
                         # s3_client.upload_file(
                         #     full_local_path,
@@ -136,8 +135,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-        # hp = HeaderPhoto.objects.all()
-        # hp.delete()
+        hp = HeaderPhoto.objects.all()
+        hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

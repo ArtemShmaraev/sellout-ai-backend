@@ -71,9 +71,8 @@ class Command(BaseCommand):
                             text = service.files().get_media(fileId=item["id"]).execute().decode("utf-8")
                         else:
                             url = f"http://drive.google.com/uc?export=view&id={item['id']}"
-                            photo = Photo(url=url)
-                            photo.save()
-                            header_photo = HeaderPhoto(photo=photo, type=type, where=where)
+
+                            header_photo = HeaderPhoto(photo=url, type=type, where=where)
                             header_photo.save()
                             header_photo.collabs.add(collab)
                             header_photo.genders.add(gender_m)

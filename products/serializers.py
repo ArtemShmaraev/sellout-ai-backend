@@ -204,6 +204,42 @@ class ProductSerializer(serializers.ModelSerializer):
         return False
 
 
+
+def update_product_serializer(data, context):
+    def get_min_price_product_unit(obj, context):
+        size = context.get('size')
+
+        # Проверьте, соответствуют ли значения фильтров product_unit
+        filters = Q(availability=True)
+
+        if size:
+            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
+
+        if filters:
+            return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+        else:
+            return obj.min_price
+
+    def get_in_wishlist(product_id, context):
+        wishlist = context.get('wishlist')
+        if wishlist:
+            return wishlist.products.filter(id=product_id).exist()
+        return False
+
+    wl = context.get('wishlist')
+    wl_set = set()
+    if wl:
+        wl_set.update(wl.products.values_list("id", flat=True))
+    for product in data:
+        product['in_wishlist'] = product['id'] in wl_set
+        if "size" in context:
+            pr = Product.objects.get(id=product['id'])
+            product["min_price_product_unit"] = get_min_price_product_unit(pr, context)
+        else:
+            product["min_price_product_unit"] = product['min_price']
+    return data
+
+
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit

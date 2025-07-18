@@ -33,8 +33,6 @@ router_brand.register("brands", BrandViewSet, basename="brands")
 router_color = routers.DefaultRouter()
 router_color.register("colors", ColorViewSet, basename="colors")
 
-router_color = routers.DefaultRouter()
-router_color.register("colors", ColorViewSet, basename="colors")
 
 router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")

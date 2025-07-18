@@ -26,7 +26,7 @@ from rest_framework import status
 from .product_page import get_product_page, get_product_page_header
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer
+    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text
 
@@ -340,7 +340,7 @@ class ProductView(APIView):
             t_old = time()
             print(f"cache: {t_old - t_new}")
         else:
-            queryset, res = get_product_page(request)
+            queryset, res = get_product_page(request, context)
             t_new = time()
             cache.set(cache_product_key, (queryset, res), CACHE_TIME)
             t_old = time()
@@ -482,12 +482,27 @@ class CollabView(APIView):
 
     def get(self, request):
         q = self.request.query_params.get('q')
-        collabs = CollabSerializer(Collab.objects.all(), many=True).data
-        if q:
-            for i in range(len(collabs)):
-                if not (q.lower() in collabs[i]['name'].lower() or q.lower() in collabs[i]['name'].replace(" x ",
-                                                                                                           " ").lower()):
-                    collabs[i]['is_show'] = False
+
+        # Создайте ключ кэша, учитывая параметр q
+        cache_key = f'collab_queryset_{q}'
+
+        # Попробуйте сначала получить результат из кэша
+        collabs = cache.get(cache_key)
+
+        if collabs is None:
+            # Если результат не найден в кэше, выполните запрос к базе данных и сериализуйте его
+            queryset = Collab.objects.all()
+            collabs = CollabSerializer(queryset, many=True).data
+            if q:
+                for i in range(len(collabs)):
+                    if not (q.lower() in collabs[i]['name'].lower() or q.lower() in collabs[i]['name'].replace(" x ",
+                                                                                                               " ").lower()):
+                        collabs[i]['is_show'] = False
+
+            # Сохраните результат в кэш с уникальным ключом
+            cache.set(cache_key, collabs, CACHE_TIME)
+
+
 
         return Response(collabs)
 

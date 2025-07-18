@@ -1,5 +1,7 @@
+from django.core.cache import cache
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from sellout.settings import CACHE_TIME
 from .models import Product, Category, Line, Brand, Color, Collection, Collab, Material
 from rest_framework import viewsets, permissions, generics, pagination
 from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
@@ -70,10 +72,23 @@ class BrandViewSet(viewsets.ModelViewSet):
 
 class CollabViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Collab.objects.filter(is_main_collab=True)
+    # queryset = Collab.objects.filter(is_main_collab=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = BrandSerializer
+
+    def get_queryset(self):
+        # Попробуйте сначала получить результат из кэша
+        queryset = cache.get('collab_queryset')
+
+        if queryset is None:
+            # Если результат не найден в кэше, выполните запрос к базе данных
+            queryset = Collab.objects.filter(is_main_collab=True)
+
+            # Затем сохраните результат в кэш
+            cache.set('collab_queryset', queryset, CACHE_TIME)
+
+        return queryset
 
 
 class ProductPagination(pagination.PageNumberPagination):

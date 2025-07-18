@@ -88,7 +88,7 @@ def get_product_page_header(request):
 
 
 
-def get_product_page(request):
+def get_product_page(request, context):
     params = request.query_params
     t0 = time()
     queryset = Product.objects.all()
@@ -314,5 +314,11 @@ def get_product_page(request):
     res['max_price'] = 1000000
     t6 = time()
     print("t5", t6 - t5)
+
+    # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
+    # t7 = time()
+    # print("t6", t7 - t6)
+    # queryset = list(serializer.data)
+
     # print(queryset)
     return queryset, res

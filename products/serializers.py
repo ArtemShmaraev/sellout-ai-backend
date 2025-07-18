@@ -240,7 +240,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         filters = Q(availability=True)
 
         if size:
-            filters &= Q(size__in=size)
+            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
 
         if price_max:
             filters &= Q(final_price__lte=price_max)

@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.utils.functional import cached_property
 from django.db import models
 import rest_framework.generics
-
+from django.db.models import Case, When, Value, IntegerField
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case
 # from haystack.query import SearchQuerySet
 from rest_framework.decorators import api_view, action
@@ -335,13 +335,34 @@ class ProductView(APIView):
         cached_data = cache.get(cache_product_key)
 
         if cached_data is not None:
+            t_new = time()
             queryset, res = cached_data
+            t_old = time()
+            print(f"cache: {t_old - t_new}")
         else:
             queryset, res = get_product_page(request)
+            t_new = time()
             cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+            t_old = time()
+            print(f"no cache: {t_old - t_new}")
+
+        t5 = time()
+        product_ids = queryset
+        queryset = Product.objects.filter(id__in=product_ids)
+
+        # Определение порядка объектов в queryset
+        preserved_order = Case(
+            *[
+                When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
+            ],
+            default=Value(len(product_ids)),
+            output_field=IntegerField()
+        )
+        queryset = queryset.annotate(order=preserved_order).order_by('order')
 
         t6 = time()
-        print("t5", t6 - t0)
+        print(f"t06 {t6-t5}")
+
         # Сериализуем объекты и возвращаем ответ с пагинированными данными
         serializer = ProductMainPageSerializer(queryset, many=True, context=context)
         t7 = time()

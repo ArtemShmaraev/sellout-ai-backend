@@ -42,46 +42,49 @@ def suggest_search(query):
 
 
 def similar_product(product):
-    search = Search(index='product_index')  # Замените на имя вашего индекса
-    search = search.query(
-        MoreLikeThis(
-            like={'_id': product.id},
-            fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2', 'collab'],
-            min_term_freq=1,
-            min_doc_freq=1,
-            max_query_terms=50,
-            boost_terms=1.5,
-            boost=1.2
+    try:
+        search = Search(index='product_index')  # Замените на имя вашего индекса
+        search = search.query(
+            MoreLikeThis(
+                like={'_id': product.id},
+                fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2', 'collab'],
+                min_term_freq=1,
+                min_doc_freq=1,
+                max_query_terms=50,
+                boost_terms=1.5,
+                boost=1.2
+            )
         )
-    )
-    # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']
+        # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']
 
-    search = search[:25]
+        search = search[:25]
 
-    # Выполните запрос
-    response = search.execute()
+        # Выполните запрос
+        response = search.execute()
 
-    # output_file = 'similar_results.json'
-    # with open(output_file, 'w', encoding="utf-8") as f:
-    #     json.dump(response.to_dict(), f, indent=4)
-    # max_score = response.hits.max_score
-    # threshold = 0.6 * max_score
+        # output_file = 'similar_results.json'
+        # with open(output_file, 'w', encoding="utf-8") as f:
+        #     json.dump(response.to_dict(), f, indent=4)
+        # max_score = response.hits.max_score
+        # threshold = 0.6 * max_score
 
-    product_ids = [hit.meta.id for hit in response.hits]
-    queryset = Product.objects.filter(id__in=product_ids)
+        product_ids = [hit.meta.id for hit in response.hits]
+        queryset = Product.objects.filter(id__in=product_ids)
 
-    # Определение порядка объектов в queryset
-    preserved_order = Case(
-        *[
-            When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
-        ],
-        default=Value(len(product_ids)),
-        output_field=IntegerField()
-    )
+        # Определение порядка объектов в queryset
+        preserved_order = Case(
+            *[
+                When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
+            ],
+            default=Value(len(product_ids)),
+            output_field=IntegerField()
+        )
 
-    # Применение порядка к queryset
-    queryset = queryset.annotate(order=preserved_order).order_by('order')
-    return queryset
+        # Применение порядка к queryset
+        queryset = queryset.annotate(order=preserved_order).order_by('order')
+        return queryset
+    except:
+        return []
 
 
 

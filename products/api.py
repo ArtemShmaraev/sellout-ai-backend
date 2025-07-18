@@ -70,7 +70,7 @@ class BrandViewSet(viewsets.ModelViewSet):
 
 class CollabViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Collab.objects.filter(is_main_collab=True).order_by("id")
+    queryset = Collab.objects.filter(is_main_collab=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = BrandSerializer

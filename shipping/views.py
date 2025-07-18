@@ -77,7 +77,6 @@ class MinPriceForSizeView(APIView):
             for size, prices in prices_by_size.items():
 
                 min_price = min(prices['price'])
-                print(prices['price'])
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = min_price
@@ -89,7 +88,28 @@ class MinPriceForSizeView(APIView):
                     d['view_size'] = size
                 min_prices_by_size[size] = d
                 s.append(d)
-            return Response(sorted(s, key=lambda x: float(x['view_size']) if x['view_size'].replace(".", "").isdigit() else x['view_size']))
+
+            def custom_sort_key(s):
+                s = s["view_size"]
+                # Функция преобразует строку s в список, в котором числа будут числами, а остальные символы строками
+                parts = []
+                current_part = ''
+
+                for char in s:
+                    if char.isdigit():
+                        current_part += char
+                    else:
+                        if current_part:
+                            parts.append(int(current_part))  # Преобразовываем числа в int
+                            current_part = ''
+                        parts.append(char)
+
+                if current_part:
+                    parts.append(int(current_part))
+
+                return parts
+
+            return Response(sorted(s, key=custom_sort_key))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

@@ -261,6 +261,13 @@ def get_product_page(request):
 
     t3 = time()
     print("t2", t3 - t2)
+
+    # res['count'] = queryset.values('id').count()
+    res['count'] = 1000
+    t4 = time()
+    print("t3", t4 - t3)
+
+
     default_ordering = "-rel_num"
     if new:
         default_ordering = "-exact_date"
@@ -276,7 +283,7 @@ def get_product_page(request):
                 min_price_product_unit=Subquery(
                     Product.objects.filter(pk=OuterRef('pk'))
                     .annotate(unit_min_price=Min('product_units__final_price', filter=(
-                        Q(product_units__size__in=size))))
+                        Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))))
                     .values('unit_min_price')[:1]
                 )
             )
@@ -287,8 +294,6 @@ def get_product_page(request):
         else:
             queryset = queryset.order_by(ordering)
 
-    t4 = time()
-    print("t3", t4 - t3)
 
     # paginator = CustomPagination()
     # Применяем пагинацию к списку объектов Product
@@ -296,16 +301,18 @@ def get_product_page(request):
     # serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
     # res = paginator.get_paginated_response(serializer)
 
-    res['count'] = queryset.values('id').count()
     t5 = time()
     print("t4", t5 - t4)
 
     page_number = params.get("page")
     page_number = int(page_number if page_number else 1)
     start_index = (page_number - 1) * 48
-    queryset = queryset[start_index:start_index + 48]
+    queryset = list(queryset[start_index:start_index + 48].values_list("id", flat=True))
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0
     res['max_price'] = 1000000
+    t6 = time()
+    print("t5", t6 - t5)
+    # print(queryset)
     return queryset, res

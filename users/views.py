@@ -83,7 +83,6 @@ class SendVerifyEmail(APIView):
             "recipient_email": recipient_email,
             "body": body
         }
-
         requests.get(url, params=params)
         return Response("ok")
 
@@ -96,8 +95,8 @@ def confirm_email(request, token):
         user.verify_email = True
         user.save()
         # Опционально: Удаляйте запись о подтверждении из базы данных
-        if url != None:
-            return redirect(url)  # Перенаправление на страницу с подтверждением
+        # if url != None:
+        #     return redirect(url)  # Перенаправление на страницу с подтверждением
         return redirect(f"https://{FRONTEND_HOST}/email_success")
     except signing.BadSignature:
         return redirect(f'https://{FRONTEND_HOST}/email_invalid')  # Перенаправление на страницу с ошибкой

@@ -42,7 +42,11 @@ def get_line_selection(line=None):
         lines = Line.objects.filter(~Q(parent_line=None))
         line = get_random(lines)
         products = Product.objects.filter(lines=line)
+
         filters = Q(product_units__availability=True)
+        filters &= Q(available_flag=True)
+        filters &= Q(is_custom=False)
+
         products = products.filter(filters).distinct()
         if not products.exists():
             return get_line_selection()
@@ -53,6 +57,8 @@ def get_line_selection(line=None):
     else:
         products = Product.objects.filter(lines=line)
         filters = Q(product_units__availability=True)
+        filters &= Q(available_flag=True)
+        filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
             products = products.order_by("-rel_num")[:30]
@@ -67,6 +73,8 @@ def get_collab_selection(collab=None):
         collab = get_random(collabs)
         products = Product.objects.filter(collab=collab)
         filters = Q(product_units__availability=True)
+        filters &= Q(available_flag=True)
+        filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if not products.exists():
             return get_collab_selection()
@@ -77,6 +85,8 @@ def get_collab_selection(collab=None):
     else:
         products = Product.objects.filter(collab=collab)
         filters = Q(product_units__availability=True)
+        filters &= Q(available_flag=True)
+        filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
             products = products.order_by("-rel_num")[:30]
@@ -93,6 +103,11 @@ def get_brand_and_category_selection():
     random_category = get_random(category)
 
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))
+    filters = Q(product_units__availability=True)
+    filters &= Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    products = products.filter(filters).distinct()
+
     if not products.exists():
         return get_brand_and_category_selection()
     else:

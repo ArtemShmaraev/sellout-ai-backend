@@ -14,9 +14,10 @@ import json
 
 
 class DeliveryForSizeView(APIView):
-    def get(self, request, product_id, view_size):
+    def get(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
+            view_size = self.request.query_params.get('view_size')
             product_units = product.product_units.filter(view_size_platform=view_size, availability=True)
             s = []
             for product_unit in product_units:

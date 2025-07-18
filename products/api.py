@@ -27,18 +27,42 @@ class LinesViewSet(viewsets.ModelViewSet):
 
 class ColorViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Color.objects.filter(is_main_color=True)
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = ColorSerializer
 
+    def get_queryset(self):
+        # Попробуйте сначала получить результат из кэша
+        queryset = cache.get('color_queryset')
+
+        if queryset is None:
+            # Если результат не найден в кэше, выполните запрос к базе данных
+            queryset = Color.objects.filter(is_main_color=True)
+
+            # Затем сохраните результат в кэш
+            cache.set('color_queryset', queryset, CACHE_TIME)
+
+        return queryset
+
 
 class MaterialViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    queryset = Material.objects.filter()
     # permission_classes = [permissions.IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     serializer_class = MaterialSerializer
+
+    def get_queryset(self):
+        # Попробуйте сначала получить результат из кэша
+        queryset = cache.get('mat_queryset')
+
+        if queryset is None:
+            # Если результат не найден в кэше, выполните запрос к базе данных
+            queryset = Material.objects.all()
+
+            # Затем сохраните результат в кэш
+            cache.set('mat_queryset', queryset, CACHE_TIME)
+
+        return queryset
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

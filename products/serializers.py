@@ -180,9 +180,11 @@ class ProductSerializer(serializers.ModelSerializer):
             return parents[::-1]
 
         if list_lines:
-            s = get_line_parents(obj.main_line)
-            if len(s) == 1:
-                s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
+            s = []
+            if obj.main_line is not None:
+                s = get_line_parents(obj.main_line)
+                if len(s) == 1:
+                    s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
         return s
 
     # def get_is_return(self, obj):
@@ -250,7 +252,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "exact_date", "min_price_product_unit", "in_wishlist", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link"]
+        fields = ["id", "min_price_product_unit", "in_wishlist", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
@@ -278,11 +280,11 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         if size:
             filters &= (Q(size__in=size) | Q(size__is_one_size=True))
 
-        if price_max:
-            filters &= Q(final_price__lte=price_max)
-
-        if price_min:
-            filters &= Q(final_price__gte=price_min)
+        # if price_max:
+        #     filters &= Q(final_price__lte=price_max)
+        #
+        # if price_min:
+        #     filters &= Q(final_price__gte=price_min)
 
         if filters:
             return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']

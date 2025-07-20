@@ -28,7 +28,7 @@ from .serializers import SizeTableSerializer, ProductMainPageSerializer, Categor
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
-    get_product_page_photo, RandomGenerator, get_product_text
+    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -154,20 +154,24 @@ class MainPageBlocks(APIView):
         page = request.query_params.get("page", 1)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
-        s = [2 if (page == 1 or page == "1") else 0, 1, 1, 0, 1, 1, 0, 0, 1]
+        s = [2 if int(page) == 1 else 0, 1, 0, 0, 1]
 
+        t1 = time()
         last = "any"
-        for i in range(9):
+        for i in range(len(s)):
             type = s[i]
             if type == 0:
                 cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
                 cached_data = cache.get(cache_photo_key)
 
                 if cached_data is not None:
-                    photo, last, queryset = cached_data
+                    photo, last, list_id = cached_data
                 else:
-                    photo, last, queryset = get_photo_text(last)
-                    cache.set(cache_photo_key, (photo, last, queryset), CACHE_TIME)
+                    photo, last, list_id = get_photo_text(last)
+
+                    cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
+
+                queryset = get_queryset_from_list_id(list_id)
                 if queryset.exists():
                     res.append(photo)
                     selection = {"type": "selection", "title": photo['mobile']['title'],
@@ -180,11 +184,16 @@ class MainPageBlocks(APIView):
                 cached_data = cache.get(cache_sellection_key)
 
                 if cached_data is not None:
-                    queryset, selection = cached_data
+                    list_id, selection = cached_data
                 else:
-                    queryset, selection = get_selection()
-                    cache.set(cache_sellection_key, (queryset, selection), CACHE_TIME)
+                    list_id, selection = get_selection()
+
+                    cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
+
+                queryset = get_queryset_from_list_id(list_id)
+
                 selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+
                 res.append(selection)
             else:
                 cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
@@ -192,9 +201,11 @@ class MainPageBlocks(APIView):
                 if cached_data is not None:
                     photo, last = cached_data
                 else:
+
                     photo, last = get_sellout_photo_text(last)
-                    cache.set(cache_photo_key, (photo, last), 60 * 60 * 5)
+                    cache.set(cache_photo_key, (photo, last), CACHE_TIME)
                 res.append(photo)
+
         return Response(res)
 
 
@@ -347,18 +358,7 @@ class ProductView(APIView):
             print(f"no cache: {t_old - t_new}")
 
         t5 = time()
-        product_ids = queryset
-        queryset = Product.objects.filter(id__in=product_ids)
-
-        # Определение порядка объектов в queryset
-        preserved_order = Case(
-            *[
-                When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
-            ],
-            default=Value(len(product_ids)),
-            output_field=IntegerField()
-        )
-        queryset = queryset.annotate(order=preserved_order).order_by('order')
+        queryset = get_queryset_from_list_id(queryset)
 
         t6 = time()
         print(f"t06 {t6-t5}")

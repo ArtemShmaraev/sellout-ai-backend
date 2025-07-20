@@ -12,7 +12,6 @@ from products.serializers import LineSerializer, ProductMainPageSerializer
 
 
 def get_header_photo():
-    t = time()
     header = HeaderPhoto.objects.exclude(where='product_page')
     brand = choice(header)
     shoes = choice(header.filter(categories__eng_name="shoes_category"))
@@ -22,17 +21,15 @@ def get_header_photo():
            "shoes": shoes.photo,
            "clothes": clothes.photo,
            "accessories": accessories.photo}
-    t1 = time()
-    print(t1-t)
     return res
 
 
 def get_random(queryset):
     try:
-        total_records = queryset.values("id").count()
-        random_index = randint(0, total_records - 1)
-        random_obj = queryset[random_index]
-        return random_obj
+        # total_records = queryset.values("id").count()
+        # random_index = randint(0, total_records - 1)
+        # random_obj = queryset[random_index]
+        return choice(queryset)
     except:
         return None
 
@@ -51,7 +48,7 @@ def get_line_selection(line=None):
         if not products.exists():
             return get_line_selection()
         else:
-            products = products.order_by("-rel_num")[:30]
+            products = products.order_by("-rel_num")[:10]
             title = f"{line.name}"
             url = f"line={line.full_eng_name}"
     else:
@@ -61,10 +58,13 @@ def get_line_selection(line=None):
         filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
-            products = products.order_by("-rel_num")[:30]
+            products = products.order_by("-rel_num")[:10]
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
-    return title, products, url
+
+    list_id = list(products.values_list("id", flat=True))
+
+    return title, list_id, url
 
 
 def get_collab_selection(collab=None):
@@ -79,7 +79,7 @@ def get_collab_selection(collab=None):
         if not products.exists():
             return get_collab_selection()
         else:
-            products = products.order_by("-rel_num")[:30]
+            products = products.order_by("-rel_num")[:10]
             title = f"{collab.name}"
             url = f"collab={collab.query_name}"
     else:
@@ -89,10 +89,13 @@ def get_collab_selection(collab=None):
         filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
-            products = products.order_by("-rel_num")[:30]
+            products = products.order_by("-rel_num")[:10]
         title = f"{collab.name}"
         url = f"collab={collab.query_name}"
-    return title, products, url
+
+    list_id = list(products.values_list("id", flat=True))
+
+    return title, list_id, url
 
 
 def get_brand_and_category_selection():
@@ -111,21 +114,24 @@ def get_brand_and_category_selection():
     if not products.exists():
         return get_brand_and_category_selection()
     else:
-        products = products.order_by("-rel_num")[:30]
+        products = products.order_by("-rel_num")[:10]
         title = f"{random_category.name} {random_brand.name}"
         url = f"category={random_category.eng_name}&line={random_brand.query_name}"
-        return title, products, url
+    list_id = list(products.values_list("id", flat=True))
+    return title, list_id, url
 
 
 def get_selection():
-    type = randint(1, 3)
+    type = randint(2, 3)
     if type == 1:
         title, queryset, url = get_brand_and_category_selection()
     elif type == 2:
         title, queryset, url = get_collab_selection()
     else:
+
         title, queryset, url = get_line_selection()
     res = {"type": "selection", "title": title, "url": url}
+
     return queryset, res
 
 

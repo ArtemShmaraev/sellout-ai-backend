@@ -15,16 +15,9 @@ from kombu import Queue, Exchange
 from datetime import timedelta
 from corsheaders.defaults import default_headers
 
-CACHE_TIME = 15
+CACHE_TIME = 1500
 #
-HOST = "sellout.su"
-BACKEND_HOST = "sellout.su"
-FRONTEND_HOST = "sellout.su"
 
-# #
-# HOST = "127.0.0.1"
-# BACKEND_HOST = "127.0.0.1:8000"
-# FRONTEND_HOST = "127.0.0.1:3000"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -75,13 +68,6 @@ INSTALLED_APPS = [
 GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
 GOOGLE_OAUTH2_SECRET = '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'
 
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': f'{HOST}:9200',
-
-        # 'hosts': '51.250.74.115:9200',  # Адрес и порт вашего Elasticsearch
-    },
-}
 
 # Set the AUTH_USER_MODEL setting to point to your custom user model
 AUTH_USER_MODEL = 'users.User'
@@ -261,9 +247,18 @@ SIMPLE_JWT = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+#
+#
+# HOST = "127.0.0.1"
+# BACKEND_HOST = "127.0.0.1:8000"
+# FRONTEND_HOST = "127.0.0.1:3000"
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+
+
+HOST = "sellout.su"
+BACKEND_HOST = "sellout.su"
+FRONTEND_HOST = "sellout.su"
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -274,25 +269,34 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-# # # #
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# # # # #
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#
+# # Set to True to always redirect HTTP requests to HTTPS
+# SECURE_SSL_REDIRECT = False
+#
+# # Ensure secure handling of cookies
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+#
+# # Enable HTTP Strict Transport Security (HSTS)
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+#
+# CACHES = {
+#     'default': {
+#         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
+#         'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+#         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
+#     }
+# }
 
-# Set to True to always redirect HTTP requests to HTTPS
-SECURE_SSL_REDIRECT = False
 
-# Ensure secure handling of cookies
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-
-# Enable HTTP Strict Transport Security (HSTS)
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-
-CACHES = {
+ELASTICSEARCH_DSL = {
     'default': {
-        'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
-        'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
-    }
+        'hosts': f'{HOST}:9200',
+
+        # 'hosts': '51.250.74.115:9200',  # Адрес и порт вашего Elasticsearch
+    },
 }

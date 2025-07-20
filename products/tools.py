@@ -2,8 +2,9 @@ import random
 import json
 from functools import lru_cache
 from datetime import datetime, date
+from time import time
 
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField
 
 from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
@@ -11,6 +12,20 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from products.serializers import LineSerializer
 
 
+
+def get_queryset_from_list_id(product_ids):
+    queryset = Product.objects.filter(id__in=product_ids)
+
+    # Определение порядка объектов в queryset
+    preserved_order = Case(
+        *[
+            When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
+        ],
+        default=Value(len(product_ids)),
+        output_field=IntegerField()
+    )
+    queryset = queryset.annotate(order=preserved_order).order_by('order')
+    return queryset
 
 
 

@@ -140,19 +140,24 @@ def add_product_api(data):
     for unit in data['units']:
 
         sizes = []
+        tables = []
         if "size_table_info" in unit:
             for size in unit["size_table_info"]:
-                if size['size_table'] == "undefined" or size['size_table_row_value'] == 'undefined' or size["size_table_row"] == "undefined":
+                if size['size_table'] == "undefined":
                     row = SizeTranslationRows.objects.filter(is_one_size=True).first()
                     sizes.append(row.id)
                 else:
-
                     table = SizeTable.objects.get(name=size['size_table'])
-                    rows = table.rows.all()
-                    for size_row in rows:
-                        if size_row.row[size["size_table_row"]] == size["size_table_row_value"]:
-                            sizes.append(size_row.id)
-                            break
+                    tables.append(table.id)
+                    if size['size_table_row_value'] == 'undefined' or size["size_table_row"] == "undefined":
+                        row = SizeTranslationRows.objects.filter(is_one_size=True).first()
+                        sizes.append(row.id)
+                    else:
+                        rows = table.rows.all()
+                        for size_row in rows:
+                            if size_row.row[size["size_table_row"]] == size["size_table_row_value"]:
+                                sizes.append(size_row.id)
+                                break
         else:
             row = SizeTranslationRows.objects.filter(is_one_size=True).first()
             sizes.append(row.id)
@@ -187,6 +192,7 @@ def add_product_api(data):
                 platform_info=platform_info
             )
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
+            product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
             product_unit.update_history()
     product.update_min_price()
 

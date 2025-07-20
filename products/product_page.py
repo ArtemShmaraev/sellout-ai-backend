@@ -8,7 +8,8 @@ from django.http import JsonResponse, FileResponse
 
 from users.models import User
 from wishlist.models import Wishlist
-from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText
+from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
+    SizeTranslationRows
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
@@ -100,6 +101,9 @@ def get_product_page(request, context):
     size = params.getlist('size')
     if size:
         size = list(map(lambda x: x.split("_")[1], size))
+        table = []
+        for s in size:
+            table.append(SizeTranslationRows.objects.get(id=s).table.id)
 
     price_max = params.get('price_max')
     price_min = params.get('price_min')
@@ -228,7 +232,7 @@ def get_product_page(request, context):
 
     # Фильтр по размеру
     if size:
-        filters &= (Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))
+        filters &= ((Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True)) & Q(product_units__size_table__in=table))
 
     # Фильтр по наличию скидки
     if is_sale:
@@ -307,7 +311,9 @@ def get_product_page(request, context):
     page_number = params.get("page")
     page_number = int(page_number if page_number else 1)
     start_index = (page_number - 1) * 48
+    # print(queryset[0].id)
     queryset = list(queryset[start_index:start_index + 48].values_list("id", flat=True))
+    # queryset = [product.id for product in queryset]
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0

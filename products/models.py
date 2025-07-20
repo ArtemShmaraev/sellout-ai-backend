@@ -244,7 +244,7 @@ class Product(models.Model):
     approximate_date = models.CharField(max_length=63, null=False, blank=True, default="")
 
     fit = models.IntegerField(default=0)
-    rel_num = models.IntegerField(default=0)
+    rel_num = models.IntegerField(default=0, db_index=True)
     platform_info = models.JSONField(blank=True, null=True)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 

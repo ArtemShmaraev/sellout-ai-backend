@@ -1,4 +1,6 @@
 from django.db import models
+
+from products.models import SizeTable
 from utils.models import Currency
 
 
@@ -69,6 +71,8 @@ class ProductUnit(models.Model):
     view_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
     # size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
+
+    size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", null=True, blank=True)
 
     size = models.ManyToManyField("products.SizeTranslationRows", related_name="product_units",
                              null=True, blank=True)  # порядковый номер размера в таблице

@@ -14,7 +14,7 @@ import json
 
 
 class DeliveryForSizeView(APIView):
-    def get(self, request, product_id):
+    def post(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
             view_size = json.loads(request.body)['view_size']

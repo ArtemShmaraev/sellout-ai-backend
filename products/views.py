@@ -358,7 +358,7 @@ class ProductView(APIView):
             print(f"no cache: {t_old - t_new}")
 
         t5 = time()
-        queryset = get_queryset_from_list_id(queryset)
+        # queryset = get_queryset_from_list_id(queryset)
 
         t6 = time()
         print(f"t06 {t6-t5}")
@@ -564,7 +564,7 @@ class ProductUpdateView(APIView):
 
 
 class SizeTableForFilter(APIView):
-    @method_decorator(cache_page(CACHE_TIME))
+
     def get(self, request):
         try:
             context = {}
@@ -574,27 +574,36 @@ class SizeTableForFilter(APIView):
             gender = self.request.query_params.getlist("gender")
             categories = self.request.query_params.getlist("category")
 
-            filters = {}
-            size_tables = SizeTable.objects.all()
+            cache_key = f'size_table{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
 
-            # Фильтр по цене
-            if gender:
-                filters['gender__name__in'] = gender
-            if categories:
-                list_cat = []
-                for category in categories:
-                    category_model = Category.objects.filter(eng_name=category).first()
-                    list_cat.append(category_model.eng_name)
-                    while category_model.parent_category:
-                        list_cat.append(category_model.parent_category.eng_name)
-                        category_model = category_model.parent_category
-                filters['category__eng_name__in'] = list_cat
+            # Попробуйте сначала получить результат из кэша
+            size_tables = cache.get(cache_key)
 
-            if filters:
-                size_tables = size_tables.filter(**filters)
 
-            return Response(
-                SizeTableSerializer(size_tables, many=True, context=context).data)
+            if size_tables is None:
+                filters = {}
+                size_tables = SizeTable.objects.all()
+
+                # Фильтр по цене
+                if gender:
+                    filters['gender__name__in'] = gender
+                if categories:
+                    list_cat = []
+                    for category in categories:
+                        category_model = Category.objects.filter(eng_name=category).first()
+                        list_cat.append(category_model.eng_name)
+                        while category_model.parent_category:
+                            list_cat.append(category_model.parent_category.eng_name)
+                            category_model = category_model.parent_category
+                    filters['category__eng_name__in'] = list_cat
+
+                if filters:
+                    size_tables = size_tables.filter(**filters)
+                size_tables = SizeTableSerializer(size_tables, many=True, context=context).data
+
+                cache.set(cache_key, size_tables, CACHE_TIME)
+            return Response(size_tables
+                )
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

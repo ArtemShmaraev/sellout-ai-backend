@@ -312,7 +312,7 @@ def get_product_page(request, context):
     page_number = int(page_number if page_number else 1)
     start_index = (page_number - 1) * 48
     # print(queryset[0].id)
-    queryset = list(queryset[start_index:start_index + 48].values_list("id", flat=True))
+    queryset = queryset[start_index:start_index + 48]
     # queryset = [product.id for product in queryset]
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"

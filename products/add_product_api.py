@@ -29,12 +29,9 @@ def add_product_api(data):
     if not create:
         product.delete()
         product = Product.objects.create(spu_id=spu_id, property_id=property_id,
-                                         manufacturer_sku=manufacturer_sku)
+                                         manufacturer_sku=manufacturer_sku, slug=f"{spu_id}_{property_id}_{manufacturer_sku}")
 
     t2 = time()
-
-    product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
-    product.save()
 
     product.is_collab = data["is_collab"]
     if data["is_collab"] and len(data['collab_names']) > 0:

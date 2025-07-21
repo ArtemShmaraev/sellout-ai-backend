@@ -1,5 +1,7 @@
 import json
 
+from django.db.models import F
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -15,7 +17,55 @@ from rest_framework import status
 from promotions.models import PromoCode
 from promotions.views import check_promo
 from users.models import User
+from .tools import get_delivery_costs, get_delivery_price
 
+
+class DeliveryInfo(APIView):
+    def get(self, request):
+
+
+        try:
+            user = User.objects.get(id=request.user.id)
+            cart = ShoppingCart.objects.get(user=user)
+            data = json.loads(request.body)
+
+            zip = "0"
+            if "address_id" in data:
+                try:
+                    zip = AddressInfo.objects.get(id=data['address_id']).post_index
+                except AddressInfo.DoesNotExist:
+                    return JsonResponse({"error": "Адрес не найден"}, status=400)
+
+            target = data.get("target", "0")
+
+            product_units = cart.product_units.annotate(
+                delivery_days=F('delivery_type__days_max')
+            )
+
+            sorted_product_units = product_units.order_by('delivery_days')
+            tec = [sorted_product_units[0]]
+            sum_part = 0
+            for unit in sorted_product_units[1:]:
+                if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
+                    tec.append(unit)
+                else:
+                    sum_part += get_delivery_price(tec, "02743", target, zip)
+                    tec = [unit]
+
+            sum_part += get_delivery_price(tec, "02743", target, zip)
+            sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
+
+            # Возвращаем успешный ответ
+            return Response({"sum_part": sum_part, "sum_all": sum_all})
+
+        except User.DoesNotExist:
+            return Response({"error": "Пользователь не найден"}, status=404)
+        except ShoppingCart.DoesNotExist:
+            return Response({"error": "Корзина пользователя не найдена"}, status=404)
+        except json.JSONDecodeError:
+            return Response({"error": "Ошибка разбора JSON"}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 class ChangeStatusUnit(APIView):
     def get(self, request, order_unit_id):
@@ -141,22 +191,28 @@ class CheckOutView(APIView):
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
 
-                address = get_object_or_404(AddressInfo, id=data['address_id'])
-                status = Status.objects.get(name="В обработке")
 
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,
                               email=data['email'], phone=data['phone'],
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
-                              address=address, status=status, fact_of_payment=False, promo_sale=cart.promo_sale,
-                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, delivery=data['delivery'])
+                              status= Status.objects.get(name="В обработке"), fact_of_payment=False, promo_sale=cart.promo_sale,
+                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale)
+                if "address_id" in data:
+                    order.address = get_object_or_404(AddressInfo, id=data['address_id'])
+                else:
+                    order.pvz = data.get('target', 0)
                 order.save()
+
+
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit)
                 order.promo_sale = cart.promo_sale
                 order.bonus_sale = cart.bonus_sale
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
+                order.get_delivery(data)
+                order.final_amount += order.delivery_price
                 order.save()
 
                 serializer = OrderSerializer(order)

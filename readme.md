@@ -2510,8 +2510,10 @@ Body:
   "name": "Имя",
   "surname": "Фамилия",
   "patronymic": "Отчество",
-  "address_id": 1,
-  "delivery": "Способ доставки"
+  "delivery_type": "0 если по мск | 1 если до ПВЗ | 2 если курьеорм",
+  "address_id": 1, если курьер или по мск,
+  "target": "1234", если ПВЗ
+  "consolidation": true
 }
 ```
 

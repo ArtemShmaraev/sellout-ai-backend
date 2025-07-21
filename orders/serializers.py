@@ -41,7 +41,8 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class OrderUnitSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
+    product = ProductMainPageSerializer()
+
     class Meta:
         model = OrderUnit
         # fields = '__all__'

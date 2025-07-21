@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import ShoppingCartViewSet
 from django.urls import path
-from .views import UseBonus, ShoppingCartUser, CheckOutView, AllOrdersView, UserOrdersView, OrderView, ListProductUnitOrderView, ChangeStatusUnit
+from .views import UseBonus, ShoppingCartUser, CheckOutView, AllOrdersView, UserOrdersView, DeliveryInfo, OrderView, ListProductUnitOrderView, ChangeStatusUnit
 
 router = routers.DefaultRouter()
 router.register("", ShoppingCartViewSet, 'cart')
@@ -19,3 +19,4 @@ urlpatterns.append(path('info/<int:order_id>', OrderView.as_view()))
 
 urlpatterns.append(path('cart/use_bonus/<int:user_id>', UseBonus.as_view()))
 urlpatterns.append(path('status_unit/<order_unit_id>', ChangeStatusUnit.as_view()))
+urlpatterns.append(path('delivery_info', DeliveryInfo.as_view()))

@@ -1,11 +1,23 @@
 import requests
 
 
+def get_delivery_price(units, target_start, target, zip):
+    sum = 0
+    sum_weight = 0
+    delivery_price = 0
+    for unit in units:
+        sum += unit.final_price
+        sum_weight += unit.weight
+    delivery_info = get_delivery_costs(sum_weight, sum, target_start, target, zip)
+    if "price_base" in delivery_info:
+        delivery_price += (delivery_info['price_base'] * 1.25) + delivery_info['price_service']
+    return delivery_price
+
 def get_delivery_costs(weight, ordersum, targetstart, target, zip):
     url = "http://api.boxberry.ru/json.php"
     params = {
         "method": "DeliveryCosts",
-        "weight": weight,
+        "weight": weight * 1000,
         "target": target,
         "ordersum": ordersum,
         "targetstart": targetstart,

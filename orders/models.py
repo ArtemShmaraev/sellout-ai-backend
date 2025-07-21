@@ -1,8 +1,12 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import F
+
 from promotions.tools import check_promo
 from django.utils import timezone
 
+from shipping.models import AddressInfo
+from .tools import get_delivery_costs, get_delivery_price
 
 class Status(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
@@ -28,7 +32,10 @@ class Order(models.Model):
     surname = models.CharField(max_length=100, null=False, blank=False)
     patronymic = models.CharField(max_length=100, default="")
     delivery = models.CharField(max_length=100, default="")
-    address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders")
+    delivery_price = models.IntegerField(default=0)
+    groups_delivery = models.JSONField(default=list)
+    address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True, blank=True)
+    pvz = models.CharField(default="", max_length=100)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
     bonus_sale = models.IntegerField(default=0)
@@ -43,6 +50,58 @@ class Order(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
+    def get_delivery(self, data):
+        zip = "0"
+        if "address_id" in data:
+            zip = AddressInfo.objects.get(id=data['address_id']).post_index
+
+        target = data.get("target", "0")
+
+
+        if int(data['delivery_type']) == 0:
+            self.delivery_price = 0
+            self.delivery = "по Москве без консолидации"
+            self.groups_delivery.append([unit.id for unit in self.order_units.all()])
+        else:
+            if int(data['delivery_type']) == 1:
+                zip = "0"
+                name_delivery = "Пункт выдачи"
+            else:
+                target = "0"
+                name_delivery = "Курьер"
+
+            if data['consolidation']:
+
+                product_units = self.order_units.annotate(
+                    delivery_days=F('delivery_type__days_max')
+                )
+
+                sorted_product_units = product_units.order_by('delivery_days')
+                tec = [sorted_product_units[0]]
+                sum_part = 0
+                for unit in sorted_product_units[1:]:
+                    if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
+                        tec.append(unit)
+
+                    else:
+                        sum_part += get_delivery_price(tec, "02743", target, zip)
+                        self.groups_delivery.append([unit.id for unit in tec])
+                        tec = [unit]
+
+                sum_part += get_delivery_price(tec, "02743", target, zip)
+                self.groups_delivery.append([unit.id for unit in tec])
+                self.delivery_price = sum_part
+                self.delivery = f"{name_delivery} + консолидация"
+
+            else:
+                self.groups_delivery.append([unit.id for unit in self.order_units.all()])
+                self.delivery_price = get_delivery_price(self.order_units.all(), "02743", target, zip)
+                self.delivery = f"{name_delivery}"
+        self.save()
+
+
+
+
     def change_status(self):
         min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
         if min_status_id is not None:
@@ -54,9 +113,8 @@ class Order(models.Model):
         order_unit = OrderUnit(
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
+            weight=product_unit.weight,
             # size_table_platform=product_unit.size_table_platform,
-            color=product_unit.color,
-            configuration=product_unit.configuration,
             start_price=product_unit.start_price,
             final_price=product_unit.final_price,
             delivery_type=product_unit.delivery_type,
@@ -136,9 +194,7 @@ class OrderUnit(models.Model):
     size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="order_units",
                              null=True, blank=True)
-
-    color = models.CharField(max_length=255, null=True, blank=True, default="")
-    configuration = models.CharField(max_length=255, null=True, blank=True, default="")
+    weight = models.IntegerField(default=1)
 
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False)  # Новая цена

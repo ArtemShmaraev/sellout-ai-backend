@@ -266,8 +266,8 @@ def get_product_page(request, context):
     t3 = time()
     print("t2", t3 - t2)
 
-    # res['count'] = queryset.values('id').count()
-    res['count'] = 1000
+    res['count'] = queryset.values('id').count()
+    # res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)
 

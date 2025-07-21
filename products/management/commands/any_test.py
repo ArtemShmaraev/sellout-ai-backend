@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
 
         # ps = ProductUnit.objects.all()
-        pr = AddressInfo.objects.values_list("id", flat=True)
+        pr = ProductUnit.objects.count()
         print(pr)
         # for p in ps:
         #     for s in p.size.all():

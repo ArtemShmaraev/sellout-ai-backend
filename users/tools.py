@@ -44,7 +44,6 @@ def register_user(data):
                     last_name=data['last_name'],
                     is_mailing_list=data['is_mailing_list'], email=data['username'])
     genders = {'male': 1, "female": 2}
-    print(data['gender'])
     if 'gender' in data:
         new_user.gender_id = genders[data['gender']]
     if 'phone' in data:

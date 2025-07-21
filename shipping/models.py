@@ -96,6 +96,7 @@ class ProductUnit(models.Model):
     is_sale = models.BooleanField(default=False)
 
     dimensions = models.JSONField(default=dict)
+    weight = models.IntegerField(default=1)
     history_price = models.JSONField(default=list)
     platform_info = models.JSONField(default=dict)
 

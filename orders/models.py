@@ -38,6 +38,7 @@ class Order(models.Model):
                                related_name="orders", default=get_default_status())
     payment = models.CharField(max_length=100, default="")
     fact_of_payment = models.BooleanField(default=False)
+    comment = models.CharField(default="", max_length=4048)
     date = models.DateTimeField(default=timezone.now)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)

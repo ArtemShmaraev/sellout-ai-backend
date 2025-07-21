@@ -9,7 +9,7 @@ class ProductUnitAdmin(admin.ModelAdmin):
 
 
 class AddressInfoAdmin(admin.ModelAdmin):
-    list_display = ('address', )
+    list_display = ('address', 'post_index',)
 
 
 class DeliveryTypeAdmin(admin.ModelAdmin):

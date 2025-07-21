@@ -333,6 +333,7 @@ class ProductView(APIView):
         price_max = self.request.query_params.get('price_max')
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
+        like = self.request.query_params.get('like')
 
         context['size'] = size if size else None
         context['price_max'] = price_max if price_max else None
@@ -345,29 +346,31 @@ class ProductView(APIView):
         cache_product_key = f"product_page:{url_hash}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)
 
-        if cached_data is not None:
-            t_new = time()
-            queryset, res = cached_data
-            t_old = time()
-            print(f"cache: {t_old - t_new}")
-        else:
+        if cached_data is None or like:
             queryset, res = get_product_page(request, context)
             t_new = time()
             cache.set(cache_product_key, (queryset, res), CACHE_TIME)
             t_old = time()
             print(f"no cache: {t_old - t_new}")
 
-        t5 = time()
-        # queryset = get_queryset_from_list_id(queryset)
+        else:
+            t_new = time()
+            queryset, res = cached_data
+            t_old = time()
+            print(f"cache: {t_old - t_new}")
 
+
+        # t5 = time()
+        # # queryset = get_queryset_from_list_id(queryset)
+        #
         t6 = time()
-        print(f"t06 {t6-t5}")
+        # print(f"t06 {t6-t5}")
 
         # Сериализуем объекты и возвращаем ответ с пагинированными данными
-        serializer = ProductMainPageSerializer(queryset, many=True, context=context)
+        # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
         t7 = time()
         print("t6", t7 - t6)
-        serializer = serializer.data
+        serializer = queryset
         res["results"] = serializer
         t8 = time()
         print("t7", t8 - t7)

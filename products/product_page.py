@@ -266,8 +266,10 @@ def get_product_page(request, context):
     t3 = time()
     print("t2", t3 - t2)
 
-    res['count'] = queryset.values('id').count()
-    # res['count'] = 1000
+
+
+    # res['count'] = queryset.values('id').count()
+    res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)
 
@@ -310,6 +312,7 @@ def get_product_page(request, context):
 
     page_number = params.get("page")
     page_number = int(page_number if page_number else 1)
+
     start_index = (page_number - 1) * 48
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 48]
@@ -321,7 +324,9 @@ def get_product_page(request, context):
     t6 = time()
     print("t5", t6 - t5)
 
-    # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
+    queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
+    t7 = time()
+    print("t6", t7-t6)
     # t7 = time()
     # print("t6", t7 - t6)
     # queryset = list(serializer.data)

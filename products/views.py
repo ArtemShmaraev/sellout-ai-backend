@@ -42,6 +42,26 @@ from products.main_page import get_selection, get_photo_text, get_sellout_photo_
 from sellout.settings import CACHE_TIME
 
 
+class AvailableSize(APIView):
+    def get(self, request, product_id):
+        try:
+            product = get_object_or_404(Product, id=product_id)  # Получение объекта Product или 404, если он не найден
+            sizes_info = {"sizes": [], "filter_logo": ""}
+            sizes_id = set()
+            for unit in product.product_units.all():
+                for s in unit.size.all():
+                    row = s.table.default_row
+                    if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
+                        sizes_info['filter_logo'] = row.filter_logo
+                    if s.id not in sizes_id:
+                        sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
+                        sizes_id.add(s.id)
+            sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
+            return Response(sizes_info)
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=404)
+
+
 
 class AddFilterSearch(APIView):
     def get(self, request):

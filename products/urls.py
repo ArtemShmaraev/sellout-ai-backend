@@ -7,7 +7,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
-    SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch
+    SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -33,10 +33,8 @@ router_brand.register("brands", BrandViewSet, basename="brands")
 router_color = routers.DefaultRouter()
 router_color.register("colors", ColorViewSet, basename="colors")
 
-
 router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")
-
 
 router_material = routers.DefaultRouter()
 router_material.register("materials", MaterialViewSet, basename="materials")
@@ -60,4 +58,5 @@ urlpatterns = [
     path("main_page", MainPageBlocks.as_view()), path("header_photo", GetHeaderPhoto.as_view()),
     path("ransom_request", MakeRansomRequest.as_view()), path("sg_info_list", SGInfoListSkuView.as_view()),
     path("sg_info", SGInfoListView.as_view()), path("sg_info/<str:sku>", SGInfoView.as_view()),
-    path("search_brands", BrandSearchView.as_view()), path("add_filter_search", AddFilterSearch.as_view())]
+    path("search_brands", BrandSearchView.as_view()), path("add_filter_search", AddFilterSearch.as_view()),
+    path("sizes_info/<int:product_id>", AvailableSize.as_view())]

@@ -2,7 +2,7 @@ import functools
 import random
 
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case
-
+from .tools import get_queryset_from_list_id
 from time import time
 from django.http import JsonResponse, FileResponse
 
@@ -123,8 +123,6 @@ def get_product_page(request, context):
 
     if not available:
         queryset = queryset.filter(available_flag=True)
-        queryset = queryset.filter(product_units__availability=True)
-        queryset = queryset.distinct()
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
@@ -220,7 +218,7 @@ def get_product_page(request, context):
     if gender:
         queryset = queryset.filter(gender__name__in=gender)
 
-    filters = Q(product_units__availability=True)
+    filters = Q()
 
     # Фильтр по цене
     if price_min:
@@ -229,6 +227,7 @@ def get_product_page(request, context):
         # Фильтр по максимальной цене
     if price_max:
         filters &= Q(product_units__final_price__lte=price_max)
+
 
     # Фильтр по размеру
     if size:
@@ -268,8 +267,8 @@ def get_product_page(request, context):
 
 
 
-    # res['count'] = queryset.values('id').count()
-    res['count'] = 1000
+    res['count'] = queryset.values('id').count()
+    # res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)
 
@@ -323,6 +322,9 @@ def get_product_page(request, context):
     res['max_price'] = 1000000
     t6 = time()
     print("t5", t6 - t5)
+    # list_id = list(queryset.values_list("id", flat=True))
+    # print(time() - t6)
+    # queryset = get_queryset_from_list_id(list_id)
 
     queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
     t7 = time()

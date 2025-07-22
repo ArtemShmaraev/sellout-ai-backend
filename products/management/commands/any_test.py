@@ -7,7 +7,7 @@ import json
 
 from django.core.paginator import Paginator
 
-from orders.models import ShoppingCart
+from orders.models import ShoppingCart, Status
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,23 +18,36 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        products = Product.objects.all().order_by("rel_num")  # Получение всех объектов Product
+
+        queryset = Product.objects.all()
+        queryset = queryset.filter(available_flag=True, is_custom=False)
+        # queryset = queryset.distinct()
+        queryset = queryset[310000:310050]
+        print(queryset.query)
         t = time()
-        paginator = Paginator(products,
-                              per_page=48)  # Инициализация Paginator с количеством объектов на странице (10 в данном случае)
+        print(queryset.count())
         t2 = time()
         print(t2-t)
-
-        mxt = time() - time()
-        for page_number in range(901, 4000, 100):
-            t = time()
-            page = paginator.get_page(page_number)
-            s = list(page.object_list.values_list("id", flat=True))
-            t1 = time()
-            print(f"{page_number}: {t1 - t}")
-            mxt = max(mxt, t1 - t)
+        print(list(queryset.values_list("id", flat=True)))
+        #
+        # # paginator = Paginator(queryset,
+        # #                       per_page=48)  # Инициализация Paginator с количеством объектов на странице (10 в данном случае)
+        #
+        # #
+        # mxt = time() - time()
+        # for page_number in range(2, 7000, 1000):
+        #     t = time()
+        #     # page = paginator.get_page(page_number)
+        #
+        #     start_index = (page_number - 1) * 48
+        #     # print(queryset[0].id)
+        #     queryset1 = queryset[start_index:start_index + 48]
+        #     s = list(queryset1.values_list("id", flat=True))
+        #     t1 = time()
+        #     print(f"{page_number}: {t1 - t}")
+        #     mxt = max(mxt, t1 - t)
             # print(f"{page_number}: {t1-t}")
-        print(mxt)
+        # print(mxt)
         # st = SizeRow.objects.all()
         #
         # for s in st:
@@ -51,8 +64,8 @@ class Command(BaseCommand):
 
 
         # ps = ProductUnit.objects.all()
-        # pr = ProductUnit.objects.count()
-        # print(pr)
+        # # pr = ProductUnit.objects.count()
+        # # print(pr)
         # for p in ps:
         #     for s in p.size.all():
         #         if not s.is_one_size:

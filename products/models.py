@@ -257,26 +257,22 @@ class Product(models.Model):
 
     objects = ProductManager()
 
-    # class Meta:
-    #     indexes = [
-    #         models.Index(fields=['id']),
-    #         models.Index(fields=['spu_id']),
-    #         models.Index(fields=['model']),
-    #         models.Index(fields=['colorway']),
-    #         models.Index(fields=['slug']),
-    #         models.Index(fields=['manufacturer_sku']),
-    #         models.Index(fields=['colors']),
-    #         models.Index(fields=['lines']),
-    #         models.Index(fields=['is_custom']),
-    #         models.Index(fields=['is_collab']),
-    #         models.Index(fields=['gender']),
-    #         models.Index(fields=['materials']),
-    #         models.Index(fields=['min_price']),
-    #         models.Index(fields=['rel_num']),
-    #         models.Index(fields=['available_flag']),
-    #
-    #         # Добавьте индексы для остальных полей с db_index=True
-    #     ]
+    class Meta:
+        indexes = [
+            models.Index(fields=['id']),
+            models.Index(fields=['spu_id']),
+            models.Index(fields=['model']),
+            models.Index(fields=['colorway']),
+            models.Index(fields=['slug']),
+            models.Index(fields=['manufacturer_sku']),
+            models.Index(fields=['is_custom']),
+            models.Index(fields=['is_collab']),
+            models.Index(fields=['min_price']),
+            models.Index(fields=['rel_num']),
+            models.Index(fields=['available_flag']),
+
+            # Добавьте индексы для остальных полей с db_index=True
+        ]
 
     def update_min_price(self):
         if self.product_units.all():

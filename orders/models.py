@@ -8,6 +8,7 @@ from django.utils import timezone
 from shipping.models import AddressInfo
 from .tools import get_delivery_costs, get_delivery_price
 
+
 class Status(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
 
@@ -34,7 +35,8 @@ class Order(models.Model):
     delivery = models.CharField(max_length=100, default="")
     delivery_price = models.IntegerField(default=0)
     groups_delivery = models.JSONField(default=list)
-    address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True, blank=True)
+    address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True,
+                                blank=True)
     pvz = models.CharField(default="", max_length=100)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
@@ -56,7 +58,6 @@ class Order(models.Model):
             zip = AddressInfo.objects.get(id=data['address_id']).post_index
 
         target = data.get("target", "0")
-
 
         if int(data['delivery_type']) == 0:
             self.delivery_price = 0
@@ -99,15 +100,11 @@ class Order(models.Model):
                 self.delivery = f"{name_delivery}"
         self.save()
 
-
-
-
     def change_status(self):
         min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
         if min_status_id is not None:
             self.status = Status.objects.get(id=min_status_id)
             self.save()
-
 
     def add_order_unit(self, product_unit):
         order_unit = OrderUnit(
@@ -129,10 +126,9 @@ class Order(models.Model):
         self.order_units.add(order_unit)
 
 
-
 class ShoppingCart(models.Model):
     user = models.ForeignKey("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
-                                blank=False)
+                             blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
                                            related_name="shopping_carts")
     unit_order = models.JSONField(default=list)
@@ -211,5 +207,3 @@ class OrderUnit(models.Model):
                                related_name="order_units", default=get_default_status())
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
-
-

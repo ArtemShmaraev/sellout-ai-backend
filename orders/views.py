@@ -23,7 +23,6 @@ from .tools import get_delivery_costs, get_delivery_price
 class DeliveryInfo(APIView):
     def get(self, request):
 
-
         try:
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
@@ -54,9 +53,12 @@ class DeliveryInfo(APIView):
 
             sum_part += get_delivery_price(tec, "02743", target, zip)
             sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
+            res = {"sum_part": sum_part, "sum_all": sum_all, "block": False}
+            if ((int(data["delivery_type"]) == 1 or int(data["delivery_type"]) == 2) and product_units.count() != 1) and (sum_part != sum_all):
+                res["block"] = True
 
             # Возвращаем успешный ответ
-            return Response({"sum_part": sum_part, "sum_all": sum_all})
+            return Response(res)
 
         except User.DoesNotExist:
             return Response({"error": "Пользователь не найден"}, status=404)
@@ -66,6 +68,7 @@ class DeliveryInfo(APIView):
             return Response({"error": "Ошибка разбора JSON"}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 class ChangeStatusUnit(APIView):
     def get(self, request, order_unit_id):
@@ -191,19 +194,18 @@ class CheckOutView(APIView):
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
 
-
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,
                               email=data['email'], phone=data['phone'],
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
-                              status= Status.objects.get(name="В обработке"), fact_of_payment=False, promo_sale=cart.promo_sale,
+                              status=Status.objects.get(name="Ожидает подтверждения"), fact_of_payment=False,
+                              promo_sale=cart.promo_sale,
                               bonus_sale=cart.bonus_sale, total_sale=cart.total_sale)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
                     order.pvz = data.get('target', 0)
                 order.save()
-
 
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit)

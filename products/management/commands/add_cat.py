@@ -57,10 +57,6 @@ class Command(BaseCommand):
         self.create_categories(all_data)
         #
         #
-        # statuses = ["Ожидает подтверждения", "Заказ подтвержден", "В пути до международного склада", "В пути до склада в Москве",
-        #             "Готово к выдаче в пункте самовывоза", "Передано в службу доставки", "Получено"]
-        # for status_name in statuses:
-        #     status = Status.objects.get_or_create(name=status_name)[0]
-        #     status.save()
+
 
         print('finished')

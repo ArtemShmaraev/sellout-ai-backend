@@ -243,7 +243,6 @@ def get_product_page(request, context):
     if filters:
         # Выполняем фильтрацию
         queryset = queryset.filter(filters)
-    queryset = queryset.distinct()
 
 
     if new and not query:
@@ -265,9 +264,17 @@ def get_product_page(request, context):
     t3 = time()
     print("t2", t3 - t2)
 
+    queryset = queryset.distinct()
+
+    unique_ids = queryset.values('id').distinct()
+    res['count'] = unique_ids.count()
+
+    # Получите queryset объектов с уникальными id
+    queryset = Product.objects.filter(id__in=unique_ids)
 
 
-    res['count'] = queryset.values('id').count()
+
+
     # res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)

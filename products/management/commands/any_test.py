@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
         queryset = Product.objects.all()
         queryset = queryset.filter(available_flag=True, is_custom=False)
-        # queryset = queryset.distinct()
+        queryset = queryset.distinct()
         queryset = queryset[310000:310050]
         print(queryset.query)
         t = time()

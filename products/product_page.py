@@ -13,7 +13,7 @@ from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Colla
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer
+    DewuInfoSerializer, CollabSerializer, CustomProductSerializer
 from .tools import get_product_text
 
 from rest_framework.response import Response
@@ -266,12 +266,9 @@ def get_product_page(request, context):
 
     # queryset = queryset.distinct()
 
-    unique_ids = queryset.values('id').distinct()
-    res['count'] = unique_ids.count()
-
-    # Получите queryset объектов с уникальными id
-    queryset = Product.objects.filter(id__in=unique_ids)
-    # res['count'] = 1000
+    queryset = queryset.values('id').distinct()
+    print("1111", time() - t3)
+    res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)
 
@@ -318,6 +315,13 @@ def get_product_page(request, context):
     start_index = (page_number - 1) * 48
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 48]
+    queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
+    # queryset = Product.objects.filter(id__in=queryset)
+    # print(queryset.query)
+    # print()
+    # print(queryset[0])
+    # t101 = time()
+    # print("12121", t101 - t100)
     # queryset = [product.id for product in queryset]
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
@@ -328,7 +332,6 @@ def get_product_page(request, context):
     # list_id = list(queryset.values_list("id", flat=True))
     # print(time() - t6)
     # queryset = get_queryset_from_list_id(list_id)
-
     queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
     t7 = time()
     print("t6", t7-t6)

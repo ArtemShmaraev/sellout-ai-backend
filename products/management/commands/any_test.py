@@ -12,6 +12,8 @@ from orders.models import ShoppingCart, Status
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
 from django.core.exceptions import ObjectDoesNotExist
+
+from products.serializers import ProductMainPageSerializer
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation
 from products.tools import get_text
@@ -20,10 +22,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # queryset = Product.objects.all()
+        queryset = Product.objects.all()
         # queryset = queryset.filter(available_flag=True, is_custom=False)
         # queryset = queryset.distinct()
-        # queryset = queryset[310000:310050]
+        queryset = queryset[:50]
+        t1 = time()
+        s = ProductMainPageSerializer(queryset, many=True).data
+        t2 = time()
+        print(t2-t1)
         # print(queryset.query)
         # t = time()
         # print(queryset.count())
@@ -63,19 +69,19 @@ class Command(BaseCommand):
         #     s.sizes = new_js
         #     s.save()
 
-        print()
-        product_units_to_update = ProductUnit.objects.all()
-
-        batch_size = 100  # Размер пакета для обновления
-
-        for start in range(0, product_units_to_update.count(), batch_size):
-            print(start)
-            end = start + batch_size
-            batch = product_units_to_update[start:end]
-
-            for product_unit in batch:
-                size_tables = [size.table for size in product_unit.size.all()]
-                product_unit.size_table.set(size_tables)
+        # print()
+        # product_units_to_update = ProductUnit.objects.all()
+        #
+        # batch_size = 100  # Размер пакета для обновления
+        #
+        # for start in range(0, product_units_to_update.count(), batch_size):
+        #     print(start)
+        #     end = start + batch_size
+        #     batch = product_units_to_update[start:end]
+        #
+        #     for product_unit in batch:
+        #         size_tables = [size.table for size in product_unit.size.all()]
+        #         product_unit.size_table.set(size_tables)
         # # Получите queryset ProductUnit, для которых нужно обновить поле size_table
         # product_units_to_update = ProductUnit.objects.all()
         #

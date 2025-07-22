@@ -277,10 +277,3 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         if wishlist:
             return product.id in wishlist.products.all().values_list("id")
         return False
-        # if user_id is not None and user_id > 0:
-        #     try:
-        #         wishlist = Wishlist.objects.get(user_id=user_id)
-        #         return product in wishlist.products.all()
-        #     except Wishlist.DoesNotExist:
-        #         pass
-        # return False

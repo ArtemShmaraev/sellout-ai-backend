@@ -13,7 +13,7 @@ from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Colla
 from rest_framework import status
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer, CustomProductSerializer
+    DewuInfoSerializer, CollabSerializer
 from .tools import get_product_text
 
 from rest_framework.response import Response

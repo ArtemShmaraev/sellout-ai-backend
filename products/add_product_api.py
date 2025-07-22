@@ -171,8 +171,9 @@ def add_product_api(data):
                 days_min=unit["offers"][i]["delivery_info_first"],
                 days_max=unit["offers"][i]["delivery_info_last"])
 
-            platform_info['delivery_info'] = unit["offers"][i]["delivery_info"]
-            platform_info["additional_info"] = unit["offers"][i]["additional_info"]
+            platform_info['poizon_info']['delivery_info'] = unit["offers"][i]["delivery_info"]
+            platform_info['poizon_info']["additional_info"] = unit["offers"][i]["additional_info"]
+            platform_info['poizon_info']["poizon_abroad"] = unit["offers"][i]['poizon_abroad']
 
             product_unit = ProductUnit.objects.create(
                 product=product,

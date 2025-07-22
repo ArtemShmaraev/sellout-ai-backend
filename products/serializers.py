@@ -149,8 +149,6 @@ class ProductSerializer(serializers.ModelSerializer):
     # is_fast_shipping = serializers.SerializerMethodField()
     # is_return = serializers.SerializerMethodField()
     list_lines = serializers.SerializerMethodField()
-    product_units = serializers.SerializerMethodField()
-
     class Meta:
         model = Product
         exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]

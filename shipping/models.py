@@ -100,6 +100,12 @@ class ProductUnit(models.Model):
     history_price = models.JSONField(default=list)
     platform_info = models.JSONField(default=dict)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['product', 'id']),
+        ]
+        unique_together = [['product', 'id']]
+
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"
 

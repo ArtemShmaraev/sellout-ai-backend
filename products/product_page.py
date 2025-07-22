@@ -231,7 +231,7 @@ def get_product_page(request, context):
 
     # Фильтр по размеру
     if size:
-        filters &= ((Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True)) & Q(product_units__size_table__in=table))
+        filters &= ((Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True)))
 
     # Фильтр по наличию скидки
     if is_sale:
@@ -264,17 +264,13 @@ def get_product_page(request, context):
     t3 = time()
     print("t2", t3 - t2)
 
-    queryset = queryset.distinct()
+    # queryset = queryset.distinct()
 
     unique_ids = queryset.values('id').distinct()
     res['count'] = unique_ids.count()
 
     # Получите queryset объектов с уникальными id
     queryset = Product.objects.filter(id__in=unique_ids)
-
-
-
-
     # res['count'] = 1000
     t4 = time()
     print("t3", t4 - t3)

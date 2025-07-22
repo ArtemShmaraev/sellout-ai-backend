@@ -274,6 +274,7 @@ class Product(models.Model):
             # Добавьте индексы для остальных полей с db_index=True
         ]
 
+
     def update_min_price(self):
         if self.product_units.all():
             product_units = self.product_units.all()

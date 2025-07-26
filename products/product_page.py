@@ -272,6 +272,7 @@ def get_product_page(request, context):
 
     queryset = queryset.values_list("id", flat=True).distinct()
     print("1111", time() - t3)
+    page_number = params.get("page", 1)
 
     params = request.GET.copy()
     if 'page' in params:
@@ -327,8 +328,7 @@ def get_product_page(request, context):
     t5 = time()
     print("t4", t5 - t4)
 
-    page_number = params.get("page")
-    page_number = int(page_number if page_number else 1)
+
 
     start_index = (page_number - 1) * 48
     # print(queryset[0].id)

@@ -1,7 +1,10 @@
 import functools
 import random
 
+from django.core.cache import cache
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case
+
+from sellout.settings import CACHE_TIME
 from .tools import get_queryset_from_list_id
 from time import time
 from django.http import JsonResponse, FileResponse
@@ -123,6 +126,7 @@ def get_product_page(request, context):
 
     if not available:
         queryset = queryset.filter(available_flag=True)
+        # queryset = queryset.filter(product_units__availability=True)
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
@@ -266,9 +270,23 @@ def get_product_page(request, context):
 
     # queryset = queryset.distinct()
 
-    queryset = queryset.values('id').distinct()
+    queryset = queryset.values_list("id", flat=True).distinct()
     print("1111", time() - t3)
-    res['count'] = 1000
+
+    params = request.GET.copy()
+    if 'page' in params:
+        del params['page']
+
+    cache_count_key = f"count:{params}"  # Уникальный ключ для каждой URL
+    cached_count = cache.get(cache_count_key)
+    if cached_count is not None:
+
+        count = cached_count
+    else:
+        count = queryset.count()
+        cache.set(cache_count_key, (count), CACHE_TIME)
+
+    res['count'] = count
     t4 = time()
     print("t3", t4 - t3)
 

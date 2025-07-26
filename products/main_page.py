@@ -40,8 +40,7 @@ def get_line_selection(line=None):
         line = get_random(lines)
         products = Product.objects.filter(lines=line)
 
-        filters = Q(product_units__availability=True)
-        filters &= Q(available_flag=True)
+        filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
 
         products = products.filter(filters).distinct()
@@ -53,8 +52,7 @@ def get_line_selection(line=None):
             url = f"line={line.full_eng_name}"
     else:
         products = Product.objects.filter(lines=line)
-        filters = Q(product_units__availability=True)
-        filters &= Q(available_flag=True)
+        filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
@@ -72,8 +70,7 @@ def get_collab_selection(collab=None):
         collabs = Collab.objects.all()
         collab = get_random(collabs)
         products = Product.objects.filter(collab=collab)
-        filters = Q(product_units__availability=True)
-        filters &= Q(available_flag=True)
+        filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if not products.exists():
@@ -84,8 +81,7 @@ def get_collab_selection(collab=None):
             url = f"collab={collab.query_name}"
     else:
         products = Product.objects.filter(collab=collab)
-        filters = Q(product_units__availability=True)
-        filters &= Q(available_flag=True)
+        filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
         products = products.filter(filters).distinct()
         if products.exists():
@@ -106,8 +102,7 @@ def get_brand_and_category_selection():
     random_category = get_random(category)
 
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))
-    filters = Q(product_units__availability=True)
-    filters &= Q(available_flag=True)
+    filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     products = products.filter(filters).distinct()
 

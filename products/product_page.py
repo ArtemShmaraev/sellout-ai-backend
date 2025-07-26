@@ -18,7 +18,7 @@ from .serializers import SizeTableSerializer, ProductMainPageSerializer, Categor
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer
 from .tools import get_product_text
-
+from urllib.parse import urlencode
 from rest_framework.response import Response
 
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product
@@ -277,7 +277,7 @@ def get_product_page(request, context):
     if 'page' in params:
         del params['page']
 
-    cache_count_key = f"count:{params}"  # Уникальный ключ для каждой URL
+    cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
     cached_count = cache.get(cache_count_key)
     if cached_count is not None:
 

@@ -275,5 +275,5 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         # user_id = self.context.get('user_id')
         wishlist = self.context.get('wishlist')
         if wishlist:
-            return product.id in wishlist.products.all().values_list("id")
+            return product in wishlist.products.all()
         return False

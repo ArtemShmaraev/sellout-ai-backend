@@ -30,7 +30,9 @@ def add_product_api(data):
         product.delete()
         product = Product.objects.create(spu_id=spu_id, property_id=property_id,
                                          manufacturer_sku=manufacturer_sku, slug=f"{spu_id}_{property_id}_{manufacturer_sku}")
-
+    else:
+        product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+    product.save()
     t2 = time()
 
     product.is_collab = data["is_collab"]
@@ -94,7 +96,7 @@ def add_product_api(data):
 
     product.parameters = data['parameters_to_show_in_product']
     product.platform_info = data['platform_info']
-    product.rel_num = data["poizon_likes_count"]
+    product.rel_num = int(data["poizon_likes_count"])  if str(data["poizon_likes_count"]).isdigit() else 0
     product.similar_product = data.get("similar_products", [])
     product.another_configuration = data.get("another_configuration", [])
 

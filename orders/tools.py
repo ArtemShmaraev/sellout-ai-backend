@@ -13,6 +13,7 @@ def get_delivery_price(units, target_start, target, zip):
         delivery_price += (delivery_info['price_base'] * 1.25) + delivery_info['price_service']
     return delivery_price
 
+
 def get_delivery_costs(weight, ordersum, targetstart, target, zip):
     url = "http://api.boxberry.ru/json.php"
     params = {
@@ -33,3 +34,8 @@ def get_delivery_costs(weight, ordersum, targetstart, target, zip):
     else:
         print(f"Ошибка {response.status_code}: {response.text}")
         return None
+
+
+import math
+def round_to_nearest(value, step=50):
+    return math.ceil(value / step) * step

@@ -17,7 +17,7 @@ from rest_framework import status
 from promotions.models import PromoCode
 from promotions.views import check_promo
 from users.models import User
-from .tools import get_delivery_costs, get_delivery_price
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 
 
 class DeliveryInfo(APIView):
@@ -27,6 +27,12 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
+            if data['delivery_info'] == 0:
+                return {
+                    "sum_part": 0,
+                    "sum_all": 0,
+                    "block": False
+                }
 
             zip = "0"
             if "address_id" in data:
@@ -53,8 +59,9 @@ class DeliveryInfo(APIView):
 
             sum_part += get_delivery_price(tec, "02743", target, zip)
             sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
-            res = {"sum_part": sum_part, "sum_all": sum_all, "block": False}
-            if ((int(data["delivery_type"]) == 1 or int(data["delivery_type"]) == 2) and product_units.count() != 1) and (sum_part != sum_all):
+            res = {"sum_part": round_to_nearest(sum_part), "sum_all": round_to_nearest(sum_all), "block": False}
+            if ((int(data["delivery_type"]) == 1 or int(
+                    data["delivery_type"]) == 2) and product_units.count() != 1) and (sum_part != sum_all):
                 res["block"] = True
 
             # Возвращаем успешный ответ
@@ -200,7 +207,7 @@ class CheckOutView(APIView):
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Ожидает подтверждения"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
-                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale)
+                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data['comment'])
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
@@ -214,7 +221,7 @@ class CheckOutView(APIView):
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 order.get_delivery(data)
-                order.final_amount += order.delivery_price
+                order.final_amount += round_to_nearest(order.delivery_price)
                 order.save()
 
                 serializer = OrderSerializer(order)

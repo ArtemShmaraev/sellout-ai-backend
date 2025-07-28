@@ -6,9 +6,10 @@ from django.core.management.base import BaseCommand
 import json
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Subquery, F
+from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When
 
 from orders.models import ShoppingCart, Status
+
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,18 +19,50 @@ from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation
 from products.tools import get_text
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        ps = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))
+        di = DewuInfo.objects.filter(spu_id__in=ps)
+        print("го")
 
-        queryset = Product.objects.all()
-        # queryset = queryset.filter(available_flag=True, is_custom=False)
-        # queryset = queryset.distinct()
-        queryset = queryset[:50]
-        t1 = time()
-        s = ProductMainPageSerializer(queryset, many=True).data
-        t2 = time()
-        print(t2-t1)
+        k = 0
+        for page in range(0, di.values("id").count(), 5):
+            pi = di[page:page + 5]
+            for d in pi:
+                if k % 100 == 0:
+                    print("*", k)
+                k += 1
+
+                if d.preprocessed_data["likesCount"] != "" and "年" not in d.preprocessed_data['releaseDate']:
+                    print(d.spu_id)
+
+        # print(ps.count())
+        # k = 0
+        # for p in ps:
+        #     if k % 250 == 0:
+        #         print(k)
+        #     k += 1
+        #     p.available_flag = False
+        #     print(p.spu_id)
+
+        # queryset = Product.objects.all()
+        # queryset = queryset.filter(available_flag=True, is_custom=False).order_by("min_price")
+        # queryset = queryset.values_list("id", flat=True).distinct()
+        # t = time()
+        # print(queryset.count())
+        # print(time() - t)
+        # queryset = queryset[100:150]
+        # print(queryset.query)
+        # queryset2 = Product.objects.filter(id__in=list(queryset))
+        #
+        # print()
+        # print(queryset2.query)
+        # t1 = time()
+        # s = ProductMainPageSerializer(queryset2, many=True).data
+        # t2 = time()
+        # print(t2-t1)
         # print(queryset.query)
         # t = time()
         # print(queryset.count())
@@ -53,7 +86,7 @@ class Command(BaseCommand):
         #     t1 = time()
         #     print(f"{page_number}: {t1 - t}")
         #     mxt = max(mxt, t1 - t)
-            # print(f"{page_number}: {t1-t}")
+        # print(f"{page_number}: {t1-t}")
         # print(mxt)
         # st = SizeRow.objects.all()
         #
@@ -112,14 +145,10 @@ class Command(BaseCommand):
         #             p.size_table.add(table)
         #     p.save()
 
-
-
-
         # phs = Photo.objects.all()
         # for p in phs:
         #     if not p.product.exists():
         #         p.delete()
-
 
         # # di = DeliveryType.objects.all()
         # # for d in di:
@@ -141,17 +170,3 @@ class Command(BaseCommand):
         # print(sorted(s))
         # f = open("list.txt", "w")
         # f.write(str(sorted(s)))
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -227,11 +227,12 @@ class Product(models.Model):
     size_table_platform = models.JSONField(default=dict)
 
     min_price = models.IntegerField(blank=True, null=True, db_index=True)
+    min_price_without_sale = models.IntegerField(blank=True, null=True, default=0)
 
     # sizes are initialized in Size model by ForeignKey
     # product units are initialized in UnitBundle model by ForeignKey
 
-    available_flag = models.BooleanField(default=True, db_index=True)
+    available_flag = models.BooleanField(default=False, db_index=True)
 
     has_many_sizes = models.BooleanField(default=False)
     has_many_colors = models.BooleanField(default=False)
@@ -254,8 +255,18 @@ class Product(models.Model):
     main_size_row_of_unit = models.CharField(max_length=255, null=True, blank=True)
     main_size_row = models.CharField(max_length=255, null=True, blank=True)
     unit_common_name = models.CharField(max_length=255, null=True, blank=True)
+    is_sale = models.BooleanField(default=False)
+    percentage_sale = models.IntegerField(default=0)
+
 
     objects = ProductManager()
+
+
+    def update_available_status(self):
+        if not self.product_units.exists():
+            self.available_flag = False
+            self.save()
+
 
     class Meta:
         indexes = [
@@ -276,11 +287,13 @@ class Product(models.Model):
 
 
     def update_min_price(self):
-        if self.product_units.all():
+        if self.product_units.exists():
+            self.available_flag = True
             product_units = self.product_units.all()
             for product_unit in product_units:
                 if product_unit.final_price < self.min_price and product_unit.availability:
                     self.min_price = product_unit.final_price
+                    self.min_price_without_sale = product_unit.start_price
 
         self.save()
 
@@ -318,7 +331,6 @@ class Product(models.Model):
             #     self.main_line = lines.order_by('-id').first()
 
         # super(Product, self).save(*args, **kwargs)
-        # print()
         super().save(*args, **kwargs)
 
 

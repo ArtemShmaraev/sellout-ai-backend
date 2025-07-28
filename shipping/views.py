@@ -55,13 +55,14 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
-                    prices_by_size[size] = {"price": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False, "size_sellout": []}
+                    prices_by_size[size] = {"price": [], "price_without_sale": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False, "size_sellout": []}
                 prices_by_size[size]["size_sellout"].extend(item.size.all().values_list("id"))
 
 
                 if available:
                     prices_by_size[size]["available"] = True
                     prices_by_size[size]['price'].append(price)
+                    prices_by_size[size]['price_without_sale'].append(item.start_price)
                     if item.is_fast_shipping:
                         prices_by_size[size]["is_fast_shipping"] = True
                     if item.is_sale:
@@ -77,10 +78,16 @@ class MinPriceForSizeView(APIView):
             # Вычисление минимальной цены для каждого размера
             for size, prices in prices_by_size.items():
 
-                min_price = min(prices['price'])
+                min_price = prices['price'][0]
+                min_price_without_sale = prices['price_without_sale'][0]
+                for i in range(len(prices['price'])):
+                    if prices['price'][i] < min_price:
+                        min_price = prices['price'][i]
+                        min_price_without_sale = prices['price_without_sale'][i]
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = min_price
+                    d['min_price_without_sale'] = min_price_without_sale
                     d['available'] = prices['available']
                     d['is_fast_shipping'] = prices['is_fast_shipping']
                     d['is_sale'] = prices['is_sale']

@@ -198,8 +198,6 @@ def get_photo_text(last):
         url_mobile = ""
         f = False
 
-
-
     if random_photo_desk.lines.exists():
         line = random_photo_desk.lines.all().order_by("-id").first()
         url_desk = f"line={line.full_eng_name}"

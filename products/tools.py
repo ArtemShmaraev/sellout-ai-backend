@@ -94,6 +94,7 @@ def get_product_page_photo(params):
         text_desktop = get_text(photo_desktop, category)
     else:
         text_desktop = text
+
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
     res['desktop']['photo'] = photo_desktop.photo
 
@@ -121,7 +122,16 @@ def get_product_text(photo, line, collab, category, new, recommendations):
     # elif photo.collabs.exists():
     #     texts = texts.filter(collabs__in=photo.collabs.all())
 
-    if category:
+
+    if line:
+        texts = texts.filter(lines__in=photo.lines.all())
+        texts = texts.filter(lines__full_eng_name__in=line)
+
+    elif collab:
+        texts = texts.filter(collabs__in=photo.collabs.all())
+        texts = texts.filter(collabs__query_name__in=collab)
+
+    elif category:
         categories = Category.objects.filter(eng_name__in=category)
         list_cat = set()
         for cat in categories:
@@ -137,13 +147,6 @@ def get_product_text(photo, line, collab, category, new, recommendations):
         else:
             texts = texts.filter(title="sellout")
 
-    elif line:
-        texts = texts.filter(lines__in=photo.lines.all())
-        texts = texts.filter(lines__full_eng_name__in=line)
-
-    elif collab:
-        texts = texts.filter(collabs__in=photo.collabs.all())
-        texts = texts.filter(collabs__query_name__in=collab)
 
     elif new:
         texts = texts.filter(title="Новинки")

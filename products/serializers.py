@@ -145,14 +145,18 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
-    # is_sale = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()
     # is_return = serializers.SerializerMethodField()
     list_lines = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]
         depth = 2
+
+    def get_price(self, obj):
+        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -191,9 +195,6 @@ class ProductSerializer(serializers.ModelSerializer):
     # def get_is_fast_shipping(self, obj):
     #     return obj.product_units.filter(is_fast_shipping=True).exists()
     #
-    # def get_is_sale(self, obj):
-    #     return obj.product_units.filter(is_sale=True).exists()
-
 
 
     def get_in_wishlist(self, product):
@@ -242,6 +243,7 @@ def update_product_serializer(data, context):
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
+    price = serializers.SerializerMethodField()
 
     # is_sale = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()
@@ -249,13 +251,30 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", 'in_wishlist', 'min_price_product_unit', "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link"]
+        fields = ["id", 'in_wishlist', 'price', 'min_price_product_unit', "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
         #            "spu_id", "has_many_sizes", "has_many_colors", "has_many_configurations", "is_custom",
         #            "recommended_gender", "designer_color", "available_flag", "tags", "id", "min_price"]
         depth = 2
+
+    def get_price(self, obj):
+        size = self.context.get('size')
+
+        # Проверьте, соответствуют ли значения фильтров product_unit
+        filters = Q()
+
+        if size:
+            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
+
+        if filters:
+            min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+            corresponding_start_price = obj.product_units.filter(final_price=min_final_price).values_list('start_price',
+                                                                                                          flat=True).first()
+            return {"final_price": min_final_price, "start_price": corresponding_start_price}
+        else:
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
     def get_min_price_product_unit(self, obj):
         size = self.context.get('size')

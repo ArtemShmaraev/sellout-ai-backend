@@ -66,7 +66,7 @@ def get_default_delivery_type():
 
 class ProductUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="product_units",
-                                null=False, blank=False)
+                                null=False, blank=False, db_index=True)
     size_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # размер с платформы
     view_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
@@ -81,7 +81,7 @@ class ProductUnit(models.Model):
                                  null=False, blank=False, default=get_default_currency)
     original_price = models.IntegerField(null=False, blank=False, default=0)
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
-    final_price = models.IntegerField(null=False, blank=False)  # Новая цена
+    final_price = models.IntegerField(null=False, blank=False, db_index=True)  # Новая цена
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
                                       null=False, blank=False, default=get_default_delivery_type)
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',

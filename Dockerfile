@@ -30,4 +30,4 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8000
 
 # Run the application using Gunicorn
-CMD service nginx start && gunicorn sellout.wsgi:application --bind 0.0.0.0:8000 --threads 10
+CMD service nginx start && gunicorn sellout.wsgi:application --bind 0.0.0.0:8080 --threads 10

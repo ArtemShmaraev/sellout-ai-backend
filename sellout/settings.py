@@ -81,7 +81,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XContentOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware'
 ]
 
 CORS_ALLOW_HEADERS = default_headers + (
@@ -254,7 +253,7 @@ SIMPLE_JWT = {
 # FRONTEND_HOST = "127.0.0.1:3000"
 
 
-
+# #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
 FRONTEND_HOST = "sellout.su"
@@ -269,28 +268,28 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-# # # # #
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Set to True to always redirect HTTP requests to HTTPS
-SECURE_SSL_REDIRECT = False
-
-# Ensure secure handling of cookies
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-
-# Enable HTTP Strict Transport Security (HSTS)
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-
-CACHES = {
-    'default': {
-        'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
-        'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
-    }
-}
+# # # # # #
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#
+# # Set to True to always redirect HTTP requests to HTTPS
+# SECURE_SSL_REDIRECT = False
+#
+# # Ensure secure handling of cookies
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+#
+# # Enable HTTP Strict Transport Security (HSTS)
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+#
+# CACHES = {
+#     'default': {
+#         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
+#         'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+#         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
+#     }
+# }
 
 
 ELASTICSEARCH_DSL = {

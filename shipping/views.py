@@ -98,22 +98,35 @@ class MinPriceForSizeView(APIView):
                 s.append(d)
 
             def custom_sort_key(s):
-                s = s["view_size"]
-                # Функция преобразует строку s в список, в котором числа будут числами, а остальные символы строками
+                s = s["view_size"].lower()
+                size_order = {
+                    "xxxxxs": 0,
+                    "xxxxs": 1,
+                    "xxxs": 2,
+                    "xxs": 3,
+                    "xs": 4,
+                    "s": 5,
+                    "m": 6,
+                    "l": 7,
+                    "xl": 8,
+                    "xxl": 9,
+                    "xxxl": 10,
+                    "xxxxl": 11
+                }
                 parts = []
                 current_part = ''
 
                 for char in s:
-                    if char.isdigit():
+                    if char.isalpha():  # Проверяем, является ли символ буквой (размером)
                         current_part += char
                     else:
                         if current_part:
-                            parts.append(int(current_part))  # Преобразовываем числа в int
+                            parts.append(size_order.get(current_part.lower(), current_part.lower()))
                             current_part = ''
                         parts.append(char)
 
                 if current_part:
-                    parts.append(int(current_part))
+                    parts.append(size_order.get(current_part.lower(), current_part.lower()))
 
                 return parts
 

@@ -363,7 +363,7 @@ class ProductView(APIView):
         url = request.build_absolute_uri()
         url_hash = hashlib.md5(url.encode()).hexdigest()
 
-        cache_product_key = f"product_page:{url_hash}"  # Уникальный ключ для каждой URL
+        cache_product_key = f"product_page:{url_hash}_{request.user.id if request.user else 0}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)
 
         if cached_data is None or like:

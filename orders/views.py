@@ -21,13 +21,13 @@ from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 
 
 class DeliveryInfo(APIView):
-    def get(self, request):
+    def post(self, request):
 
         try:
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            if data['delivery_info'] == 0:
+            if data['delivery_info'] == 0 or cart.final_amount > 20_000:
                 return {
                     "sum_part": 0,
                     "sum_all": 0,
@@ -207,7 +207,7 @@ class CheckOutView(APIView):
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Ожидает подтверждения"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
-                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data['comment'])
+                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data['comment'], final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
@@ -216,12 +216,14 @@ class CheckOutView(APIView):
 
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit)
-                order.promo_sale = cart.promo_sale
-                order.bonus_sale = cart.bonus_sale
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 order.get_delivery(data)
-                order.final_amount += round_to_nearest(order.delivery_price)
+                if order.final_amount <= 20_000:
+                    order.final_amount += round_to_nearest(order.delivery_price)
+
+                else:
+                    order.delivery_view_price = 0
                 order.save()
 
                 serializer = OrderSerializer(order)

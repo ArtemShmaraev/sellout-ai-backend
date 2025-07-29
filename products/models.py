@@ -291,7 +291,7 @@ class Product(models.Model):
             self.available_flag = True
             product_units = self.product_units.all()
             for product_unit in product_units:
-                if product_unit.final_price < self.min_price and product_unit.availability:
+                if product_unit.final_price <= self.min_price and product_unit.availability:
                     self.min_price = product_unit.final_price
                     self.min_price_without_sale = product_unit.start_price
 

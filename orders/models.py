@@ -27,6 +27,7 @@ class Order(models.Model):
     order_units = models.ManyToManyField("OrderUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
+    final_amount_without_shipping = models.IntegerField(default=0)
     email = models.EmailField(null=False, blank=False)
     phone = models.CharField(max_length=20, null=False, blank=False)
     name = models.CharField(max_length=100, null=False, blank=False)
@@ -34,6 +35,7 @@ class Order(models.Model):
     patronymic = models.CharField(max_length=100, default="")
     delivery = models.CharField(max_length=100, default="")
     delivery_price = models.IntegerField(default=0)
+    delivery_view_price = models.IntegerField(default=0)
     groups_delivery = models.JSONField(default=list)
     address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True,
                                 blank=True)
@@ -98,6 +100,7 @@ class Order(models.Model):
                 self.groups_delivery.append([unit.id for unit in self.order_units.all()])
                 self.delivery_price = get_delivery_price(self.order_units.all(), "02743", target, zip)
                 self.delivery = f"{name_delivery}"
+        self.delivery_view_price = self.delivery_price
         self.save()
 
     def change_status(self):

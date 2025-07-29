@@ -1,3 +1,4 @@
+import random
 from itertools import count
 from time import time
 
@@ -23,20 +24,30 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        ps = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))
-        di = DewuInfo.objects.filter(spu_id__in=ps)
-        print("го")
+        # ps = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))
+        # di = DewuInfo.objects.filter(spu_id__in=ps)
+        # print("го")
+        #
+        # k = 0
+        # for page in range(0, di.values("id").count(), 5):
+        #     pi = di[page:page + 5]
+        #     for d in pi:
+        #         if k % 100 == 0:
+        #             print("*", k)
+        #         k += 1
+        #
+        #         if d.preprocessed_data["likesCount"] != "" and "年" not in d.preprocessed_data['releaseDate']:
+        #             print(d.spu_id)
+        pr = Product.objects.get(slug="nike-air-monarch-4-air-monarch-4-white-navy-49461")
+        pr.is_sale = True
+        for unit in pr.product_units.all():
+            if random.randint(1, 5) % 2 == 0:
+                unit.start_price = unit.final_price * 1.2
+                unit.is_sale = True
+                unit.save()
+        pr.update_min_price()
+        pr.save()
 
-        k = 0
-        for page in range(0, di.values("id").count(), 5):
-            pi = di[page:page + 5]
-            for d in pi:
-                if k % 100 == 0:
-                    print("*", k)
-                k += 1
-
-                if d.preprocessed_data["likesCount"] != "" and "年" not in d.preprocessed_data['releaseDate']:
-                    print(d.spu_id)
 
         # print(ps.count())
         # k = 0

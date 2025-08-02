@@ -96,27 +96,27 @@ class MinPriceForSizeView(APIView):
                 s.append(d)
 
             def custom_sort_key(s):
-                s = s["view_size"].lower()
+                s = str(s["view_size"]).lower()
                 size_order = {
-                    "xxxxxxs": 0, "6xs": 0,
-                    "xxxxxs": 1, "5xs": 1,
-                    "xxxxs": 2, "4xs": 2,
-                    "xxxs": 3, "3xs": 3,
-                    "xxs": 4, "2xs": 4,
-                    "xs": 5,
-                    "s": 6,
-                    "m": 7,
-                    "l": 8,
-                    "xl": 9,
-                    "xxl": 10, "2xl": 10,
-                    "xxxl": 11, "3xl": 11,
-                    "xxxxl": 12, "4xl": 12,
-                    "xxxxxl": 13, "5xl": 13,
-                    "xxxxxxl": 14, "6xl": 12,
-                    "xxxxxxxl": 15, "7xl": 15,
-                    "xxxxxxxxl": 16, "8xl": 16,
-                    "xxxxxxxxxl": 17, "9xl": 17,
-                    "xxxxxxxxxxl": 18, "10xl": 18,
+                    "xxxxxxs": "00", "6xs": "00",
+                    "xxxxxs": "01", "5xs": "01",
+                    "xxxxs": "02", "4xs": "02",
+                    "xxxs": "03", "3xs": "03",
+                    "xxs": "04", "2xs": "04",
+                    "xs": "05",
+                    "s": "06",
+                    "m": "07",
+                    "l": "08",
+                    "xl": "09",
+                    "xxl": "10", "2xl": "10",
+                    "xxxl": "11", "3xl": "11",
+                    "xxxxl": "12", "4xl": "12",
+                    "xxxxxl": "13", "5xl": "13",
+                    "xxxxxxl": "14", "6xl": "12",
+                    "xxxxxxxl": "15", "7xl": "15",
+                    "xxxxxxxxl": "16", "8xl": "16",
+                    "xxxxxxxxxl": "17", "9xl": "17",
+                    "xxxxxxxxxxl": "18", "10xl": "18",
                 }
                 parts = []
                 current_part = ''

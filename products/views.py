@@ -62,13 +62,10 @@ class AvailableSize(APIView):
             return Response({"error": "Product not found"}, status=404)
 
 
-
 class AddFilterSearch(APIView):
     def get(self, request):
         search_query = request.query_params.get('q', '')
         return Response(add_filter_search(search_query))
-
-
 
 
 class BrandSearchView(APIView):
@@ -79,7 +76,7 @@ class BrandSearchView(APIView):
         # Используем исключение try-except для обработки ошибок
         try:
             # Ищем бренды, чьи имена содержат поисковой запрос
-            brands = Brand.objects.filter(name__icontains=search_query)
+            brands = Brand.objects.filter(name__icontains=search_query).order_by('name')
             serializer = BrandSerializer(brands, many=True, context=context)  # Сериализуем найденные бренды
             return Response(serializer.data)
         except Exception as e:

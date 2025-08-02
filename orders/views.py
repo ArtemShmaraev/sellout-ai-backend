@@ -201,7 +201,7 @@ class CheckOutView(APIView):
                               promo_code=cart.promo_code,
                               email=data['email'], phone=data['phone'],
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
-                              status=Status.objects.get(name="Ожидает подтверждения"), fact_of_payment=False,
+                              status=Status.objects.get(name="Принят"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
                               bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:

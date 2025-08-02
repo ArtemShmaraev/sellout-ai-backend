@@ -93,7 +93,7 @@ class MinPriceForSizeView(APIView):
                     d['is_sale'] = prices['is_sale']
                     d['is_return'] = prices['is_return']
                     d['size'] = list(set(prices["size_sellout"]))
-                    d['view_size'] = size
+                    d['view_size'] = size.replace("INT", "")
                 min_prices_by_size[size] = d
                 s.append(d)
 

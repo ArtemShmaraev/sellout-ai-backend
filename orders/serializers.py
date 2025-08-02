@@ -43,6 +43,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 class OrderUnitSerializer(serializers.ModelSerializer):
     product = ProductMainPageSerializer()
 
+
     class Meta:
         model = OrderUnit
         # fields = '__all__'
@@ -54,6 +55,8 @@ class OrderSerializer(serializers.ModelSerializer):
     user = UserOrderSerializer()
     address = AddressInfoSerializer()
     order_units = OrderUnitSerializer(many=True, read_only=True)
+    formatted_date = serializers.DateTimeField(source='date', format='%d.%m.%y')
+
     class Meta:
         model = Order
         fields = '__all__'

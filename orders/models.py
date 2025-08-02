@@ -6,7 +6,7 @@ from promotions.tools import check_promo
 from django.utils import timezone
 
 from shipping.models import AddressInfo
-from .tools import get_delivery_costs, get_delivery_price
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 
 
 class Status(models.Model):
@@ -74,7 +74,11 @@ class Order(models.Model):
                 name_delivery = "Курьер"
 
             if data['consolidation']:
+                self.groups_delivery.append([unit.id for unit in self.order_units.all()])
+                self.delivery_price = get_delivery_price(self.order_units.all(), "02743", target, zip)
+                self.delivery = f"{name_delivery}"
 
+            else:
                 product_units = self.order_units.annotate(
                     delivery_days=F('delivery_type__days_max')
                 )
@@ -96,10 +100,7 @@ class Order(models.Model):
                 self.delivery_price = sum_part
                 self.delivery = f"{name_delivery} + консолидация"
 
-            else:
-                self.groups_delivery.append([unit.id for unit in self.order_units.all()])
-                self.delivery_price = get_delivery_price(self.order_units.all(), "02743", target, zip)
-                self.delivery = f"{name_delivery}"
+        self.delivery_price = round_to_nearest(self.delivery_price)
         self.delivery_view_price = self.delivery_price
         self.save()
 

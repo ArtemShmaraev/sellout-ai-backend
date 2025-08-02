@@ -4,7 +4,7 @@ from products.models import Product, Category, Line, Brand, Color, Collection, D
     SizeTranslationRows, Collab, SGInfo, Material
 from rest_framework import serializers
 from shipping.models import ProductUnit
-from django.db.models import Min, Q
+from django.db.models import Min, Q, Max
 
 # from .views import build_line_tree
 
@@ -242,7 +242,6 @@ def update_product_serializer(data, context):
 
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
-    min_price_product_unit = serializers.SerializerMethodField()  # Сериализатор для связанных ProductUnit
     price = serializers.SerializerMethodField()
 
     # is_sale = serializers.SerializerMethodField()
@@ -251,7 +250,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", 'in_wishlist', 'price', 'min_price_product_unit', "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
+        fields = ["id", 'in_wishlist', 'price', "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
@@ -270,25 +269,13 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
         if filters:
             min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-            corresponding_start_price = obj.product_units.filter(final_price=min_final_price).values_list('start_price',
-                                                                                                          flat=True).first()
+            filters &= Q(final_price=min_final_price)
+            corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('final_price'))['max_price']
             return {"final_price": min_final_price, "start_price": corresponding_start_price}
         else:
             return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
-    def get_min_price_product_unit(self, obj):
-        size = self.context.get('size')
 
-        # Проверьте, соответствуют ли значения фильтров product_unit
-        filters = Q()
-
-        if size:
-            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
-
-        if filters:
-            return obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-        else:
-            return obj.min_price
 
     def get_in_wishlist(self, product):
         # user_id = self.context.get('user_id')

@@ -27,26 +27,23 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            if data['delivery_type'] == 0 or cart.final_amount > 20_000:
-                return {
+            if str(data['delivery_type']) == "0" or cart.final_amount > 20_000:
+                return Response({
                     "sum_part": 0,
                     "sum_all": 0,
                     "block": False
-                }
-
+                })
             zip = "0"
             if "address_id" in data:
                 try:
                     zip = AddressInfo.objects.get(id=data['address_id']).post_index
                 except AddressInfo.DoesNotExist:
-                    return JsonResponse({"error": "Адрес не найден"}, status=400)
+                    return Response({"error": "Адрес не найден"}, status=400)
 
             target = data.get("target", "0")
-
             product_units = cart.product_units.annotate(
                 delivery_days=F('delivery_type__days_max')
             )
-
             sorted_product_units = product_units.order_by('delivery_days')
             tec = [sorted_product_units[0]]
             sum_part = 0
@@ -60,8 +57,7 @@ class DeliveryInfo(APIView):
             sum_part += get_delivery_price(tec, "02743", target, zip)
             sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
             res = {"sum_part": round_to_nearest(sum_part), "sum_all": round_to_nearest(sum_all), "block": False}
-            if ((int(data["delivery_type"]) == 1 or int(
-                    data["delivery_type"]) == 2) and product_units.count() != 1) and (sum_part != sum_all):
+            if ((str(data["delivery_type"]) == "1" or str((data["delivery_type"])) == "2") and product_units.count() != 1) and (sum_part != sum_all):
                 res["block"] = True
 
             # Возвращаем успешный ответ
@@ -207,11 +203,11 @@ class CheckOutView(APIView):
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Ожидает подтверждения"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
-                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data['comment'], final_amount_without_shipping=cart.final_amount)
+                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
-                    order.pvz = data.get('target', 0)
+                    order.pvz = str(data.get('target', 0))
                 order.save()
 
                 for unit in cart.product_units.all():
@@ -220,7 +216,7 @@ class CheckOutView(APIView):
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 order.get_delivery(data)
                 if order.final_amount <= 20_000:
-                    order.final_amount += round_to_nearest(order.delivery_price)
+                    order.final_amount += order.delivery_price
 
                 else:
                     order.delivery_view_price = 0

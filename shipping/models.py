@@ -75,7 +75,7 @@ class ProductUnit(models.Model):
     size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", null=True, blank=True)
 
     size = models.ManyToManyField("products.SizeTranslationRows", related_name="product_units",
-                             null=True, blank=True)  # порядковый номер размера в таблице
+                             null=True, blank=True, db_index=True)  # порядковый номер размера в таблице
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)

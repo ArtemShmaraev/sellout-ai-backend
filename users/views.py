@@ -393,6 +393,10 @@ class UserInfoView(APIView):
                 user.phone_number = data.get("phone", user.phone_number)
                 if "gender" in data:
                     user.gender_id = genders['gender']
+                if "date" in data:
+                    date_format = "%d.%m.%Y"
+                    parsed_date = datetime.strptime(data['date'], date_format)
+                    user.happy_birthday = parsed_date
                 user.save()
                 serializer = UserSerializer(user)
                 return Response(serializer.data)

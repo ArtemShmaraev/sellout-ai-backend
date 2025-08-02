@@ -2513,7 +2513,7 @@ Body:
   "delivery_type": "0 если по мск | 1 если до ПВЗ | 2 если курьеорм",
   "address_id": 1, если курьер или по мск,
   "target": "1234", если ПВЗ
-  "consolidation": true,
+  "consolidation": true, (true если отправить все сраз, false если по частям
   "comment": "тут комент"
 }
 ```

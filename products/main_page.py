@@ -143,7 +143,6 @@ def get_photo():
     elif collab_desk is not None:
         photos_mobile = photos_mobile.filter(collabs=collab_desk)
 
-
     if not photos_mobile.exists():
         photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
 

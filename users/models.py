@@ -52,7 +52,7 @@ class User(AbstractUser):
     # last_viewed_products = models.ManyToManyField("products.Product", related_name='users_viewed',
     #                                               blank=True)
     last_viewed_products = models.JSONField(blank=True, null=True, default=list)
-    happy_birthday = models.DateTimeField(auto_now=True)
+    happy_birthday = models.DateTimeField(null=True, blank=True)
     preferred_shoes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True, null=True,
                                                  related_name='users_with_shoes_table')
     preferred_clothes_size_row = models.ForeignKey("products.SizeRow", on_delete=models.SET_NULL, blank=True,

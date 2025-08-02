@@ -196,6 +196,20 @@ def add_product_api(data):
             product_unit.update_history()
     product.update_min_price()
 
+    sizes_info = {"sizes": [], "filter_logo": ""}
+    sizes_id = set()
+    for unit in product.product_units.all():
+        for s in unit.size.all():
+            row = s.table.default_row
+            if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
+                sizes_info['filter_logo'] = row.filter_logo
+            if s.id not in sizes_id:
+                sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
+                sizes_id.add(s.id)
+    sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
+    product.available_sizes = sizes_info
+    product.save()
+
     t8 = time()
     # print(t2-t1)
     # print(t3-t2)

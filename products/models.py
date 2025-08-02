@@ -257,6 +257,7 @@ class Product(models.Model):
     unit_common_name = models.CharField(max_length=255, null=True, blank=True)
     is_sale = models.BooleanField(default=False)
     percentage_sale = models.IntegerField(default=0)
+    available_sizes = models.JSONField(blank=True, null=True, default=dict)
 
 
     objects = ProductManager()

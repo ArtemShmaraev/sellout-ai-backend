@@ -12,8 +12,13 @@ class ConfigurationUnit(models.Model):
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="config_units",
                              null=True, blank=True)  # порядковый номер размера в таблице
 
+
 class DeliveryType(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
+    days_min_to_international_warehouse = models.IntegerField(default=0)
+    days_max_to_international_warehouse = models.IntegerField(default=0)
+    days_min_to_russian_warehouse = models.IntegerField(default=0)
+    days_max_to_russian_warehouse = models.IntegerField(default=0)
     days_min = models.IntegerField(default=0)
     days_max = models.IntegerField(default=0)
     view_name = models.CharField(max_length=100, null=True, blank=True)

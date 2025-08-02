@@ -11,8 +11,6 @@ from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
 
 
-
-
 class DeliveryForSizeView(APIView):
     def post(self, request, product_id):
         try:
@@ -38,7 +36,6 @@ class DeliveryForSizeView(APIView):
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
 
-
 class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
@@ -55,9 +52,10 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
-                    prices_by_size[size] = {"price": [], "price_without_sale": [], "available": False, "is_fast_shipping": False, "is_sale": False, "is_return": False, "size_sellout": []}
+                    prices_by_size[size] = {"price": [], "price_without_sale": [], "available": False,
+                                            "is_fast_shipping": False, "is_sale": False, "is_return": False,
+                                            "size_sellout": []}
                 prices_by_size[size]["size_sellout"].extend(item.size.all().values_list("id"))
-
 
                 if available:
                     prices_by_size[size]["available"] = True
@@ -81,9 +79,9 @@ class MinPriceForSizeView(APIView):
                 min_price = prices['price'][0]
                 min_price_without_sale = prices['price_without_sale'][0]
                 for i in range(len(prices['price'])):
-                    if prices['price'][i] < min_price:
+                    if prices['price'][i] <= min_price:
                         min_price = prices['price'][i]
-                        min_price_without_sale = prices['price_without_sale'][i]
+                        min_price_without_sale = max(min_price_without_sale, prices['price_without_sale'][i])
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = min_price
@@ -100,18 +98,25 @@ class MinPriceForSizeView(APIView):
             def custom_sort_key(s):
                 s = s["view_size"].lower()
                 size_order = {
-                    "xxxxxs": 0,
-                    "xxxxs": 1,
-                    "xxxs": 2,
-                    "xxs": 3,
-                    "xs": 4,
-                    "s": 5,
-                    "m": 6,
-                    "l": 7,
-                    "xl": 8,
-                    "xxl": 9,
-                    "xxxl": 10,
-                    "xxxxl": 11
+                    "xxxxxxs": 0, "6xs": 0,
+                    "xxxxxs": 1, "5xs": 1,
+                    "xxxxs": 2, "4xs": 2,
+                    "xxxs": 3, "3xs": 3,
+                    "xxs": 4, "2xs": 4,
+                    "xs": 5,
+                    "s": 6,
+                    "m": 7,
+                    "l": 8,
+                    "xl": 9,
+                    "xxl": 10, "2xl": 10,
+                    "xxxl": 11, "3xl": 11,
+                    "xxxxl": 12, "4xl": 12,
+                    "xxxxxl": 13, "5xl": 13,
+                    "xxxxxxl": 14, "6xl": 12,
+                    "xxxxxxxl": 15, "7xl": 15,
+                    "xxxxxxxxl": 16, "8xl": 16,
+                    "xxxxxxxxxl": 17, "9xl": 17,
+                    "xxxxxxxxxxl": 18, "10xl": 18,
                 }
                 parts = []
                 current_part = ''
@@ -191,7 +196,6 @@ class ProductUnitProductMainView(APIView):
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
 
-
 class ListProductUnitView(APIView):
     # authentication_classes = [JWTAuthentication]
     def post(self, request):
@@ -227,4 +231,3 @@ class TotalPriceForListProductUnitView(APIView):
             return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

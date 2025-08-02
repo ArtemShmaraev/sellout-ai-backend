@@ -27,7 +27,7 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            if data['delivery_info'] == 0 or cart.final_amount > 20_000:
+            if data['delivery_type'] == 0 or cart.final_amount > 20_000:
                 return {
                     "sum_part": 0,
                     "sum_all": 0,

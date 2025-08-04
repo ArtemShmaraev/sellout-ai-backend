@@ -86,7 +86,7 @@ class MinPriceForSizeView(APIView):
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = formula_price(product, min_price)
-                    d['min_price_without_sale'] = formula_price(min_price_without_sale)
+                    d['min_price_without_sale'] = formula_price(product, min_price_without_sale)
                     d['available'] = prices['available']
                     d['is_fast_shipping'] = prices['is_fast_shipping']
                     d['is_sale'] = prices['is_sale']

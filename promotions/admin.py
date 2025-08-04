@@ -7,7 +7,11 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 
 class BonusesAdmin(admin.ModelAdmin):
-    list_display = ("total_amount", )
+    list_display = ("total_amount", "user_name")
+
+    def user_name(self, obj):
+        user = obj.user.all().first()  # Получить первого пользователя, связанного с этим объектом Bonuses
+        return user.username if user is not None else ''
 
 
 

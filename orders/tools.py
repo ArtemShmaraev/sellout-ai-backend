@@ -1,5 +1,10 @@
 import requests
 
+import math
+
+from django.db.models import Sum
+
+
 
 def get_delivery_price(units, target_start, target, zip):
     sum = 0
@@ -36,6 +41,15 @@ def get_delivery_costs(weight, ordersum, targetstart, target, zip):
         return None
 
 
-import math
 def round_to_nearest(value, step=50):
     return math.ceil(value / step) * step
+
+
+def send_email_confirmation_order(order, email):
+    url = "https://sellout.su/mail/send_customer_service_mail/"
+    params = {
+        "recipient_email": email,
+        "body": order
+    }
+    requests.get(url, params=params)
+    return requests.status_codes

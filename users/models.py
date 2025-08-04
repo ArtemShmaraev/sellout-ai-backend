@@ -1,9 +1,35 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Sum
+
 from promotions.models import Bonuses
 from products.models import SizeRow, SizeTable
 
 from django.utils import timezone
+
+
+class UserStatus(models.Model):
+    name = models.CharField(max_length=128, default="1")
+    total_orders_amount = models.IntegerField(default=0)
+    unit_max_bonuses = models.IntegerField(default=250)
+    free_ship_amount = models.IntegerField(default=20000)
+    exclusive_sale = models.BooleanField(default=False)
+    close_release = models.BooleanField(default=False)
+    priority_service = models.BooleanField(default=False)
+    birthday_gift = models.BooleanField(default=True)
+    start_bonuses = models.BooleanField(default=True)
+    base = models.BooleanField(default=True)
+    percentage_bonuses = models.IntegerField(default=10)
+
+
+    def __str__(self):
+        return self.name
+
+
+def get_default_status():
+    default_object = \
+    UserStatus.objects.get_or_create(name="Amethyst")[0]
+    return default_object.pk
 
 
 class User(AbstractUser):
@@ -65,9 +91,11 @@ class User(AbstractUser):
     weight = models.IntegerField(default=60)
 
     wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True, related_name="wait_list_users")
+    user_status = models.ForeignKey("UserStatus", default=get_default_status(), on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.username
+
 
     def save(self, *args, **kwargs):
         # Если гендер мужской, установите значение по умолчанию для мужского размера обуви

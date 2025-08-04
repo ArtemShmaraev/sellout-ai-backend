@@ -333,7 +333,6 @@ def get_product_page(request, context):
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 48]
     queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
-    print(queryset)
     # queryset = Product.objects.filter(id__in=queryset)
     # print(queryset.query)
     # print()

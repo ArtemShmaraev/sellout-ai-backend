@@ -29,7 +29,7 @@ class AccrualBonus(models.Model):
     date = models.DateTimeField(auto_now=True)
 
     def is_expired(self):
-        return self.date + timedelta(days=30) < datetime.datetime.now()
+        return self.date + timedelta(days=365) < datetime.datetime.now()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -58,6 +58,10 @@ class Bonuses(models.Model):
     def update_total_amount(self):
         self.total_amount = self.accrual.aggregate(models.Sum('amount'))['amount__sum'] or 0
         self.save()
+
+    def __str__(self):
+        user = self.user.all().first()  # Получить первого пользователя, связанного с этим объектом Bonuses
+        return user.username if user is not None else ''
 
 
 @receiver(m2m_changed, sender=Bonuses.accrual.through)

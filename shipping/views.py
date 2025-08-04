@@ -9,6 +9,7 @@ from wishlist.models import Wishlist
 from products.models import Product
 from products.serializers import ProductMainPageSerializer, ProductSerializer
 import json
+from products.formula_price import formula_price
 
 
 class DeliveryForSizeView(APIView):
@@ -21,8 +22,8 @@ class DeliveryForSizeView(APIView):
             for product_unit in product_units:
                 d = dict()
                 d['id'] = product_unit.id
-                d['final_price'] = product_unit.final_price
-                d['start_price'] = product_unit.start_price
+                d['final_price'] = formula_price(product, product_unit.final_price)
+                d['start_price'] = formula_price(product, product_unit.start_price)
                 d['available'] = product_unit.availability
                 d['is_fast_shipping'] = product_unit.is_fast_shipping
                 d['is_sale'] = product_unit.is_sale
@@ -84,8 +85,8 @@ class MinPriceForSizeView(APIView):
                         min_price_without_sale = max(min_price_without_sale, prices['price_without_sale'][i])
                 d = dict()
                 if len(prices) > 0:
-                    d['min_price'] = min_price
-                    d['min_price_without_sale'] = min_price_without_sale
+                    d['min_price'] = formula_price(product, min_price)
+                    d['min_price_without_sale'] = formula_price(min_price_without_sale)
                     d['available'] = prices['available']
                     d['is_fast_shipping'] = prices['is_fast_shipping']
                     d['is_sale'] = prices['is_sale']

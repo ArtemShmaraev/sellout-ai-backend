@@ -13,6 +13,8 @@ from products.serializers import LineSerializer
 
 
 
+
+
 def get_queryset_from_list_id(product_ids):
     queryset = Product.objects.filter(id__in=product_ids)
 

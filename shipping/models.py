@@ -104,6 +104,7 @@ class ProductUnit(models.Model):
     weight = models.IntegerField(default=1)
     history_price = models.JSONField(default=list)
     platform_info = models.JSONField(default=dict)
+    absolute_profit = models.IntegerField(default=0)
 
     class Meta:
         indexes = [

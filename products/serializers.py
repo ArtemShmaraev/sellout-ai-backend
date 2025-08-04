@@ -5,7 +5,7 @@ from products.models import Product, Category, Line, Brand, Color, Collection, D
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min, Q, Max
-
+from .formula_price import formula_price
 # from .views import build_line_tree
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -156,7 +156,7 @@ class ProductSerializer(serializers.ModelSerializer):
         depth = 2
 
     def get_price(self, obj):
-        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
+        return {"final_price": formula_price(obj, obj.min_price), "start_price": formula_price(obj, obj.min_price_without_sale)}
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -271,9 +271,9 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
             filters &= Q(final_price=min_final_price)
             corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
-            return {"final_price": min_final_price, "start_price": corresponding_start_price}
+            return {"final_price": formula_price(obj, min_final_price), "start_price": formula_price(obj, corresponding_start_price)}
         else:
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
+            return {"final_price": formula_price(obj, obj.min_price), "start_price": formula_price(obj, obj.min_price_without_sale)}
 
 
 

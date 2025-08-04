@@ -14,10 +14,11 @@ from .serializers import ShoppingCartSerializer, OrderSerializer
 from shipping.models import ProductUnit, AddressInfo
 from shipping.serializers import ProductUnitSerializer
 from rest_framework import status
-from promotions.models import PromoCode
+from promotions.models import PromoCode, AccrualBonus
 from promotions.views import check_promo
 from users.models import User
-from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order
+from .tools_for_user import update_user_status
 
 
 class DeliveryInfo(APIView):
@@ -27,7 +28,7 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            if str(data['delivery_type']) == "0" or cart.final_amount > 20_000:
+            if str(data['delivery_type']) == "0" or cart.final_amount > user.user_status.free_ship_amount:
                 return Response({
                     "sum_part": 0,
                     "sum_all": 0,
@@ -215,15 +216,25 @@ class CheckOutView(APIView):
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 order.get_delivery(data)
-                if order.final_amount <= 20_000:
+                if order.final_amount <= user.user_status.free_ship_amount:
                     order.final_amount += order.delivery_price
 
                 else:
                     order.delivery_view_price = 0
                 order.save()
+                unit_count = order.order_units.all().count()
+                if Order.objects.filter(user=user).count() == 1:
+                    accrual_bonus = AccrualBonus(amount=(unit_count * user.user_status.unit_max_bonuses) + 750)
+                else:
+                    accrual_bonus = AccrualBonus(amount=unit_count * user.user_status.unit_max_bonuses)
+                accrual_bonus.save()
+                user.bonuses.accrual.add(accrual_bonus)
+                user.bonuses.update_total_amount()
+                update_user_status(user)
 
-                serializer = OrderSerializer(order)
-                return Response(serializer.data)
+                serializer = OrderSerializer(order).data
+                send_email_confirmation_order(serializer, order.email)
+                return Response(serializer)
             else:
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:

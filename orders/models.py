@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from shipping.models import AddressInfo
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
-
+from products.formula_price import formula_price
 
 class Status(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
@@ -116,8 +116,8 @@ class Order(models.Model):
             view_size_platform=product_unit.view_size_platform,
             weight=product_unit.weight,
             # size_table_platform=product_unit.size_table_platform,
-            start_price=product_unit.start_price,
-            final_price=product_unit.final_price,
+            start_price=formula_price(product_unit.product, product_unit.start_price),
+            final_price=formula_price(product_unit.product, product_unit.final_price),
             delivery_type=product_unit.delivery_type,
             platform=product_unit.platform,
             url=product_unit.url,
@@ -149,7 +149,7 @@ class ShoppingCart(models.Model):
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         for product_unit in self.product_units.all():
-            total_amount += product_unit.final_price
+            total_amount += formula_price(product_unit.product, product_unit.final_price)
 
         # Обновить поле total_amount для текущей корзины
         self.total_amount = total_amount

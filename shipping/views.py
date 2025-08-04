@@ -225,7 +225,7 @@ class TotalPriceForListProductUnitView(APIView):
             product_units = ProductUnit.objects.filter(id__in=s_product_unit)
             sum = 0
             for product_unit in product_units:
-                sum += product_unit.final_price
+                sum += formula_price(product_unit.product, product_unit.final_price)
 
             return Response({"total_amount": sum})
         except json.JSONDecodeError:

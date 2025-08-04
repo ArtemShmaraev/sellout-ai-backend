@@ -17,14 +17,71 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from products.serializers import ProductMainPageSerializer
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation
+from users.models import User, EmailConfirmation, UserStatus
 from products.tools import get_text
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # ps = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))
+        amethyst = UserStatus.objects.get(name="Amethyst", total_orders_amount=0, start_bonuses=True, birthday_gift=True,
+                              unit_max_bonuses=250,
+                              free_ship_amount=20000,
+                              exclusive_sale=False,
+                              close_release=False, priority_service=False)
+        amethyst.percentage_bonuses = 10
+        amethyst.save()
+
+        sapphire = UserStatus.objects.get(name="Supphire", total_orders_amount=15000, start_bonuses=True, birthday_gift=True,
+                              unit_max_bonuses=500,
+                              free_ship_amount=20000,
+                              exclusive_sale=False,
+                              close_release=False, priority_service=False)
+        sapphire.percentage_bonuses = 15
+        sapphire.save()
+
+        emerald = UserStatus.objects.get(name="Emerald", total_orders_amount=45000, start_bonuses=True, birthday_gift=True,
+                             unit_max_bonuses=750,
+                             free_ship_amount=15000,
+                             exclusive_sale=False,
+                             close_release=False, priority_service=False)
+        emerald.percentage_bonuses = 20
+        emerald.save()
+
+        ruby = UserStatus.objects.get(name="Ruby", total_orders_amount=100000, start_bonuses=True, birthday_gift=True,
+                          unit_max_bonuses=1000,
+                          free_ship_amount=15000,
+                          exclusive_sale=True,
+                          close_release=False, priority_service=False)
+        ruby.percentage_bonuses = 25
+        ruby.save()
+
+        diamond = UserStatus.objects.get(name="Diamond", total_orders_amount=300000, start_bonuses=True, birthday_gift=True,
+                             unit_max_bonuses=1500,
+                             free_ship_amount=15000,
+                             exclusive_sale=True,
+                             close_release=True, priority_service=True)
+        diamond.percentage_bonuses = 30
+        diamond.save()
+
+        privileged = UserStatus.objects.get(name="Privileged", start_bonuses=False, birthday_gift=False, unit_max_bonuses=0,
+                                free_ship_amount=0,
+                                exclusive_sale=True,
+                                close_release=True, priority_service=True, base=False)
+        privileged.percentage_bonuses = 0
+        privileged.save()
+
+        f_and_f = UserStatus.objects.get(name="Friends & Family", start_bonuses=False, birthday_gift=False, unit_max_bonuses=0,
+                             free_ship_amount=0,
+                             exclusive_sale=True,
+                             close_release=True, priority_service=True, base=False)
+        f_and_f.percentage_bonuses = 0
+        f_and_f.save()
+
+        # ps = Product.objects.filter(model="")
+        # ps.update(available_flag=False)
+
+
         # di = DewuInfo.objects.filter(spu_id__in=ps)
         # print("го")
         #
@@ -38,15 +95,18 @@ class Command(BaseCommand):
         #
         #         if d.preprocessed_data["likesCount"] != "" and "年" not in d.preprocessed_data['releaseDate']:
         #             print(d.spu_id)
-        pr = Product.objects.get(slug="nike-air-monarch-4-air-monarch-4-white-navy-49461")
-        pr.is_sale = True
-        for unit in pr.product_units.all():
-            if random.randint(1, 5) % 2 == 0:
-                unit.start_price = unit.final_price * 1.2
-                unit.is_sale = True
-                unit.save()
-        pr.update_min_price()
-        pr.save()
+        # pr = Product.objects.all()
+
+        # pr.update(min_price_without_sale=F("min_price"))
+        # print("11111")
+        # pr = Product.objects.get(slug="nike-air-monarch-4-air-monarch-4-white-navy-49461")
+        # pr.is_sale = True
+        # for unit in pr.product_units.all():
+        #     unit.start_price = unit.final_price * 1.2
+        #     unit.is_sale = True
+        #     unit.save()
+        # pr.update_min_price()
+        # pr.save()
 
 
         # print(ps.count())

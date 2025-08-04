@@ -157,7 +157,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_price(self, obj):
         unit = ProductUnit.objects.filter(product=obj, final_price=obj.min_price,
-                                          start_price=obj.min_price_without_sale).order_by("-extra_delivery_price")[0]
+                                          start_price=obj.min_price_without_sale).order_by("approximate_price_with_delivery_in_rub")[0]
 
         wl = self.context.get('wishlist')
         if wl:
@@ -281,10 +281,10 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
             filters &= Q(final_price=min_final_price)
             corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
-            unit = ProductUnit.objects.filter(product=obj, final_price=min_final_price, start_price=corresponding_start_price).order_by("-extra_delivery_price")[0]
+            unit = obj.product_units.filter(final_price=min_final_price, start_price=corresponding_start_price).order_by("approximate_price_with_delivery_in_rub")[0]
 
         else:
-            unit = ProductUnit.objects.filter(product=obj, final_price=obj.min_price, start_price=obj.min_price_without_sale).order_by("-extra_delivery_price")[0]
+            unit = obj.product_units.filter(final_price=obj.min_price, start_price=obj.min_price_without_sale).order_by("approximate_price_with_delivery_in_rub")[0]
 
         wl = self.context.get('wishlist')
         if wl:

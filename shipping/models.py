@@ -21,7 +21,12 @@ class DeliveryType(models.Model):
     days_max_to_russian_warehouse = models.IntegerField(default=0)
     days_min = models.IntegerField(default=0)
     days_max = models.IntegerField(default=0)
+    delivery_price_per_kg_in_rub =  models.IntegerField(default=0)
+    decimal_insurance = models.IntegerField(default=0)
+    absolute_insurance = models.IntegerField(default=0)
     view_name = models.CharField(max_length=100, null=True, blank=True)
+    extra_charge = models.IntegerField(default=0)
+    poizon_abroad = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -87,8 +92,9 @@ class ProductUnit(models.Model):
     original_price = models.IntegerField(null=False, blank=False, default=0)
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False, db_index=True)  # Новая цена
+    approximate_price_with_delivery_in_rub = models.IntegerField(null=False, blank=False, db_index=True, default=0)
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
-                                      null=False, blank=False, default=get_default_delivery_type)
+                                      null=False, blank=False, default=get_default_delivery_type, db_index=True)
     platform = models.ForeignKey("Platform", on_delete=models.CASCADE, related_name='product_units',
                                  null=False, blank=False)
     url = models.CharField(max_length=255, null=True, blank=True, default="")
@@ -99,7 +105,6 @@ class ProductUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
-    extra_delivery_price = models.IntegerField(default=0)
 
     dimensions = models.JSONField(default=dict)
     weight = models.IntegerField(default=1)

@@ -167,33 +167,46 @@ def add_product_api(data):
         platform_info['poizon_info'] = poizon_info
 
         for i in range(len(unit['offers'])):
-            dilivery, create = DeliveryType.objects.get_or_create(
-                name=unit['offers'][i]["delivery_additional_info"],
-                view_name=f'{unit["offers"][i]["delivery_info_first"]}-{unit["offers"][i]["delivery_info_last"]}',
-                days_min=unit["offers"][i]["delivery_info_first"],
-                days_max=unit["offers"][i]["delivery_info_last"])
+            offer = unit['offers'][i]
+            if offer['show']:
+                dilivery, create = DeliveryType.objects.get_or_create(
+                    name=unit['offers'][i]["delivery_additional_info"],
+                    view_name=f'{offer["days_min"]}-{offer["days_max"]}',
+                    days_min=offer['days_min'],
+                    days_max=offer['days_max'],
+                    days_max_to_international_warehouse=unit['days_max_to_international_warehouse'],
+                    days_min_to_international_warehouse=unit["days_min_to_international_warehouse"],
+                    days_min_to_russian_warehouse=unit['days_min_to_russian_warehouse'],
+                    days_max_to_russian_warehouse=unit["days_max_to_russian_warehouse"],
+                    absolute_insurance=unit.get('absolute_insurance', 0),
+                    decimal_insurance=unit.get('decimal_insurance', 0),
+                    delivery_price_per_kg_in_rub=unit['delivery_price_per_kg_in_rub'],
+                    extra_charge=unit['extra_charge'],
+                    poizon_abroad=unit["offers"][i]['poizon_abroad']
+                    )
 
-            platform_info['poizon_info']['delivery_info'] = unit["offers"][i]["delivery_info"]
-            platform_info['poizon_info']["additional_info"] = unit["offers"][i]["additional_info"]
-            platform_info['poizon_info']["poizon_abroad"] = unit["offers"][i]['poizon_abroad']
+                platform_info['poizon_info']['delivery_info'] = unit["offers"][i]["delivery_info"]
+                platform_info['poizon_info']["additional_info"] = unit["offers"][i]["additional_info"]
+                platform_info['poizon_info']["poizon_abroad"] = unit["offers"][i]['poizon_abroad']
 
-            product_unit = ProductUnit.objects.create(
-                product=product,
-                size_platform=unit['unit_name'],
-                view_size_platform=unit['unit_name_with_size'],
-                original_price=unit["offers"][i]['price'],
-                start_price=unit["offers"][i]['price'],
-                final_price=unit["offers"][i]['price'],
-                delivery_type=dilivery,
-                platform=Platform.objects.get_or_create(platform='poizon', site="poizon")[0],
-                url=data['platform_info']["poizon_info"]['url'],
-                availability=True,
-                currency=Currency.objects.get_or_create(name=unit["offers"][i]["currency"])[0],
-                platform_info=platform_info
-            )
-            product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
-            product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
-            product_unit.update_history()
+                product_unit = ProductUnit.objects.create(
+                    product=product,
+                    size_platform=unit['unit_name'],
+                    view_size_platform=unit['unit_name_with_size'],
+                    original_price=unit["offers"][i]['price'],
+                    start_price=unit["offers"][i]['price'],
+                    final_price=unit["offers"][i]['price'],
+                    approximate_price_with_delivery_in_rub=offer["approximate_price_with_delivery_in_rub"],
+                    delivery_type=dilivery,
+                    platform=Platform.objects.get_or_create(platform='poizon', site="poizon")[0],
+                    url=data['platform_info']["poizon_info"]['url'],
+                    availability=True,
+                    currency=Currency.objects.get_or_create(name=unit["offers"][i]["currency"])[0],
+                    platform_info=platform_info
+                )
+                product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
+                product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
+                product_unit.update_history()
     product.update_min_price()
 
     sizes_info = {"sizes": [], "filter_logo": ""}

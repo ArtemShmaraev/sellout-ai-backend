@@ -289,6 +289,7 @@ class Product(models.Model):
 
     def update_min_price(self):
         if self.product_units.exists():
+            self.min_price = 999999999
             self.available_flag = True
             product_units = self.product_units.all()
             for product_unit in product_units:

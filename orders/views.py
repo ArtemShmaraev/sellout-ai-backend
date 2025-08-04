@@ -212,7 +212,7 @@ class CheckOutView(APIView):
                 order.save()
 
                 for unit in cart.product_units.all():
-                    order.add_order_unit(unit)
+                    order.add_order_unit(unit, user.user_status)
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 order.get_delivery(data)

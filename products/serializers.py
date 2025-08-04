@@ -1,10 +1,10 @@
-from users.models import User
+from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
     SizeTranslationRows, Collab, SGInfo, Material
 from rest_framework import serializers
 from shipping.models import ProductUnit
-from django.db.models import Min, Q, Max
+from django.db.models import Min, Q, Max, Count
 from .formula_price import formula_price
 # from .views import build_line_tree
 
@@ -156,7 +156,17 @@ class ProductSerializer(serializers.ModelSerializer):
         depth = 2
 
     def get_price(self, obj):
-        return {"final_price": formula_price(obj, obj.min_price), "start_price": formula_price(obj, obj.min_price_without_sale)}
+        unit = ProductUnit.objects.filter(product=obj, final_price=obj.min_price,
+                                          start_price=obj.min_price_without_sale).order_by("-extra_delivery_price")[0]
+
+        wl = self.context.get('wishlist')
+        if wl:
+            user_status = wl.user.user_status
+        else:
+            user_status = UserStatus.objects.get(name="Amethyst")
+
+        return formula_price(obj, unit, user_status)
+
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -250,7 +260,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", 'in_wishlist', 'price', "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
+        fields = ["id", 'in_wishlist', "price", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
@@ -271,9 +281,18 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
             filters &= Q(final_price=min_final_price)
             corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
-            return {"final_price": formula_price(obj, min_final_price), "start_price": formula_price(obj, corresponding_start_price)}
+            unit = ProductUnit.objects.filter(product=obj, final_price=min_final_price, start_price=corresponding_start_price).order_by("-extra_delivery_price")[0]
+
         else:
-            return {"final_price": formula_price(obj, obj.min_price), "start_price": formula_price(obj, obj.min_price_without_sale)}
+            unit = ProductUnit.objects.filter(product=obj, final_price=obj.min_price, start_price=obj.min_price_without_sale).order_by("-extra_delivery_price")[0]
+
+        wl = self.context.get('wishlist')
+        if wl:
+            user_status = wl.user.user_status
+        else:
+            user_status = UserStatus.objects.get(name="Amethyst")
+
+        return formula_price(obj, unit, user_status)
 
 
 

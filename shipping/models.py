@@ -99,6 +99,7 @@ class ProductUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
+    extra_delivery_price = models.IntegerField(default=0)
 
     dimensions = models.JSONField(default=dict)
     weight = models.IntegerField(default=1)

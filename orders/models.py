@@ -42,6 +42,7 @@ class Order(models.Model):
     pvz = models.CharField(default="", max_length=100)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
+    sale = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
@@ -110,14 +111,15 @@ class Order(models.Model):
             self.status = Status.objects.get(id=min_status_id)
             self.save()
 
-    def add_order_unit(self, product_unit):
+    def add_order_unit(self, product_unit, user_status):
+        price = formula_price(product_unit.product, product_unit, user_status)
         order_unit = OrderUnit(
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
             weight=product_unit.weight,
             # size_table_platform=product_unit.size_table_platform,
-            start_price=formula_price(product_unit.product, product_unit.start_price),
-            final_price=formula_price(product_unit.product, product_unit.final_price),
+            start_price=price['start_price'],
+            final_price=price['final_price'],
             delivery_type=product_unit.delivery_type,
             platform=product_unit.platform,
             url=product_unit.url,
@@ -139,6 +141,7 @@ class ShoppingCart(models.Model):
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="carts")
     total_amount = models.IntegerField(default=0)
+    sale = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
@@ -148,11 +151,15 @@ class ShoppingCart(models.Model):
 
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
+        sale = 0
         for product_unit in self.product_units.all():
-            total_amount += formula_price(product_unit.product, product_unit.final_price)
+            price = formula_price(product_unit.product, product_unit, self.user.user_status)
+            total_amount += price['start_price']
+            sale += price['start_price'] - price['final_price']
 
         # Обновить поле total_amount для текущей корзины
         self.total_amount = total_amount
+        self.sale = sale
 
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь
@@ -161,15 +168,16 @@ class ShoppingCart(models.Model):
             self.promo_code = None
 
         if self.promo_code:
+            self.final_amount = self.total_amount - self.sale
             if self.promo_code.discount_percentage > 0:
                 self.final_amount = round(self.total_amount * (100 - self.promo_code.discount_percentage) // 100)
             elif self.promo_code.discount_absolute > 0:
                 self.final_amount = round(self.total_amount - self.promo_code.discount_absolute)
             self.promo_sale = self.total_amount - self.final_amount
         else:
-            self.final_amount = self.total_amount
+            self.final_amount = self.total_amount - self.sale
         self.final_amount -= self.bonus_sale
-        self.total_sale = self.bonus_sale + self.promo_sale
+        self.total_sale = self.bonus_sale + self.promo_sale + self.sale
         self.save()
 
     def __str__(self):

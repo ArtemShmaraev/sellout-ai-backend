@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from users.models import User, UserStatus
 from .models import ProductUnit
 from .serializers import ProductUnitSerializer, DeliveryTypeSerializer
 from wishlist.models import Wishlist
@@ -16,14 +17,16 @@ class DeliveryForSizeView(APIView):
     def post(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
+            user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(name="Amethyst")
             view_size = json.loads(request.body)['view_size']
             product_units = product.product_units.filter(view_size_platform=view_size, availability=True)
             s = []
             for product_unit in product_units:
                 d = dict()
+                price = formula_price(product, product_unit, user_status)
                 d['id'] = product_unit.id
-                d['final_price'] = formula_price(product, product_unit.final_price)
-                d['start_price'] = formula_price(product, product_unit.start_price)
+                d['final_price'] = price['final_price']
+                d['start_price'] = price['start_price']
                 d['available'] = product_unit.availability
                 d['is_fast_shipping'] = product_unit.is_fast_shipping
                 d['is_sale'] = product_unit.is_sale
@@ -43,6 +46,9 @@ class MinPriceForSizeView(APIView):
             product = Product.objects.get(id=product_id)
             product_units = product.product_units.all()
 
+            user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(
+                name="Amethyst")
+
             prices_by_size = {}
 
             # Проход по каждому элементу списка
@@ -53,15 +59,17 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
-                    prices_by_size[size] = {"price": [], "price_without_sale": [], "available": False,
+                    prices_by_size[size] = {"final_price": [], "start_price": [], "available": False,
                                             "is_fast_shipping": False, "is_sale": False, "is_return": False,
                                             "size_sellout": []}
                 prices_by_size[size]["size_sellout"].extend(item.size.all().values_list("id"))
 
                 if available:
                     prices_by_size[size]["available"] = True
-                    prices_by_size[size]['price'].append(price)
-                    prices_by_size[size]['price_without_sale'].append(item.start_price)
+                    price = formula_price(product, item, user_status)
+                    prices_by_size[size]['final_price'].append(price['final_price'])
+                    prices_by_size[size]['start_price'].append(price['start_price'])
+
                     if item.is_fast_shipping:
                         prices_by_size[size]["is_fast_shipping"] = True
                     if item.is_sale:
@@ -77,16 +85,16 @@ class MinPriceForSizeView(APIView):
             # Вычисление минимальной цены для каждого размера
             for size, prices in prices_by_size.items():
 
-                min_price = prices['price'][0]
-                min_price_without_sale = prices['price_without_sale'][0]
-                for i in range(len(prices['price'])):
-                    if prices['price'][i] <= min_price:
-                        min_price = prices['price'][i]
-                        min_price_without_sale = max(min_price_without_sale, prices['price_without_sale'][i])
+                min_price = prices['final_price'][0]
+                min_price_without_sale = prices['start_price'][0]
+                for i in range(len(prices['final_price'])):
+                    if prices['final_price'][i] <= min_price:
+                        min_price = prices['final_price'][i]
+                        min_price_without_sale = max(min_price_without_sale, prices['start_price'][i])
                 d = dict()
                 if len(prices) > 0:
-                    d['min_price'] = formula_price(product, min_price)
-                    d['min_price_without_sale'] = formula_price(product, min_price_without_sale)
+                    d['min_price'] = min_price
+                    d['min_price_without_sale'] = min_price_without_sale
                     d['available'] = prices['available']
                     d['is_fast_shipping'] = prices['is_fast_shipping']
                     d['is_sale'] = prices['is_sale']
@@ -223,11 +231,17 @@ class TotalPriceForListProductUnitView(APIView):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
             product_units = ProductUnit.objects.filter(id__in=s_product_unit)
-            sum = 0
-            for product_unit in product_units:
-                sum += formula_price(product_unit.product, product_unit.final_price)
+            user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(
+                name="Amethyst")
 
-            return Response({"total_amount": sum})
+            sum = 0
+            sale = 0
+            for product_unit in product_units:
+                price = formula_price(product_unit.product, product_unit, user_status)
+                sum += price['start_price']
+                sale += price['start_price'] - price['final_price']
+
+            return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale})
         except json.JSONDecodeError:
             return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
         except ProductUnit.DoesNotExist:

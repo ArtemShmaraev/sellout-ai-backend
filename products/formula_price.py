@@ -157,8 +157,8 @@ def formula_price(product, unit, user_status):
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
         if unit.final_price > 0:
-            return {"final_price": round_to_nearest(unit.final_price, step=500) - 10,
-                    "start_price": round_to_nearest(unit.start_price, step=500) - 10}
+            return {"final_price": unit.final_price,
+                    "start_price": unit.start_price}
 
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         shipping_cost = delivery_price_per_kg_in_rub * weight + delivery_extra_charge

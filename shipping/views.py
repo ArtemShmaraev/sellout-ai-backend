@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from products.tools import update_price
 from users.models import User, UserStatus
 from .models import ProductUnit
 from .serializers import ProductUnitSerializer, DeliveryTypeSerializer
@@ -18,12 +19,16 @@ class DeliveryForSizeView(APIView):
         try:
             product = Product.objects.get(id=product_id)
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(name="Amethyst")
+            update_price(product)
             view_size = json.loads(request.body)['view_size']
             product_units = product.product_units.filter(view_size_platform=view_size, availability=True)
             s = []
             for product_unit in product_units:
                 d = dict()
-                price = formula_price(product, product_unit, user_status)
+                if user_status.base:
+                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                else:
+                    price = formula_price(product_unit.product, product_unit, user_status)
                 d['id'] = product_unit.id
                 d['final_price'] = price['final_price']
                 d['start_price'] = price['start_price']
@@ -45,7 +50,7 @@ class MinPriceForSizeView(APIView):
         try:
             product = Product.objects.get(id=product_id)
             product_units = product.product_units.all()
-
+            update_price(product)
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(
                 name="Amethyst")
 
@@ -66,7 +71,11 @@ class MinPriceForSizeView(APIView):
 
                 if available:
                     prices_by_size[size]["available"] = True
-                    price = formula_price(product, item, user_status)
+                    if user_status.base:
+                        price = {"start_price": item.start_price, "final_price": item.final_price}
+                    else:
+                        price = formula_price(item.product, item, user_status)
+
                     prices_by_size[size]['final_price'].append(price['final_price'])
                     prices_by_size[size]['start_price'].append(price['start_price'])
 
@@ -238,7 +247,12 @@ class TotalPriceForListProductUnitView(APIView):
             sum = 0
             sale = 0
             for product_unit in product_units:
-                price = formula_price(product_unit.product, product_unit, user_status)
+                update_price(product_unit.product)
+                if user_status.base:
+                    update_price(product_unit.product)
+                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                else:
+                    price = formula_price(product_unit.product, product_unit, user_status)
                 sum += price['start_price']
                 sale += price['start_price'] - price['final_price']
 

@@ -26,6 +26,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         ps = ProductUnit.objects.filter(start_price=0).filter(product__available_flag=True)
+        prs = Product.objects.filter(actual_price=False)
+        prs.update(actual_price=True)
         print(ps.count())
 
         # di = DewuInfo.objects.filter(spu_id__in=ps)

@@ -9,6 +9,7 @@ from orders.models import ShoppingCart
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from products.formula_price import formula_price
+from products.tools import update_price
 from shipping.models import ProductUnit
 from users.models import UserStatus
 from .models import PromoCode
@@ -61,7 +62,8 @@ class PromocodeAnonView(APIView):
         sum = 0
         sale = 0
         for product_unit in product_units:
-            price = formula_price(product_unit.product, product_unit, UserStatus.objects.get(name="Amethyst"))
+            update_price(product_unit.product)
+            price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
             sum += price['start_price']
             sale += price['start_price'] - price['final_price']
 

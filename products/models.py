@@ -262,6 +262,7 @@ class Product(models.Model):
     in_sg = models.BooleanField(default=False)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
+    actual_price = models.BooleanField(default=True)
 
     objects = ProductManager()
 
@@ -269,6 +270,8 @@ class Product(models.Model):
         if not self.product_units.exists():
             self.available_flag = False
             self.save()
+
+
 
     class Meta:
         indexes = [
@@ -296,6 +299,7 @@ class Product(models.Model):
                 if product_unit.final_price <= self.min_price and product_unit.availability:
                     self.min_price = product_unit.final_price
                     self.min_price_without_sale = product_unit.start_price
+        self.actual_price = True
 
         self.save()
 

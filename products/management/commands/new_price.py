@@ -43,6 +43,7 @@ class Command(BaseCommand):
 
         # Получите все продукты, которые вы хотите обновить
         products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
+        products.update(actual_price=False)
         user_status = UserStatus.objects.get(name="Amethyst")
 
         # Укажите количество потоков

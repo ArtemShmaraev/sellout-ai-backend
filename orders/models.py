@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models import F
 
+from products.tools import update_price
 from promotions.tools import check_promo
 from django.utils import timezone
 
@@ -113,7 +114,11 @@ class Order(models.Model):
             self.save()
 
     def add_order_unit(self, product_unit, user_status):
-        price = formula_price(product_unit.product, product_unit, user_status)
+        if user_status.base:
+            update_price(product_unit.product)
+            price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+        else:
+            price = formula_price(product_unit.product, product_unit, user_status)
         order_unit = OrderUnit(
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
@@ -153,8 +158,13 @@ class ShoppingCart(models.Model):
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         sale = 0
+        user_status = self.user.user_status
         for product_unit in self.product_units.all():
-            price = formula_price(product_unit.product, product_unit, self.user.user_status)
+            if user_status.base:
+                update_price(product_unit.product)
+                price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+            else:
+                price = formula_price(product_unit.product, product_unit, user_status)
             total_amount += price['start_price']
             sale += price['start_price'] - price['final_price']
 

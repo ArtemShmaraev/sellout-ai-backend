@@ -24,63 +24,9 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        amethyst = UserStatus.objects.get(name="Amethyst", total_orders_amount=0, start_bonuses=True, birthday_gift=True,
-                              unit_max_bonuses=250,
-                              free_ship_amount=20000,
-                              exclusive_sale=False,
-                              close_release=False, priority_service=False)
-        amethyst.percentage_bonuses = 10
-        amethyst.save()
 
-        sapphire = UserStatus.objects.get(name="Supphire", total_orders_amount=15000, start_bonuses=True, birthday_gift=True,
-                              unit_max_bonuses=500,
-                              free_ship_amount=20000,
-                              exclusive_sale=False,
-                              close_release=False, priority_service=False)
-        sapphire.percentage_bonuses = 15
-        sapphire.save()
-
-        emerald = UserStatus.objects.get(name="Emerald", total_orders_amount=45000, start_bonuses=True, birthday_gift=True,
-                             unit_max_bonuses=750,
-                             free_ship_amount=15000,
-                             exclusive_sale=False,
-                             close_release=False, priority_service=False)
-        emerald.percentage_bonuses = 20
-        emerald.save()
-
-        ruby = UserStatus.objects.get(name="Ruby", total_orders_amount=100000, start_bonuses=True, birthday_gift=True,
-                          unit_max_bonuses=1000,
-                          free_ship_amount=15000,
-                          exclusive_sale=True,
-                          close_release=False, priority_service=False)
-        ruby.percentage_bonuses = 25
-        ruby.save()
-
-        diamond = UserStatus.objects.get(name="Diamond", total_orders_amount=300000, start_bonuses=True, birthday_gift=True,
-                             unit_max_bonuses=1500,
-                             free_ship_amount=15000,
-                             exclusive_sale=True,
-                             close_release=True, priority_service=True)
-        diamond.percentage_bonuses = 30
-        diamond.save()
-
-        privileged = UserStatus.objects.get(name="Privileged", start_bonuses=False, birthday_gift=False, unit_max_bonuses=0,
-                                free_ship_amount=0,
-                                exclusive_sale=True,
-                                close_release=True, priority_service=True, base=False)
-        privileged.percentage_bonuses = 0
-        privileged.save()
-
-        f_and_f = UserStatus.objects.get(name="Friends & Family", start_bonuses=False, birthday_gift=False, unit_max_bonuses=0,
-                             free_ship_amount=0,
-                             exclusive_sale=True,
-                             close_release=True, priority_service=True, base=False)
-        f_and_f.percentage_bonuses = 0
-        f_and_f.save()
-
-        # ps = Product.objects.filter(model="")
-        # ps.update(available_flag=False)
-
+        ps = ProductUnit.objects.filter(start_price=0).filter(product__available_flag=True)
+        print(ps.count())
 
         # di = DewuInfo.objects.filter(spu_id__in=ps)
         # print("го")

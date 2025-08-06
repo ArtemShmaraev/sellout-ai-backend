@@ -209,7 +209,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
     manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
-    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, null=True, db_index=True)
+    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, db_index=True)
 
     is_custom = models.BooleanField(default=False, db_index=True)
     is_collab = models.BooleanField(default=False, db_index=True)

@@ -4,7 +4,6 @@ from products.models import SizeTable
 from utils.models import Currency
 
 
-
 class ConfigurationUnit(models.Model):
     product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="config_units",
                                 null=False, blank=False)
@@ -21,7 +20,7 @@ class DeliveryType(models.Model):
     days_max_to_russian_warehouse = models.IntegerField(default=0)
     days_min = models.IntegerField(default=0)
     days_max = models.IntegerField(default=0)
-    delivery_price_per_kg_in_rub =  models.IntegerField(default=0)
+    delivery_price_per_kg_in_rub = models.IntegerField(default=0)
     decimal_insurance = models.IntegerField(default=0)
     absolute_insurance = models.IntegerField(default=0)
     view_name = models.CharField(max_length=100, null=True, blank=True)
@@ -55,8 +54,6 @@ class AddressInfo(models.Model):
         return self.address
 
 
-
-
 class Platform(models.Model):
     platform = models.CharField(max_length=255, null=False, blank=False)
     site = models.CharField(max_length=10, null=True, blank=True)
@@ -83,10 +80,10 @@ class ProductUnit(models.Model):
                                           default="")  # обработанный размер с платформы
     # size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
 
-    size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", null=True, blank=True)
+    size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", blank=True)
 
     size = models.ManyToManyField("products.SizeTranslationRows", related_name="product_units",
-                             null=True, blank=True, db_index=True)  # порядковый номер размера в таблице
+                                  blank=True, db_index=True)  # порядковый номер размера в таблице
 
     currency = models.ForeignKey("utils.Currency", on_delete=models.CASCADE,
                                  null=False, blank=False, default=get_default_currency)

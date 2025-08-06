@@ -12,6 +12,8 @@ from .formula_price import formula_price
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
+
+
 class SizeRowSerializer(serializers.ModelSerializer):
     is_main = serializers.SerializerMethodField()
 
@@ -159,7 +161,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
     def get_price(self, obj):
-        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
+        wl = self.context.get('wishlist', "")
+        if wl and not wl.user.user_status.base:
+            user_status = wl.user.user_status
+            unit = \
+                    obj.product_units.filter(final_price=obj.min_price).order_by(
+                        "approximate_price_with_delivery_in_rub")[0]
+
+            return formula_price(obj, unit, user_status)
+
+        else:
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
 
     def get_list_lines(self, obj):
@@ -264,6 +276,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     def get_price(self, obj):
         size = self.context.get('size')
+        from .tools import update_price
+        update_price(obj)
 
         # Проверьте, соответствуют ли значения фильтров product_unit
         filters = Q()
@@ -272,15 +286,13 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             filters &= (Q(size__in=size) | Q(size__is_one_size=True))
 
         wl = self.context.get('wishlist')
-        if wl:
+        if wl and not wl.user.user_status.base:
             user_status = wl.user.user_status
             if filters:
                 min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                 unit = \
                 obj.product_units.filter(final_price=min_final_price).order_by(
                     "approximate_price_with_delivery_in_rub")[0]
-
-
             else:
                 unit = \
                     obj.product_units.filter(final_price=obj.min_price).order_by(
@@ -288,22 +300,11 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             return formula_price(obj, unit, user_status)
 
         else:
-            user_status = UserStatus.objects.get(name="Amethyst")
-            if obj.actual_price == False:
-                for unit in obj.product_units.all():
-                    price = formula_price(obj, unit, user_status)
-                    unit.start_price = price['start_price']
-                    unit.final_price = price['final_price']
-                    unit.save()
-                obj.update_min_price()
-
-
             if filters:
                 min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                 filters &= Q(final_price=min_final_price)
                 corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
                 return {"final_price": min_final_price, "start_price": corresponding_start_price}
-                # unit = obj.product_units.filter(final_price=min_final_price, start_price=corresponding_start_price).order_by("approximate_price_with_delivery_in_rub")[0]
 
             else:
                 return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}

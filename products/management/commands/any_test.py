@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 import json
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When
+from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count
 
 from orders.models import ShoppingCart, Status
 
@@ -24,11 +24,14 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        # Фильтруем объекты, для которых нет связанных product_units
+        products_to_update = Product.objects.annotate(unit_count=Count('product_units')).filter(unit_count=0)
 
-        ps = ProductUnit.objects.filter(start_price=0).filter(product__available_flag=True)
-        prs = Product.objects.filter(actual_price=False)
-        prs.update(actual_price=True)
-        print(ps.count())
+        # Обновляем флаги доступности для выбранных объектов
+        products_to_update.update(available_flag=False)
+
+        # Выводим количество обновленных записей
+        self.stdout.write(self.style.SUCCESS(f'Updated {products_to_update.count()} products.'))
 
         # di = DewuInfo.objects.filter(spu_id__in=ps)
         # print("го")

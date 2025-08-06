@@ -10,8 +10,9 @@ from products.formula_price import formula_price
 from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto
-from products.serializers import LineSerializer
+
 from users.models import UserStatus
+
 
 
 def update_price(product):
@@ -233,6 +234,7 @@ def category_no_child(cats):
 
 @lru_cache(maxsize=2)
 def build_line_tree():
+    from products.serializers import LineSerializer
     lines = LineSerializer(Line.objects.all(), many=True).data
     line_dict = {}
     root_lines = []

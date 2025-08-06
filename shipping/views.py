@@ -212,6 +212,7 @@ class ListProductUnitView(APIView):
     def post(self, request):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
+            print(s_product_unit)
             product_units = ProductUnit.objects.filter(id__in=s_product_unit)
 
             serializer = ProductUnitSerializer(product_units, many=True)

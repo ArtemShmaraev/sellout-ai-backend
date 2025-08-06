@@ -208,6 +208,7 @@ class CheckOutView(APIView):
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
+                    order.pvz_address = str(data.get('pvz_address', ""))
                     order.pvz = str(data.get('target', 0))
                 order.save()
 

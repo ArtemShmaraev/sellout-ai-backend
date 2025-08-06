@@ -40,6 +40,7 @@ class Order(models.Model):
     address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True,
                                 blank=True)
     pvz = models.CharField(default="", max_length=100)
+    pvz_address = models.CharField(default="", max_length=2048)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.PROTECT, blank=True, null=True,
                                    related_name="orders")
     sale = models.IntegerField(default=0)

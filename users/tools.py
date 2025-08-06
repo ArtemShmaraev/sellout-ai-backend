@@ -4,7 +4,7 @@ from dadata import Dadata
 
 from orders.models import ShoppingCart
 from promotions.models import Bonuses
-from users.models import User, EmailConfirmation
+from users.models import User, EmailConfirmation, UserStatus
 from wishlist.models import Wishlist
 from django.core import signing
 
@@ -66,6 +66,7 @@ def register_user(data):
 
     # Присвойте бонусы пользователю и сохраните его снова
     new_user.bonuses = bonus
+    new_user.user_status = UserStatus.objects.get(name='Amethyst')
     new_user.save()
 
     email_confirmation = EmailConfirmation(user=new_user)

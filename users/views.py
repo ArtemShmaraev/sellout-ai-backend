@@ -546,7 +546,6 @@ class UserAddressView(APIView):
         if request.user.id == user_id or request.user.is_staff:
             data = json.loads(request.body)
             address_info = check_adress(data['address'])
-            print(address_info)
             if address_info:
                 address = AddressInfo(name=data['name'], address=address_info['value'], other_info=address_info, post_index=address_info['data']['postal_code'])
             else:

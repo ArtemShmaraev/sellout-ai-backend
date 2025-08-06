@@ -26,12 +26,15 @@ def add_product_api(data):
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id,
                                                     manufacturer_sku=manufacturer_sku)
+    product_slug = ""
     if not create:
+        if product.available_flag:
+            product_slug = product.slug
         product.delete()
         product = Product.objects.create(spu_id=spu_id, property_id=property_id,
                                          manufacturer_sku=manufacturer_sku, slug=f"{spu_id}_{property_id}_{manufacturer_sku}")
     else:
-        product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+        product.slug = product_slug if product_slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.save()
     t2 = time()
 
@@ -43,6 +46,7 @@ def add_product_api(data):
     product.model = data['model']
     product.colorway = data['colorway']
     product.is_custom = data['custom']
+    product.in_sg = data.get("product_on_stadium_goods", False)
 
     genders = data.get('gender', [])
     product.gender.set(Gender.objects.filter(name__in=genders))
@@ -131,8 +135,7 @@ def add_product_api(data):
     product.main_size_row_of_unit = data.get('main_size_row_of_unit', "")
     product.main_size_row = data.get('main_size_row', "")
     product.unit_common_name = data.get('unit_common_name', "")
-
-    product.save(custom_param=True)
+    product.save(product_slug=product_slug)
 
     t7 = time()
 
@@ -161,10 +164,12 @@ def add_product_api(data):
             row = SizeTranslationRows.objects.filter(is_one_size=True).first()
             sizes.append(row.id)
 
-        platform_info = unit["platform_info"]
-        poizon_info = platform_info["poizon_info"]
+        platform_info = unit['platform_info']
+        poizon_info = platform_info['poizon_info']
         del poizon_info['offers']
         platform_info['poizon_info'] = poizon_info
+
+
 
         for i in range(len(unit['offers'])):
             offer = unit['offers'][i]
@@ -174,20 +179,19 @@ def add_product_api(data):
                     view_name=f'{offer["days_min"]}-{offer["days_max"]}',
                     days_min=offer['days_min'],
                     days_max=offer['days_max'],
-                    days_max_to_international_warehouse=unit['days_max_to_international_warehouse'],
-                    days_min_to_international_warehouse=unit["days_min_to_international_warehouse"],
-                    days_min_to_russian_warehouse=unit['days_min_to_russian_warehouse'],
-                    days_max_to_russian_warehouse=unit["days_max_to_russian_warehouse"],
-                    absolute_insurance=unit.get('absolute_insurance', 0),
-                    decimal_insurance=unit.get('decimal_insurance', 0),
-                    delivery_price_per_kg_in_rub=unit['delivery_price_per_kg_in_rub'],
-                    extra_charge=unit['extra_charge'],
-                    poizon_abroad=unit["offers"][i]['poizon_abroad']
+                    days_max_to_international_warehouse=offer['days_max_to_international_warehouse'],
+                    days_min_to_international_warehouse=offer["days_min_to_international_warehouse"],
+                    days_min_to_russian_warehouse=offer['days_min_to_russian_warehouse'],
+                    days_max_to_russian_warehouse=offer["days_max_to_russian_warehouse"],
+                    absolute_insurance=offer.get('absolute_insurance', 0),
+                    decimal_insurance=offer.get('decimal_insurance', 0),
+                    delivery_price_per_kg_in_rub=offer['delivery_price_per_kg_in_rub'],
+                    extra_charge=offer['extra_charge'] if offer['extra_charge'] else 0,
+                    poizon_abroad=offer.get('poizon_abroad', False),
+                    delivery_type=offer.get('delivery_type', "standard")
                     )
 
-                platform_info['poizon_info']['delivery_info'] = unit["offers"][i]["delivery_info"]
-                platform_info['poizon_info']["additional_info"] = unit["offers"][i]["additional_info"]
-                platform_info['poizon_info']["poizon_abroad"] = unit["offers"][i]['poizon_abroad']
+                platform_info['poizon_info'].update(offer["platform_info"])
 
                 product_unit = ProductUnit.objects.create(
                     product=product,
@@ -196,7 +200,7 @@ def add_product_api(data):
                     original_price=unit["offers"][i]['price'],
                     start_price=unit["offers"][i]['price'],
                     final_price=unit["offers"][i]['price'],
-                    approximate_price_with_delivery_in_rub=offer["approximate_price_with_delivery_in_rub"],
+                    approximate_price_with_delivery_in_rub=int(round(offer["approximate_price_with_delivery_in_rub"])),
                     delivery_type=dilivery,
                     platform=Platform.objects.get_or_create(platform='poizon', site="poizon")[0],
                     url=data['platform_info']["poizon_info"]['url'],

@@ -27,6 +27,7 @@ class DeliveryType(models.Model):
     view_name = models.CharField(max_length=100, null=True, blank=True)
     extra_charge = models.IntegerField(default=0)
     poizon_abroad = models.BooleanField(default=False)
+    delivery_type = models.CharField(max_length=64, default="standard")
 
     def __str__(self):
         return self.name

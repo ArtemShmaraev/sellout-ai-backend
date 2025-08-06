@@ -186,6 +186,7 @@ class SGInfo(models.Model):
     manufacturer_sku = models.CharField(max_length=256, default="")
     data = models.JSONField(default=dict)
 
+
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
     property_id = models.IntegerField(default=0, db_index=True, )
@@ -196,7 +197,8 @@ class Product(models.Model):
                                         blank=True, db_index=True)
     lines = models.ManyToManyField("Line", related_name='products',
                                    blank=True, db_index=True)
-    main_line = models.ForeignKey("Line", on_delete=models.SET_NULL, blank=True, null=True, related_name="main_products")
+    main_line = models.ForeignKey("Line", on_delete=models.SET_NULL, blank=True, null=True,
+                                  related_name="main_products")
     # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
@@ -211,7 +213,8 @@ class Product(models.Model):
 
     is_custom = models.BooleanField(default=False, db_index=True)
     is_collab = models.BooleanField(default=False, db_index=True)
-    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products", db_index=True)
+    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products",
+                               db_index=True)
 
     main_color = models.ForeignKey("Color", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="products_main", db_index=True)
@@ -256,18 +259,16 @@ class Product(models.Model):
     main_size_row = models.CharField(max_length=255, null=True, blank=True)
     unit_common_name = models.CharField(max_length=255, null=True, blank=True)
     is_sale = models.BooleanField(default=False)
+    in_sg = models.BooleanField(default=False)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
 
-
     objects = ProductManager()
-
 
     def update_available_status(self):
         if not self.product_units.exists():
             self.available_flag = False
             self.save()
-
 
     class Meta:
         indexes = [
@@ -286,7 +287,6 @@ class Product(models.Model):
             # Добавьте индексы для остальных полей с db_index=True
         ]
 
-
     def update_min_price(self):
         if self.product_units.exists():
             self.min_price = 999999999
@@ -301,11 +301,13 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
 
-
-        custom_param = kwargs.pop('custom_param', False)
-        if custom_param:
-            self.slug = slugify(
-                f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
+        product_slug = kwargs.pop('product_slug', "1")
+        if product_slug != "1":
+            if product_slug == "":
+                self.slug = slugify(
+                    f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
+            else:
+                self.slug = product_slug
 
             lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
             if lines:
@@ -334,7 +336,6 @@ class Product(models.Model):
 
         # super(Product, self).save(*args, **kwargs)
         super().save(*args, **kwargs)
-
 
     def __str__(self):
         return self.model
@@ -379,7 +380,8 @@ class HeaderPhoto(models.Model):
     type = models.CharField(max_length=64, default="")
     where = models.CharField(max_length=64, default="")
     photo = models.CharField(max_length=1024, default="")
-    header_text = models.ForeignKey("HeaderText", related_name='headers_photo', blank=True, on_delete=models.CASCADE, null=True)
+    header_text = models.ForeignKey("HeaderText", related_name='headers_photo', blank=True, on_delete=models.CASCADE,
+                                    null=True)
 
 
 class HeaderText(models.Model):
@@ -393,11 +395,9 @@ class HeaderText(models.Model):
     text = models.CharField(max_length=8096, default="")
 
 
-
 class HeaderPage(models.Model):
     text = models.ForeignKey("HeaderText", blank=True, null=True, on_delete=models.PROTECT)
     photo = models.ForeignKey("HeaderPhoto", blank=True, null=True, on_delete=models.PROTECT)
-
 
 
 class MainPage(models.Model):
@@ -405,7 +405,6 @@ class MainPage(models.Model):
     photo = models.ForeignKey("HeaderPhoto", blank=True, null=True, on_delete=models.PROTECT)
     button = models.BooleanField(default=True)
     button_text = models.CharField(max_length=64, default="")
-
 
 
 class RansomRequest(models.Model):
@@ -416,6 +415,3 @@ class RansomRequest(models.Model):
     url = models.CharField(max_length=512, default="")
     photo = models.CharField(max_length=128, default="")
     info = models.CharField(max_length=1024, default="")
-
-
-

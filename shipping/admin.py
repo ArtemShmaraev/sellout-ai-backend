@@ -5,7 +5,7 @@ from .models import ProductUnit, Platform, Formula, AddressInfo, DeliveryType
 
 
 class ProductUnitAdmin(admin.ModelAdmin):
-    list_display = ('product', "platform", "delivery_type", "final_price", )
+    list_display = ('product', "platform", "delivery_type", "final_price", "id",)
 
 
 class AddressInfoAdmin(admin.ModelAdmin):

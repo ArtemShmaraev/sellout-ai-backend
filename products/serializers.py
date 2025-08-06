@@ -1,3 +1,4 @@
+
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
@@ -152,8 +153,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]
+        fields = "__all__"
+        # exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]
         depth = 2
+
 
     def get_price(self, obj):
         unit = ProductUnit.objects.filter(product=obj, final_price=obj.min_price,

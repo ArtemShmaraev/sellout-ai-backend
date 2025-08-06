@@ -91,7 +91,7 @@ class User(AbstractUser):
     weight = models.IntegerField(default=60)
 
     wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True, related_name="wait_list_users")
-    user_status = models.ForeignKey("UserStatus", default=get_default_status(), on_delete=models.SET_NULL, null=True, blank=True)
+    user_status = models.ForeignKey("UserStatus", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.username

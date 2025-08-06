@@ -1,16 +1,18 @@
 from orders.tools import round_to_nearest
 
-
 def formula_price(product, unit, user_status):
-    genders = product.gender.all().values_list("name", flat=True) # [M F K]
-    categories = product.categories.all().values_list("name", flat=True) # на русском ["Обувь", "Вся обувь"]
+
+
+    genders = product.gender.all().values_list("name", flat=True)  # ["M", "F", "K"]
+    categories = product.categories.all().values_list("name", flat=True)  # на русском ["Обувь", "Вся обувь"]
     poizon_abroad = unit.delivery_type.poizon_abroad
-    status_name = user_status.name # Amethyst
+    weight = unit.weight
+    status_name = user_status.name  # Amethyst
     delivery = unit.delivery_type
+    delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
+    extra_charge = delivery.extra_charge
+    original_price = unit.original_price  # цена в юанях
 
-    # чтобы получить инфу о доставке пиши  delivery.название_свойства как в файле с оферами
-
-    original_price = unit.original_price # цена в юанях
 
     final_price = unit.final_price * 14
     final_price += 3000

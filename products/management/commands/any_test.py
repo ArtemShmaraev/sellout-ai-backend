@@ -24,16 +24,19 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        users = User.objects.all()
-        for user in users:
-            if user.user_status is None:
-                user.user_status = UserStatus.objects.get(name="Amethyst")
-                user.save()
+        # users = User.objects.all()
+        # for user in users:
+        #     if user.user_status is None:
+        #         user.user_status = UserStatus.objects.get(name="Amethyst")
+        #         user.save()
         # Фильтруем объекты, для которых нет связанных product_units
-        # products_to_update = Product.objects.annotate(unit_count=Count('product_units')).filter(unit_count=0)
+        products_to_update = Product.objects.all()
         #
         # # Обновляем флаги доступности для выбранных объектов
-        # products_to_update.update(available_flag=False)
+        products_to_update.update(is_sale=True)
+        units = ProductUnit.objects.all()
+        units.update(is_sale=True)
+        print()
         #
         # # Выводим количество обновленных записей
         # self.stdout.write(self.style.SUCCESS(f'Updated {products_to_update.count()} products.'))

@@ -1,9 +1,10 @@
+import copy
 import math
 
 
 def round_by_step(value, step=50):
     return math.ceil(value / step) * step
-import copy
+
 
 CURRENCY_RATE_CNY = 13.8
 COMMISSION_FEE_ABSOLUTE = 500
@@ -151,20 +152,21 @@ def formula_price(product, unit, user_status):
         cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
                                  * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL + COMMISSION_FEE_ABSOLUTE)
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
+        total_profit = PRIVILEGED_MARKUP + converted_into_rub_price * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL
         total_price = total_cost + PRIVILEGED_MARKUP
     elif status_name == "Friends & Family":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         shipping_cost = delivery_price_per_kg_in_rub * weight
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
+        total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
-        if unit.final_price > 0:
-            return {"final_price": unit.final_price,
-                    "start_price": unit.start_price}
-
+        # if unit.final_price > 0:
+        #     return {"final_price": unit.final_price,
+        #             "start_price": unit.start_price}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = delivery_price_per_kg_in_rub * weight + delivery_extra_charge
+        shipping_cost = delivery_price_per_kg_in_rub * weight
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost
         total_cost_after_cashing_out = total_cost * CASHING_OUT_COMMISSION_FEE_DECIMAL
@@ -200,11 +202,13 @@ def formula_price(product, unit, user_status):
                 step_of_order_amount) >= 8 and "Обувь" not in categories and "Аксессуары" in categories:
             extra_markup += 1000
 
-        total_markup = preliminary_markup + extra_markup
+        total_markup = preliminary_markup + extra_markup + delivery_extra_charge
         total_price_before_payment_and_tax_commission = (total_cost_after_cashing_out + total_markup
                                                          + FIXED_COSTS_ABSOLUTE)
+        total_profit = total_markup
         total_price = total_price_before_payment_and_tax_commission * PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL
 
-
     round_total_price = round_by_step(total_price, step=100) - 10
-    return {"final_price":  round_total_price, "start_price": round_total_price}
+    total_round_markup = round_total_price - total_price
+    total_profit += total_round_markup
+    return {"final_price": round_total_price, "start_price": round(total_profit)}

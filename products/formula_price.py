@@ -162,9 +162,9 @@ def formula_price(product, unit, user_status):
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
-        # if unit.final_price > 0:
-        #     return {"final_price": unit.final_price,
-        #             "start_price": unit.start_price}
+        if unit.final_price > 0:
+            return {"final_price": unit.final_price,
+                    "start_price": unit.start_price}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         shipping_cost = delivery_price_per_kg_in_rub * weight
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
@@ -211,4 +211,4 @@ def formula_price(product, unit, user_status):
     round_total_price = round_by_step(total_price + 10, step=100) - 10
     total_round_markup = round_total_price - total_price
     total_profit += total_round_markup
-    return {"final_price": round_total_price, "start_price": round(total_profit), "total_profit": round(total_profit)}
+    return {"final_price": round_total_price, "start_price": round_total_price, "total_profit": round(total_profit)}

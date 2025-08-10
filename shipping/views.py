@@ -59,7 +59,6 @@ class MinPriceForSizeView(APIView):
             # Проход по каждому элементу списка
             for item in product_units:
                 size = item.view_size_platform
-                price = item.final_price
                 available = item.availability
 
                 # Проверка наличия размера в словаре

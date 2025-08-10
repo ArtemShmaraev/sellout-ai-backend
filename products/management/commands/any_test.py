@@ -34,6 +34,7 @@ class Command(BaseCommand):
         #
         # # Обновляем флаги доступности для выбранных объектов
         products_to_update.update(is_sale=False)
+        print(1)
         units = ProductUnit.objects.all()
         units.update(is_sale=False)
         print()

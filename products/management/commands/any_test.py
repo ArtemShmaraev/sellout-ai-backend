@@ -24,14 +24,19 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        users = User.objects.all()
+        for user in users:
+            if user.user_status is None:
+                user.user_status = UserStatus.objects.get(name="Amethyst")
+                user.save()
         # Фильтруем объекты, для которых нет связанных product_units
-        products_to_update = Product.objects.annotate(unit_count=Count('product_units')).filter(unit_count=0)
-
-        # Обновляем флаги доступности для выбранных объектов
-        products_to_update.update(available_flag=False)
-
-        # Выводим количество обновленных записей
-        self.stdout.write(self.style.SUCCESS(f'Updated {products_to_update.count()} products.'))
+        # products_to_update = Product.objects.annotate(unit_count=Count('product_units')).filter(unit_count=0)
+        #
+        # # Обновляем флаги доступности для выбранных объектов
+        # products_to_update.update(available_flag=False)
+        #
+        # # Выводим количество обновленных записей
+        # self.stdout.write(self.style.SUCCESS(f'Updated {products_to_update.count()} products.'))
 
         # di = DewuInfo.objects.filter(spu_id__in=ps)
         # print("го")

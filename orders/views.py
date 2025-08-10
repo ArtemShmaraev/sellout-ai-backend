@@ -28,7 +28,8 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            if str(data['delivery_type']) == "0" or cart.final_amount > user.user_status.free_ship_amount:
+            if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
+                print( user.user_status.name )
                 return Response({
                     "sum_part": 0,
                     "sum_all": 0,
@@ -223,15 +224,17 @@ class CheckOutView(APIView):
                 else:
                     order.delivery_view_price = 0
                 order.save()
-                unit_count = order.order_units.all().count()
-                if Order.objects.filter(user=user).count() == 1:
-                    accrual_bonus = AccrualBonus(amount=(unit_count * user.user_status.unit_max_bonuses) + 750)
-                else:
-                    accrual_bonus = AccrualBonus(amount=unit_count * user.user_status.unit_max_bonuses)
-                accrual_bonus.save()
-                user.bonuses.accrual.add(accrual_bonus)
-                user.bonuses.update_total_amount()
-                update_user_status(user)
+                cart.clear()
+                if user.user_status.base:
+                    unit_count = order.order_units.all().count()
+                    if Order.objects.filter(user=user).count() == 1:
+                        accrual_bonus = AccrualBonus(amount=(unit_count * user.user_status.unit_max_bonuses) + 750)
+                    else:
+                        accrual_bonus = AccrualBonus(amount=unit_count * user.user_status.unit_max_bonuses)
+                    accrual_bonus.save()
+                    user.bonuses.accrual.add(accrual_bonus)
+                    user.bonuses.update_total_amount()
+                    update_user_status(user)
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)
@@ -265,7 +268,7 @@ class UserOrdersView(APIView):
     def get(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
-                orders = Order.objects.filter(user_id=user_id)
+                orders = Order.objects.filter(user_id=user_id).order_by("-id")
                 serializer = OrderSerializer(orders, many=True)
                 return Response(serializer.data)
             else:

@@ -153,20 +153,25 @@ class ShoppingCart(models.Model):
     total_sale = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
 
+    def clear(self):
+        self.product_units.clear()
+        self.promo_code = None
+        self.unit_order = []
+        self.total()
+
+
     def total(self):
 
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         sale = 0
         user_status = self.user.user_status
-        print(user_status.name)
         for product_unit in self.product_units.all():
             if user_status.base:
                 update_price(product_unit.product)
                 price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
             else:
                 price = formula_price(product_unit.product, product_unit, user_status)
-            print(price)
             total_amount += price['start_price']
             sale += price['start_price'] - price['final_price']
 

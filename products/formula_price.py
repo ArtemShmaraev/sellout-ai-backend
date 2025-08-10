@@ -1,5 +1,8 @@
-from orders.tools import round_to_nearest
+import math
 
+
+def round_by_step(value, step=50):
+    return math.ceil(value / step) * step
 import copy
 
 CURRENCY_RATE_CNY = 13.8
@@ -202,4 +205,6 @@ def formula_price(product, unit, user_status):
                                                          + FIXED_COSTS_ABSOLUTE)
         total_price = total_price_before_payment_and_tax_commission * PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL
 
-    return {"final_price": round_to_nearest(total_price, step=100) - 10, "start_price": round_to_nearest(total_price, step=100) - 10}
+
+    round_total_price = round_by_step(total_price, step=100) - 10
+    return {"final_price":  round_total_price, "start_price": round_total_price}

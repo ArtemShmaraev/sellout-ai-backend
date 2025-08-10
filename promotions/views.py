@@ -13,7 +13,6 @@ from products.tools import update_price
 from shipping.models import ProductUnit
 from users.models import UserStatus
 from .models import PromoCode
-from .tools import check_promo
 from .serializers import PromoCodeSerializer
 
 
@@ -31,13 +30,12 @@ class PromocodeView(APIView):
                 promo = PromoCode.objects.get(string_representation=text.upper())
             except:
                 return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False})
-            check = check_promo(promo, user_id)
+            check = promo.check_promo(user_id=user_id)
 
             if check[0]:
-                promo = check[2]
                 cart.promo_code = promo
                 cart.total()
-                return Response({"final_amount": cart.final_amount, "message": "Промокод применен", "status": True})
+                return Response({"final_amount": cart.final_amount, "message": check[1], "status": True})
             return Response({"final_amount": cart.final_amount, "message": check[1], "status": False})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
@@ -71,10 +69,9 @@ class PromocodeAnonView(APIView):
             promo = PromoCode.objects.get(string_representation=text.upper())
         except:
             return Response({"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale, "promo_sale": 0})
-        check = check_promo(promo)
+        check = promo.check_promo()
 
         if check[0]:
-            promo = check[2]
             if promo.discount_percentage > 0:
 
                 final_amount = round((sum - sale) * (100 - promo.discount_percentage) // 100)

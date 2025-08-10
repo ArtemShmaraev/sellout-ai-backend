@@ -99,7 +99,7 @@ class MinPriceForSizeView(APIView):
                 for i in range(len(prices['final_price'])):
                     if prices['final_price'][i] <= min_price:
                         min_price = prices['final_price'][i]
-                        min_price_without_sale = max(min_price_without_sale, prices['start_price'][i])
+                        min_price_without_sale = prices['start_price'][i]
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = min_price

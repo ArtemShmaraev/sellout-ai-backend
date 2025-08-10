@@ -7,7 +7,7 @@ from time import time
 from django.db.models import Q, Case, When, Value, IntegerField
 
 from products.formula_price import formula_price
-from products.main_page import get_random
+# from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto
 
@@ -172,7 +172,7 @@ def get_product_text(photo, line, collab, category, new, recommendations):
         texts = texts.filter(title="sellout")
     if not texts.exists():
         texts = HeaderText.objects.filter(title="sellout")
-    text = get_random(texts)
+    text = random.choice(texts)
 
     return text
 

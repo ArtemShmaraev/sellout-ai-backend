@@ -141,8 +141,8 @@ def formula_price(product, unit, user_status):
     delivery = unit.delivery_type
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
     delivery_extra_charge = delivery.extra_charge
-    genders = product.gender.all().values_list("name", flat=True)  # ["M", "F", "K"]
-    categories = product.categories.all().values_list("name", flat=True)  # на русском ["Обувь", "Вся обувь"]
+    genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
+    categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
     poizon_abroad = unit.delivery_type.poizon_abroad
     status_name = user_status.name  # Amethyst
 
@@ -208,7 +208,7 @@ def formula_price(product, unit, user_status):
         total_profit = total_markup
         total_price = total_price_before_payment_and_tax_commission * PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL
 
-    round_total_price = round_by_step(total_price, step=100) - 10
+    round_total_price = round_by_step(total_price + 10, step=100) - 10
     total_round_markup = round_total_price - total_price
     total_profit += total_round_markup
-    return {"final_price": round_total_price, "start_price": round(total_profit)}
+    return {"final_price": round_total_price, "start_price": round(total_profit), "total_profit": round(total_profit)}

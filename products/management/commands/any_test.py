@@ -33,9 +33,9 @@ class Command(BaseCommand):
         products_to_update = Product.objects.all()
         #
         # # Обновляем флаги доступности для выбранных объектов
-        products_to_update.update(is_sale=True)
+        products_to_update.update(is_sale=False)
         units = ProductUnit.objects.all()
-        units.update(is_sale=True)
+        units.update(is_sale=False)
         print()
         #
         # # Выводим количество обновленных записей

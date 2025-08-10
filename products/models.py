@@ -7,6 +7,9 @@ from django_slugify_processor.text import slugify
 from django.db import models
 from django.dispatch import receiver
 
+from products.formula_price import formula_price
+from users.models import UserStatus
+
 
 class Photo(models.Model):
     url = models.CharField(max_length=512)
@@ -271,6 +274,16 @@ class Product(models.Model):
             self.available_flag = False
             self.save()
 
+
+    def update_price(self):
+        if not self.actual_price:
+            user_status = UserStatus.objects.get(name="Amethyst")
+            for unit in self.product_units.all():
+                price = formula_price(self, unit, user_status)
+                unit.start_price = price['start_price']
+                unit.final_price = price['final_price']
+                unit.save()
+            self.update_min_price()
 
 
     class Meta:

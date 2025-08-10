@@ -2,16 +2,6 @@ import datetime
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import PromoCodeSerializer
 
 
-def check_promo(promo, user_id=0):
-    try:
-        if promo.activation_count >= promo.max_activation_count:
-            return 0, "Промокод закончился"
-        if promo.active_status and promo.active_until_date >= datetime.date.today():
-            return 1, Response(PromoCodeSerializer(promo).data), promo
-        else:
-            return 0, "Промокод не активен"
-    except:
-        return 0, "Промокод не найден"
+

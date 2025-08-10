@@ -1,6 +1,6 @@
 from django.db import models
 
-from products.models import SizeTable
+# from products.models import SizeTable
 from utils.models import Currency
 
 

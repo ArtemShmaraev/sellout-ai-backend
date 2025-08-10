@@ -15,9 +15,8 @@ from shipping.models import ProductUnit, AddressInfo
 from shipping.serializers import ProductUnitSerializer
 from rest_framework import status
 from promotions.models import PromoCode, AccrualBonus
-from promotions.views import check_promo
 from users.models import User
-from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order, get_delivery
 from .tools_for_user import update_user_status
 
 
@@ -217,7 +216,7 @@ class CheckOutView(APIView):
                     order.add_order_unit(unit, user.user_status)
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
-                order.get_delivery(data)
+                get_delivery(order, data)
                 if order.final_amount <= user.user_status.free_ship_amount:
                     order.final_amount += order.delivery_price
 
@@ -234,7 +233,7 @@ class CheckOutView(APIView):
                     accrual_bonus.save()
                     user.bonuses.accrual.add(accrual_bonus)
                     user.bonuses.update_total_amount()
-                    update_user_status(user)
+                    user.update_user_status()
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)

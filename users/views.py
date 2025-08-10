@@ -5,12 +5,13 @@ from datetime import datetime, timedelta
 from django.core import signing
 from django.contrib.auth.tokens import default_token_generator
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import check_password, make_password
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer, BrandSerializer
-from .models import User, Gender, EmailConfirmation
+from .models import User, Gender, EmailConfirmation, UserStatus
 from rest_framework import exceptions
 from products.models import Product, Brand, SizeTable, SizeTranslationRows
 from django.db import models
@@ -37,6 +38,35 @@ from rest_framework.response import Response
 from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
+
+
+
+class LoyaltyProgram(APIView):
+    def get(self, request):
+        try:
+            user = request.user
+            res = {"bonuses": user.bonuses.total_amount, "status_name": user.user_status.name, "total": user.total_amount_order()}
+
+            statuses = UserStatus.objects.filter(base=True).order_by("total_orders_amount")
+            user_total = res['total']
+            new_level = 0
+            k = False
+            if user.user_status.base:
+                for status in statuses:
+                    if k:
+                        new_level = status.total_orders_amount - user_total
+                        break
+                    if status.total_orders_amount < user_total:
+                        k = True
+            res["until_next_status"] = new_level
+            res["number_card"] = str(user.id).zfill(4)[-4:]
+            return Response(res)
+        except ObjectDoesNotExist as e:
+            # Обработка исключения ObjectDoesNotExist (например, если объект не существует)
+            return Response({"error": str(e)}, status=404)
+        except Exception as e:
+            # Общая обработка других исключений
+            return Response({"error": str(e)}, status=500)
 
 
 

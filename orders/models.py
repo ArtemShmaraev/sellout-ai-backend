@@ -2,8 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models import F
 
-from products.tools import update_price
-from promotions.tools import check_promo
+
 from django.utils import timezone
 
 from shipping.models import AddressInfo
@@ -57,55 +56,7 @@ class Order(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
-    def get_delivery(self, data):
-        zip = "0"
-        if "address_id" in data:
-            zip = AddressInfo.objects.get(id=data['address_id']).post_index
 
-        target = data.get("target", "0")
-
-        if int(data['delivery_type']) == 0:
-            self.delivery_price = 0
-            self.delivery = "по Москве без консолидации"
-            self.groups_delivery.append([unit.id for unit in self.order_units.all()])
-        else:
-            if int(data['delivery_type']) == 1:
-                zip = "0"
-                name_delivery = "Пункт выдачи"
-            else:
-                target = "0"
-                name_delivery = "Курьер"
-
-            if data['consolidation']:
-                self.groups_delivery.append([unit.id for unit in self.order_units.all()])
-                self.delivery_price = get_delivery_price(self.order_units.all(), "02743", target, zip)
-                self.delivery = f"{name_delivery}"
-
-            else:
-                product_units = self.order_units.annotate(
-                    delivery_days=F('delivery_type__days_max')
-                )
-
-                sorted_product_units = product_units.order_by('delivery_days')
-                tec = [sorted_product_units[0]]
-                sum_part = 0
-                for unit in sorted_product_units[1:]:
-                    if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
-                        tec.append(unit)
-
-                    else:
-                        sum_part += get_delivery_price(tec, "02743", target, zip)
-                        self.groups_delivery.append([unit.id for unit in tec])
-                        tec = [unit]
-
-                sum_part += get_delivery_price(tec, "02743", target, zip)
-                self.groups_delivery.append([unit.id for unit in tec])
-                self.delivery_price = sum_part
-                self.delivery = f"{name_delivery} + консолидация"
-
-        self.delivery_price = round_to_nearest(self.delivery_price)
-        self.delivery_view_price = self.delivery_price
-        self.save()
 
     def change_status(self):
         min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
@@ -115,7 +66,7 @@ class Order(models.Model):
 
     def add_order_unit(self, product_unit, user_status):
         if user_status.base:
-            update_price(product_unit.product)
+            product_unit.product.update_price()
             price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
         else:
             price = formula_price(product_unit.product, product_unit, user_status)
@@ -168,7 +119,7 @@ class ShoppingCart(models.Model):
         user_status = self.user.user_status
         for product_unit in self.product_units.all():
             if user_status.base:
-                update_price(product_unit.product)
+                product_unit.product.update_price()
                 price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
             else:
                 price = formula_price(product_unit.product, product_unit, user_status)
@@ -182,8 +133,9 @@ class ShoppingCart(models.Model):
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь
         # Если промокод активен и применим, обновить поле promo_code для текущей корзины
-        if not check_promo(self.promo_code, user_id=self.user_id)[0]:
-            self.promo_code = None
+
+        # if not self.promo_code.check_promo(user_id=self.user_id)[0]:
+        #     self.promo_code = None
 
         if self.promo_code:
             self.final_amount = self.total_amount - self.sale

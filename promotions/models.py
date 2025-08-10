@@ -20,6 +20,17 @@ class PromoCode(models.Model):
     active_status = models.BooleanField(default=True)
     active_until_date = models.DateField(default=date.today)
 
+    def check_promo(self, user_id=0):
+        try:
+            if self.activation_count >= self.max_activation_count:
+                return 0, "Промокод закончился"
+            if self.active_status and self.active_until_date >= datetime.date.today():
+                return 1, "Промокод применен"
+            else:
+                return 0, "Промокод не активен"
+        except:
+            return 0, "Промокод не найден"
+
     def __str__(self):
         return self.string_representation
 

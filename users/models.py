@@ -2,8 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
 
+from orders.models import Order
 from promotions.models import Bonuses
-from products.models import SizeRow, SizeTable
+
 
 from django.utils import timezone
 
@@ -96,8 +97,25 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def update_user_status(self):
+        statuses = UserStatus.objects.filter(base=True).order_by("-total_orders_amount")
+        user_total = self.total_amount_order()
+
+        for status in statuses:
+            if status.total_orders_amount < user_total:
+                self.user_status = status
+                break
+        self.save()
+
+    def total_amount_order(self):
+        user_orders = Order.objects.filter(user=self)
+        user_total = user_orders.aggregate(total=Sum('final_amount_without_shipping'))['total']
+        return user_total
+
+
 
     def save(self, *args, **kwargs):
+        from products.models import SizeRow, SizeTable
         # Если гендер мужской, установите значение по умолчанию для мужского размера обуви
         size_info = kwargs.pop('size_info', False)
         if not size_info:

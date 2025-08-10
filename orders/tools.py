@@ -2,8 +2,9 @@ import requests
 
 import math
 
-from django.db.models import Sum
+from django.db.models import Sum, F
 
+from shipping.models import AddressInfo
 
 
 def get_delivery_price(units, target_start, target, zip):
@@ -53,3 +54,56 @@ def send_email_confirmation_order(order, email):
     }
     requests.get(url, params=params)
     return requests.status_codes
+
+
+
+
+def get_delivery(order, data):
+    zip = "0"
+    if "address_id" in data:
+        zip = AddressInfo.objects.get(id=data['address_id']).post_index
+
+    target = data.get("target", "0")
+
+    if int(data['delivery_type']) == 0:
+        order.delivery_price = 0
+        order.delivery = "по Москве без консолидации"
+        order.groups_delivery.append([unit.id for unit in order.order_units.all()])
+    else:
+        if int(data['delivery_type']) == 1:
+            zip = "0"
+            name_delivery = "Пункт выдачи"
+        else:
+            target = "0"
+            name_delivery = "Курьер"
+
+        if data['consolidation']:
+            order.groups_delivery.append([unit.id for unit in order.order_units.all()])
+            order.delivery_price = get_delivery_price(order.order_units.all(), "02743", target, zip)
+            order.delivery = f"{name_delivery}"
+
+        else:
+            product_units = order.order_units.annotate(
+                delivery_days=F('delivery_type__days_max')
+            )
+
+            sorted_product_units = product_units.order_by('delivery_days')
+            tec = [sorted_product_units[0]]
+            sum_part = 0
+            for unit in sorted_product_units[1:]:
+                if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
+                    tec.append(unit)
+
+                else:
+                    sum_part += get_delivery_price(tec, "02743", target, zip)
+                    order.groups_delivery.append([unit.id for unit in tec])
+                    tec = [unit]
+
+            sum_part += get_delivery_price(tec, "02743", target, zip)
+            order.groups_delivery.append([unit.id for unit in tec])
+            order.delivery_price = sum_part
+            order.delivery = f"{name_delivery} + консолидация"
+
+    order.delivery_price = round_to_nearest(order.delivery_price)
+    order.delivery_view_price = order.delivery_price
+    order.save()

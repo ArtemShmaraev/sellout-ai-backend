@@ -1,5 +1,5 @@
 
-from users.models import User, UserStatus
+
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
     SizeTranslationRows, Collab, SGInfo, Material
@@ -8,6 +8,7 @@ from shipping.models import ProductUnit
 from django.db.models import Min, Q, Max, Count
 from .formula_price import formula_price
 # from .views import build_line_tree
+from users.models import User, UserStatus
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 

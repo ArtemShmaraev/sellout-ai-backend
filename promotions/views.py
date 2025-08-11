@@ -80,6 +80,6 @@ class PromocodeAnonView(APIView):
             else:
                 return Response({"final_amount": sum, "message": "Промокод не активен", "status": False, "sale": sale})
             return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
-                             "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale})
+                             "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale, "promo_code": promo.string_representation})
         else:
             return Response({"final_amount": sum, "message": check[1], "status": False, "total_sale": 0, "sale": sale, "promo_sale": 0})

@@ -44,17 +44,17 @@ from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 class LoyaltyProgram(APIView):
     def get(self, request):
         try:
-            user = request.user
+            user = User.objects.get(id=request.user.id)
             res = {"bonuses": user.bonuses.total_amount, "status_name": user.user_status.name, "total": user.total_amount_order()}
 
             statuses = UserStatus.objects.filter(base=True).order_by("total_orders_amount")
             user_total = res['total']
             new_level = 0
-            k = False
             if user.user_status.base:
                 for status in statuses:
-                    if not status.total_orders_amount < user_total:
+                    if status.total_orders_amount > user_total:
                         new_level = status.total_orders_amount - user_total
+                        break
 
             res["until_next_status"] = new_level
             res["number_card"] = str(user.id).zfill(4)[-4:]

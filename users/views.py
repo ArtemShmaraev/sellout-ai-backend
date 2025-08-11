@@ -53,11 +53,9 @@ class LoyaltyProgram(APIView):
             k = False
             if user.user_status.base:
                 for status in statuses:
-                    if k:
+                    if not status.total_orders_amount < user_total:
                         new_level = status.total_orders_amount - user_total
-                        break
-                    if status.total_orders_amount < user_total:
-                        k = True
+
             res["until_next_status"] = new_level
             res["number_card"] = str(user.id).zfill(4)[-4:]
             return Response(res)
@@ -224,14 +222,13 @@ class UserChangePassword(generics.GenericAPIView):
             return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            if user and default_token_generator.check_token(user, token.strip()):
+            if default_token_generator.check_token(user, token.strip()):
                 data = json.loads(request.body)
-                user.set_password(data.get('password', ''))
+                user.set_password(data.get('password', '').strip())
                 user.save()
-                log_data = {'username': user.email, 'password': data.get('password', '')}
+                log_data = {'username': user.username, 'password': data['password']}
                 serializer = self.get_serializer(data=log_data)
                 serializer.is_valid(raise_exception=True)
-
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
             else:
                 return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)

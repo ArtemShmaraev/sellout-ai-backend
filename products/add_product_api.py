@@ -28,8 +28,7 @@ def add_product_api(data):
                                                     manufacturer_sku=manufacturer_sku)
     product_slug = ""
     if not create:
-        if product.available_flag:
-            product_slug = product.slug
+        product_id = product.id
         product.delete()
         product = Product.objects.create(spu_id=spu_id, property_id=property_id,
                                          manufacturer_sku=manufacturer_sku, slug=f"{spu_id}_{property_id}_{manufacturer_sku}")
@@ -211,8 +210,8 @@ def add_product_api(data):
                 product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
                 product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
                 product_unit.update_history()
-    product.update_min_price()
 
+    product.update_price()
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.all():

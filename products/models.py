@@ -232,7 +232,7 @@ class Product(models.Model):
                                    related_name='products')
     size_table_platform = models.JSONField(default=dict)
 
-    min_price = models.IntegerField(blank=True, null=True, db_index=True)
+    min_price = models.IntegerField(blank=True, null=True, db_index=True, default=0)
     min_price_without_sale = models.IntegerField(blank=True, null=True, default=0)
 
     # sizes are initialized in Size model by ForeignKey
@@ -283,7 +283,11 @@ class Product(models.Model):
                 unit.start_price = price['start_price']
                 unit.final_price = price['final_price']
                 unit.save()
-            self.update_min_price()
+                if (unit.final_price <= self.min_price or self.min_price == 0) and unit.availability:
+                    self.min_price = unit.final_price
+                    self.min_price_without_sale = unit.start_price
+            self.actual_price = True
+            self.save()
 
 
     class Meta:

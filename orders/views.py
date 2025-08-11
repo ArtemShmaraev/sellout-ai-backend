@@ -174,17 +174,17 @@ class ShoppingCartUser(APIView):
 
 class UseBonus(APIView):
 
-    def post(self, request, user_id):
+    def post(self, request):
         try:
-            if request.user.id == user_id or request.user.is_staff:
-                bonus = int(json.loads(request.body)["bonus"])
-                cart = ShoppingCart.objects.get(user_id=user_id)
-                if bonus <= cart.user.bonuses.total_amount:
-                    cart.bonus_sale = bonus
-                    cart.save()
-                    return Response("Бонусы списаны")
-                else:
-                    return Response("Недостаточно бонусов", status=status.HTTP_403_FORBIDDEN)
+            user = request.user
+            bonus = int(json.loads(request.body)["bonus"])
+            cart = ShoppingCart.objects.get(user=user)
+            if bonus <= cart.user.bonuses.total_amount:
+                cart.bonus_sale = bonus
+                cart.save()
+                return Response("Бонусы списаны")
+            else:
+                return Response("Недостаточно бонусов", status=status.HTTP_403_FORBIDDEN)
         except ShoppingCart.DoesNotExist:
             return Response("Пользователь не найден", status=status.HTTP_404_NOT_FOUND)
 
@@ -241,6 +241,20 @@ class CheckOutView(APIView):
                     user.bonuses.accrual.add(accrual_bonus)
                     user.bonuses.update_total_amount()
                     user.update_user_status()
+
+                if cart.promo_code is not None:
+                    cart.promo_code.activation_count += 1
+                    cart.promo_code.save()
+
+                    if cart.promo_code.ref_promo:
+                        ref_user = cart.promo_code.owner
+                        ref_accrual_bonus = AccrualBonus(amount=cart.promo_sale, type="Приглашение")
+                        ref_accrual_bonus.save()
+                        ref_user.bonuses.accrual.add(ref_accrual_bonus)
+                        cart.user.ref_user = ref_user
+                        cart.user.save()
+                        ref_user.save()
+
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)

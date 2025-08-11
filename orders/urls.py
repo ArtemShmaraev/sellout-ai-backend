@@ -17,6 +17,6 @@ urlpatterns.append(path('orders', AllOrdersView.as_view()))
 urlpatterns.append(path('user_orders/<int:user_id>', UserOrdersView.as_view()))
 urlpatterns.append(path('info/<int:order_id>', OrderView.as_view()))
 
-urlpatterns.append(path('cart/use_bonus/<int:user_id>', UseBonus.as_view()))
+urlpatterns.append(path('cart/use_bonus', UseBonus.as_view()))
 urlpatterns.append(path('status_unit/<order_unit_id>', ChangeStatusUnit.as_view()))
 urlpatterns.append(path('delivery_info', DeliveryInfo.as_view()))

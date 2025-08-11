@@ -40,6 +40,7 @@ class PromoCode(models.Model):
 class AccrualBonus(models.Model):
     amount = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now=True)
+    type = models.CharField(default="Накопление", max_length=120)
 
     def is_expired(self):
         return self.date + timedelta(days=365) < datetime.datetime.now()

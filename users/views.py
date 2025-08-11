@@ -9,6 +9,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import check_password, make_password
+
+from promotions.models import PromoCode
+from promotions.serializers import PromoCodeSerializer
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer, BrandSerializer
 from .models import User, Gender, EmailConfirmation, UserStatus
@@ -749,3 +752,44 @@ class AddFavoriteBrands(APIView):
                 return Response("бренд не существует", status=status.HTTP_404_NOT_FOUND)
         else:
             return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
+
+
+
+class UserReferalPromo(APIView):
+    def get(self, request):
+        user = request.user
+        if user.referral_promo is not None:
+            return Response(PromoCodeSerializer(user.referal_promo).data)
+        else:
+            return Response("none")
+
+    def post(self, request):
+        user = request.user
+
+        data = json.loads(request.body)
+        string = data['promo']
+        promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
+        promo.save()
+        user.referral_promo = promo
+        user.save()
+        return Response(PromoCodeSerializer(user.referal_promo).data)
+
+    def put(self, request):
+        user = request.user
+        data = json.loads(request.body)
+        string = data['promo']
+        promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
+        promo.save()
+        if user.referral_promo is not None:
+            user.referal_promo.delete()
+        user.save()
+        return Response(PromoCodeSerializer(user.referal_promo).data)
+
+    def delete(self, request):
+        user = request.user
+        if user.referral_promo is not None:
+            user.referal_promo.delete()
+        return Response("DELETE request processed")
+
+
+

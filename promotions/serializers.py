@@ -5,8 +5,6 @@ from users.serializers import ForAnonUserSerializer
 
 class PromoCodeSerializer(serializers.ModelSerializer):
     owner = ForAnonUserSerializer()
-
-
     class Meta:
         model = PromoCode
         fields = '__all__'

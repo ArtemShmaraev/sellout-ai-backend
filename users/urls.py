@@ -3,7 +3,7 @@ from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, FavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
     UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView, GoogleAuth, \
-    initiate_google_auth, UserForSpamEmail, confirm_email, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram
+    initiate_google_auth, UserForSpamEmail, confirm_email, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo
 
 router = routers.DefaultRouter()
 router.register("", UserViewSet, 'user')
@@ -34,3 +34,4 @@ urlpatterns.append(path('send_set_pwd/<str:email>', SendSetPassword.as_view()))
 urlpatterns.append(path('send_verify_email/<int:user_id>', SendVerifyEmail.as_view()))
 urlpatterns.append(path('auth/google/', initiate_google_auth))
 urlpatterns.append(path('waiting_list/<int:product_id>', WaitList.as_view()))
+urlpatterns.append(path('referal_promo', UserReferalPromo.as_view()))

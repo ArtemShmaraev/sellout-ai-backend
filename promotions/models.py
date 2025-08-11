@@ -18,6 +18,8 @@ class PromoCode(models.Model):
     activation_count = models.IntegerField(default=0)
     max_activation_count = models.IntegerField(default=1)
     active_status = models.BooleanField(default=True)
+    unlimited = models.BooleanField(default=False)
+    ref_promo = models.BooleanField(default=False)
     active_until_date = models.DateField(default=date.today)
 
     def check_promo(self, user_id=0):

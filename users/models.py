@@ -71,7 +71,7 @@ class User(AbstractUser):
 
     # wishlist and shopping cart are described in Wishlist and ShoppingCart models
 
-    referral_promo = models.CharField(max_length=100, null=True, blank=True)
+    referral_promo = models.ForeignKey("promotions.PromoCode", on_delete=models.SET_NULL, blank=True, null=True)
     ref_user = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
     bonuses = models.ForeignKey("promotions.Bonuses", on_delete=models.PROTECT, null=True, blank=True,
                                 related_name="user")

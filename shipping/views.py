@@ -72,7 +72,7 @@ class MinPriceForSizeView(APIView):
                 if available:
                     prices_by_size[size]["available"] = True
                     if user_status.base:
-                        price = {"start_price": item.start_price, "final_price": item.final_price}
+                        price = {"start_price": item.start_price, "final_price": item.final_price, "bonus": item.bonus}
                     else:
                         price = formula_price(item.product, item, user_status)
 

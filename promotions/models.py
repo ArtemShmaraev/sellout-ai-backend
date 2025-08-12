@@ -22,12 +22,35 @@ class PromoCode(models.Model):
     ref_promo = models.BooleanField(default=False)
     active_until_date = models.DateField(default=date.today)
 
-    def check_promo(self, user_id=0):
+    def check_promo(self, final_amount, total_amount, user_id=0, cart=""):
         try:
+            if self.ref_promo:
+                ref_sale = 0
+                if 3000 <= final_amount < 5000:
+                    ref_sale = 500
+                elif 5000 <= final_amount < 15000:
+                    ref_sale = 750
+                elif 15000 <= final_amount < 35000:
+                    ref_sale = 1000
+                elif 35000 <= final_amount < 70000:
+                    ref_sale = 1250
+                elif 70000 <= final_amount < 130000:
+                    ref_sale = 2000
+                elif 130000 <= final_amount < 150000:
+                    ref_sale = 2500
+                elif final_amount >= 150000:
+                    ref_sale = 3000
+                final_amount = total_amount - ref_sale
+            elif self.discount_percentage > 0:
+                final_amount = round(total_amount * (100 - self.discount_percentage) // 100)
+            elif self.discount_absolute > 0:
+                final_amount = round(total_amount - self.discount_absolute)
+            promo_sale = total_amount - final_amount
+
             if self.activation_count >= self.max_activation_count:
                 return 0, "Промокод закончился"
             if self.active_status and self.active_until_date >= datetime.date.today():
-                return 1, "Промокод применен"
+                return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale
             else:
                 return 0, "Промокод не активен"
         except:

@@ -233,6 +233,7 @@ class Product(models.Model):
     size_table_platform = models.JSONField(default=dict)
 
     min_price = models.IntegerField(blank=True, null=True, db_index=True, default=0)
+    max_bonus = models.IntegerField(blank=True, null=True, default=0)
     min_price_without_sale = models.IntegerField(blank=True, null=True, default=0)
 
     # sizes are initialized in Size model by ForeignKey
@@ -282,6 +283,8 @@ class Product(models.Model):
                 price = formula_price(self, unit, user_status)
                 unit.start_price = price['start_price']
                 unit.final_price = price['final_price']
+                unit.total_profit = price['total_profit']
+                unit.bonus = price['bonus']
                 unit.save()
                 if (unit.final_price <= self.min_price or self.min_price == 0) and unit.availability:
                     self.min_price = unit.final_price

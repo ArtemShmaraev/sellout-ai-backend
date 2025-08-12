@@ -32,6 +32,7 @@ class DeliveryForSizeView(APIView):
                 d['id'] = product_unit.id
                 d['final_price'] = price['final_price']
                 d['start_price'] = price['start_price']
+                d['bonus'] = price['bonus']
                 d['available'] = product_unit.availability
                 d['is_fast_shipping'] = product_unit.is_fast_shipping
                 d['is_sale'] = product_unit.is_sale
@@ -63,7 +64,7 @@ class MinPriceForSizeView(APIView):
 
                 # Проверка наличия размера в словаре
                 if size not in prices_by_size:
-                    prices_by_size[size] = {"final_price": [], "start_price": [], "available": False,
+                    prices_by_size[size] = {"final_price": [], "start_price": [], "bonus": [], "available": False,
                                             "is_fast_shipping": False, "is_sale": False, "is_return": False,
                                             "size_sellout": []}
                 prices_by_size[size]["size_sellout"].extend(item.size.all().values_list("id"))
@@ -77,6 +78,7 @@ class MinPriceForSizeView(APIView):
 
                     prices_by_size[size]['final_price'].append(price['final_price'])
                     prices_by_size[size]['start_price'].append(price['start_price'])
+                    prices_by_size[size]['bonus'].append(price['bonus'])
 
                     if item.is_fast_shipping:
                         prices_by_size[size]["is_fast_shipping"] = True
@@ -95,13 +97,17 @@ class MinPriceForSizeView(APIView):
 
                 min_price = prices['final_price'][0]
                 min_price_without_sale = prices['start_price'][0]
+                max_bonus = prices['bonus'][0]
                 for i in range(len(prices['final_price'])):
                     if prices['final_price'][i] <= min_price:
                         min_price = prices['final_price'][i]
                         min_price_without_sale = prices['start_price'][i]
+                        max_bonus = prices['bonus'][i]
+
                 d = dict()
                 if len(prices) > 0:
                     d['min_price'] = min_price
+                    d['bonus'] = max_bonus
                     d['min_price_without_sale'] = min_price_without_sale
                     d['available'] = prices['available']
                     d['is_fast_shipping'] = prices['is_fast_shipping']

@@ -485,7 +485,6 @@ class LineTreeView(APIView):
                     tree[i]['is_show'] = False
                     no_tree.append(tree[i])
             return Response(start_tree + in_tree + no_tree)
-
         return Response(tree)
 
 

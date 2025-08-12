@@ -9,7 +9,7 @@ import json
 from django.core.paginator import Paginator
 from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count
 
-from orders.models import ShoppingCart, Status
+from orders.models import ShoppingCart, Status, OrderUnit, Order
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
@@ -25,12 +25,25 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        users = User.objects.all()
-        for new_user in users:
-            promo = PromoCode(string_representation=f"{new_user.username}", ref_promo=True, unlimited=True, owner=new_user)
-            promo.save()
-            new_user.referral_promo = promo
-            new_user.save()
+        product = Product.objects.get(slug="hermes-faubourg-birkin-sellier-20-125740")
+        for unit in product.product_units.all():
+            print(unit.original_price)
+        # order_status = [
+        #     "В пути до международного склада",
+        #     "В пути до московского склада",
+        #     "Прибыл в Москву",
+        #     "Передан в службу доставки по России",
+        #     "Доставлен",
+        #     "Отменён", "Частично передан в службу доставки по России", "Частично прибыл в Москву"
+        # ]
+        # for os in order_status:
+        #     s = Status(name=os)
+        #     s.save()
+        sp = []
+        # for ou in ous:
+        #     ou.status = Status.objects.get_or_create(name="Принят")[0]
+        #     ou.save()
+
 
         # users = User.objects.all()
         # for user in users:

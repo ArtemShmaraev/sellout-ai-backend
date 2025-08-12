@@ -90,6 +90,8 @@ class ProductUnit(models.Model):
     original_price = models.IntegerField(null=False, blank=False, default=0)
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False, db_index=True)  # Новая цена
+    total_profit = models.IntegerField(null=False, blank=False, default=0)
+    bonus = models.IntegerField(null=False, blank=False, default=0)
     approximate_price_with_delivery_in_rub = models.IntegerField(null=False, blank=False, db_index=True, default=0)
     delivery_type = models.ForeignKey("DeliveryType", on_delete=models.CASCADE, related_name='product_units',
                                       null=False, blank=False, default=get_default_delivery_type, db_index=True)

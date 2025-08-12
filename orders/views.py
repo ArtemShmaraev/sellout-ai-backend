@@ -181,8 +181,9 @@ class UseBonus(APIView):
             cart = ShoppingCart.objects.get(user=user)
             if bonus <= cart.user.bonuses.total_amount:
                 cart.bonus_sale = bonus
-                cart.save()
-                return Response("Бонусы списаны")
+                cart.total()
+                serializer = ShoppingCartSerializer(cart, context={"user_id": user.id})
+                return Response(serializer.data)
             else:
                 return Response("Недостаточно бонусов", status=status.HTTP_403_FORBIDDEN)
         except ShoppingCart.DoesNotExist:
@@ -232,11 +233,17 @@ class CheckOutView(APIView):
                 order.save()
                 cart.clear()
                 if user.user_status.base:
-                    unit_count = order.order_units.all().count()
-                    if Order.objects.filter(user=user).count() == 1:
-                        accrual_bonus = AccrualBonus(amount=(unit_count * user.user_status.unit_max_bonuses) + 750)
-                    else:
-                        accrual_bonus = AccrualBonus(amount=unit_count * user.user_status.unit_max_bonuses)
+                    orders_count = Order.objects.filter(user=user).count()
+                    units = order.order_units.order_by("-bonus")
+                    k = 0
+                    sum_bonus = 0
+                    for unit in units:
+                        if orders_count == 1 and k == 0:
+                            sum_bonus += 1000
+                        else:
+                            sum_bonus += unit.bonus
+                        k += 1
+                    accrual_bonus = AccrualBonus(amount=sum_bonus)
                     accrual_bonus.save()
                     user.bonuses.accrual.add(accrual_bonus)
                     user.bonuses.update_total_amount()
@@ -254,7 +261,6 @@ class CheckOutView(APIView):
                         cart.user.ref_user = ref_user
                         cart.user.save()
                         ref_user.save()
-
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)

@@ -9,6 +9,7 @@ from shipping.models import AddressInfo
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 from products.formula_price import formula_price
 
+
 class Status(models.Model):
     name = models.CharField(max_length=500, null=False, blank=False)
 
@@ -17,7 +18,7 @@ class Status(models.Model):
 
 
 def get_default_status():
-    default_object = Status.objects.get_or_create(name="Ожидает подтверждения")[0]
+    default_object = Status.objects.get_or_create(name="Заказ принят")[0]
     return default_object.pk
 
 
@@ -56,13 +57,31 @@ class Order(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
+    def update_order_status(self):
+        # Получаем все статусы юнитов этого заказа
+        unit_statuses = self.order_units.values_list('status__name', flat=True)
 
+        # Проверяем условия и определяем статус заказа
+        if 'Отменён' in unit_statuses:
+            self.status = Status.objects.get(name='Отменён')
+        elif 'Доставлен' in unit_statuses:
+            self.status = Status.objects.get(name='Доставлен')
+        elif 'В пути' in unit_statuses and 'Получен' not in unit_statuses:
+            self.status = Status.objects.get(name='В пути')
+        elif 'Прибыл в Москву' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
+            self.status = Status.objects.get(name='Частично прибыл в Москву')
+        elif 'Готов к самовывозу' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
+            self.status = Status.objects.get(name='Частично готов к самовывозу')
+        elif all(status == 'Готов к самовывозу' or status == 'Получен' for status in unit_statuses):
+            self.status = Status.objects.get(name='Готов к самовывозу')
+        elif 'Передан в службу доставки по России' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
+            self.status = Status.objects.get(name='Частично передан в службу доставки по России')
+        elif all(status == 'Передан в службу доставки по России' or status == 'Получен' for status in unit_statuses):
+            self.status = Status.objects.get(name='Передан в службу доставки по России')
+        else:
+            self.status = Status.objects.get(name='Заказ принят')
 
-    def change_status(self):
-        min_status_id = self.order_units.aggregate(min_status_id=models.Min('status__id'))['min_status_id']
-        if min_status_id is not None:
-            self.status = Status.objects.get(id=min_status_id)
-            self.save()
+        self.save()
 
     def add_order_unit(self, product_unit, user_status):
         if user_status.base:
@@ -83,7 +102,10 @@ class Order(models.Model):
             warehouse=product_unit.warehouse,
             is_return=product_unit.is_return,
             is_fast_shipping=product_unit.is_fast_shipping,
-            is_sale=product_unit.is_sale
+            is_sale=product_unit.is_sale,
+            bonus=product_unit.bonus,
+            original_price=product_unit.original_price,
+            total_profit=product_unit.total_profit
         )
         order_unit.save()
         self.order_units.add(order_unit)
@@ -102,6 +124,7 @@ class ShoppingCart(models.Model):
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
+    bonus = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
 
     def clear(self):
@@ -117,18 +140,27 @@ class ShoppingCart(models.Model):
         total_amount = 0
         sale = 0
         user_status = self.user.user_status
+        sum_bonus = 0
+        max_bonus = 0
         for product_unit in self.product_units.all():
             if user_status.base:
                 product_unit.product.update_price()
                 price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                sum_bonus += price['bonus']
+                max_bonus = max(max_bonus, price['bonus'])
             else:
                 price = formula_price(product_unit.product, product_unit, user_status)
             total_amount += price['start_price']
             sale += price['start_price'] - price['final_price']
 
+
         # Обновить поле total_amount для текущей корзины
         self.total_amount = total_amount
         self.sale = sale
+
+        orders_count = Order.objects.filter(user=self.user).count()
+        if orders_count == 0:
+            sum_bonus += max(0, 1000 - max_bonus)
 
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь
@@ -163,6 +195,7 @@ class ShoppingCart(models.Model):
 
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
+        self.bonus_sale = sum_bonus
         self.save()
 
     def __str__(self):
@@ -191,6 +224,9 @@ class OrderUnit(models.Model):
 
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False)  # Новая цена
+    original_price = models.IntegerField(null=False, blank=False, default=0)
+    total_profit = models.IntegerField(null=False, blank=False, default=0)
+    bonus = models.IntegerField(null=False, blank=False, default=0)
     delivery_type = models.ForeignKey("shipping.DeliveryType", on_delete=models.CASCADE, related_name='order_units',
                                       null=False, blank=False)
     platform = models.ForeignKey("shipping.Platform", on_delete=models.CASCADE, related_name='order_units',

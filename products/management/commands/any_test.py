@@ -25,9 +25,17 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        product = Product.objects.get(slug="hermes-faubourg-birkin-sellier-20-125740")
-        for unit in product.product_units.all():
-            print(unit.original_price)
+        users = User.objects.all()
+        for u in users:
+            promo_string = u.email.split("@")[0].upper()
+            if PromoCode.objects.filter(string_representation=promo_string).exists():
+                promo_string += str(u.id)
+            promo = PromoCode(string_representation=promo_string, ref_promo=True, unlimited=True, owner=u)
+            promo.save()
+            u.referral_promo = promo
+            u.save()
+
+
         # order_status = [
         #     "В пути до международного склада",
         #     "В пути до московского склада",

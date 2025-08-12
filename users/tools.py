@@ -67,7 +67,10 @@ def register_user(data):
     # Присвойте бонусы пользователю и сохраните его снова
     new_user.bonuses = bonus
     new_user.user_status = UserStatus.objects.get(name='Amethyst')
-    promo = PromoCode(string_representation=f"{data['username']}", ref_promo=True, unlimited=True, owner=new_user)
+    promo_string = data['username'].split("@")[0].upper()
+    if PromoCode.objects.filter(string_representation=promo_string).exists():
+        promo_string += str(new_user.id)
+    promo = PromoCode(string_representation=promo_string, ref_promo=True, unlimited=True, owner=new_user)
     promo.save()
     new_user.referral_promo = promo
     new_user.save()

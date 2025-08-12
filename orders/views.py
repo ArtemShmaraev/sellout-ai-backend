@@ -28,7 +28,7 @@ class DeliveryInfo(APIView):
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
             if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
-                print( user.user_status.name )
+                print(user.user_status.name)
                 return Response({
                     "sum_part": 0,
                     "sum_all": 0,
@@ -205,7 +205,7 @@ class CheckOutView(APIView):
                               promo_code=cart.promo_code,
                               email=data['email'], phone=data['phone'],
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
-                              status=Status.objects.get(name="Принят"), fact_of_payment=False,
+                              status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
                               bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
@@ -225,13 +225,13 @@ class CheckOutView(APIView):
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 get_delivery(order, data)
-                if order.final_amount <= user.user_status.free_ship_amount:
+                if order.final_amount <= user.user_status.free_ship_amount and order.user.user_status.base:
                     order.final_amount += order.delivery_price
 
                 else:
                     order.delivery_view_price = 0
                 order.save()
-                cart.clear()
+
                 if user.user_status.base:
                     orders_count = Order.objects.filter(user=user).count()
                     units = order.order_units.order_by("-bonus")
@@ -264,6 +264,7 @@ class CheckOutView(APIView):
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)
+                cart.clear()
                 return Response(serializer)
             else:
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

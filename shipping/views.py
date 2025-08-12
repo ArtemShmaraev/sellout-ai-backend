@@ -26,7 +26,7 @@ class DeliveryForSizeView(APIView):
             for product_unit in product_units:
                 d = dict()
                 if user_status.base:
-                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price, "bonus": product_unit.bonus}
                 else:
                     price = formula_price(product_unit.product, product_unit, user_status)
                 d['id'] = product_unit.id
@@ -39,6 +39,7 @@ class DeliveryForSizeView(APIView):
                 d['is_return'] = product_unit.is_return
                 d['delivery'] = DeliveryTypeSerializer(product_unit.delivery_type).data
                 s.append(d)
+                print(s)
             return Response(s)
 
 
@@ -245,7 +246,10 @@ class TotalPriceForListProductUnitView(APIView):
     def post(self, request):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
-            product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+
+            s_id = [s.strip() for s in s_product_unit if s.strip()]
+
+            product_units = ProductUnit.objects.filter(id__in=s_id)
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(
                 name="Amethyst")
 
@@ -260,6 +264,7 @@ class TotalPriceForListProductUnitView(APIView):
                     price = formula_price(product_unit.product, product_unit, user_status)
                 sum += price['start_price']
                 sale += price['start_price'] - price['final_price']
+
 
             return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale})
         except json.JSONDecodeError:

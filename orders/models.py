@@ -130,6 +130,12 @@ class ShoppingCart(models.Model):
     def clear(self):
         self.product_units.clear()
         self.promo_code = None
+        self.bonus_sale = 0
+        self.bonus = 0
+        self.total_amount = 0
+        self.final_amount = 0
+        self.promo_sale = 0
+        self.sale = 0
         self.unit_order = []
         self.total()
 
@@ -195,7 +201,7 @@ class ShoppingCart(models.Model):
 
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
-        self.bonus_sale = sum_bonus
+        self.bonus = sum_bonus
         self.save()
 
     def __str__(self):

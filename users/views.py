@@ -768,9 +768,15 @@ class UserReferalPromo(APIView):
 
         data = json.loads(request.body)
         string = data['promo']
-        promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
-        promo.save()
-        user.referral_promo = promo
+        if PromoCode.objects.filter(string_representation=string).exists():
+            return Response({"message": "Такой промокод уже существует"})
+        if user.referral_promo is not None:
+            user.referal_promo.string_representation = string
+            user.referral_promo.save()
+        else:
+            promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
+            promo.save()
+            user.referral_promo = promo
         user.save()
         return Response(PromoCodeSerializer(user.referal_promo).data)
 
@@ -778,10 +784,16 @@ class UserReferalPromo(APIView):
         user = request.user
         data = json.loads(request.body)
         string = data['promo']
-        promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
-        promo.save()
+        if PromoCode.objects.filter(string_representation=string).exists():
+            return Response({"message": "Такой промокод уже существует"})
+
         if user.referral_promo is not None:
-            user.referal_promo.delete()
+            user.referal_promo.string_representation = string
+            user.referral_promo.save()
+        else:
+            promo = PromoCode(string_representation=string, ref_promo=True, unlimited=True, owner=user)
+            promo.save()
+            user.referral_promo = promo
         user.save()
         return Response(PromoCodeSerializer(user.referal_promo).data)
 

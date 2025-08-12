@@ -16,6 +16,7 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from django.core.exceptions import ObjectDoesNotExist
 
 from products.serializers import ProductMainPageSerializer
+from promotions.models import PromoCode
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation, UserStatus
 from products.tools import get_text
@@ -24,8 +25,12 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        user_status = UserStatus.objects.filter(name="Penis").first()
-        user_status.delete()
+        users = User.objects.all()
+        for new_user in users:
+            promo = PromoCode(string_representation=f"{new_user.username}", ref_promo=True, unlimited=True, owner=new_user)
+            promo.save()
+            new_user.referral_promo = promo
+            new_user.save()
 
         # users = User.objects.all()
         # for user in users:

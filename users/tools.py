@@ -3,7 +3,7 @@ import hashlib
 from dadata import Dadata
 
 from orders.models import ShoppingCart
-from promotions.models import Bonuses
+from promotions.models import Bonuses, PromoCode
 from users.models import User, EmailConfirmation, UserStatus
 from wishlist.models import Wishlist
 from django.core import signing
@@ -67,6 +67,9 @@ def register_user(data):
     # Присвойте бонусы пользователю и сохраните его снова
     new_user.bonuses = bonus
     new_user.user_status = UserStatus.objects.get(name='Amethyst')
+    promo = PromoCode(string_representation=f"{data['username']}", ref_promo=True, unlimited=True, owner=new_user)
+    promo.save()
+    new_user.referral_promo = promo
     new_user.save()
 
     email_confirmation = EmailConfirmation(user=new_user)

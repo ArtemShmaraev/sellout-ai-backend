@@ -1,10 +1,11 @@
 import copy
 import hashlib
 import random
+import threading
 
 from django.core.cache import cache
 from django.utils.functional import cached_property
-from django.db import models
+from django.db import models, transaction
 import rest_framework.generics
 from django.db.models import Case, When, Value, IntegerField
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case
@@ -17,7 +18,7 @@ import json
 from time import time
 from django.http import JsonResponse, FileResponse
 from .add_product_api import add_product_api
-from users.models import User
+from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
     RansomRequest, SGInfo, Brand
@@ -42,6 +43,46 @@ from products.main_page import get_selection, get_photo_text, get_sellout_photo_
 from sellout.settings import CACHE_TIME
 
 
+
+class UpdatePrice(APIView):
+    def get(self, request):
+        page = request.query_params.get('page', 1)
+        def update_prices(products, start, end):
+            for product_id in products[start:end]:
+                product = Product.objects.get(id=product_id)
+                with transaction.atomic():
+                    product.update_price()
+
+
+        # Получите все продукты, которые вы хотите обновить
+        products = Product.objects.filter(available_flag=True).filter(actual_price=False).values_list("id", flat=True)
+        part = page
+        num_part = products.count() // 4
+        products = products[num_part * (part - 1):num_part * part]
+        # products = products[105000:210000]
+        # products = products[210000:315000]
+        # products = products[315000:429000]
+
+        # Укажите количество потоков
+        num_threads = 8
+
+        # Разделите список продуктов на равные части для каждого потока
+        batch_size = len(products) // num_threads
+
+        # Создайте потоки и запустите их
+        threads = []
+        for i in range(num_threads):
+            start = i * batch_size
+            end = start + batch_size if i < num_threads - 1 else len(products)
+            thread = threading.Thread(target=update_prices, args=(products, start, end))
+            thread.start()
+            threads.append(thread)
+
+        # Дождитесь завершения всех потоков
+        for thread in threads:
+            thread.join()
+
+        return Response("Цены успешно обновлены.")
 class AvailableSize(APIView):
     def get(self, request, product_id):
         try:

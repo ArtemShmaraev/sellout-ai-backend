@@ -7,7 +7,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     LineTreeView, ProductUpdateView, LineNoChildView, \
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
-    SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize
+    SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -59,4 +59,4 @@ urlpatterns = [
     path("ransom_request", MakeRansomRequest.as_view()), path("sg_info_list", SGInfoListSkuView.as_view()),
     path("sg_info", SGInfoListView.as_view()), path("sg_info/<str:sku>", SGInfoView.as_view()),
     path("search_brands", BrandSearchView.as_view()), path("add_filter_search", AddFilterSearch.as_view()),
-    path("sizes_info/<int:product_id>", AvailableSize.as_view())]
+    path("sizes_info/<int:product_id>", AvailableSize.as_view()),  path("update_price", UpdatePrice.as_view())]

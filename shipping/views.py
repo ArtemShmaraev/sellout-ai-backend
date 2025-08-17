@@ -39,7 +39,6 @@ class DeliveryForSizeView(APIView):
                 d['is_return'] = product_unit.is_return
                 d['delivery'] = DeliveryTypeSerializer(product_unit.delivery_type).data
                 s.append(d)
-                print(s)
             return Response(s)
 
 

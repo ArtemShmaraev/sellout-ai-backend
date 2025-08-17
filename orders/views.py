@@ -15,7 +15,7 @@ from shipping.models import ProductUnit, AddressInfo
 from shipping.serializers import ProductUnitSerializer
 from rest_framework import status
 from promotions.models import PromoCode, AccrualBonus
-from users.models import User
+from users.models import User, EmailConfirmation
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order, get_delivery
 from .tools_for_user import update_user_status
 
@@ -190,16 +190,20 @@ class UseBonus(APIView):
             return Response("Пользователь не найден", status=status.HTTP_404_NOT_FOUND)
 
 
+
 class CheckOutView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def post(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
+
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 data = json.loads(request.body)
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
+                if not user.verify_email:
+                    return Response("Подтвердите почту", status=status.HTTP_401_UNAUTHORIZED)
 
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,

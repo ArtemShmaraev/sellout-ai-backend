@@ -94,6 +94,50 @@ def get_collab_selection(collab=None):
     return title, list_id, url
 
 
+def get_color_and_category_selection():
+    colors = Color.objects.filter(is_main_color=True)
+    random_color = get_random(colors)
+
+    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
+    random_category = get_random(category)
+
+    products = Product.objects.filter(Q(categories=random_category) & Q(colors=random_color))
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    products = products.filter(filters).distinct()
+
+    if not products.exists():
+        return get_color_and_category_selection()
+    else:
+        products = products.order_by("-rel_num")[:10]
+        title = f"{random_category.name} {random_color.russian_name}"
+        url = f"category={random_category.eng_name}&color={random_color.name}"
+    list_id = list(products.values_list("id", flat=True))
+    return title, list_id, url
+
+
+def get_color_and_brand_selection():
+    colors = Color.objects.filter(is_main_color=True)
+    random_color = get_random(colors)
+
+    brands = Brand.objects.all()
+    random_brand = get_random(brands)
+
+    products = Product.objects.filter(Q(brands=random_brand) & Q(colors=random_color))
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    products = products.filter(filters).distinct()
+
+    if not products.exists():
+        return get_color_and_brand_selection()
+    else:
+        products = products.order_by("-rel_num")[:10]
+        title = f"{random_brand.name} {random_color.russian_name}"
+        url = f"line={random_brand.query_name}&color={random_color.name}"
+    list_id = list(products.values_list("id", flat=True))
+    return title, list_id, url
+
+
 def get_brand_and_category_selection():
     brands = Brand.objects.all()
     random_brand = get_random(brands)
@@ -117,13 +161,16 @@ def get_brand_and_category_selection():
 
 
 def get_selection():
-    type = randint(2, 3)
+    type = randint(1, 5)
     if type == 1:
         title, queryset, url = get_brand_and_category_selection()
     elif type == 2:
         title, queryset, url = get_collab_selection()
+    elif type == 3:
+        title, queryset, url = get_color_and_category_selection()
+    elif type == 4:
+        title, queryset, url = get_color_and_brand_selection()
     else:
-
         title, queryset, url = get_line_selection()
     res = {"type": "selection", "title": title, "url": url}
 

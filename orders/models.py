@@ -38,6 +38,7 @@ class Order(models.Model):
     delivery_price = models.IntegerField(default=0)
     delivery_view_price = models.IntegerField(default=0)
     groups_delivery = models.JSONField(default=list)
+    track_numbers = models.JSONField(default=list)
     address = models.ForeignKey("shipping.AddressInfo", on_delete=models.PROTECT, related_name="orders", null=True,
                                 blank=True)
     pvz = models.CharField(default="", max_length=100)
@@ -235,6 +236,7 @@ class OrderUnit(models.Model):
     bonus = models.IntegerField(null=False, blank=False, default=0)
     delivery_type = models.ForeignKey("shipping.DeliveryType", on_delete=models.CASCADE, related_name='order_units',
                                       null=False, blank=False)
+    track_number = models.CharField(default="", max_length=1024)
     platform = models.ForeignKey("shipping.Platform", on_delete=models.CASCADE, related_name='order_units',
                                  null=False, blank=False)
     url = models.CharField(max_length=255, null=True, blank=True, default="")

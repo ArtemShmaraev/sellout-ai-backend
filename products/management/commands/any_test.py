@@ -25,15 +25,11 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        users = User.objects.all()
-        for u in users:
-            promo_string = u.email.split("@")[0].upper()
-            if PromoCode.objects.filter(string_representation=promo_string).exists():
-                promo_string += str(u.id)
-            promo = PromoCode(string_representation=promo_string, ref_promo=True, unlimited=True, owner=u)
-            promo.save()
-            u.referral_promo = promo
-            u.save()
+        # products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
+        # products.update(actual_price=False)
+        prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()
+        print(prus)
+        # print(Product.objects.all().count())
 
 
         # order_status = [

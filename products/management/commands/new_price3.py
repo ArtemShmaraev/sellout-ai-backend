@@ -39,9 +39,9 @@ class Command(BaseCommand):
 
         # Получите все продукты, которые вы хотите обновить
         products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
-        products = products[:105000]
+        # products = products[:105000]
         # products = products[105000:210000]
-        # products = products[210000:315000]
+        products = products[210000:315000]
         # products = products[315000:429000]
         user_status = UserStatus.objects.get(name="Amethyst")
 

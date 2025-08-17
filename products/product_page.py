@@ -329,9 +329,9 @@ def get_product_page(request, context):
 
 
 
-    start_index = (page_number - 1) * 48
+    start_index = (page_number - 1) * 60
     # print(queryset[0].id)
-    queryset = queryset[start_index:start_index + 48]
+    queryset = queryset[start_index:start_index + 60]
     queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
     # queryset = Product.objects.filter(id__in=queryset)
     # print(queryset.query)
@@ -343,7 +343,7 @@ def get_product_page(request, context):
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0
-    res['max_price'] = 1000000
+    res['max_price'] = 50_000_000
     t6 = time()
     print("t5", t6 - t5)
     # list_id = list(queryset.values_list("id", flat=True))

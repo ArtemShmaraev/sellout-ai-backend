@@ -46,7 +46,7 @@ from sellout.settings import CACHE_TIME
 
 class UpdatePrice(APIView):
     def get(self, request):
-        page = request.query_params.get('page', 1)
+        page = int(request.query_params.get('page', 1))
         def update_prices(products, start, end):
             for product_id in products[start:end]:
                 product = Product.objects.get(id=product_id)

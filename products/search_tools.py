@@ -15,23 +15,46 @@ from .documents import LineDocument
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    # Создайте объект Search и настройте подсказки
-    search = Search(index=index_name)
-    s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 100, 'fuzzy': {
-        'fuzziness': 'AUTO'
-    }})
+    search = Search(index='suggest_index')
+    search = search.suggest(
+        'autocomplete',
+        query,  # Часть слова, по которой будет выполняться поиск
+        completion={
+            'field': 'suggest',
+            'size': 10
+        }
+    )
 
-    # Выполнение запроса
-    response = s.execute()
+    response = search.execute()
+    suggestions = response.suggest.autocomplete[0].options
 
-    # Извлечение подсказок из ответа
-    suggestions = response.suggest['user-input-suggestions'][0]['options']
+    # Обработка полученных подсказок
     sp = []
-
-    # Вывод подсказок
     for suggestion in suggestions:
-        sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
+        sp.append(suggestion.text)
     return sp
+
+
+
+    # # Создайте объект Search и настройте подсказки
+    # search = Search(index=index_name)
+    # s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 100, 'fuzzy': {
+    #     'fuzziness': 'AUTO'
+    # }})
+    #
+    # # Выполнение запроса
+    # response = s.execute()
+    #
+    # # Извлечение подсказок из ответа
+    # suggestions = response.suggest['user-input-suggestions'][0]['options']
+    # sp = []
+    #
+    # # Вывод подсказок
+    # for suggestion in suggestions:
+    #
+    #     sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url, "sug": suggestion._source.suggest})
+    #     # sp.append(dict(suggestion._source))
+    # return sp
 
     # Извлечение всех подсказок из ответа
     # suggestions = response.suggest['all-suggestions'][0]['options']

@@ -46,7 +46,7 @@ class SuggestDocument(Document):
     name = Text()
     type = Text()
     url = Text()
-    suggest = Completion()
+    suggest = Completion(analyzer='simple')
 
 
     class Index:

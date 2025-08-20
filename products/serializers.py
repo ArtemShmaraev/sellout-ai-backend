@@ -13,8 +13,6 @@ from users.models import User, UserStatus
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-
-
 class SizeRowSerializer(serializers.ModelSerializer):
     is_main = serializers.SerializerMethodField()
 

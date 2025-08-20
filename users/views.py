@@ -768,7 +768,8 @@ class UserReferalPromo(APIView):
 
         data = json.loads(request.body)
         string = data['promo'].upper()
-        if PromoCode.objects.filter(string_representation=string).exists():
+        if PromoCode.objects.filter(
+                string_representation=string).exists() and user.referral_promo.string_representation != string:
             return Response({"message": "Такой промокод уже существует"})
         if user.referral_promo is not None:
             user.referral_promo.string_representation = string
@@ -784,7 +785,7 @@ class UserReferalPromo(APIView):
         user = request.user
         data = json.loads(request.body)
         string = data['promo'].upper()
-        if PromoCode.objects.filter(string_representation=string).exists():
+        if PromoCode.objects.filter(string_representation=string).exists() and user.referral_promo.string_representation != string:
             return Response({"message": "Такой промокод уже существует"})
 
         if user.referral_promo is not None:

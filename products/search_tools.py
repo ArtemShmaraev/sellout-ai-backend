@@ -21,7 +21,7 @@ def suggest_search(query):
         query,  # Часть слова, по которой будет выполняться поиск
         completion={
             'field': 'suggest',
-            'size': 10
+            'size': 25
         }
     )
 

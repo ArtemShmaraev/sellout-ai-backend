@@ -757,9 +757,9 @@ class AddFavoriteBrands(APIView):
 
 class UserReferalPromo(APIView):
     def get(self, request):
-        user = request.user
+        user = User.objects.get(id=request.user.id)
         if user.referral_promo is not None:
-            return Response(PromoCodeSerializer(user.referal_promo).data)
+            return Response(PromoCodeSerializer(user.referral_promo).data)
         else:
             return Response("none")
 

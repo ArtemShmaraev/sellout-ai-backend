@@ -29,14 +29,17 @@ class PromocodeView(APIView):
             try:
                 promo = PromoCode.objects.get(string_representation=text.upper())
             except:
-                return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False})
+                return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False,
+                                 "total_sale": cart.total_sale})
             check = promo.check_promo(cart.final_amount, cart.total_amount, user_id=user_id)
 
             if check[0]:
                 cart.promo_code = promo
                 cart.total()
-                return Response({"final_amount": cart.final_amount, "message": check[1], "status": True})
-            return Response({"final_amount": cart.final_amount, "message": check[1], "status": False})
+                return Response({"final_amount": cart.final_amount, "message": check[1], "status": True,
+                                 "total_sale": cart.total_sale})
+            return Response({"final_amount": cart.final_amount, "message": check[1], "status": False,
+                             "total_sale": cart.total_sale})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, user_id):
@@ -45,7 +48,8 @@ class PromocodeView(APIView):
             cart = ShoppingCart.objects.get(user_id=user_id)
             cart.promo_code = None
             cart.save()
-            return Response({"final_amount": cart.final_amount, "message": "", "status": False})
+            return Response(
+                {"final_amount": cart.final_amount, "message": "", "status": False, "total_sale": cart.total_sale})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
 
@@ -68,7 +72,9 @@ class PromocodeAnonView(APIView):
         try:
             promo = PromoCode.objects.get(string_representation=text.upper())
         except:
-            return Response({"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale, "promo_sale": 0})
+            return Response(
+                {"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale,
+                 "promo_sale": 0})
         check = promo.check_promo(sum - sale, sum)
 
         if check[0]:
@@ -82,6 +88,8 @@ class PromocodeAnonView(APIView):
             else:
                 return Response({"final_amount": sum, "message": "Промокод не активен", "status": False, "sale": sale})
             return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
-                             "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale, "promo_code": promo.string_representation})
+                             "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale,
+                             "promo_code": promo.string_representation})
         else:
-            return Response({"final_amount": sum, "message": check[1], "status": False, "total_sale": 0, "sale": sale, "promo_sale": 0})
+            return Response({"final_amount": sum, "message": check[1], "status": False, "total_sale": 0, "sale": sale,
+                             "promo_sale": 0})

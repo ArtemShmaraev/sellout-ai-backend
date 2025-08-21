@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
         # products.update(actual_price=False)
-        user = User.objects.get(id=118)
+        user = User.objects.get(id=119)
         cart = ShoppingCart.objects.get(user=user)
         cart.clear()
         prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()

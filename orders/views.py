@@ -261,6 +261,7 @@ class CheckOutView(APIView):
                         ref_user = cart.promo_code.owner
                         ref_accrual_bonus = AccrualBonus(amount=cart.promo_sale, type="Приглашение")
                         ref_accrual_bonus.save()
+                        ref_user.total_ref_bonus += cart.promo_sale
                         ref_user.bonuses.accrual.add(ref_accrual_bonus)
                         cart.user.ref_user = ref_user
                         cart.user.save()

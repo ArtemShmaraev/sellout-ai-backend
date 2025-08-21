@@ -759,7 +759,10 @@ class UserReferalPromo(APIView):
     def get(self, request):
         user = User.objects.get(id=request.user.id)
         if user.referral_promo is not None:
-            return Response(PromoCodeSerializer(user.referral_promo).data)
+            promo = PromoCodeSerializer(user.referral_promo).data
+            promo["total_bonus"] = user.total_ref_bonus
+            promo['user_count'] = User.objects.filter(ref_user = user).count()
+            return Response(promo)
         else:
             return Response("none")
 
@@ -779,7 +782,10 @@ class UserReferalPromo(APIView):
             promo.save()
             user.referral_promo = promo
         user.save()
-        return Response(PromoCodeSerializer(user.referral_promo).data)
+        promo = PromoCodeSerializer(user.referral_promo).data
+        promo["total_bonus"] = user.total_ref_bonus
+        promo['user_count'] = User.objects.filter(ref_user=user).count()
+        return Response(promo)
 
     def put(self, request):
         user = request.user
@@ -796,7 +802,10 @@ class UserReferalPromo(APIView):
             promo.save()
             user.referral_promo = promo
         user.save()
-        return Response(PromoCodeSerializer(user.referral_promo).data)
+        promo = PromoCodeSerializer(user.referral_promo).data
+        promo["total_bonus"] = user.total_ref_bonus
+        promo['user_count'] = User.objects.filter(ref_user=user).count()
+        return Response(promo)
 
     def delete(self, request):
         user = request.user

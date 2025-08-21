@@ -32,7 +32,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    formatted_happy_birthday_date = serializers.DateTimeField(source='happy_birthday', format='%d.%m.%y')
+    formatted_happy_birthday_date = serializers.DateTimeField(source='happy_birthday', format='%d.%m.%Y')
     class Meta:
         model = User
         # fields = '__all__'

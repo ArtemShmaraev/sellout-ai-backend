@@ -22,6 +22,7 @@ def update_price(product):
             price = formula_price(product, unit, user_status)
             unit.start_price = price['start_price']
             unit.final_price = price['final_price']
+            unit.bonus = price['bonus']
             unit.save()
         product.update_min_price()
 

@@ -21,7 +21,7 @@ def suggest_search(query):
         query,  # Часть слова, по которой будет выполняться поиск
         completion={
             'field': 'suggest',
-            'size': 25
+            'size': 10
         }
     )
 
@@ -31,7 +31,8 @@ def suggest_search(query):
     # Обработка полученных подсказок
     sp = []
     for suggestion in suggestions:
-        sp.append(suggestion.text)
+        sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
+        #
     return sp
 
 

@@ -279,16 +279,26 @@ class Product(models.Model):
     def update_price(self):
         if not self.actual_price:
             user_status = UserStatus.objects.get(name="Amethyst")
+            min_price = 0
+            max_bonus = 0
+            min_price_without_sale = 0
+            # print(self.product_units.all())
             for unit in self.product_units.all():
                 price = formula_price(self, unit, user_status)
+                # print(price)
                 unit.start_price = price['start_price']
                 unit.final_price = price['final_price']
                 unit.total_profit = price['total_profit']
                 unit.bonus = price['bonus']
                 unit.save()
-                if (unit.final_price <= self.min_price or self.min_price == 0) and unit.availability:
-                    self.min_price = unit.final_price
-                    self.min_price_without_sale = unit.start_price
+                if (unit.final_price <= min_price or min_price == 0) and unit.availability:
+                    min_price = unit.final_price
+                    min_price_without_sale = unit.start_price
+                if (unit.bonus > max_bonus or max_bonus == 0) and unit.availability:
+                    max_bonus = unit.bonus
+            self.max_bonus = max_bonus
+            self.min_price = min_price
+            self.min_price_without_sale = min_price_without_sale
             self.actual_price = True
             self.save()
 

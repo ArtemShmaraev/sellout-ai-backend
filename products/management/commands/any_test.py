@@ -25,13 +25,20 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
-        # products.update(actual_price=False)
-        user = User.objects.get(id=119)
-        cart = ShoppingCart.objects.get(user=user)
-        cart.clear()
+        products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
+        products.update(actual_price=False)
+        # print(products.count())
+        # # user = User.objects.get(id=118)
+        # # cart = ShoppingCart.objects.get(user=user)
         prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()
         print(prus)
+        # products = Product.objects.order_by("-rel_num")[:1000]
+        # for p in products:
+        #     if p.product_units.filter(final_price=p.min_price).exists():
+        #         continue
+        #     else:
+        #         p.available_flag = False
+        #     p.save()
         # print(Product.objects.all().count())
 
 

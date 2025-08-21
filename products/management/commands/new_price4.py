@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
 
         # Получите все продукты, которые вы хотите обновить
-        products = Product.objects.filter(available_flag=True).filter(actual_price=False).values_list("id", flat=True)
+        products = Product.objects.filter(available_flag=True).filter(actual_price=False).order_by("-rel_num").values_list("id", flat=True)
         part = 4
         num_part = products.count() // 4
         products = products[num_part * (part - 1):]

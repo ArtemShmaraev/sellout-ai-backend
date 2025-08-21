@@ -162,7 +162,7 @@ def formula_price(product, unit, user_status):
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
-        if unit.final_price > 0:
+        if unit.bonus > 0:
             return {"final_price": unit.final_price,
                     "start_price": unit.start_price,
                     "total_profit": unit.total_profit,

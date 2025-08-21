@@ -170,7 +170,7 @@ class ProductSerializer(serializers.ModelSerializer):
             return formula_price(obj, unit, user_status)
 
         else:
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
 
 
     def get_list_lines(self, obj):
@@ -310,7 +310,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 unit = \
                     obj.product_units.filter(final_price=obj.min_price).order_by(
                         "approximate_price_with_delivery_in_rub")[0]
-                return formula_price(obj, unit, UserStatus.objects.get(name="Ruby"))
+                return formula_price(obj, unit, UserStatus.objects.get(name="Amethyst"))
                 # return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
         #

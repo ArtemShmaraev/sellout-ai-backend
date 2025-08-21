@@ -41,42 +41,16 @@ class ProductDocument(Document):
         name = 'product_index'
 
 
-substring_analyzer = {
-    "type": "custom",
-    "tokenizer": "standard",
-    "filter": ["lowercase", "ngram_filter"]
-}
 
 
 class SuggestDocument(Document):
     name = Text()
     type = Text()
     url = Text()
-    suggest = Completion(analyzer='substring_analyzer')  # Использование анализатора напрямую
+    suggest = Completion()  # Использование анализатора напрямую
 
     class Index:
         name = 'suggest_index'
-        settings = {
-            "index": {
-                "max_ngram_diff": 10
-            },
-            "analysis": {
-                "filter": {
-                    "ngram_filter": {
-                        "type": "ngram",
-                        "min_gram": 3,
-                        "max_gram": 11
-                    }
-                },
-                "analyzer": {
-                    "substring_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "standard",
-                        "filter": ["lowercase", "ngram_filter"]
-                    }
-                }
-            }
-        }
 
 
 class LineDocument(Document):

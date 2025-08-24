@@ -25,7 +25,7 @@ class DeliveryForSizeView(APIView):
             s = []
             for product_unit in product_units:
                 d = dict()
-                if user_status.base:
+                if user_status.name == "Amethyst":
                     price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price, "bonus": product_unit.bonus}
                 else:
                     price = formula_price(product_unit.product, product_unit, user_status)
@@ -71,7 +71,7 @@ class MinPriceForSizeView(APIView):
 
                 if available:
                     prices_by_size[size]["available"] = True
-                    if user_status.base:
+                    if user_status.name == "Amethyst":
                         price = {"start_price": item.start_price, "final_price": item.final_price, "bonus": item.bonus}
                     else:
                         price = formula_price(item.product, item, user_status)
@@ -224,19 +224,19 @@ class ProductUnitProductMainView(APIView):
 class ListProductUnitView(APIView):
     # authentication_classes = [JWTAuthentication]
     def post(self, request):
-        try:
+        # try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
             s_id = [s.strip() for s in s_product_unit if s.strip()]
             product_units = ProductUnit.objects.filter(id__in=s_id)
 
             serializer = ProductUnitSerializer(product_units, many=True)
             return Response(serializer.data)
-        except json.JSONDecodeError:
-            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
-        except ProductUnit.DoesNotExist:
-            return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # except json.JSONDecodeError:
+        #     return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+        # except ProductUnit.DoesNotExist:
+        #     return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+        # except Exception as e:
+        #     return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TotalPriceForListProductUnitView(APIView):

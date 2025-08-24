@@ -41,8 +41,22 @@ from .documents import ProductDocument  # Импортируйте ваш док
 from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
+from collections import OrderedDict
 
 
+class HideProductView(APIView):
+    def get(self, request, spu_id):
+        pass
+
+class PopularSpuIdView(APIView):
+    def get(self, request):
+        count = int(request.query_params.get('count', 20000))
+        popular_product = list(Product.objects.filter(available_flag=True, is_custom=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:count]
+
+        def remove_duplicates(lst):
+            return list(OrderedDict.fromkeys(lst))
+        popular_product = remove_duplicates(popular_product)
+        return Response(popular_product)
 
 class UpdatePrice(APIView):
     def get(self, request):

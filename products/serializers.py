@@ -161,7 +161,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_price(self, obj):
         wl = self.context.get('wishlist', "")
-        if wl and not wl.user.user_status.base:
+        if wl and wl.user.user_status.name != "Amethyst":
             user_status = wl.user.user_status
             unit = \
                     obj.product_units.filter(final_price=obj.min_price).order_by(

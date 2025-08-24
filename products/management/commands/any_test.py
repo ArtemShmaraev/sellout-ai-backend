@@ -1,3 +1,4 @@
+import math
 import random
 from itertools import count
 from time import time
@@ -25,11 +26,20 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
-        products.update(actual_price=False)
-        # print(products.count())
-        # # user = User.objects.get(id=118)
-        # # cart = ShoppingCart.objects.get(user=user)
+        # def round_by_step(value, step=50):
+        #     return math.ceil(value / step) * step
+        # product = Product.objects.get(slug="jordan-air-jordan-1-low-laser-blue-161181")
+        # bonus = 250
+        # print(bonus)
+        # product.max_bonus = 250
+        # product.is_sale = False
+        # product.min_price_without_sale = product.min_price
+        # product.save()
+        # products = Product.objects.filter(available_flag=True).values_list("id", flat=True)
+        # products.update(actual_price=False)
+        # # print(products.count())
+        # # # user = User.objects.get(id=118)
+        # # # cart = ShoppingCart.objects.get(user=user)
         prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()
         print(prus)
         # products = Product.objects.order_by("-rel_num")[:1000]

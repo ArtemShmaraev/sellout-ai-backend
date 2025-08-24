@@ -1,5 +1,5 @@
 from products.formula_price import formula_price
-from users.models import User
+from users.models import User, UserStatus
 from .models import ProductUnit, AddressInfo, DeliveryType
 from rest_framework import serializers
 from products.serializers import ProductMainPageSerializer, ProductSerializer
@@ -19,7 +19,10 @@ class ProductUnitSerializer(serializers.ModelSerializer):
 
 
     def get_price(self, obj):
-        status = User.objects.get(id=self.context.get("user_id")).user_status
+        if "user_id" in self.context:
+            status = User.objects.get(id=self.context.get("user_id")).user_status
+        else:
+            status = UserStatus.objects.get(name="Amethyst")
         return formula_price(obj.product, obj, status)
 
 

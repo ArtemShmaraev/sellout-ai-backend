@@ -15,7 +15,7 @@ from .documents import LineDocument
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
+    # analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
 
 
     search = Search(index=index_name)
@@ -25,7 +25,6 @@ def suggest_search(query):
         completion={
             'field': 'suggest',
             'size': 10,
-            'analyzer': analyzer_name,
             'fuzzy': {  # Добавляем фильтр fuzzy для допуска опечаток
                 'fuzziness': 'AUTO'  # Автоматический режим допуска опечаток
             }

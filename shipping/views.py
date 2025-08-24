@@ -254,18 +254,20 @@ class TotalPriceForListProductUnitView(APIView):
 
             sum = 0
             sale = 0
+            bonus = 0
             for product_unit in product_units:
                 update_price(product_unit.product)
                 if user_status.base:
                     update_price(product_unit.product)
-                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                    price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price, "bonus": product_unit.bonus}
                 else:
                     price = formula_price(product_unit.product, product_unit, user_status)
                 sum += price['start_price']
                 sale += price['start_price'] - price['final_price']
+                bonus += price['bonus']
 
 
-            return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale})
+            return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale, "bonus": bonus})
         except json.JSONDecodeError:
             return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
         except ProductUnit.DoesNotExist:

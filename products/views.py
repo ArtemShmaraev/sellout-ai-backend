@@ -57,6 +57,13 @@ class HideProductView(APIView):
         product.update(available_flag=True)
         return Response("Готово")
 
+class HideProductSpiIdView(APIView):
+    def get(self, request, spu_id, ):
+        product = Product.objects.filter(spu_id=spu_id)
+        product.update(available_flag=True)
+        return Response("Готово")
+
+
 
 class PopularSpuIdView(APIView):
     def get(self, request):

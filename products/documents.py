@@ -41,18 +41,66 @@ class ProductDocument(Document):
         name = 'product_index'
 
 
-substring_analyzer = {
-    "type": "custom",
-    "tokenizer": "standard",
-    "filter": ["lowercase", "ngram_filter"]
-}
+# Определение анализаторов для n-грамм с разной длиной
+ngram_analyzer_2 = analyzer('ngram_analyzer_2',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_2']
+)
 
+ngram_analyzer_3 = analyzer('ngram_analyzer_3',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_3']
+)
+
+ngram_analyzer_4 = analyzer('ngram_analyzer_4',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_4']
+)
+
+ngram_analyzer_5 = analyzer('ngram_analyzer_5',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_5']
+)
+
+ngram_analyzer_6 = analyzer('ngram_analyzer_6',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_6']
+)
+
+ngram_analyzer_7 = analyzer('ngram_analyzer_7',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_7']
+)
+
+ngram_analyzer_8 = analyzer('ngram_analyzer_8',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_8']
+)
+
+ngram_analyzer_9 = analyzer('ngram_analyzer_9',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_9']
+)
+
+ngram_analyzer_10 = analyzer('ngram_analyzer_10',
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_10']
+)
 
 class SuggestDocument(Document):
     name = Text()
     type = Text()
     url = Text()
-    suggest = Completion(analyzer='substring_analyzer')  # Использование анализатора напрямую
+    suggest = Completion()  # Использование анализатора n-грамм (по умолчанию)
 
     class Index:
         name = 'suggest_index'
@@ -62,17 +110,97 @@ class SuggestDocument(Document):
             },
             "analysis": {
                 "filter": {
-                    "ngram_filter": {
+                    "ngram_filter_2": {
                         "type": "ngram",
                         "min_gram": 2,
-                        "max_gram": 13
+                        "max_gram": 2
+                    },
+                    "ngram_filter_3": {
+                        "type": "ngram",
+                        "min_gram": 3,
+                        "max_gram": 3
+                    },
+                    "ngram_filter_4": {
+                        "type": "ngram",
+                        "min_gram": 4,
+                        "max_gram": 4
+                    },
+                    "ngram_filter_5": {
+                        "type": "ngram",
+                        "min_gram": 5,
+                        "max_gram": 5
+                    },
+                    "ngram_filter_6": {
+                        "type": "ngram",
+                        "min_gram": 6,
+                        "max_gram": 6
+                    },
+                    "ngram_filter_7": {
+                        "type": "ngram",
+                        "min_gram": 7,
+                        "max_gram": 7
+                    },
+                    "ngram_filter_8": {
+                        "type": "ngram",
+                        "min_gram": 8,
+                        "max_gram": 8
+                    },
+                    "ngram_filter_9": {
+                        "type": "ngram",
+                        "min_gram": 9,
+                        "max_gram": 9
+                    },
+                    "ngram_filter_10": {
+                        "type": "ngram",
+                        "min_gram": 10,
+                        "max_gram": 10
                     }
                 },
                 "analyzer": {
-                    "substring_analyzer": {
+                    "ngram_analyzer_2": {
                         "type": "custom",
                         "tokenizer": "standard",
-                        "filter": ["lowercase", "ngram_filter"]
+                        "filter": ["lowercase", "ngram_filter_2"]
+                    },
+                    "ngram_analyzer_3": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_3"]
+                    },
+                    "ngram_analyzer_4": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_4"]
+                    },
+                    "ngram_analyzer_5": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_5"]
+                    },
+                    "ngram_analyzer_6": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_6"]
+                    },
+                    "ngram_analyzer_7": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_7"]
+                    },
+                    "ngram_analyzer_8": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_8"]
+                    },
+                    "ngram_analyzer_9": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_9"]
+                    },
+                    "ngram_analyzer_10": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "ngram_filter_10"]
                     }
                 }
             }

@@ -15,15 +15,34 @@ from .documents import LineDocument
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    search = Search(index='suggest_index')
+    analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
+
+
+    search = Search(index=index_name)
     search = search.suggest(
         'autocomplete',
         query,  # Часть слова, по которой будет выполняться поиск
         completion={
             'field': 'suggest',
-            'size': 10
+            'size': 10,
+            'analyzer': analyzer_name,
+            'fuzzy': {  # Добавляем фильтр fuzzy для допуска опечаток
+                'fuzziness': 'AUTO'  # Автоматический режим допуска опечаток
+            }
+            # Указываем соответствующий анализатор для поиска
         }
     )
+
+    #
+    # search = Search(index='suggest_index')
+    # search = search.suggest(
+    #     'autocomplete',
+    #     query,  # Часть слова, по которой будет выполняться поиск
+    #     completion={
+    #         'field': 'suggest',
+    #         'size': 10
+    #     }
+    # )
 
     response = search.execute()
     suggestions = response.suggest.autocomplete[0].options

@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import math
 import random
 import threading
 
@@ -44,11 +45,18 @@ from sellout.settings import CACHE_TIME
 from collections import OrderedDict
 
 
+class DewuInfoCount(APIView):
+    def get(self, request):
+        count = DewuInfo.objects.values_list("id", flat=True).count()
+        return Response({"count": count, "page": math.ceil(count / 30)})
+
+
 class HideProductView(APIView):
     def get(self, request, spu_id, property_id):
         product = Product.objects.filter(spu_id=spu_id, property_id=property_id)
         product.update(available_flag=True)
         return Response("Готово")
+
 
 class PopularSpuIdView(APIView):
     def get(self, request):

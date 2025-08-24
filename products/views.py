@@ -45,8 +45,10 @@ from collections import OrderedDict
 
 
 class HideProductView(APIView):
-    def get(self, request, spu_id):
-        pass
+    def get(self, request, spu_id, property_id):
+        product = Product.objects.filter(spu_id=spu_id, property_id=property_id)
+        product.update(available_flag=True)
+        return Response("Готово")
 
 class PopularSpuIdView(APIView):
     def get(self, request):

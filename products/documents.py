@@ -43,85 +43,74 @@ class ProductDocument(Document):
 
 # Определение анализаторов для n-грамм с разной длиной
 ngram_analyzer_2 = analyzer('ngram_analyzer_2',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_2']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_2']
+)
 
 ngram_analyzer_3 = analyzer('ngram_analyzer_3',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_3']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_3']
+)
 
 ngram_analyzer_4 = analyzer('ngram_analyzer_4',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_4']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_4']
+)
 
 ngram_analyzer_5 = analyzer('ngram_analyzer_5',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_5']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_5']
+)
 
 ngram_analyzer_6 = analyzer('ngram_analyzer_6',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_6']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_6']
+)
 
 ngram_analyzer_7 = analyzer('ngram_analyzer_7',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_7']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_7']
+)
 
 ngram_analyzer_8 = analyzer('ngram_analyzer_8',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_8']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_8']
+)
 
 ngram_analyzer_9 = analyzer('ngram_analyzer_9',
-                            type='custom',
-                            tokenizer='standard',
-                            filter=['lowercase', 'ngram_filter_9']
-                            )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_9']
+)
 
 ngram_analyzer_10 = analyzer('ngram_analyzer_10',
-                             type='custom',
-                             tokenizer='standard',
-                             filter=['lowercase', 'ngram_filter_10']
-                             )
+    type='custom',
+    tokenizer='standard',
+    filter=['lowercase', 'ngram_filter_10']
+)
 
 
+custom_analyzer = analyzer(
+    'autocomplete',
+    tokenizer='standard',
+    filter=['lowercase', 'edge_ngram']
+)
 class SuggestDocument(Document):
     name = Text()
     type = Text()
     url = Text()
-    suggest = Completion(analyzer='edge_ngram')  # Использование анализатора n-грамм (по умолчанию)
+    suggest = Completion(analyzer='keyword')  # Использование анализатора n-грамм (по умолчанию)
 
     class Index:
         name = 'suggest_index'
-        settings = {
 
-            "analysis": {
-                "tokenizer": {
-                    "edge_ngram_tokenizer": {
-                        "type": "edge_ngram",
-                        "min_gram": 2,
-                        "max_gram": 15,
-                        "token_chars": ["letter", "digit"]
-                    }
-                },
-                "analyzer": {
-                    "edge_ngram": {
-                        "type": "custom",
-                        "tokenizer": "edge_ngram_tokenizer"
-                    }
-                }}}
 
 
 class LineDocument(Document):

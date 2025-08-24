@@ -152,9 +152,9 @@ class ShoppingCart(models.Model):
         for product_unit in self.product_units.all():
             if user_status.base:
                 product_unit.product.update_price()
-                price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
-                sum_bonus += product_unit.bonus
-                max_bonus = max(max_bonus, product_unit.bonus)
+                price = formula_price(product_unit.product, product_unit, user_status)
+                sum_bonus += price['bonus']
+                max_bonus = max(max_bonus, price['bonus'])
             else:
                 price = formula_price(product_unit.product, product_unit, user_status)
             total_amount += price['start_price']

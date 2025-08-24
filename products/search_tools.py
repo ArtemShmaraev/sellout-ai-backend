@@ -15,22 +15,45 @@ from .documents import LineDocument
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    # analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
+    analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
 
 
     search = Search(index=index_name)
-    search = search.suggest(
-        'autocomplete',
-        query,  # Часть слова, по которой будет выполняться поиск
-        completion={
-            'field': 'suggest',
-            'size': 10,
-            'fuzzy': {  # Добавляем фильтр fuzzy для допуска опечаток
-                'fuzziness': 'AUTO'  # Автоматический режим допуска опечаток
+    # search = search.suggest(
+    #     'prefix',
+    #     query,  # Часть слова, по которой будет выполняться поиск
+    #     completion={
+    #         'field': 'suggest',
+    #         'size': 10,
+    #         # 'analyzer': analyzer_name,
+    #         'fuzzy': {  # Добавляем фильтр fuzzy для допуска опечаток
+    #             'fuzziness': 'AUTO'  # Автоматический режим допуска опечаток
+    #         }
+    #         # Указываем соответствующий анализатор для поиска
+    #     }
+    # )
+
+    suggest_query = {
+        "suggestion": {
+            "prefix": query,  # Префикс для поиска
+            "completion": {
+                "field": "suggest",  # Имя поля suggest
+                "size": 10  # Максимальное количество предложений
             }
-            # Указываем соответствующий анализатор для поиска
         }
-    )
+    }
+
+    # Добавьте запрос suggest к объекту Search
+    search = search.suggest('suggestion', suggest_query)
+
+    # Выполните поиск и получите результаты
+    response = search.execute()
+
+    # Получите предложенные варианты
+    suggestions = response.suggest.suggestion[0].options if 'suggestion' in response.suggest else []
+
+    # В suggestions теперь будут предложенные варианты
+    print(suggestions)
 
     #
     # search = Search(index='suggest_index')
@@ -43,15 +66,16 @@ def suggest_search(query):
     #     }
     # )
 
-    response = search.execute()
-    suggestions = response.suggest.autocomplete[0].options
+    # response = search.execute()
+    # print(response)
+    # suggestions = response.suggest.autocomplete[0].options
 
     # Обработка полученных подсказок
-    sp = []
-    for suggestion in suggestions:
-        sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
-        #
-    return sp
+    # sp = []
+    # for suggestion in suggestions:
+    #     sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
+    #     #
+    # return sp
 
 
 

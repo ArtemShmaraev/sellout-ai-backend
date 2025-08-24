@@ -42,24 +42,19 @@ class Command(BaseCommand):
                 level += 1
             brand = current_line.view_name
 
-            if line.parent_line is None:
-                line_doc.suggest = [{
-                    'input': [line.view_name] + dict_brand.get(line.view_name.lower(), []),
-                    'weight': 6 - level
-                }]
-            else:
+            line_name = line.view_name.split()
+            for i in range(len(line_name)):
+                if i == 0:
+                    line_doc.suggest = [{
+                        'input': [" ".join(line_name[i:])] + dict_brand.get(line.view_name.lower(), []),
+                        'weight': 6 - level
+                    }]
+                else:
+                    line_doc.suggest = [{
+                        'input': [" ".join(line_name[i:])],
+                        'weight': 6 - level - i
+                    }]
 
-                line_name = line.name.replace(brand, "").strip()
-
-                line_doc.suggest = [{
-                    'input': [line.view_name],
-                    'weight': 5 - level
-                }]
-                if line_name != line.view_name:
-                    line_doc.suggest.append({
-                        'input': [line_name],
-                        'weight': 4 - level
-                    })
             line_doc.save()
 
         collabs = Collab.objects.all()
@@ -68,10 +63,18 @@ class Command(BaseCommand):
             collab_doc.name = collab.name
             collab_doc.url = f"collab={collab.query_name}"
             collab_doc.type = "Коллаборация"
-            collab_doc.suggest = [{
-                'input': [collab.name, collab.name.replace(" x ", " ")],
-                'weight': 4
-            }]
+            collab_name = collab.name.split()
+            for i in range(len(collab_name)):
+                if i == 0:
+                    collab_doc.suggest = [{
+                        'input': [" ".join(collab_name[i:]), collab.name.replace(" x ", " ")],
+                        'weight': 4
+                    }]
+                else:
+                    collab_doc.suggest = [{
+                        'input': [" ".join(collab_name[i:])],
+                        'weight': 4 - i
+                    }]
             collab_doc.save()
 
         cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
@@ -80,10 +83,18 @@ class Command(BaseCommand):
             cat_doc.name = cat.name
             cat_doc.type = "Категория"
             cat_doc.url = f"category={cat.eng_name}"
-            cat_doc.suggest = [{
-                'input': [cat.name, cat.eng_name],
-                'weight': 4
-            }]
+            cat_name = cat.name.split()
+            for i in range(len(cat_name)):
+                if i == 0:
+                    cat_doc.suggest = [{
+                        'input': [" ".join(cat_name[i:]), cat.eng_name],
+                        'weight': 4
+                    }]
+                else:
+                    cat_doc.suggest = [{
+                        'input': [" ".join(cat_name[i:])],
+                        'weight': 4 - i
+                    }]
             cat_doc.save()
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))

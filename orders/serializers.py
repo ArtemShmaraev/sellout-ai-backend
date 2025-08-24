@@ -11,7 +11,7 @@ from users.serializers import ForAnonUserSerializer, UserSerializer, UserOrderSe
 class ShoppingCartSerializer(serializers.ModelSerializer):
     promo_code = PromoCodeSerializer()
     product_units = ProductUnitSerializer(many=True, read_only=True)
-    bonus = serializers.SerializerMethodField()
+    user_bonus = serializers.SerializerMethodField()
     user = ForAnonUserSerializer()
     class Meta:
         model = ShoppingCart
@@ -25,7 +25,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return representation
 
 
-    def get_bonus(self, obj):
+    def get_bonuses(self, obj):
         user_id = self.context.get('user_id')
         if user_id is not None and user_id > 0:
             try:

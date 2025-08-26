@@ -5,14 +5,14 @@ from elasticsearch_dsl.connections import connections
 from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, \
     SuggestDocument  # Замените на путь к вашему документу
 from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
-from sellout.settings import HOST
+from sellout.settings import ELASTIC_HOST
 
 
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
 
     def handle(self, *args, **options):
-        hosts = [f"{HOST}:9200"]
+        hosts = [f"{ELASTIC_HOST}:9200"]
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index

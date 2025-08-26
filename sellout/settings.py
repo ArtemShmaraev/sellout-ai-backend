@@ -248,11 +248,14 @@ SIMPLE_JWT = {
 # }
 #
 #
+
+
+
 # HOST = "127.0.0.1"
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
 
-
+ELASTIC_HOST = "158.160.56.73"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
@@ -294,7 +297,7 @@ CACHES = {
 
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': f'{HOST}:9200',
+        'hosts': f'{ELASTIC_HOST}:9200',
 
         # 'hosts': '51.250.74.115:9200',  # Адрес и порт вашего Elasticsearch
     },

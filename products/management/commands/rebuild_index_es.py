@@ -1,3 +1,5 @@
+import re
+
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
 from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, \
@@ -44,17 +46,25 @@ class Command(BaseCommand):
             brand = current_line.view_name
 
             line_name = line.view_name.split()
+            dop = 0
+            match = re.search(r'\d+', " ".join(line_name[:]))
+            if match:
+                dop = int(match.group())
             for i in range(len(line_name)):
+                slice = " ".join(line_name[i:])
+                length = len(slice)
+
                 if i == 0:
                     line_doc.suggest = [{
-                        'input': [" ".join(line_name[i:])] + dict_brand.get(line.view_name.lower(), []),
-                        'weight': 7 - level
+                        'input': [slice] + dict_brand.get(line.view_name.lower(), []),
+                        'weight': 70000 - level - dop - length
                     }]
                 else:
                     line_doc.suggest.append({
-                        'input': [" ".join(line_name[i:])],
-                        'weight': max(0, 7 - level - i)
+                        'input': [slice],
+                        'weight': max(0, 70000 - level - (i * 10) - dop - length)
                     })
+            print(line_doc.suggest)
             line_doc.save()
 
         collabs = Collab.objects.all()
@@ -65,15 +75,17 @@ class Command(BaseCommand):
             collab_doc.type = "Коллаборация"
             collab_name = collab.name.split()
             for i in range(len(collab_name)):
+                slice = " ".join(collab_name[i:])
+                length = len(slice)
                 if i == 0:
                     collab_doc.suggest = [{
-                        'input': [" ".join(collab_name[i:]), collab.name.replace(" x ", " ")],
-                        'weight': 4
+                        'input': [slice, collab.name.replace(" x ", " ")],
+                        'weight': 50000 - length
                     }]
                 else:
                     collab_doc.suggest.append({
-                        'input': [" ".join(collab_name[i:])],
-                        'weight': max(0, 4 - i)
+                        'input': [slice],
+                        'weight': max(0, 50000 - (i * 10) - length)
                     })
             collab_doc.save()
 
@@ -85,21 +97,23 @@ class Command(BaseCommand):
             cat_doc.url = f"category={cat.eng_name}"
             cat_name = cat.name.split()
             for i in range(len(cat_name)):
+                slice = " ".join(cat_name[i:])
+                length = len(slice)
                 if i == 0:
                     cat_doc.suggest = [{
-                        'input': [" ".join(cat_name[i:]), cat.eng_name],
-                        'weight': 5
+                        'input': [slice, cat.eng_name],
+                        'weight': 50000 - length
                     }]
                 else:
                     cat_doc.suggest.append({
-                        'input': [" ".join(cat_name[i:])],
-                        'weight': max(5 - i, 0)
+                        'input': [slice],
+                        'weight': max(50000 - (i * 10) - length, 0)
                     })
             cat_doc.save()
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = True
+        f = False
         if f:
             product_index = ProductDocument._index
             if product_index.exists():

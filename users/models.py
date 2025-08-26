@@ -168,3 +168,15 @@ class Status(models.Model):
 class EmailConfirmation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=100)
+
+
+class SpamEmail(models.Model):
+    email = models.CharField(max_length=200, null=False, blank=False)
+
+
+class Partner(models.Model):
+    name = models.CharField(max_length=200, null=False, blank=False)
+    tg = models.CharField(max_length=200, null=False, blank=False)
+    email = models.CharField(max_length=200, null=False, blank=False)
+    chanels = models.CharField(max_length=2000, null=False, blank=False)
+    other = models.CharField(max_length=2000, null=False, blank=False)

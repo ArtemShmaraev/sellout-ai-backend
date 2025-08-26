@@ -14,7 +14,7 @@ from promotions.models import PromoCode
 from promotions.serializers import PromoCodeSerializer
 from .serializers import UserSerializer, UserSizeSerializer
 from products.serializers import ProductSerializer, ProductMainPageSerializer, SizeTableSerializer, BrandSerializer
-from .models import User, Gender, EmailConfirmation, UserStatus
+from .models import User, Gender, EmailConfirmation, UserStatus, SpamEmail, Partner
 from rest_framework import exceptions
 from products.models import Product, Brand, SizeTable, SizeTranslationRows
 from django.db import models
@@ -42,7 +42,21 @@ from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
+class AddPartnerList(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        email = data['email']
+        partner = Partner(email=email, tg=data['tg'], name=data['name'], other=data.get("other", ""), chanels=data['chanels'])
+        partner.save()
+        return Response("ok")
 
+class AddMailingList(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        email = data['email']
+        spam = SpamEmail(email=email)
+        spam.save()
+        return Response("ok")
 
 class LoyaltyProgram(APIView):
     def get(self, request):
@@ -439,8 +453,10 @@ class UserInfoView(APIView):
 class UserForSpamEmail(APIView):
     def get(self, request):
         if request.query_params.get("pwd") == "hjk,tju89eio[plaCVWRKDSlkj" or request.user.is_staff:
-            emails = User.objects.filter(is_mailing_list=True).values("email")
-            return Response(emails)
+            emails = User.objects.filter(is_mailing_list=True).values_list("email", flat=True)
+            emails2 = SpamEmail.objects.values_list("email", flat=True)
+            emails3 = list(emails) + list(emails2)
+            return Response(emails3)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 

@@ -38,7 +38,7 @@ class DeliveryForSizeView(APIView):
                 d['is_sale'] = product_unit.is_sale
                 d['is_return'] = product_unit.is_return
                 d['delivery'] = DeliveryTypeSerializer(product_unit.delivery_type).data
-                d['delivery_vies'] = f"{product_unit.delivery_type.days_min}-{product_unit.delivery_type.days_max} дней"
+                d['delivery_view'] = f"{product_unit.delivery_type.days_min}-{product_unit.delivery_type.days_max} дней"
                 s.append(d)
             return Response(s)
 

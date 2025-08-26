@@ -48,14 +48,13 @@ class Command(BaseCommand):
                 if i == 0:
                     line_doc.suggest = [{
                         'input': [" ".join(line_name[i:])] + dict_brand.get(line.view_name.lower(), []),
-                        'weight': 6 - level
+                        'weight': 7 - level
                     }]
                 else:
-                    line_doc.suggest = [{
+                    line_doc.suggest.append({
                         'input': [" ".join(line_name[i:])],
-                        'weight': 6 - level - i
-                    }]
-
+                        'weight': max(0, 7 - level - i)
+                    })
             line_doc.save()
 
         collabs = Collab.objects.all()
@@ -72,10 +71,10 @@ class Command(BaseCommand):
                         'weight': 4
                     }]
                 else:
-                    collab_doc.suggest = [{
+                    collab_doc.suggest.append({
                         'input': [" ".join(collab_name[i:])],
-                        'weight': 4 - i
-                    }]
+                        'weight': max(0, 4 - i)
+                    })
             collab_doc.save()
 
         cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
@@ -89,18 +88,18 @@ class Command(BaseCommand):
                 if i == 0:
                     cat_doc.suggest = [{
                         'input': [" ".join(cat_name[i:]), cat.eng_name],
-                        'weight': 4
+                        'weight': 5
                     }]
                 else:
-                    cat_doc.suggest = [{
+                    cat_doc.suggest.append({
                         'input': [" ".join(cat_name[i:])],
-                        'weight': 4 - i
-                    }]
+                        'weight': max(5 - i, 0)
+                    })
             cat_doc.save()
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = False
+        f = True
         if f:
             product_index = ProductDocument._index
             if product_index.exists():
@@ -156,84 +155,84 @@ class Command(BaseCommand):
                 product_doc.save()
             self.stdout.write(self.style.SUCCESS(f"{k} %"))
 
-        # line_index = LineDocument._index
-        # if line_index.exists():
-        #     self.stdout.write(self.style.SUCCESS('Deleting existing line index...'))
-        #     line_index.delete()
-        #
-        # self.stdout.write(self.style.SUCCESS('Creating line index...'))
-        # line_index.create()
-        #
-        # lines = Line.objects.all().exclude(name__icontains='Все').exclude(name__contains='Другие')
-        #
-        # for line in lines:
-        #
-        #     line_doc = LineDocument(meta={'id': line.id})
-        #     line_doc.name = line.view_name
-        #     if line.parent_line is None:
-        #         line_doc.suggest = {
-        #             'input': [line.view_name],
-        #             'weight': 1
-        #         }
-        #     line_doc.save()
-        #
-        # self.stdout.write(self.style.SUCCESS('Line indexing complete.'))
-        #
-        # category_index = CategoryDocument._index
-        # if category_index.exists():
-        #     self.stdout.write(self.style.SUCCESS('Deleting existing category index...'))
-        #     category_index.delete()
-        #
-        # self.stdout.write(self.style.SUCCESS('Creating category index...'))
-        # category_index.create()
-        #
-        # categories = Category.objects.all().exclude(name__icontains='Все').exclude(name__contains='Другие')
-        #
-        # for category in categories:
-        #     category_doc = CategoryDocument(meta={'id': category.id})
-        #     category_doc.name = category.name
-        #     category_doc.save()
-        #     category_doc.suggest = {
-        #         'input': [category.name],
-        #         'weight': 1
-        #     }
-        #
-        # self.stdout.write(self.style.SUCCESS('Category indexing complete.'))
-        #
-        # color_index = ColorDocument._index
-        # if color_index.exists():
-        #     self.stdout.write(self.style.SUCCESS('Deleting existing color index...'))
-        #     color_index.delete()
-        #
-        # self.stdout.write(self.style.SUCCESS('Creating color index...'))
-        # color_index.create()
-        #
-        # colors = Color.objects.all()
-        #
-        # for color in colors:
-        #     if color.russian_name != "":
-        #         print(color.russian_name)
-        #         color_doc = ColorDocument(meta={'id': color.id})
-        #         color_doc.russian_name = color.russian_name
-        #         color_doc.save()
-        #
-        # self.stdout.write(self.style.SUCCESS('Color indexing complete.'))
-        #
-        # collab_index = CollabDocument._index
-        # if collab_index.exists():
-        #     self.stdout.write(self.style.SUCCESS('Deleting existing collab index...'))
-        #     collab_index.delete()
-        #
-        # self.stdout.write(self.style.SUCCESS('Creating collab index...'))
-        # collab_index.create()
-        #
-        # collabs = Collab.objects.filter(is_main_collab=True)
-        #
-        # for collab in collabs:
-        #     collab_doc = CollabDocument(meta={'id': collab.id})
-        #     collab_doc.name = collab.name
-        #     collab_doc.save()
-        #
-        # self.stdout.write(self.style.SUCCESS('Collab indexing complete.'))
+        line_index = LineDocument._index
+        if line_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing line index...'))
+            line_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating line index...'))
+        line_index.create()
+
+        lines = Line.objects.all().exclude(name__icontains='Все').exclude(name__contains='Другие')
+
+        for line in lines:
+
+            line_doc = LineDocument(meta={'id': line.id})
+            line_doc.name = line.view_name
+            if line.parent_line is None:
+                line_doc.suggest = {
+                    'input': [line.view_name],
+                    'weight': 1
+                }
+            line_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Line indexing complete.'))
+
+        category_index = CategoryDocument._index
+        if category_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing category index...'))
+            category_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating category index...'))
+        category_index.create()
+
+        categories = Category.objects.all().exclude(name__icontains='Все').exclude(name__contains='Другие')
+
+        for category in categories:
+            category_doc = CategoryDocument(meta={'id': category.id})
+            category_doc.name = category.name
+            category_doc.save()
+            category_doc.suggest = {
+                'input': [category.name],
+                'weight': 1
+            }
+
+        self.stdout.write(self.style.SUCCESS('Category indexing complete.'))
+
+        color_index = ColorDocument._index
+        if color_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing color index...'))
+            color_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating color index...'))
+        color_index.create()
+
+        colors = Color.objects.all()
+
+        for color in colors:
+            if color.russian_name != "":
+                print(color.russian_name)
+                color_doc = ColorDocument(meta={'id': color.id})
+                color_doc.russian_name = color.russian_name
+                color_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Color indexing complete.'))
+
+        collab_index = CollabDocument._index
+        if collab_index.exists():
+            self.stdout.write(self.style.SUCCESS('Deleting existing collab index...'))
+            collab_index.delete()
+
+        self.stdout.write(self.style.SUCCESS('Creating collab index...'))
+        collab_index.create()
+
+        collabs = Collab.objects.filter(is_main_collab=True)
+
+        for collab in collabs:
+            collab_doc = CollabDocument(meta={'id': collab.id})
+            collab_doc.name = collab.name
+            collab_doc.save()
+
+        self.stdout.write(self.style.SUCCESS('Collab indexing complete.'))
 
         self.stdout.write(self.style.SUCCESS('Indexing complete.'))

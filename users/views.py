@@ -120,15 +120,11 @@ class SendVerifyEmail(APIView):
         user = User.objects.get(id=user_id)
         email_confirmation = EmailConfirmation.objects.get(user=user)
         check = f"https://{FRONTEND_HOST}/email_confirmed/{email_confirmation.token}?url={url}"
-        url = "https://sellout.su/mail/send_customer_service_mail/"
+        url = "https://sellout.su/mail/confirm_mail"
         recipient_email = user.email
-        body = check
+        body = {'link': check, "recipient_email": recipient_email}
 
-        params = {
-            "recipient_email": recipient_email,
-            "body": body
-        }
-        requests.get(url, params=params)
+        requests.post(url, json=body)
         return Response("ok")
 
 
@@ -159,16 +155,15 @@ class SendSetPassword(APIView):
 
             # Создайте ссылку с токеном и идентификатором пользователя
             reset_password_link = f"https://{FRONTEND_HOST}/reset-password/{uidb64}/{token}"
-            url = "https://sellout.su/mail/send_customer_service_mail/"
+            url = "https://sellout.su/mail/reset_password"
             recipient_email = user.email
-            body = reset_password_link
 
-            params = {
+            body = {
                 "recipient_email": recipient_email,
-                "body": body
+                "link": reset_password_link
             }
 
-            requests.get(url, params=params)
+            requests.post(url, json=body)
             return Response("ok")
 
         except User.DoesNotExist:

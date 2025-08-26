@@ -5,6 +5,7 @@ from products.documents import ProductDocument, LineDocument, CategoryDocument, 
 from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
 from sellout.settings import HOST
 
+
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
 
@@ -126,22 +127,19 @@ class Command(BaseCommand):
                     product_doc.main_line = main_line.name
 
                 categories = product.categories.exclude(name__icontains='Все').exclude(
-                                              name__contains='Другие')
+                    name__contains='Другие')
                 if categories:
                     main_category = categories.order_by("-id").first()
                     product_doc.main_category = main_category.name
                     product_doc.main_category_eng = main_category.eng_name
-
-
-
 
                 product_doc.brands = [brand.name for brand in product.brands.all()]
                 product_doc.categories = [category.name for category in
                                           product.categories.exclude(name__icontains='Все').exclude(
                                               name__contains='Другие')]
                 product_doc.categories_eng = [category.eng_name for category in
-                                          product.categories.exclude(name__icontains='Все').exclude(
-                                              name__contains='Другие')]
+                                              product.categories.exclude(name__icontains='Все').exclude(
+                                                  name__contains='Другие')]
 
                 product_doc.lines = [line.name for line in
                                      product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]

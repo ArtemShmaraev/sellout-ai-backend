@@ -115,6 +115,9 @@ class ShoppingCartUser(APIView):
             if request.user.id == user_id or request.user.is_staff:
 
                 shopping_cart = ShoppingCart.objects.get(user_id=user_id)
+                units = ProductUnit.objects.filter(id__in=shopping_cart.unit_order)
+                shopping_cart.product_units.set(units)
+                print(shopping_cart.unit_order)
                 shopping_cart.total()
                 serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id})
                 return Response(serializer.data)

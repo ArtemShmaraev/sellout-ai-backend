@@ -22,7 +22,7 @@ from .add_product_api import add_product_api
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand
+    RansomRequest, SGInfo, Brand, Photo
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header
@@ -44,6 +44,27 @@ from products.main_page import get_selection, get_photo_text, get_sellout_photo_
 from sellout.settings import CACHE_TIME
 from collections import OrderedDict
 
+
+
+class AddPhotoBlackList(APIView):
+    def post(self, request, product_id, photo_id):
+        try:
+            product = Product.objects.get(id=product_id)
+            photo = Photo.objects.get(id=photo_id)
+        except Product.DoesNotExist:
+            return Response("Продукт не найден", status=status.HTTP_404_NOT_FOUND)
+        except Photo.DoesNotExist:
+            return Response("Фото не найдено", status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            # Удаляем фото из bucket_link и добавляем в black_bucket_link
+            product.bucket_link.remove(photo)
+            product.black_bucket_link.add(photo)
+            product.save()
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response("Готово")
 
 class DewuInfoCount(APIView):
     def get(self, request):

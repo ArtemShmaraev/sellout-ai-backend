@@ -26,6 +26,13 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        photos_without_product = Photo.objects.filter(product__isnull=True)
+        for photo in photos_without_product:
+            print(photo.url)
+
+        # Удалите найденные объекты
+        # photos_without_product.delete()
+
         # def round_by_step(value, step=50):
         #     return math.ceil(value / step) * step
         # product = Product.objects.get(slug="jordan-air-jordan-1-low-laser-blue-161181")
@@ -40,8 +47,8 @@ class Command(BaseCommand):
         # # print(products.count())
         # # # user = User.objects.get(id=118)
         # # # cart = ShoppingCart.objects.get(user=user)
-        prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()
-        print(prus)
+        # prus = ProductUnit.objects.filter(product__actual_price=False).values_list("id", flat=True).count()
+        # print(prus)
         # products = Product.objects.order_by("-rel_num")[:1000]
         # for p in products:
         #     if p.product_units.filter(final_price=p.min_price).exists():

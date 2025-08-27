@@ -5,7 +5,7 @@ from django.db.models import F
 
 from django.utils import timezone
 
-from shipping.models import AddressInfo
+from shipping.models import AddressInfo, ProductUnit
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 from products.formula_price import formula_price
 
@@ -116,7 +116,7 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
                              blank=False)
     product_units = models.ManyToManyField("shipping.ProductUnit", blank=True,
-                                           related_name="shopping_carts")
+                                           related_name="shopping_carts")#, on_delete=models.DO_NOTHING)
     unit_order = models.JSONField(default=list)
     promo_code = models.ForeignKey("promotions.PromoCode", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="carts")
@@ -127,6 +127,8 @@ class ShoppingCart(models.Model):
     total_sale = models.IntegerField(default=0)
     bonus = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
+
+
 
     def clear(self):
         self.product_units.clear()

@@ -106,7 +106,7 @@ def add_product_api(data):
     t5 = time()
 
     for img in data["images"]:
-        photo = Photo(url=img["url"])
+        photo = Photo.objects.get(url=img["url"])
         photo.save()
         product.bucket_link.add(photo)
 
@@ -342,8 +342,6 @@ def update_product_api(data):
 
         for del_unit in units[:len(sort_offers)]:
             del_unit.delete()
-
-
 
         for i in range(len(sort_offers)):
             offer = sort_offers[i]

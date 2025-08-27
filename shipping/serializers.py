@@ -9,14 +9,11 @@ class ProductUnitSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
     price = serializers.SerializerMethodField()
 
-
-
     class Meta:
         model = ProductUnit
         # fields = '__all__'
         exclude = ["size",]
         depth = 1  # глубина позволяет возвращать не только id бренда, но и его поля (name)
-
 
     def get_price(self, obj):
         if "user_id" in self.context:

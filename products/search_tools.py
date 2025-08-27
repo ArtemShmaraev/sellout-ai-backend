@@ -188,9 +188,7 @@ def search_product(query, queryset, page_number=1):
     #     filter=queryset.query
     # )
 
-    search = search[:1000]
-    print(search)
-    print(100)
+    search = search[:192]
 
     response = search.execute()
     # Определите пороговое значение для подходящих результатов (50% от max_score)
@@ -202,7 +200,8 @@ def search_product(query, queryset, page_number=1):
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
     product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
-    queryset = Product.objects.filter(id__in=product_ids)
+    queryset = Product.objects.filter(id__in=product_ids).values_list("id", flat=True)
+    count = queryset.count()
     # Определение порядка объектов в queryset
     preserved_order = Case(
         *[
@@ -215,7 +214,7 @@ def search_product(query, queryset, page_number=1):
     # Применение порядка к queryset
     queryset = queryset.annotate(order=preserved_order).order_by('order')
 
-    # count = response.hits.total.value
+
     # start_index = (page_number - 1) * 60
     # queryset = response.hits[start_index:start_index + 60]
     #

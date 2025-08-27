@@ -284,7 +284,7 @@ def get_product_page(request, context):
 
         count = cached_count
     else:
-        count = queryset.count()
+        count = 100000
         cache.set(cache_count_key, (count), CACHE_TIME)
 
     res['count'] = count

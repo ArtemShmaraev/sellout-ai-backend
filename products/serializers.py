@@ -310,11 +310,9 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 return {"final_price": min_final_price, "start_price": corresponding_start_price}
 
             else:
-                unit = \
-                    obj.product_units.filter(final_price=obj.min_price).order_by(
-                        "approximate_price_with_delivery_in_rub")[0]
-                return formula_price(obj, unit, UserStatus.objects.get(name="Amethyst"))
-                # return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
+                if not obj.actual_price:
+                    obj.update_price()
+                return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
 
         #
 

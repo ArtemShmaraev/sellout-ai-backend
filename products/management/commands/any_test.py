@@ -26,12 +26,13 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        photos_without_product = Photo.objects.filter(product__isnull=True)
-        for photo in photos_without_product:
-            print(photo.url)
+        duplicate_photos = Photo.objects.values('url').annotate(url_count=Count('url')).filter(url_count__gt=1)
 
-        # Удалите найденные объекты
-        # photos_without_product.delete()
+        # Вывести дубликаты
+        for duplicate in duplicate_photos:
+            url = duplicate['url']
+            count = duplicate['url_count']
+            print(f"URL: {url}, Количество: {count}")
 
         # def round_by_step(value, step=50):
         #     return math.ceil(value / step) * step

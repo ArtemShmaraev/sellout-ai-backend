@@ -47,7 +47,7 @@ from collections import OrderedDict
 
 
 class AddPhotoBlackList(APIView):
-    def post(self, request, product_id, photo_id):
+    def get(self, request, product_id, photo_id):
         try:
             product = Product.objects.get(id=product_id)
             photo = Photo.objects.get(id=photo_id)

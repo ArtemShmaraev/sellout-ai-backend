@@ -63,4 +63,4 @@ urlpatterns = [
     path("sizes_info/<int:product_id>", AvailableSize.as_view()), path("update_price", UpdatePrice.as_view()),
     path("popular_spu_id", PopularSpuIdView.as_view()),
     path("hide_product/<int:spu_id>/<int:property_id>", HideProductView.as_view()), path("hide_product/<int:spu_id>", HideProductSpiIdView.as_view()),
-    path("dewu_info_count", DewuInfoCount.as_view()), path("add_photo_black_list", AddPhotoBlackList.as_view())]
+    path("dewu_info_count", DewuInfoCount.as_view()), path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view())]

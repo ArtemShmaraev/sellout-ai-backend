@@ -104,7 +104,6 @@ def add_product_api(data):
     product.actual_price = False
 
     t5 = time()
-
     blacklisted_urls = product.black_bucket_link.values_list("url", flat=True)
     # Получить список URL-ов из ваших данных, которых нет в черном списке
     new_urls = [img["url"] for img in data["images"] if img["url"] not in blacklisted_urls]

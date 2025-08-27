@@ -155,7 +155,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "russian_name", "spu_id", "size_table", "add_date", "last_upd", "lines"]
+        exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "last_upd", "lines"]
         depth = 2
 
 
@@ -164,7 +164,7 @@ class ProductSerializer(serializers.ModelSerializer):
         if wl and wl.user.user_status.name != "Amethyst":
             user_status = wl.user.user_status
             unit = \
-                    obj.product_units.filter(final_price=obj.min_price).order_by(
+                    obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                         "approximate_price_with_delivery_in_rub")[0]
 
             return formula_price(obj, unit, user_status)
@@ -288,18 +288,21 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         if wl and not wl.user.user_status.base:
             user_status = wl.user.user_status
             if filters:
+                filters &= Q(availability=True)
                 min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+                filters &= Q(final_price=min_final_price)
                 unit = \
-                obj.product_units.filter(final_price=min_final_price).order_by(
+                obj.product_units.filter(filters).order_by(
                     "approximate_price_with_delivery_in_rub")[0]
             else:
                 unit = \
-                    obj.product_units.filter(final_price=obj.min_price).order_by(
+                    obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                         "approximate_price_with_delivery_in_rub")[0]
             return formula_price(obj, unit, user_status)
 
         else:
             if filters:
+                filters &= Q(availability=True)
                 min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                 filters &= Q(final_price=min_final_price)
                 corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']

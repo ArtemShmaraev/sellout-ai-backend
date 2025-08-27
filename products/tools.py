@@ -18,7 +18,7 @@ from users.models import UserStatus
 def update_price(product):
     if not product.actual_price:
         user_status = UserStatus.objects.get(name="Amethyst")
-        for unit in product.product_units.all():
+        for unit in product.product_units.filter(availability=True):
             price = formula_price(product, unit, user_status)
             unit.start_price = price['start_price']
             unit.final_price = price['final_price']

@@ -232,7 +232,8 @@ class ProductViewSet(viewsets.ModelViewSet):
                             Product.objects.filter(pk=OuterRef('pk'))
                             .annotate(unit_min_price=Min('product_units__final_price', filter=(
                                     Q(product_units__size__US__in=size_us) & Q(
-                                product_units__final_price__lte=price_max))))
+                                product_units__final_price__lte=price_max) & Q(
+                                product_units__availability=True))))
                             .values('unit_min_price')[:1]
                         )
                     )

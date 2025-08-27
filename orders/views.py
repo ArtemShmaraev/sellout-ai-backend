@@ -229,7 +229,7 @@ class CheckOutView(APIView):
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 get_delivery(order, data)
-                if order.final_amount <= user.user_status.free_ship_amount and order.user.user_status.base:
+                if order.final_amount <= user.user_status.free_ship_amount or not order.user.user_status.base:
                     order.final_amount += order.delivery_price
 
                 else:

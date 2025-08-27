@@ -67,8 +67,10 @@ class HideProductSpiIdView(APIView):
 
 class PopularSpuIdView(APIView):
     def get(self, request):
-        count = int(request.query_params.get('count', 20000))
+        count = int(request.query_params.get('count', 10000))
         popular_product = list(Product.objects.filter(available_flag=True, is_custom=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:count]
+        other = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:10000]
+
 
         def remove_duplicates(lst):
             return list(OrderedDict.fromkeys(lst))
@@ -120,7 +122,7 @@ class AvailableSize(APIView):
             product = get_object_or_404(Product, id=product_id)  # Получение объекта Product или 404, если он не найден
             sizes_info = {"sizes": [], "filter_logo": ""}
             sizes_id = set()
-            for unit in product.product_units.all():
+            for unit in product.product_units.filter(availability=True):
                 for s in unit.size.all():
                     row = s.table.default_row
                     if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
@@ -712,7 +714,7 @@ class AddProductView(APIView):
     def post(self, request):
         data = json.loads(request.body)
         product = add_product_api(data)
-        return Response(product.slug)
+        return Response(ProductSerializer(product).data)
 
 
 class ListProductView(APIView):

@@ -208,9 +208,9 @@ class Product(models.Model):
 
     model = models.CharField(max_length=255, null=False, blank=True, db_index=True)
     colorway = models.CharField(max_length=255, null=False, blank=True, db_index=True)
-    russian_name = models.CharField(max_length=255, null=False, blank=True)
+    russian_name = models.CharField(max_length=255, null=False, blank=True, default="")
     slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
-    manufacturer_sku = models.CharField(max_length=255)  # Артем, это артикул по-английски, не пугайся
+    manufacturer_sku = models.CharField(max_length=255, default="")  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, db_index=True)
 
@@ -222,7 +222,7 @@ class Product(models.Model):
     main_color = models.ForeignKey("Color", on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name="products_main", db_index=True)
     colors = models.ManyToManyField("Color", related_name='products', blank=True, db_index=True)
-    designer_color = models.SlugField(max_length=255, blank=True)
+    designer_color = models.SlugField(max_length=255, blank=True, default="")
 
     materials = models.ManyToManyField("Material", related_name='products', blank=True, db_index=True)
 
@@ -253,25 +253,85 @@ class Product(models.Model):
 
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0, db_index=True)
-    platform_info = models.JSONField(blank=True, null=True)
+    platform_info = models.JSONField(blank=True, null=True, default=dict)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 
     parameters = models.JSONField(blank=True, null=True, default=dict)
     similar_product = models.JSONField(blank=True, null=True, default=list)
     another_configuration = models.JSONField(blank=True, null=True, default=list)
     main_size_row_of_unit = models.CharField(max_length=255, null=True, blank=True)
-    main_size_row = models.CharField(max_length=255, null=True, blank=True)
-    unit_common_name = models.CharField(max_length=255, null=True, blank=True)
+    main_size_row = models.CharField(max_length=255, null=True, blank=True, default="")
+    unit_common_name = models.CharField(max_length=255, null=True, blank=True, default="")
     is_sale = models.BooleanField(default=False)
     in_sg = models.BooleanField(default=False)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
-    actual_price = models.BooleanField(default=True)
+    actual_price = models.BooleanField(default=False)
 
     objects = ProductManager()
 
+    def clear_all_fields(self):
+        self.brands.clear()
+        self.categories.clear()
+        self.lines.clear()
+        self.main_line = None
+        # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
+        self.tags.clear()
+
+        self.model = ""
+        self.colorway = ""
+        self.russian_name = ""
+
+
+        self.description = ""
+        self.bucket_link.clear()
+
+        self.is_custom = False
+        self.is_collab = False
+        self.collab = None
+        self.main_color = None
+        self.colors.clear()
+        self.designer_color = ""
+        self.materials.clear()
+
+        self.gender.clear()
+        self.recommended_gender = None
+        self.size_table = None
+        self.size_table_platform = {}
+
+        self.min_price = 0
+        self.max_bonus = 0
+        self.min_price_without_sale = 0
+
+        # sizes are initialized in Size model by ForeignKey
+        # product units are initialized in UnitBundle model by ForeignKey
+
+        self.available_flag = False
+
+        self.has_many_sizes = False
+        self.has_many_colors = False
+        self.has_many_configurations = False
+
+        self.last_upd = timezone.now()
+
+        self.rel_num = 0
+        self.platform_info = {}
+        self.sizes_prices = []
+
+        self.parameters = {}
+        self.similar_product = []
+        self.another_configuration = []
+        self.main_size_row_of_unit = ""
+        self.main_size_row = ""
+        self.unit_common_name = ""
+        self.is_sale = False
+        self.percentage_sale = 0
+        self.available_sizes = {}
+        self.actual_price = True
+        self.save()
+
     def update_available_status(self):
-        if not self.product_units.exists():
+        if not self.product_units.filter(availability=True).exists():
             self.available_flag = False
             self.save()
 
@@ -283,7 +343,7 @@ class Product(models.Model):
             max_bonus = 0
             min_price_without_sale = 0
             # print(self.product_units.all())
-            for unit in self.product_units.all():
+            for unit in self.product_units.filter(availability=True):
                 price = formula_price(self, unit, user_status)
                 # print(price)
                 unit.start_price = price['start_price']
@@ -300,6 +360,10 @@ class Product(models.Model):
             self.min_price = min_price
             self.min_price_without_sale = min_price_without_sale
             self.actual_price = True
+            if self.min_price != 0:
+                self.available_flag = True
+            else:
+                self.available_flag = False
             self.save()
 
 
@@ -323,8 +387,7 @@ class Product(models.Model):
     def update_min_price(self):
         if self.product_units.exists():
             self.min_price = 999999999
-            self.available_flag = True
-            product_units = self.product_units.all()
+            product_units = self.product_units.filter(availability=True)
             for product_unit in product_units:
                 if product_unit.final_price <= self.min_price and product_unit.availability:
                     self.min_price = product_unit.final_price

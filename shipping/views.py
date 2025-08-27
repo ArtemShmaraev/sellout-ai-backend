@@ -51,7 +51,7 @@ class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
             product = Product.objects.get(id=product_id)
-            product_units = product.product_units.all()
+            product_units = product.product_units.filter(availability=True)
             update_price(product)
             user_status = User.objects.get(id=request.user.id).user_status if self.request.user.id else UserStatus.objects.get(
                 name="Amethyst")

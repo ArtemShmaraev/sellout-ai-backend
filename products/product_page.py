@@ -245,6 +245,7 @@ def get_product_page(request, context):
     if is_fast_ship:
         filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
     if filters:
+        filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
         queryset = queryset.filter(filters)
 

@@ -255,6 +255,12 @@ def update_product_serializer(data, context):
             product["min_price_product_unit"] = product['min_price']
     return data
 
+
+class ProductSlugAndPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "slug", "bucket_link"]
+        depth = 2
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()

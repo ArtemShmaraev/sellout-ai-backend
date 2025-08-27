@@ -8,7 +8,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
-    PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList
+    PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -62,5 +62,8 @@ urlpatterns = [
     path("search_brands", BrandSearchView.as_view()), path("add_filter_search", AddFilterSearch.as_view()),
     path("sizes_info/<int:product_id>", AvailableSize.as_view()), path("update_price", UpdatePrice.as_view()),
     path("popular_spu_id", PopularSpuIdView.as_view()),
-    path("hide_product/<int:spu_id>/<int:property_id>", HideProductView.as_view()), path("hide_product/<int:spu_id>", HideProductSpiIdView.as_view()),
-    path("dewu_info_count", DewuInfoCount.as_view()), path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view())]
+    path("hide_product/<int:spu_id>/<int:property_id>", HideProductView.as_view()),
+    path("hide_product/<int:spu_id>", HideProductSpiIdView.as_view()),
+    path("dewu_info_count", DewuInfoCount.as_view()),
+    path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view()),
+    path("product_photo_and_slug", ProductSlugAndPhoto.as_view())]

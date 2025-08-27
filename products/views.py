@@ -28,7 +28,8 @@ from rest_framework import status
 from .product_page import get_product_page, get_product_page_header
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer
+    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
+    ProductSlugAndPhotoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id
 
@@ -43,6 +44,33 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 from collections import OrderedDict
+
+
+class ProductSlugAndPhoto(APIView):
+    def get(self, request):
+        params = request.query_params
+        queryset = Product.objects.all()
+        page_number = int(params.get("page", 1))
+        res = {}
+
+        queryset = queryset.values_list("id", flat=True)
+        cache_count_key = f"productcount"  # Уникальный ключ для каждой URL
+        cached_count = cache.get(cache_count_key)
+        if cached_count is not None:
+
+            count = cached_count
+        else:
+            count = queryset.count()
+            cache.set(cache_count_key, (count), CACHE_TIME)
+
+        res['count'] = count
+
+        start_index = (page_number - 1) * 60
+        queryset = queryset[start_index:start_index + 60]
+        queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
+        queryset = ProductSlugAndPhotoSerializer(queryset, many=True).data
+        res['results'] = queryset
+        return Response(res)
 
 
 

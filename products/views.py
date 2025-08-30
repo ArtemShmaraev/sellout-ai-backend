@@ -65,8 +65,8 @@ class ProductSlugAndPhoto(APIView):
 
         res['count'] = count
 
-        start_index = (page_number - 1) * 60
-        queryset = queryset[start_index:start_index + 60]
+        start_index = (page_number - 1) * 100
+        queryset = queryset[start_index:start_index + 100]
         queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
         queryset = ProductSlugAndPhotoSerializer(queryset, many=True).data
         res['results'] = queryset

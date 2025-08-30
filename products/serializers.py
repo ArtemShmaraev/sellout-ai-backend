@@ -1,4 +1,4 @@
-
+from django.utils import timezone
 
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
@@ -151,12 +151,18 @@ class ProductSerializer(serializers.ModelSerializer):
     # is_return = serializers.SerializerMethodField()
     list_lines = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
+    actual_platform_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         # fields = "__all__"
         exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "last_upd", "lines"]
         depth = 2
+
+    def get_actual_platform_price(self, obj):
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        return obj.last_upd >= time_threshold
+
 
 
     def get_price(self, obj):

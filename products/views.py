@@ -550,7 +550,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            platform_update_price(product)
+            # platform_update_price(product)
 
             product.rel_num += 1
             product.save()

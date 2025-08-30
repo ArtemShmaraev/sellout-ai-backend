@@ -268,6 +268,7 @@ class Product(models.Model):
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
     actual_price = models.BooleanField(default=False)
+    one_update = models.BooleanField(default=False)
 
     objects = ProductManager()
 

@@ -26,13 +26,16 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        duplicate_photos = Photo.objects.values('url').annotate(url_count=Count('url')).filter(url_count__gt=1)
-
-        # Вывести дубликаты
-        for duplicate in duplicate_photos:
-            url = duplicate['url']
-            count = duplicate['url_count']
-            print(f"URL: {url}, Количество: {count}")
+        line_yeezy = Line.objects.get(view_name="Все Yeezy")
+        line_yeezy.full_eng_name = "adidas_yeezy"
+        line_yeezy.save()
+        # duplicate_photos = Photo.objects.values('url').annotate(url_count=Count('url')).filter(url_count__gt=1)
+        #
+        # # Вывести дубликаты
+        # for duplicate in duplicate_photos:
+        #     url = duplicate['url']
+        #     count = duplicate['url_count']
+        #     print(f"URL: {url}, Количество: {count}")
 
         # def round_by_step(value, step=50):
         #     return math.ceil(value / step) * step

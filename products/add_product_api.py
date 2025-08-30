@@ -3,7 +3,7 @@ import json
 from functools import lru_cache
 from datetime import datetime, date
 from time import time
-
+from django.utils import timezone
 from django.db.models import Q
 
 from orders.models import ShoppingCart
@@ -279,6 +279,8 @@ def add_product_api(data):
                 sizes_id.add(s.id)
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
     product.available_sizes = sizes_info
+    product.last_upd = timezone.now()
+    product.one_update = True
     product.save()
 
     t8 = time()

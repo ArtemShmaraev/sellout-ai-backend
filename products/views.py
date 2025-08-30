@@ -1,10 +1,13 @@
+import asyncio
 import copy
 import hashlib
 import math
 import random
 import threading
 
+import httpx
 from django.core.cache import cache
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.db import models, transaction
 import rest_framework.generics
@@ -87,6 +90,8 @@ class AddPhotoBlackList(APIView):
         try:
             # Удаляем фото из bucket_link и добавляем в black_bucket_link
             product.bucket_link.remove(photo)
+            if product.bucket_link.all().count() == 0:
+                product.available_flag = False
             product.black_bucket_link.add(photo)
             product.save()
         except Exception as e:
@@ -540,11 +545,20 @@ class SuggestSearch(APIView):
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
+    async def send_async_request(self, spu_id):
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+            # Вы можете добавить обработку ответа, если это необходимо
+            return response
 
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
+            spu_id = product.spu_id
 
+            time_threshold = timezone.now() - timezone.timedelta(hours=1)
+            if not product.last_upd >= time_threshold:
+                asyncio.run(self.send_async_request(spu_id))
             product.rel_num += 1
             product.save()
             serializer = ProductSerializer(product, context={"list_lines": True,

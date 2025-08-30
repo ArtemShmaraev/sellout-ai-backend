@@ -15,6 +15,15 @@ from shipping.models import DeliveryType, ProductUnit, Platform
 from utils.models import Currency
 
 
+def sklon_days(n):
+    if n % 10 == 1 and n % 100 != 11:
+        return "день"
+    elif 2 <= n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20):
+        return "дня"
+    else:
+        return "дней"
+
+
 def add_product_api(data):
     spu_id = data.get("spuId")
     property_id = data.get("propertyId")
@@ -199,9 +208,13 @@ def add_product_api(data):
         for i in range(len(sort_offers)):
             offer = sort_offers[i]
             if offer['show']:
+                view_name = f'{offer["days_min"]}-{offer["days_max"]} {sklon_days(int(offer["days_max"]))}'
+                if offer['days_min'] == offer['days_max']:
+                    view_name = f'{offer["days_max"]} {sklon_days(int(offer["days_max"]))}'
+
                 dilivery, create = DeliveryType.objects.get_or_create(
                     name=sort_offers[i]["delivery_additional_info"],
-                    view_name=f'{offer["days_min"]}-{offer["days_max"]}',
+                    view_name=view_name,
                     days_min=offer['days_min'],
                     days_max=offer['days_max'],
                     days_max_to_international_warehouse=offer['days_max_to_international_warehouse'],

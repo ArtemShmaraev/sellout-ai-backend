@@ -21,7 +21,7 @@ class DeliveryForSizeView(APIView):
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(name="Amethyst")
             update_price(product)
             view_size = json.loads(request.body)['view_size']
-            product_units = product.product_units.filter(view_size_platform=view_size, availability=True)
+            product_units = product.product_units.filter(view_size_platform=view_size, availability=True).order_by("-final_price")
             s = []
             for product_unit in product_units:
                 d = dict()
@@ -38,7 +38,7 @@ class DeliveryForSizeView(APIView):
                 d['is_sale'] = product_unit.is_sale
                 d['is_return'] = product_unit.is_return
                 d['delivery'] = DeliveryTypeSerializer(product_unit.delivery_type).data
-                d['delivery_view'] = f"{product_unit.delivery_type.days_min}-{product_unit.delivery_type.days_max} дней"
+                d['delivery_view'] = product_unit.delivery_type.view_name
                 s.append(d)
             return Response(s)
 

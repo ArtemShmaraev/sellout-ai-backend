@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from products.tools import update_price
+from products.tools import update_price, platform_update_price
 from users.models import User, UserStatus
 from .models import ProductUnit
 from .serializers import ProductUnitSerializer, DeliveryTypeSerializer
@@ -225,19 +225,21 @@ class ProductUnitProductMainView(APIView):
 class ListProductUnitView(APIView):
     # authentication_classes = [JWTAuthentication]
     def post(self, request):
-        # try:
+        try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
             s_id = [s.strip() for s in s_product_unit if s.strip()]
             product_units = ProductUnit.objects.filter(id__in=s_id)
+            for unit in product_units.all():
+                platform_update_price(unit.product)
 
             serializer = ProductUnitSerializer(product_units, many=True)
             return Response(serializer.data)
-        # except json.JSONDecodeError:
-        #     return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
-        # except ProductUnit.DoesNotExist:
-        #     return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
-        # except Exception as e:
-        #     return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except json.JSONDecodeError:
+            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+        except ProductUnit.DoesNotExist:
+            return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class TotalPriceForListProductUnitView(APIView):

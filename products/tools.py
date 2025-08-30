@@ -1,10 +1,13 @@
+import asyncio
 import random
 import json
 from functools import lru_cache
 from datetime import datetime, date
 from time import time
 
+import httpx
 from django.db.models import Q, Case, When, Value, IntegerField
+from django.utils import timezone
 
 from products.formula_price import formula_price
 # from products.main_page import get_random
@@ -13,6 +16,17 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 
 from users.models import UserStatus
 
+
+def platform_update_price(product):
+    async def send_async_request(spu_id):
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+            # Вы можете добавить обработку ответа, если это необходимо
+            return response
+    spu_id = product.spu_id
+    time_threshold = timezone.now() - timezone.timedelta(hours=1)
+    if not product.last_upd >= time_threshold:
+        asyncio.run(send_async_request(spu_id))
 
 
 def update_price(product):

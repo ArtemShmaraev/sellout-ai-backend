@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from products.tools import platform_update_price
 from .models import ShoppingCart, Order, OrderUnit, Status
 # Create your views here.
 from django.shortcuts import get_object_or_404
@@ -116,8 +117,9 @@ class ShoppingCartUser(APIView):
 
                 shopping_cart = ShoppingCart.objects.get(user_id=user_id)
                 units = ProductUnit.objects.filter(id__in=shopping_cart.unit_order)
+                for unit in units.all():
+                    platform_update_price(unit.product)
                 shopping_cart.product_units.set(units)
-                print(shopping_cart.unit_order)
                 shopping_cart.total()
                 serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id})
                 return Response(serializer.data)

@@ -34,7 +34,7 @@ from .serializers import SizeTableSerializer, ProductMainPageSerializer, Categor
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
     ProductSlugAndPhotoSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
-    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id
+    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -545,20 +545,13 @@ class SuggestSearch(APIView):
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
-    async def send_async_request(self, spu_id):
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-            # Вы можете добавить обработку ответа, если это необходимо
-            return response
+
 
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            spu_id = product.spu_id
+            platform_update_price(product)
 
-            time_threshold = timezone.now() - timezone.timedelta(hours=1)
-            if not product.last_upd >= time_threshold:
-                asyncio.run(self.send_async_request(spu_id))
             product.rel_num += 1
             product.save()
             serializer = ProductSerializer(product, context={"list_lines": True,

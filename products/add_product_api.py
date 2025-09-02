@@ -15,6 +15,16 @@ from shipping.models import DeliveryType, ProductUnit, Platform
 from utils.models import Currency
 
 
+
+def add_products_spu_id_api(data):
+    property_ids = []
+    for product in data:
+        property_ids.append(product.get("propertyId"))
+        add_product_api(product)
+
+
+
+
 def sklon_days(n):
     if n % 10 == 1 and n % 100 != 11:
         return "день"

@@ -269,6 +269,7 @@ class Product(models.Model):
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
     actual_price = models.BooleanField(default=False)
     one_update = models.BooleanField(default=False)
+    last_parse_price = models.DateTimeField(default=timezone.now)
 
     objects = ProductManager()
 

@@ -54,10 +54,18 @@ class ProductSlugAndPhoto(APIView):
         params = request.query_params
         queryset = Product.objects.all()
         page_number = int(params.get("page", 1))
+        categories = params.getlist("category", "")
+        lines = params.getlist("line", "")
+
+        if categories:
+            queryset = queryset.filter(categories__eng_name__in=categories)
+        if lines:
+            queryset = queryset.filter(lines__full_eng_name__in=lines)
+
         res = {}
 
         queryset = queryset.values_list("id", flat=True)
-        cache_count_key = f"productcount"  # Уникальный ключ для каждой URL
+        cache_count_key = f"productcount_{request.build_absolute_uri()}"  # Уникальный ключ для каждой URL
         cached_count = cache.get(cache_count_key)
         if cached_count is not None:
 
@@ -550,7 +558,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            # platform_update_price(product)
+            platform_update_price(product)
 
             product.rel_num += 1
             product.save()

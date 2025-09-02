@@ -23,10 +23,15 @@ def platform_update_price(product):
             response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
             # Вы можете добавить обработку ответа, если это необходимо
             return response
-    spu_id = product.spu_id
-    time_threshold = timezone.now() - timezone.timedelta(hours=1)
-    if not product.last_upd >= time_threshold:
-        asyncio.run(send_async_request(spu_id))
+
+    time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
+    if not product.last_parse_price >= time_threshold1:
+        spu_id = product.spu_id
+        time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+        if not product.last_upd >= time_threshold2:  # если цена не актуальна
+            product.last_parse_price = timezone.now()
+            product.save()
+            asyncio.run(send_async_request(spu_id))
 
 
 def update_price(product):

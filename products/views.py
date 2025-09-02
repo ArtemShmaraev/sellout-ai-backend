@@ -84,6 +84,14 @@ class ProductSlugAndPhoto(APIView):
         return Response(res)
 
 
+class PhotoWhiteList(APIView):
+    def get(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        for photo in product.black_bucket_link.all():
+            product.bucket_link.add(photo)
+        product.black_bucket_link.clear()
+        product.save()
+        return Response("Готово")
 
 class AddPhotoBlackList(APIView):
     def get(self, request, product_id, photo_id):

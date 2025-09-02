@@ -18,8 +18,14 @@ from utils.models import Currency
 
 def add_products_spu_id_api(data):
     property_ids = []
+    spu_id = 0
     for product in data:
         property_ids.append(product.get("propertyId"))
+        spu_id = product.get("spuId")
+
+    products = Product.objects.filter(spu_id=spu_id)
+    products.update(available_flag=False)
+    for product in data:
         add_product_api(product)
 
 

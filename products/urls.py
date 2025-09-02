@@ -66,5 +66,5 @@ urlpatterns = [
     path("hide_product/<int:spu_id>", HideProductSpiIdView.as_view()),
     path("dewu_info_count", DewuInfoCount.as_view()),
     path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view()),
-    path("add_photo_white_list/<int:product_id>", PhotoWhiteList.as_view()),
+    path("photo_white_list/<int:product_id>", PhotoWhiteList.as_view()),
     path("product_photo_and_slug", ProductSlugAndPhoto.as_view())]

@@ -566,7 +566,13 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            platform_update_price(product)
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+            # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
+            is_search_bot = any(
+                keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
+            if not is_search_bot:
+                platform_update_price(product)
 
             product.rel_num += 1
             product.save()

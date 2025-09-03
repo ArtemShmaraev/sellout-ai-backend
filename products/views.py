@@ -21,7 +21,7 @@ from django.views.decorators.cache import cache_page
 import json
 from time import time
 from django.http import JsonResponse, FileResponse
-from .add_product_api import add_product_api
+from .add_product_api import add_product_api, add_products_spu_id_api
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
@@ -572,7 +572,7 @@ class ProductSlugView(APIView):
             # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
-            if request.user:
+            if request.user.id:
                 platform_update_price(product, request=request)
                 product.rel_num += 1
                 product.save()
@@ -794,6 +794,13 @@ class AddProductView(APIView):
         data = json.loads(request.body)
         product = add_product_api(data)
         return Response(ProductSerializer(product).data)
+
+
+class AddListProductsView(APIView):  # список товаров одного spu_id
+    def post(self, request):
+        data = json.loads(request.body)
+        add_products_spu_id_api(data)
+        return Response("Готово")
 
 
 class ListProductView(APIView):

@@ -8,7 +8,8 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, \
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
-    PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto,  PhotoWhiteList
+    PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
+    PhotoWhiteList, AddListProductsView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -67,4 +68,5 @@ urlpatterns = [
     path("dewu_info_count", DewuInfoCount.as_view()),
     path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view()),
     path("photo_white_list/<int:product_id>", PhotoWhiteList.as_view()),
-    path("product_photo_and_slug", ProductSlugAndPhoto.as_view())]
+    path("product_photo_and_slug", ProductSlugAndPhoto.as_view()),
+    path("add_list_spu_id_products", AddListProductsView.as_view())]

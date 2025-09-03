@@ -516,7 +516,7 @@ class UserLastSeenView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request, user_id):
-        try:
+        # try:
             user = User.objects.get(id=user_id)
             if request.user.id == user_id or request.user.is_staff:
 
@@ -544,10 +544,10 @@ class UserLastSeenView(APIView):
                         user=User(id=self.request.user.id)) if request.user.id else None}).data)
             else:
                 return Response("Доступ запрещен", status=status.HTTP_403_FORBIDDEN)
-        except User.DoesNotExist:
-            return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # except User.DoesNotExist:
+        #     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
+        # except Exception as e:
+        #     return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:

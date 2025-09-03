@@ -278,7 +278,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", 'in_wishlist', "price", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale"]
+        fields = ["id", 'in_wishlist', "price", "model", "colorway", "slug", "is_collab","collab", "brands", "bucket_link", "is_sale", "available_sizes"]
         # exclude = ["platform_info", "sizes_prices", "last_upd", "add_date", "size_table", 'categories',
         #            "size_table_platform", "russian_name", "main_color", "description", "exact_date", "approximate_date",
         #            "fit", "rel_num", "dewu_info", "main_line", "manufacturer_sku", "lines", "colors", "gender",
@@ -308,9 +308,10 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 obj.product_units.filter(filters).order_by(
                     "approximate_price_with_delivery_in_rub")[0]
             else:
-                print(obj.slug)
+                filters &= Q(availability=True)
+                filters &= Q(final_price=obj.min_price)
                 unit = \
-                    obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
+                    obj.product_units.filter(filters).order_by(
                         "approximate_price_with_delivery_in_rub")[0]
             return formula_price(obj, unit, user_status)
 

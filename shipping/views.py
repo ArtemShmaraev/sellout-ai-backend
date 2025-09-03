@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from orders.models import ShoppingCart
 from products.tools import update_price, platform_update_price
 from users.models import User, UserStatus
 from .models import ProductUnit
@@ -229,7 +230,9 @@ class ListProductUnitView(APIView):
             s_product_unit = json.loads(request.body)["product_unit_list"]
             s_id = [s.strip() for s in s_product_unit if s.strip()]
             product_units = ProductUnit.objects.filter(id__in=s_id)
+            shopping_cart = ShoppingCart.objects.get(user__email="cartanon@mail.ru")
             for unit in product_units.all():
+                shopping_cart.product_units.add()
                 platform_update_price(unit.product)
 
             serializer = ProductUnitSerializer(product_units, many=True)

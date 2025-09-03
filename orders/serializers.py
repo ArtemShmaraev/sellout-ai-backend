@@ -24,9 +24,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     def get_actual_platform_price(self, obj):
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
         for unit in obj.product_units.all():
-            if not unit.product.last_upd >= time_threshold:
+            if unit.product.last_upd < time_threshold:
                 return False
         return True
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         unit_order = instance.unit_order

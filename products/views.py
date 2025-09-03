@@ -531,7 +531,7 @@ class ProductView(APIView):
         # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
         t7 = time()
         print("t6", t7 - t6)
-        serializer = queryset
+        serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         res["results"] = serializer
         t8 = time()
         print("t7", t8 - t7)
@@ -566,16 +566,17 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             product = Product.objects.get(slug=slug)
-            user_agent = request.META.get('HTTP_USER_AGENT', '')
 
-            # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
-            is_search_bot = any(
-                keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
-            if not is_search_bot:
-                platform_update_price(product)
-
-            product.rel_num += 1
-            product.save()
+            # user_agent = request.META.get('HTTP_USER_AGENT', '')
+            #
+            # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
+            # is_search_bot = any(
+            #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
+            if request.user:
+                platform_update_price(product, request=request)
+                product.rel_num += 1
+                product.save()
+            # print(product.min_price)
             serializer = ProductSerializer(product, context={"list_lines": True,
                                                              "wishlist": Wishlist.objects.get(user=User(
                                                                  id=self.request.user.id)) if request.user.id else None})

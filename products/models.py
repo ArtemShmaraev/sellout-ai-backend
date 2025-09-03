@@ -315,8 +315,6 @@ class Product(models.Model):
         self.has_many_colors = False
         self.has_many_configurations = False
 
-        self.last_upd = timezone.now()
-
         self.rel_num = 0
         self.platform_info = {}
         self.sizes_prices = []

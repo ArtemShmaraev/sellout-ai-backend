@@ -350,7 +350,7 @@ def get_product_page(request, context):
     # list_id = list(queryset.values_list("id", flat=True))
     # print(time() - t6)
     # queryset = get_queryset_from_list_id(list_id)
-    queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
+    # queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
     t7 = time()
     print("t6", t7-t6)
     # t7 = time()

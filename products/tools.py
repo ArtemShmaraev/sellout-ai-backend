@@ -6,6 +6,7 @@ from datetime import datetime, date
 from time import time
 
 import httpx
+from django.core.cache import cache
 from django.db.models import Q, Case, When, Value, IntegerField
 from django.utils import timezone
 
@@ -17,21 +18,41 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from users.models import UserStatus
 
 
-def platform_update_price(product):
+def platform_update_price(product, request=False):
     async def send_async_request(spu_id):
         async with httpx.AsyncClient() as client:
             response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
             # Вы можете добавить обработку ответа, если это необходимо
             return response
+    if request:
+        user_identifier = request.META.get('REMOTE_ADDR')
+        # Генерируем уникальный ключ для кэша
+        cache_key = f'request_count:{user_identifier}'
+        # Получаем текущее количество запросов пользователя
+        request_count = cache.get(cache_key, default=0)
+        # Увеличиваем количество запросов на 1
+        request_count += 1
+        # Устанавливаем значение в кэше с истечением через 1 час
+        cache.set(cache_key, request_count, 3600)
+        if request_count < 200:
+            time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
+            if not product.last_parse_price >= time_threshold1:
+                spu_id = product.spu_id
+                time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+                if not product.last_upd >= time_threshold2:  # если цена не актуальна
+                    product.last_parse_price = timezone.now()
+                    product.save()
+                    asyncio.run(send_async_request(spu_id))
 
-    time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
-    if not product.last_parse_price >= time_threshold1:
-        spu_id = product.spu_id
-        time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
-        if not product.last_upd >= time_threshold2:  # если цена не актуальна
-            product.last_parse_price = timezone.now()
-            product.save()
-            asyncio.run(send_async_request(spu_id))
+    else:
+        time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
+        if not product.last_parse_price >= time_threshold1:
+            spu_id = product.spu_id
+            time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+            if not product.last_upd >= time_threshold2:  # если цена не актуальна
+                product.last_parse_price = timezone.now()
+                product.save()
+                asyncio.run(send_async_request(spu_id))
 
 
 def update_price(product):

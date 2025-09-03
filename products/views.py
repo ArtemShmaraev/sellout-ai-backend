@@ -568,7 +568,7 @@ class ProductSlugView(APIView):
             product = Product.objects.get(slug=slug)
 
             # user_agent = request.META.get('HTTP_USER_AGENT', '')
-            #
+            print(request.META.get('HTTP_USER_AGENT', ''), "блять")
             # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])

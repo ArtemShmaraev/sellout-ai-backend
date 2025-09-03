@@ -161,7 +161,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_actual_platform_price(self, obj):
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        return obj.last_upd >= time_threshold
+        wl = self.context.get('wishlist', "")
+        return obj.last_upd >= time_threshold or not wl
 
 
 
@@ -307,6 +308,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 obj.product_units.filter(filters).order_by(
                     "approximate_price_with_delivery_in_rub")[0]
             else:
+                print(obj.slug)
                 unit = \
                     obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                         "approximate_price_with_delivery_in_rub")[0]

@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from .models import ShoppingCart, Order, OrderUnit
 from rest_framework import serializers
 from products.serializers import ProductMainPageSerializer, ProductSerializer
@@ -13,10 +15,18 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     product_units = ProductUnitSerializer(many=True, read_only=True)
     user_bonus = serializers.SerializerMethodField()
     user = ForAnonUserSerializer()
+    actual_platform_price = serializers.SerializerMethodField()
+
     class Meta:
         model = ShoppingCart
         fields = '__all__'
 
+    def get_actual_platform_price(self, obj):
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        for unit in obj.product_units.all():
+            if not unit.product.last_upd >= time_threshold:
+                return False
+        return True
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         unit_order = instance.unit_order

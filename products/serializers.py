@@ -310,6 +310,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             else:
                 filters &= Q(availability=True)
                 filters &= Q(final_price=obj.min_price)
+                print(obj.slug)
                 unit = \
                     obj.product_units.filter(filters).order_by(
                         "approximate_price_with_delivery_in_rub")[0]

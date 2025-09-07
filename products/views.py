@@ -754,7 +754,7 @@ class SizeTableForFilter(APIView):
 
             if size_tables is None:
                 filters = {}
-                size_tables = SizeTable.objects.all()
+                size_tables = SizeTable.objects.filter(standard=True)
 
                 # Фильтр по цене
                 if gender:

@@ -1630,5 +1630,21 @@
       }
     },
     "default_size": "Международный(INT)"
+  },
+  {
+    "name": "Один размер",
+    "category": [],
+    "gender": [],
+    "filter_name": "Один размер",
+    "all_sizes": {
+      "Standard_sizes": {
+        "filter_name": "Один размер",
+        "filter_logo": "Один размер",
+        "sizes": [
+          "Один размер"
+        ]
+      }
+    },
+    "default_size": "Один размер"
   }
 ]

@@ -366,7 +366,7 @@ def update_product_api(data):
                                 sizes.append(size_row.id)
                                 break
         else:
-            row = SizeTranslationRows.objects.filter(is_one_size=True).first()
+            row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
             sizes.append(row.id)
 
         platform_info = unit['platform_info']

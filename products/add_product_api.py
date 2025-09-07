@@ -307,8 +307,8 @@ def add_product_api(data):
                 sizes_id.add(s.id)
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
     product.available_sizes = sizes_info
-    product.last_upd = timezone.now()
     product.one_update = True
+    product.last_upd = timezone.now()
     product.save()
 
     t8 = time()

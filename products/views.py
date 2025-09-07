@@ -746,7 +746,7 @@ class SizeTableForFilter(APIView):
             gender = self.request.query_params.getlist("gender")
             categories = self.request.query_params.getlist("category")
 
-            cache_key = f'size_table{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
+            cache_key = f'size_table_{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
 
             # Попробуйте сначала получить результат из кэша
             size_tables = cache.get(cache_key)

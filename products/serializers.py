@@ -156,13 +156,14 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "last_upd", "lines"]
+        exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "lines",
+                   "min_price", "min_price_without_sale", "max_bonus", "has_many_sizes", "has_many_colors", "has_many_configurations", "fit",
+                   "rel_num", "another_configuration", "percentage_sale", "in_sg", "tags",]
         depth = 2
 
     def get_actual_platform_price(self, obj):
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        wl = self.context.get('wishlist', "")
-        return obj.last_upd >= time_threshold or not wl
+        return obj.last_upd >= time_threshold or 'wishlist' not in self.context
 
 
 

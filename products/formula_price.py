@@ -140,15 +140,18 @@ def formula_price(product, unit, user_status):
     weight = unit.weight
     delivery = unit.delivery_type
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
+    delivery_decimal_insurance = delivery.decimal_insurance
+    delivery_absolute_insurance = delivery.absolute_insurance
     delivery_extra_charge = delivery.extra_charge
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
     categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
-    poizon_abroad = unit.delivery_type.poizon_abroad
+    poizon_abroad = unit.platform_info.poizon.poizon_abroad
     status_name = user_status.name  # Amethyst
 
     if status_name == "Privileged":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = delivery_price_per_kg_in_rub * weight
+        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
+                         + delivery_absolute_insurance)
         cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
                                  * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL + COMMISSION_FEE_ABSOLUTE)
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
@@ -156,19 +159,43 @@ def formula_price(product, unit, user_status):
         total_price = total_cost + PRIVILEGED_MARKUP
     elif status_name == "Friends & Family":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = delivery_price_per_kg_in_rub * weight
+        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
+                         + delivery_absolute_insurance)
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
         if product.actual_price:
+            total_profit = unit.total_profit
+            bonus = unit.bonus
+            if status_name == "Amethyst":
+                bonus_max = 250
+                bonus_from_profit = round(0.1 * total_profit)
+                bonus = min(bonus_max, bonus_from_profit)
+            elif status_name == "Sapphire":
+                bonus_max = 500
+                bonus_from_profit = round(0.15 * total_profit)
+                bonus = min(bonus_max, bonus_from_profit)
+            elif status_name == "Emerald":
+                bonus_max = 750
+                bonus_from_profit = round(0.2 * total_profit)
+                bonus = min(bonus_max, bonus_from_profit)
+            elif status_name == "Ruby":
+                bonus_max = 1000
+                bonus_from_profit = round(0.25 * total_profit)
+                bonus = min(bonus_max, bonus_from_profit)
+            elif status_name == "Diamond":
+                bonus_max = 1500
+                bonus_from_profit = round(0.3 * total_profit)
+                bonus = min(bonus_max, bonus_from_profit)
             return {"final_price": unit.final_price,
                     "start_price": unit.start_price,
                     "total_profit": unit.total_profit,
-                    "bonus": unit.bonus}
+                    "bonus": bonus}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = delivery_price_per_kg_in_rub * weight
+        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
+                         + delivery_absolute_insurance)
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
 
         total_cost = cost_without_shipping + shipping_cost

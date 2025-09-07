@@ -270,6 +270,7 @@ class Product(models.Model):
     actual_price = models.BooleanField(default=False)
     one_update = models.BooleanField(default=False)
     last_parse_price = models.DateTimeField(default=timezone.now)
+    content_sources = models.JSONField(blank=True, null=True, default=dict)
 
     objects = ProductManager()
 
@@ -329,6 +330,7 @@ class Product(models.Model):
         self.percentage_sale = 0
         self.available_sizes = {}
         self.actual_price = True
+        self.content_sources = {}
         self.save()
 
     def update_available_status(self):

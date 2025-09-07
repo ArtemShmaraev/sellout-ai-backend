@@ -286,13 +286,13 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-CACHES = {
-    'default': {
-        'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
-        'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
+#         'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+#         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
+#     }
+# }
 
 
 ELASTICSEARCH_DSL = {

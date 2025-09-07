@@ -173,7 +173,7 @@ class ProductSerializer(serializers.ModelSerializer):
             user_status = wl.user.user_status
             unit = \
                     obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
-                        "approximate_price_with_delivery_in_rub")[0]
+                        "final_price")[0]
 
             return formula_price(obj, unit, user_status)
 
@@ -307,14 +307,14 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 filters &= Q(final_price=min_final_price)
                 unit = \
                 obj.product_units.filter(filters).order_by(
-                    "approximate_price_with_delivery_in_rub")[0]
+                    "final_price")[0]
             else:
                 filters &= Q(availability=True)
                 filters &= Q(final_price=obj.min_price)
                 print(obj.slug)
                 unit = \
                     obj.product_units.filter(filters).order_by(
-                        "approximate_price_with_delivery_in_rub")[0]
+                        "final_price")[0]
             return formula_price(obj, unit, user_status)
 
         else:

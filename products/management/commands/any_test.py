@@ -26,9 +26,19 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        line_yeezy = Line.objects.get(view_name="Все Yeezy")
-        line_yeezy.full_eng_name = "adidas_yeezy"
-        line_yeezy.save()
+        szs = SizeTable.objects.filter(standard=True)
+        for sz in szs:
+            for cat in sz.category.all():
+                cur_cat = cat
+                while cur_cat.parent_category:
+                    sz.category.add(cur_cat.parent_category)
+                    cur_cat = cur_cat.parent_category
+            sz.save()
+
+
+        # line_yeezy = Line.objects.get(view_name="Все Yeezy")
+        # line_yeezy.full_eng_name = "adidas_yeezy"
+        # line_yeezy.save()
         # duplicate_photos = Photo.objects.values('url').annotate(url_count=Count('url')).filter(url_count__gt=1)
         #
         # # Вывести дубликаты

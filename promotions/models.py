@@ -47,9 +47,9 @@ class PromoCode(models.Model):
                 final_amount = round(total_amount - self.discount_absolute)
             promo_sale = total_amount - final_amount
 
-            if self.activation_count >= self.max_activation_count:
+            if (self.activation_count >= self.max_activation_count) and not self.unlimited:
                 return 0, "Промокод закончился"
-            if self.active_status and self.active_until_date >= datetime.date.today():
+            if (self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited:
                 return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale
             else:
                 return 0, "Промокод не активен"

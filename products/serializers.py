@@ -22,7 +22,7 @@ class SizeRowSerializer(serializers.ModelSerializer):
 
     def get_is_main(self, row):
         user = self.context.get('user')
-        if user is not None:
+        if user is not None and row.size_tables.first().name not in ["Shoes_Adults", "Clothes_Men" "Clothes_Women"]:
             return user.preferred_shoes_size_row == row or user.preferred_clothes_size_row == row
         return row == row.size_tables.first().default_row
 

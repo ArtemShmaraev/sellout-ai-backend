@@ -746,31 +746,21 @@ class SizeTableForFilter(APIView):
             gender = self.request.query_params.getlist("gender")
             categories = self.request.query_params.getlist("category")
 
-            cache_key = f'size_table_{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
+            cache_key = f'size_table_2{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
 
             # Попробуйте сначала получить результат из кэша
             size_tables = cache.get(cache_key)
 
 
             if size_tables is None:
-                filters = {}
                 size_tables = SizeTable.objects.filter(standard=True)
 
                 # Фильтр по цене
                 if gender:
-                    filters['gender__name__in'] = gender
+                    size_tables = size_tables.filter(gender__name__in=gender)
                 if categories:
-                    list_cat = []
-                    for category in categories:
-                        category_model = Category.objects.filter(eng_name=category).first()
-                        list_cat.append(category_model.eng_name)
-                        while category_model.parent_category:
-                            list_cat.append(category_model.parent_category.eng_name)
-                            category_model = category_model.parent_category
-                    filters['category__eng_name__in'] = list_cat
+                    size_tables = size_tables.filter(category__eng_name__in=categories)
 
-                if filters:
-                    size_tables = size_tables.filter(**filters)
                 size_tables = SizeTableSerializer(size_tables, many=True, context=context).data
 
                 cache.set(cache_key, size_tables, CACHE_TIME)

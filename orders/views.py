@@ -3,6 +3,7 @@ import json
 from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from products.tools import platform_update_price
@@ -204,6 +205,11 @@ class CheckOutView(APIView):
             if request.user.id == user_id or request.user.is_staff:
 
                 cart = ShoppingCart.objects.get(user_id=user_id)
+                time_threshold = timezone.now() - timezone.timedelta(hours=1)
+                for unit in cart.product_units.all():
+                    if unit.product.last_upd < time_threshold:
+                        print("Отмена лох")
+                        return Response("Рано", status=status.HTTP_403_FORBIDDEN)
                 data = json.loads(request.body)
                 # print(data)
                 user = get_object_or_404(User, id=user_id)

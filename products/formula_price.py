@@ -170,6 +170,7 @@ def formula_price(product, unit, user_status):
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         shipping_cost = delivery_price_per_kg_in_rub * weight
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
+
         total_cost = cost_without_shipping + shipping_cost
         total_cost_after_cashing_out = total_cost * CASHING_OUT_COMMISSION_FEE_DECIMAL
 
@@ -236,6 +237,6 @@ def formula_price(product, unit, user_status):
         bonus = min(bonus_max, bonus_from_profit)
     else:
         bonus = 0
-
+    print(total_profit, round_total_price)
     return {"final_price": round_total_price, "start_price": round_total_price, "total_profit": round(total_profit),
             "bonus": bonus}

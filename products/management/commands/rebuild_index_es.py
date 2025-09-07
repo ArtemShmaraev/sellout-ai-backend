@@ -64,7 +64,6 @@ class Command(BaseCommand):
                         'input': [slice],
                         'weight': max(0, 70000 - level - (i * 10) - dop - length)
                     })
-            print(line_doc.suggest)
             line_doc.save()
 
         collabs = Collab.objects.all()
@@ -113,7 +112,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = False
+        f = True
         if f:
             product_index = ProductDocument._index
             if product_index.exists():

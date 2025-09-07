@@ -126,46 +126,49 @@ class Command(BaseCommand):
             count = products.count()
             k = 0
             kk = 0
-            for product in products:
-                kk += 1
-                if kk * 100 / count > k:
-                    self.stdout.write(self.style.SUCCESS(f"{k} %"))
-                    k += 1
-                product_doc = ProductDocument(meta={'id': product.id})
+            for page in range(0, count, 100):
+                page_product = products[page:page + 100]
 
-                lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-                if lines:
-                    main_line = lines.order_by('-id').first()
-                    product_doc.main_line = main_line.name
+                for product in page_product:
+                    kk += 1
+                    if kk * 100 / count > k:
+                        self.stdout.write(self.style.SUCCESS(f"{k} %"))
+                        k += 1
+                    product_doc = ProductDocument(meta={'id': product.id})
 
-                categories = product.categories.exclude(name__icontains='Все').exclude(
-                    name__contains='Другие')
-                if categories:
-                    main_category = categories.order_by("-id").first()
-                    product_doc.main_category = main_category.name
-                    product_doc.main_category_eng = main_category.eng_name
+                    lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+                    if lines:
+                        main_line = lines.order_by('-id').first()
+                        product_doc.main_line = main_line.name
 
-                product_doc.brands = [brand.name for brand in product.brands.all()]
-                product_doc.categories = [category.name for category in
-                                          product.categories.exclude(name__icontains='Все').exclude(
-                                              name__contains='Другие')]
-                product_doc.categories_eng = [category.eng_name for category in
+                    categories = product.categories.exclude(name__icontains='Все').exclude(
+                        name__contains='Другие')
+                    if categories:
+                        main_category = categories.order_by("-id").first()
+                        product_doc.main_category = main_category.name
+                        product_doc.main_category_eng = main_category.eng_name
+
+                    product_doc.brands = [brand.name for brand in product.brands.all()]
+                    product_doc.categories = [category.name for category in
                                               product.categories.exclude(name__icontains='Все').exclude(
                                                   name__contains='Другие')]
+                    product_doc.categories_eng = [category.eng_name for category in
+                                                  product.categories.exclude(name__icontains='Все').exclude(
+                                                      name__contains='Другие')]
 
-                product_doc.lines = [line.name for line in
-                                     product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-                product_doc.model = product.model
-                product_doc.colorway = product.colorway
-                # product_doc.russian_name = product.russian_name
-                product_doc.manufacturer_sku = product.manufacturer_sku
-                # product_doc.description = product.description
-                product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
-                # product_doc.main_color = product.main_color.name if product.main_color else None
-                # product_doc.colors = [color.name for color in product.colors.all()]
-                # product_doc.designer_color = product.designer_color
-                product_doc.gender = [gender.name for gender in product.gender.all()]
-                product_doc.save()
+                    product_doc.lines = [line.name for line in
+                                         product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+                    product_doc.model = product.model
+                    product_doc.colorway = product.colorway
+                    # product_doc.russian_name = product.russian_name
+                    product_doc.manufacturer_sku = product.manufacturer_sku
+                    # product_doc.description = product.description
+                    product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
+                    # product_doc.main_color = product.main_color.name if product.main_color else None
+                    # product_doc.colors = [color.name for color in product.colors.all()]
+                    # product_doc.designer_color = product.designer_color
+                    product_doc.gender = [gender.name for gender in product.gender.all()]
+                    product_doc.save()
             self.stdout.write(self.style.SUCCESS(f"{k} %"))
 
         line_index = LineDocument._index

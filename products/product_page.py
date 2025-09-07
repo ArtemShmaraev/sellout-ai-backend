@@ -30,7 +30,7 @@ from django.views.decorators.cache import cache_page
 
 
 
-def get_product_page_header(request):
+def  get_product_page_header(request):
     res = {}
 
     line = request.query_params.getlist('line')
@@ -153,71 +153,10 @@ def get_product_page(request, context):
     if line:
         queryset = queryset.filter(lines__full_eng_name__in=line)
 
-        # def find_common_ancestor(lines):
-        #     # Создаем множество для хранения всех родительских линеек
-        #     # Добавляем все родительские линейки в множество
-        #     current_line = lines[0]
-        #     parent_lines = set()
-        #     parent_lines.add(current_line)
-        #
-        #     while current_line.parent_line:
-        #         parent_lines.add(current_line.parent_line)
-        #         current_line = current_line.parent_line
-        #
-        #     # Переберите остальные выбранные линейки и найдите первую общую вершину
-        #     for line in lines[1:]:
-        #         current_line = line
-        #         while current_line:
-        #             if current_line in parent_lines:
-        #                 return current_line
-        #             current_line = current_line.parent_line
-        #     print(parent_lines)
-        #     if len(lines) == 1:
-        #         return lines[0]
-        #     return None  # Если общей родительской линейки не найдено
-
-        # Пример использования
-        # selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
-        # if len(selected_lines) > 0:
-        #     oldest_line = find_common_ancestor(selected_lines)
-        #     list_line.append(oldest_line)
-        #     while oldest_line.parent_line:
-        #         list_line.append(oldest_line.parent_line)
-        #         oldest_line = oldest_line.parent_line
-
     if color:
         queryset = queryset.filter(colors__name__in=color)
     if category:
         queryset = queryset.filter(categories__eng_name__in=category)
-
-        # def find_common_ancestor(categories):
-        #
-        #     current_cat = categories[0]
-        #     parent_cats = set()
-        #     parent_cats.add(current_cat)
-        #
-        #     while current_cat.parent_category:
-        #         parent_cats.add(current_cat.parent_category)
-        #         current_cat = current_cat.parent_category
-        #
-        #     # Переберите остальные выбранные линейки и найдите первую общую вершину
-        #     for cat in categories[1:]:
-        #         current_cat = cat
-        #         while current_cat:
-        #             if current_cat in parent_cats:
-        #                 return current_cat
-        #             current_cat = current_cat.parent_category
-        #     if len(categories) == 1:
-        #         return categories[0]
-        #     return None
-        #
-        # selected_cat = Category.objects.filter(eng_name__in=category)  # Ваши выбранные линейки
-        # if len(selected_cat) > 0:
-        #     oldest_cat = find_common_ancestor(selected_cat)
-        #     list_cat.append(oldest_cat)
-        #     while oldest_cat.parent_category:
-        #         list_cat.append(oldest_cat.parent_category)
-        #         oldest_cat = oldest_cat.parent_category
 
     if gender:
         queryset = queryset.filter(gender__name__in=gender)
@@ -270,7 +209,7 @@ def get_product_page(request, context):
 
     # queryset = queryset.distinct()
 
-    queryset = queryset.values_list("id", flat=True).distinct()
+    queryset = queryset.values_list("id").distinct()
     print("1111", time() - t3)
     page_number = int(params.get("page", 1))
 
@@ -284,7 +223,7 @@ def get_product_page(request, context):
 
         count = cached_count
     else:
-        count = 100000
+        count = 10000
         cache.set(cache_count_key, (count), CACHE_TIME)
 
     res['count'] = count
@@ -333,7 +272,8 @@ def get_product_page(request, context):
     start_index = (page_number - 1) * 60
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 60]
-    queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
+    print(queryset.query)
+    queryset = get_queryset_from_list_id(queryset.values_list("id", flat=True))
     # queryset = Product.objects.filter(id__in=queryset)
     # print(queryset.query)
     # print()

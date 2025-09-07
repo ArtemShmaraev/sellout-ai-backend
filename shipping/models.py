@@ -80,7 +80,7 @@ class ProductUnit(models.Model):
                                           default="")  # обработанный размер с платформы
     # size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
 
-    size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", blank=True)
+    size_table = models.ManyToManyField("products.SizeTable", related_name="product_units", blank=True, db_index=True)
 
     size = models.ManyToManyField("products.SizeTranslationRows", related_name="product_units",
                                   blank=True, db_index=True)  # порядковый номер размера в таблице
@@ -99,7 +99,7 @@ class ProductUnit(models.Model):
                                  null=False, blank=False)
     url = models.CharField(max_length=255, null=True, blank=True, default="")
 
-    availability = models.BooleanField(default=True)
+    availability = models.BooleanField(default=True, db_index=True)
     warehouse = models.BooleanField(default=False)  # на руках ли товар
     is_multiple = models.BooleanField(default=False)  # можно ли несколько позиций взять
     is_return = models.BooleanField(default=False)

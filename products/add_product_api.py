@@ -259,7 +259,7 @@ def add_product_api(data):
                     delivery_type=dilivery,
                     platform=Platform.objects.get_or_create(platform='poizon',
                                                             site="poizon")[0],
-                    url=data['platform_info']["poizon_info"]['url'],
+                    url=data['platform_info']["poizon"]['url'],
                     availability=True,
                     currency=
                     Currency.objects.get_or_create(name=offer["currency"])[0],

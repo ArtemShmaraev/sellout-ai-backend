@@ -112,7 +112,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        queryset = Product.objects.filter(id__in=product_ids)
+        queryset = Product.objects.filter(id__in=product_ids).filter(available_flag=True).filter(is_custom=False)
 
         # Определение порядка объектов в queryset
         preserved_order = Case(

@@ -145,7 +145,7 @@ def formula_price(product, unit, user_status):
     delivery_extra_charge = delivery.extra_charge
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
     categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
-    poizon_abroad = unit.platform_info.poizon.poizon_abroad
+    poizon_abroad = unit.platform_info["poizon"]["poizon_abroad"]
     status_name = user_status.name  # Amethyst
 
     if status_name == "Privileged":

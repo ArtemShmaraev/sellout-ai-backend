@@ -21,6 +21,7 @@ from users.models import UserStatus
 def platform_update_price(product, request=False):
     async def send_async_request(spu_id):
         async with httpx.AsyncClient() as client:
+            print(1)
             response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
             # Вы можете добавить обработку ответа, если это необходимо
             return response

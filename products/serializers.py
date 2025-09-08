@@ -170,12 +170,13 @@ class ProductSerializer(serializers.ModelSerializer):
     def get_price(self, obj):
         wl = self.context.get('wishlist', "")
         if wl and wl.user.user_status.name != "Amethyst":
-            user_status = wl.user.user_status
-            unit = \
-                    obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
-                        "final_price")[0]
-            return formula_price(obj, unit, user_status)
-
+            if obj.min_price != 0:
+                user_status = wl.user.user_status
+                unit = \
+                        obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
+                            "final_price")[0]
+                return formula_price(obj, unit, user_status)
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
         else:
             return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
 

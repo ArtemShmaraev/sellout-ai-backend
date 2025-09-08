@@ -568,7 +568,7 @@ class ProductSlugView(APIView):
             product = Product.objects.get(slug=slug)
 
             # user_agent = request.META.get('HTTP_USER_AGENT', '')
-            print(request.META.get('HTTP_USER_AGENT', ''), "блять")
+            # print(request.META.get('HTTP_USER_AGENT', ''), "блять")
             # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
@@ -577,9 +577,10 @@ class ProductSlugView(APIView):
                 product.rel_num += 1
                 product.save()
             # print(product.min_price)
+            # print(Wishlist.objects.get(user=User(id=request.user.id)))
             serializer = ProductSerializer(product, context={"list_lines": True,
                                                              "wishlist": Wishlist.objects.get(user=User(
-                                                                 id=self.request.user.id)) if request.user.id else None})
+                                                                 id=request.user.id)) if request.user.id else None})
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

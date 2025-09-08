@@ -222,7 +222,6 @@ def add_product_api(data):
 
             for del_unit in units[:len(sort_offers)]:
                 del_unit.delete()
-        print(sort_offers)
         for i in range(len(sort_offers)):
             offer = sort_offers[i]
             view_name = f'{offer["days_min"]}-{offer["days_max"]} {sklon_days(int(offer["days_max"]))}'

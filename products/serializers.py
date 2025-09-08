@@ -174,7 +174,6 @@ class ProductSerializer(serializers.ModelSerializer):
             unit = \
                     obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                         "final_price")[0]
-
             return formula_price(obj, unit, user_status)
 
         else:

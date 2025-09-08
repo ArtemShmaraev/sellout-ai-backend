@@ -264,6 +264,6 @@ def formula_price(product, unit, user_status):
         bonus = min(bonus_max, bonus_from_profit)
     else:
         bonus = 0
-    print(total_profit, round_total_price)
+    # print(total_profit, round_total_price)
     return {"final_price": round_total_price, "start_price": round_total_price, "total_profit": round(total_profit),
             "bonus": bonus}

@@ -56,6 +56,8 @@ def add_product_api(data):
     if not create:
         product.clear_all_fields()
         product.product_units.update(availability=False)
+        product_slug = product.slug
+        # print(product.slug)
     else:
         product.slug = product_slug if product_slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.save()
@@ -318,7 +320,7 @@ def add_product_api(data):
     # print(t7-t6)
     # print(t8-t7)
     # print(t8-t1)
-
+    # print(product.slug)
     return product
 
     # self.stdout.write(self.style.SUCCESS(product))

@@ -194,13 +194,19 @@ def formula_price(product, unit, user_status):
                     "total_profit": unit.total_profit,
                     "bonus": bonus}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
-                         + delivery_absolute_insurance)
+        # print()
+        # print(original_price)
+        # print(f"converted {converted_into_rub_price}")
+        shipping_cost = (
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                + delivery_absolute_insurance)
+        # print(f"ship {shipping_cost}")
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
-
+        # print(f"cost {cost_without_shipping}")
         total_cost = cost_without_shipping + shipping_cost
+        # print(f"total_cost {total_cost}")
         total_cost_after_cashing_out = total_cost * CASHING_OUT_COMMISSION_FEE_DECIMAL
-
+        # print(f"total {total_cost_after_cashing_out}")
         # check_preliminary_markup()
 
         step_of_order_amount = "12"

@@ -179,28 +179,14 @@ class ShoppingCart(models.Model):
         #     self.promo_code = None
         self.final_amount = self.total_amount - self.sale
         if self.promo_code:
-            if self.promo_code.ref_promo:
-                ref_sale = 0
-                if 3000 <= self.final_amount < 5000:
-                    ref_sale = 500
-                elif 5000 <= self.final_amount < 15000:
-                    ref_sale = 750
-                elif 15000 <= self.final_amount < 35000:
-                    ref_sale = 1000
-                elif 35000 <= self.final_amount < 70000:
-                    ref_sale = 1250
-                elif 70000 <= self.final_amount < 130000:
-                    ref_sale = 2000
-                elif 130000 <= self.final_amount < 150000:
-                    ref_sale = 2500
-                elif self.final_amount >= 150000:
-                    ref_sale = 3000
-                self.final_amount = self.total_amount - ref_sale
-            elif self.promo_code.discount_percentage > 0:
-                self.final_amount = round(self.total_amount * (100 - self.promo_code.discount_percentage) // 100)
-            elif self.promo_code.discount_absolute > 0:
-                self.final_amount = round(self.total_amount - self.promo_code.discount_absolute)
-            self.promo_sale = self.total_amount - self.final_amount
+            promo_sale = self.promo_code.check_promo_in_cart(self)
+            if promo_sale != 0:
+                self.promo_sale = promo_sale
+            else:
+                self.promo_code = None
+                self.promo_sale = 0
+        else:
+            self.promo_sale = 0
 
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale

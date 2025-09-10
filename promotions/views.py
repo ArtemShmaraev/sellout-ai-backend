@@ -31,7 +31,7 @@ class PromocodeView(APIView):
             except:
                 return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False,
                                  "total_sale": cart.total_sale})
-            check = promo.check_promo(cart.final_amount, cart.total_amount, user_id=user_id)
+            check = promo.check_promo(cart)
 
             if check[0]:
                 cart.promo_code = promo
@@ -75,18 +75,10 @@ class PromocodeAnonView(APIView):
             return Response(
                 {"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale,
                  "promo_sale": 0})
-        check = promo.check_promo(sum - sale, sum)
+        check = promo.check_anon_promo(sum - sale, sum)
 
         if check[0]:
-            if promo.ref_promo:
-                final_amount = sum - check[2]
-            elif promo.discount_percentage > 0:
-
-                final_amount = round((sum - sale) * (100 - promo.discount_percentage) // 100)
-            elif promo.discount_absolute > 0:
-                final_amount = round((sum - sale) - promo.discount_absolute)
-            else:
-                return Response({"final_amount": sum, "message": "Промокод не активен", "status": False, "sale": sale})
+            final_amount = sum - check[2]
             return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
                              "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale,
                              "promo_code": promo.string_representation})

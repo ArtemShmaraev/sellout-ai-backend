@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = False
+        f = True
         if f:
             product_index = ProductDocument._index
             if product_index.exists():
@@ -122,8 +122,9 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Creating index...'))
             product_index.create()
 
-            products = Product.objects.all()
+            products = Product.objects.filter(available_flag=True)
             count = products.count()
+            print("Товаров", count)
             k = 0
             kk = 0
             for page in range(0, count, 100):

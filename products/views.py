@@ -137,8 +137,9 @@ class HideProductSpiIdView(APIView):
 
 class PopularSpuIdView(APIView):
     def get(self, request):
-        count = int(request.query_params.get('count', 10000))
+        count = int(request.query_params.get('count', 5000))
         popular_product = list(Product.objects.filter(available_flag=True, is_custom=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:count]
+
         other = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:10000]
 
 

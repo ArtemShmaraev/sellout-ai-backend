@@ -30,6 +30,7 @@ class ProductDocument(Document):
     collab = Text(analyzer='standard')
     gender = Keyword(multi=True)
     manufacturer_sku = Text(analyzer='standard')
+    rel_num = Integer()
     suggest = Completion()
 
     # colors = Keyword(multi=True)

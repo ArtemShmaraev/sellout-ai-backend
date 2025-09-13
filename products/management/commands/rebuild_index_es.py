@@ -169,6 +169,7 @@ class Command(BaseCommand):
                     # product_doc.colors = [color.name for color in product.colors.all()]
                     # product_doc.designer_color = product.designer_color
                     product_doc.gender = [gender.name for gender in product.gender.all()]
+                    product_doc.rel_num = product.rel_num
                     product_doc.save()
             self.stdout.write(self.style.SUCCESS(f"{k} %"))
 

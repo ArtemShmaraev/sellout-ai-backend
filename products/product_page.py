@@ -272,7 +272,6 @@ def get_product_page(request, context):
     start_index = (page_number - 1) * 60
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 60]
-    print(queryset.query)
     queryset = get_queryset_from_list_id(queryset.values_list("id", flat=True))
     # queryset = Product.objects.filter(id__in=queryset)
     # print(queryset.query)

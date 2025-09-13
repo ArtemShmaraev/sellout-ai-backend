@@ -174,9 +174,10 @@ def add_product_api(data):
 
     product.size_table_platform = data['size_tables']
 
-    product.main_size_row_of_unit = data.get('main_size_row_of_unit', "")
-    product.main_size_row = data.get('main_size_row', "")
-    product.unit_common_name = data.get('unit_common_name', "")
+
+    product.size_row_name = data.get('size_row_name', "")
+    product.extra_name = data.get('extra_name', "")
+    product.description = data.get('description', "")
     product.content_sources = data.get("content_sources")
 
     product.has_many_sizes = data.get("many_sizes")

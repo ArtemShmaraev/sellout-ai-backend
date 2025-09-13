@@ -77,6 +77,7 @@ class CategoryDocument(Document):
 
 class ColorDocument(Document):
     russian_name = Text(analyzer=russian_analyzer)
+    eng_name = Text()
 
     class Index:
         name = 'color_index'

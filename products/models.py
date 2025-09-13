@@ -260,9 +260,8 @@ class Product(models.Model):
     parameters = models.JSONField(blank=True, null=True, default=dict)
     similar_product = models.JSONField(blank=True, null=True, default=list)
     another_configuration = models.JSONField(blank=True, null=True, default=list)
-    main_size_row_of_unit = models.CharField(max_length=255, null=True, blank=True)
-    main_size_row = models.CharField(max_length=255, null=True, blank=True, default="")
-    unit_common_name = models.CharField(max_length=255, null=True, blank=True, default="")
+    size_row_name = models.CharField(max_length=255, null=True, blank=True, default="")
+    extra_name = models.CharField(max_length=255, null=True, blank=True, default="")
     is_sale = models.BooleanField(default=False)
     in_sg = models.BooleanField(default=False)
     percentage_sale = models.IntegerField(default=0)
@@ -323,9 +322,8 @@ class Product(models.Model):
         self.parameters = {}
         self.similar_product = []
         self.another_configuration = []
-        self.main_size_row_of_unit = ""
-        self.main_size_row = ""
-        self.unit_common_name = ""
+        self.size_row_name = ""
+        self.extra_name = ""
         self.is_sale = False
         self.percentage_sale = 0
         self.available_sizes = {}

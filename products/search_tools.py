@@ -152,7 +152,7 @@ def add_filter_search(query):
 
 
 
-def search_product(query, queryset, page_number=1):
+def search_product(query, pod_queryset, page_number=1):
     search = Search(index='product_index')
     # search = search.query(
     #     'bool',
@@ -200,7 +200,8 @@ def search_product(query, queryset, page_number=1):
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
     product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
-    queryset = Product.objects.filter(id__in=product_ids).values_list("id", flat=True)
+    queryset = Product.objects.filter(id__in=product_ids).filter(id__in=pod_queryset).values_list("id", flat=True)
+
     count = queryset.count()
     # Определение порядка объектов в queryset
     preserved_order = Case(
@@ -238,11 +239,9 @@ def search_best_line(query_string):
     response = search.execute()
 
     if response:
-        print(response.hits[0].meta)
-        print(response.hits[0].name)
-
+        if response.hits[0].meta.score > 4:
         # print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
-        return Line.objects.get(name=response.hits[0].name)
+            return Line.objects.get(name=response.hits[0].name)
 
     return None
 
@@ -259,8 +258,10 @@ def search_best_category(query_string):
     response = search.execute()
 
     if response:
+        if response.hits[0].meta.score > 4:
+
         # print("Category", Category.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
-        return Category.objects.get(id=response.hits[0].meta.id)
+            return Category.objects.get(id=response.hits[0].meta.id)
     return None
 
 
@@ -269,9 +270,10 @@ def search_best_color(query_string):
     search = search.query(
         'multi_match',
         query=query_string,
-        fields=['russian_name'],  # Поле для поиска
+        fields=['russian_name', 'eng_name'],  # Поле для поиска
         fuzziness='AUTO'
     )
+
     # search = search.sort('_score')  # Сортировка по рейтингу убывающим образом
     response = search.execute()
 

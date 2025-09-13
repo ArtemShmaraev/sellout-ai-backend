@@ -112,7 +112,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = True
+        f = False
         if f:
             product_index = ProductDocument._index
             if product_index.exists():
@@ -230,6 +230,7 @@ class Command(BaseCommand):
                 print(color.russian_name)
                 color_doc = ColorDocument(meta={'id': color.id})
                 color_doc.russian_name = color.russian_name
+                color_doc.eng_name = color.name
                 color_doc.save()
 
         self.stdout.write(self.style.SUCCESS('Color indexing complete.'))

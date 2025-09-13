@@ -157,7 +157,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         # fields = "__all__"
         exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "lines",
-                   "min_price", "min_price_without_sale", "max_bonus", "has_many_sizes", "has_many_colors", "has_many_configurations", "fit",
+                   "min_price", "min_price_without_sale", "max_bonus", "fit",
                    "rel_num", "another_configuration", "percentage_sale", "in_sg", "tags",]
         depth = 2
 
@@ -175,6 +175,7 @@ class ProductSerializer(serializers.ModelSerializer):
                 unit = \
                         obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                             "final_price")[0]
+
                 return formula_price(obj, unit, user_status)
             return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
         else:

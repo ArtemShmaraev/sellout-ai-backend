@@ -126,6 +126,7 @@ class ShoppingCart(models.Model):
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     bonus = models.IntegerField(default=0)
+    is_update = models.BooleanField(default=False)
     final_amount = models.IntegerField(default=0)
 
 

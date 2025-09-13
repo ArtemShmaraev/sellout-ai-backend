@@ -73,6 +73,11 @@ def add_product_api(data):
     product.is_custom = data['custom']
     product.in_sg = data.get("product_on_stadium_goods", False)
 
+    product.category_id = data['platform_info']["poizon"].get("categoryId", 0)
+    product.category_name = data['platform_info']["poizon"].get("categoryName", "")
+    product.level1_category_id = data['platform_info']["poizon"].get("level1CategoryId", 0)
+    product.level2_category_id = data['platform_info']["poizon"].get("level2CategoryId", 0)
+
     genders = data.get('gender', [])
     product.gender.set(Gender.objects.filter(name__in=genders))
 
@@ -173,8 +178,6 @@ def add_product_api(data):
     t6 = time()
 
     product.size_table_platform = data['size_tables']
-
-
     product.size_row_name = data.get('size_row_name', "")
     product.extra_name = data.get('extra_name', "")
     product.description = data.get('description', "")
@@ -271,7 +274,11 @@ def add_product_api(data):
                     availability=True,
                     currency=
                     Currency.objects.get_or_create(name=offer["currency"])[0],
-                    platform_info=platform_info
+                    platform_info=platform_info,
+                    weight=unit['weight'],
+                    dimensions={"length": unit['length'],
+                                "height": unit['height'],
+                                "width": unit['width']}
                 )
             else:
                 product_unit = ProductUnit.objects.create(
@@ -288,7 +295,11 @@ def add_product_api(data):
                     availability=True,
                     currency=
                     Currency.objects.get_or_create(name=offer["currency"])[0],
-                    platform_info=platform_info
+                    platform_info=platform_info,
+                    weight=unit['weight'],
+                    dimensions={"length": unit['length'],
+                                "height": unit['height'],
+                                "width": unit['width']}
                 )
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
             product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
@@ -299,6 +310,7 @@ def add_product_api(data):
         has_product_unit_in_cart = ShoppingCart.objects.filter(product_units=ost_unit).exists()
         if not has_product_unit_in_cart:
             ost_unit.delete()
+
 
     product.update_price()
     sizes_info = {"sizes": [], "filter_logo": ""}

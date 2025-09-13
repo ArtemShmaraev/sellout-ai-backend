@@ -234,6 +234,7 @@ class Product(models.Model):
     size_table_platform = models.JSONField(default=dict)
 
     min_price = models.IntegerField(blank=True, null=True, db_index=True, default=0)
+    max_profit = models.IntegerField(blank=True, null=True, default=0)
     max_bonus = models.IntegerField(blank=True, null=True, default=0)
     min_price_without_sale = models.IntegerField(blank=True, null=True, default=0)
 
@@ -270,6 +271,10 @@ class Product(models.Model):
     one_update = models.BooleanField(default=False)
     last_parse_price = models.DateTimeField(default=timezone.now)
     content_sources = models.JSONField(blank=True, null=True, default=dict)
+    category_id = models.IntegerField(default=0)
+    category_name = models.CharField(max_length=128, default="")
+    level1_category_id = models.IntegerField(default=0)
+    level2_category_id = models.IntegerField(default=0)
 
     objects = ProductManager()
 
@@ -342,6 +347,7 @@ class Product(models.Model):
             user_status = UserStatus.objects.get(name="Amethyst")
             min_price = 0
             max_bonus = 0
+            max_profit = 0
             min_price_without_sale = 0
             # print(self.product_units.all())
             for unit in self.product_units.filter(availability=True):
@@ -357,6 +363,8 @@ class Product(models.Model):
                     min_price_without_sale = unit.start_price
                 if (unit.bonus > max_bonus or max_bonus == 0) and unit.availability:
                     max_bonus = unit.bonus
+                    max_profit = unit.total_profit
+            self.max_profit = max_profit
             self.max_bonus = max_bonus
             self.min_price = min_price
             self.min_price_without_sale = min_price_without_sale
@@ -387,10 +395,10 @@ class Product(models.Model):
 
     def update_min_price(self):
         if self.product_units.exists():
-            self.min_price = 999999999
+            self.min_price = 0
             product_units = self.product_units.filter(availability=True)
             for product_unit in product_units:
-                if product_unit.final_price <= self.min_price and product_unit.availability:
+                if (product_unit.final_price <= self.min_price or self.min_price == 0) and product_unit.availability:
                     self.min_price = product_unit.final_price
                     self.min_price_without_sale = product_unit.start_price
         self.actual_price = True

@@ -122,8 +122,11 @@ class ShoppingCartUser(APIView):
                     platform_update_price(unit.product)
                 shopping_cart.product_units.set(units)
                 shopping_cart.total()
-                serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id})
-                return Response(serializer.data)
+                serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id}).data
+                if shopping_cart.is_update:
+                    shopping_cart.is_update = False
+                    shopping_cart.save()
+                return Response(serializer)
             else:
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
         except ShoppingCart.DoesNotExist:
@@ -346,9 +349,11 @@ class ListProductUnitOrderView(APIView):
                 product_units = ProductUnit.objects.filter(id__in=s_id)
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 for product_unit in product_units:
+                    cart.is_update = True
                     cart.product_units.add(product_unit)
                     if product_unit.id not in cart.unit_order:
                         cart.unit_order.append(product_unit.id)
+
                 cart.total()
                 return Response(cart.product_units.values_list('id', flat=True))
             except json.JSONDecodeError:

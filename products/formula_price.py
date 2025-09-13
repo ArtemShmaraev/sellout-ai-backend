@@ -135,6 +135,39 @@ FRIENDS_AND_FAMILY_MARKUP = 500
 #                                                                                                          "preliminary_markup"]) / CASHING_OUT_COMMISSION_FEE_DECIMAL)
 
 
+def get_bonus(total_profit, max_total_profit_for_product, status_name):
+    if status_name == "Amethyst":
+        bonus_max = 250
+        bonus_from_profit = round(0.1 * total_profit)
+        bonus = min(bonus_max, bonus_from_profit)
+        max_bonus_for_product = min(round(0.1 * max_total_profit_for_product), bonus_max)
+    elif status_name == "Sapphire":
+        bonus_max = 500
+        bonus_from_profit = round(0.15 * total_profit)
+        bonus = min(bonus_max, bonus_from_profit)
+        max_bonus_for_product = min(round(0.15 * max_total_profit_for_product), bonus_max)
+    elif status_name == "Emerald":
+        bonus_max = 750
+        bonus_from_profit = round(0.2 * total_profit)
+        bonus = min(bonus_max, bonus_from_profit)
+        max_bonus_for_product = min(round(0.2 * max_total_profit_for_product), bonus_max)
+    elif status_name == "Ruby":
+        bonus_max = 1000
+        bonus_from_profit = round(0.25 * total_profit)
+        bonus = min(bonus_max, bonus_from_profit)
+        max_bonus_for_product = min(round(0.25 * max_total_profit_for_product), bonus_max)
+    elif status_name == "Diamond":
+        bonus_max = 1500
+        bonus_from_profit = round(0.3 * total_profit)
+        bonus = min(bonus_max, bonus_from_profit)
+        max_bonus_for_product = min(round(0.3 * max_total_profit_for_product), bonus_max)
+    else:
+        bonus = 0
+        max_bonus_for_product = 0
+
+    return bonus, max_bonus_for_product
+
+
 def formula_price(product, unit, user_status):
     original_price = unit.original_price
     weight = unit.weight
@@ -167,32 +200,13 @@ def formula_price(product, unit, user_status):
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
     else:
         if product.actual_price:
-            total_profit = unit.total_profit
-            bonus = unit.bonus
-            if status_name == "Amethyst":
-                bonus_max = 250
-                bonus_from_profit = round(0.1 * total_profit)
-                bonus = min(bonus_max, bonus_from_profit)
-            elif status_name == "Sapphire":
-                bonus_max = 500
-                bonus_from_profit = round(0.15 * total_profit)
-                bonus = min(bonus_max, bonus_from_profit)
-            elif status_name == "Emerald":
-                bonus_max = 750
-                bonus_from_profit = round(0.2 * total_profit)
-                bonus = min(bonus_max, bonus_from_profit)
-            elif status_name == "Ruby":
-                bonus_max = 1000
-                bonus_from_profit = round(0.25 * total_profit)
-                bonus = min(bonus_max, bonus_from_profit)
-            elif status_name == "Diamond":
-                bonus_max = 1500
-                bonus_from_profit = round(0.3 * total_profit)
-                bonus = min(bonus_max, bonus_from_profit)
+            bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
+
             return {"final_price": unit.final_price,
                     "start_price": unit.start_price,
                     "total_profit": unit.total_profit,
-                    "bonus": bonus}
+                    "bonus": bonus,
+                    "max_bonus": max_bonus_for_product}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         # print()
         # print(original_price)
@@ -248,28 +262,7 @@ def formula_price(product, unit, user_status):
     total_round_markup = round_total_price - total_price
     total_profit += total_round_markup
 
-    if status_name == "Amethyst":
-        bonus_max = 250
-        bonus_from_profit = round(0.1 * total_profit)
-        bonus = min(bonus_max, bonus_from_profit)
-    elif status_name == "Sapphire":
-        bonus_max = 500
-        bonus_from_profit = round(0.15 * total_profit)
-        bonus = min(bonus_max, bonus_from_profit)
-    elif status_name == "Emerald":
-        bonus_max = 750
-        bonus_from_profit = round(0.2 * total_profit)
-        bonus = min(bonus_max, bonus_from_profit)
-    elif status_name == "Ruby":
-        bonus_max = 1000
-        bonus_from_profit = round(0.25 * total_profit)
-        bonus = min(bonus_max, bonus_from_profit)
-    elif status_name == "Diamond":
-        bonus_max = 1500
-        bonus_from_profit = round(0.3 * total_profit)
-        bonus = min(bonus_max, bonus_from_profit)
-    else:
-        bonus = 0
-    # print(total_profit, round_total_price)
+    bonus, max_bonus_for_product = get_bonus(total_profit, product.max_profit, status_name)
+
     return {"final_price": round_total_price, "start_price": round_total_price, "total_profit": round(total_profit),
-            "bonus": bonus}
+            "bonus": bonus, "max_bonus":  max_bonus_for_product}

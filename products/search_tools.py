@@ -98,13 +98,14 @@ def similar_product(product):
                 boost=1.2
             )
         )
+
         # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']
 
         search = search[:25]
 
         # Выполните запрос
         response = search.execute()
-
+        # print(response)
         # output_file = 'similar_results.json'
         # with open(output_file, 'w', encoding="utf-8") as f:
         #     json.dump(response.to_dict(), f, indent=4)
@@ -112,7 +113,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        queryset = Product.objects.filter(id__in=product_ids).filter(available_flag=True).filter(is_custom=False)
+        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.another_configuration)).filter(available_flag=True).filter(is_custom=False)
 
         # Определение порядка объектов в queryset
         preserved_order = Case(

@@ -409,7 +409,7 @@ class Product(models.Model):
 
         product_slug = kwargs.pop('product_slug', "1")
         if product_slug != "1":
-            if product_slug == "":
+            if product_slug == f"{self.spu_id}_{self.property_id}_{self.manufacturer_sku}":
                 self.slug = slugify(
                     f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
             else:

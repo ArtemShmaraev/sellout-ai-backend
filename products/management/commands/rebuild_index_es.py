@@ -155,7 +155,7 @@ class Command(BaseCommand):
                                                   name__contains='Другие')]
                     product_doc.categories_eng = [category.eng_name for category in
                                                   product.categories.exclude(name__icontains='Все').exclude(
-                                                      name__contains='Другие')]
+                                                      name__contains='Другие').exclude(name__icontains='Вся')]
 
                     product_doc.lines = [line.name for line in
                                          product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]

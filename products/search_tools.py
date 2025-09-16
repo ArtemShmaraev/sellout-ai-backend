@@ -51,8 +51,6 @@ def suggest_search(query):
         #
     return sp
 
-
-
     # # Создайте объект Search и настройте подсказки
     # search = Search(index=index_name)
     # s = search.suggest('user-input-suggestions', query, completion={'field': 'suggest', 'size': 100, 'fuzzy': {
@@ -86,11 +84,11 @@ def similar_product(product):
         search = Search(index='product_index')  # Замените на имя вашего индекса
         # print(search.count())
 
-
         search = search.query(
             MoreLikeThis(
                 like={'_id': product.id},
-                fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2', 'collab'],
+                fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2',
+                        'collab'],
                 min_term_freq=1,
                 min_doc_freq=1,
                 max_query_terms=50,
@@ -113,7 +111,8 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.similar_product)).filter(available_flag=True).filter(is_custom=False)
+        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.similar_product)).filter(
+            available_flag=True).filter(is_custom=False)
 
         # Определение порядка объектов в queryset
         preserved_order = Case(
@@ -131,11 +130,11 @@ def similar_product(product):
         return []
 
 
-
 def add_filter_search(query):
     search_line = search_best_line(query)
     search_category = search_best_category(query)
     search_color = search_best_color(query)
+    search_color = False
     search_collab = search_best_collab(query)
     res = {"collab": "",
            "category": "",
@@ -152,7 +151,6 @@ def add_filter_search(query):
     return res
 
 
-
 def search_product(query, pod_queryset, page_number=1):
     search = Search(index='product_index')
     # search = search.query(
@@ -167,18 +165,44 @@ def search_product(query, pod_queryset, page_number=1):
     #         {'match': {'brands': {'query': query, 'boost': 4, 'fuzziness': 'AUTO'}}}
     #     ]
     # )
-
+    # fields = ['manufacturer_sku^2', 'model^3', 'lines^2', 'colorway^1',
+    #           "collab^4", "categories^3", 'brands^4'],
     search = search.query('bool',
-                          must=[Q(
-                              'multi_match',
-                              query=query,
-                              type="most_fields",
-                              fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'colorway^1',
-                                      "collab^4", "categories^3", 'brands^4'],
-                              # Установите вес для каждого поля
-                              fuzziness="AUTO")],
-                          # filter=Q('ids', values=list(queryset.values_list('id', flat=True)))
+                          must=[
+                              Q('multi_match',
+                                query=query,
+                                type="most_fields",
+                                fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
+                                        'collab^4', 'categories^3', 'brands^4'],
+                                fuzziness="AUTO")
+                          ],
+                          should=[
+                              Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
+                              Q('match', colorway={'query': query, 'fuzziness': 'AUTO'})
+                          ]
                           )
+    # search = search.query('function_score',
+    #                       functions=[
+    #                           {
+    #                               'field_value_factor': {
+    #                                   'field': 'rel_num',
+    #                                   'factor': 100000,
+    #                                   'modifier': 'log1p'
+    #                               }
+    #                           }
+    #                       ])
+
+    # search = search.query('bool',
+    #                       must=[Q(
+    #                           'multi_match',
+    #                           query=query,
+    #                           type="most_fields",
+    #                           fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
+    #                                   "collab^4", "categories^3", 'brands^4'],
+    #                           # Установите вес для каждого поля
+    #                           fuzziness="AUTO")],
+    #                       # filter=Q('ids', values=list(queryset.values_list('id', flat=True)))
+    #                       )
     search = search.sort(
         {'_score': {'order': 'desc'}},
         {'rel_num': {'order': 'asc'}}
@@ -195,6 +219,12 @@ def search_product(query, pod_queryset, page_number=1):
     search = search[:192]
 
     response = search.execute()
+    for hit in response['hits']['hits'][:10]:
+        print(hit['_score'], hit['_source']['rel_num'])
+
+        result = json.dumps(hit['_source'].to_dict(), indent=4, ensure_ascii=False)
+        # print(result)
+
     # Определите пороговое значение для подходящих результатов (50% от max_score)
 
     # Запись результатов в JSON файл
@@ -218,7 +248,6 @@ def search_product(query, pod_queryset, page_number=1):
 
     # Применение порядка к queryset
     queryset = queryset.annotate(order=preserved_order).order_by('order')
-
 
     # start_index = (page_number - 1) * 60
     # queryset = response.hits[start_index:start_index + 60]
@@ -244,7 +273,7 @@ def search_best_line(query_string):
 
     if response:
         if response.hits[0].meta.score > 4:
-        # print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
+            # print("Line", Line.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
             return Line.objects.get(name=response.hits[0].name)
 
     return None
@@ -263,8 +292,7 @@ def search_best_category(query_string):
 
     if response:
         if response.hits[0].meta.score > 4:
-
-        # print("Category", Category.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
+            # print("Category", Category.objects.get(id=response.hits[0].meta.id).name, response.hits.max_score)
             return Category.objects.get(id=response.hits[0].meta.id)
     return None
 

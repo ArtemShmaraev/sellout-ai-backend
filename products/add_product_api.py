@@ -58,7 +58,7 @@ def add_product_api(data):
         product.product_units.update(availability=False)
         product_slug = product.slug
     else:
-        product.slug = product_slug if product_slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
+        product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.save()
     t2 = time()
 
@@ -224,10 +224,11 @@ def add_product_api(data):
 
         ids = []
         if not create:
-            units = product.product_units.filter(platform_info__poizon_info__header=header).order_by(
+            units = product.product_units.filter(platform_info__poizon__header=header).order_by(
                 "delivery_type__days_max")
 
             ids = list(units.values_list("id", flat=True))
+            # print(ids)
 
             for del_unit in units[:len(sort_offers)]:
                 del_unit.delete()
@@ -256,7 +257,9 @@ def add_product_api(data):
 
             platform_info['poizon'].update(offer["platform_info"])
             # 670870
+            print(100)
             if not create and i < len(ids):
+                print(ids[i])
                 product_unit = ProductUnit.objects.create(
                     id=ids[i],
                     product=product,

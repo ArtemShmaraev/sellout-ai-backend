@@ -177,9 +177,9 @@ class ProductSerializer(serializers.ModelSerializer):
                             "final_price")[0]
 
                 return formula_price(obj, unit, user_status)
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
         else:
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus}
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
 
 
     def get_list_lines(self, obj):
@@ -270,6 +270,8 @@ class ProductSlugAndPhotoSerializer(serializers.ModelSerializer):
         model = Product
         fields = ["id", "slug", "bucket_link"]
         depth = 2
+
+
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
@@ -311,7 +313,6 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                     "final_price")[0]
             else:
                 if obj.min_price == 0:
-                    print(100)
                     return {"final_price": 0, "start_price": 0}
                 filters &= Q(availability=True)
                 filters &= Q(final_price=obj.min_price)

@@ -184,7 +184,7 @@ def formula_price(product, unit, user_status):
     if status_name == "Privileged":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0, delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
         cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
                                  * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL + COMMISSION_FEE_ABSOLUTE)
@@ -192,14 +192,19 @@ def formula_price(product, unit, user_status):
         total_profit = PRIVILEGED_MARKUP + converted_into_rub_price * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL
         total_price = total_cost + PRIVILEGED_MARKUP
     elif status_name == "Friends & Family":
+
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
+        print(converted_into_rub_price)
+        print()
         shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0, delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
+
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
+
     else:
         if product.actual_price:
             bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
@@ -214,7 +219,7 @@ def formula_price(product, unit, user_status):
         # print(original_price)
         # print(f"converted {converted_into_rub_price}")
         shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0, delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
         # print(f"ship {shipping_cost}")
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE

@@ -145,6 +145,69 @@ class ProductUnitPriceSerializer(serializers.ModelSerializer):
         fields = ['final_price']
 
 
+
+
+class ProductAdminSerializer(serializers.ModelSerializer):
+    list_lines = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        # fields = "__all__"
+        exclude = ["available_sizes", "size_table_platform", ]
+        depth = 2
+
+
+
+
+    def get_price(self, obj):
+        wl = self.context.get('wishlist', "")
+        if wl and wl.user.user_status.name != "Amethyst":
+            if obj.min_price != 0:
+                user_status = wl.user.user_status
+                unit = \
+                        obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
+                            "final_price")[0]
+
+                return formula_price(obj, unit, user_status)
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+        else:
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+
+
+    def get_list_lines(self, obj):
+        list_lines = self.context.get('list_lines')
+        s = []
+
+        def get_line_parents(line):
+            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name}"}]
+            current_line = line
+            while current_line.parent_line is not None:
+                current_line = current_line.parent_line
+                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name}"})
+            return parents[::-1]
+
+        def get_cat_parents(cat, line):
+            parents = []
+            if "Вс" not in cat.name:
+                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"})
+            current_cat = cat
+            while current_cat.parent_category is not None:
+                current_cat = current_cat.parent_category
+                if "Вс" not in current_cat.name:
+                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
+            return parents[::-1]
+
+        if list_lines:
+            s = []
+            if obj.main_line is not None:
+                s = get_line_parents(obj.main_line)
+                if len(s) == 1:
+                    s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
+        return s
+
+
+
 class ProductSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()

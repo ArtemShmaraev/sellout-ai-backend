@@ -32,7 +32,7 @@ from .product_page import get_product_page, get_product_page_header
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
-    ProductSlugAndPhotoSerializer
+    ProductSlugAndPhotoSerializer, ProductAdminSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price
 
@@ -496,6 +496,7 @@ class ProductView(APIView):
         price_min = self.request.query_params.get('price_min')
         ordering = self.request.query_params.get('ordering')
         like = self.request.query_params.get('like')
+        adminka = self.request.query_params.get('adminka')
 
         context['size'] = size if size else None
         context['price_max'] = price_max if price_max else None
@@ -532,7 +533,10 @@ class ProductView(APIView):
         # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
         t7 = time()
         print("t6", t7 - t6)
-        serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
+        if adminka:
+            serializer = ProductAdminSerializer(queryset, many=True, context=context).data
+        else:
+            serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         res["results"] = serializer
         t8 = time()
         print("t7", t8 - t7)

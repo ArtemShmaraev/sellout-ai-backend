@@ -124,13 +124,28 @@ def get_product_page(request, context):
     available = params.get("available")
     custom = params.get("custom")
 
+    category_id = request.query_params.getlist('category_id')
+    category_name = request.query_params.getlist('category_name')
+    level1_category_id = request.query_params.getlist('level1_category_id')
+    level2_category_id = request.query_params.getlist('level2_category_id')
+
+
+
     if not available:
         queryset = queryset.filter(available_flag=True)
         # queryset = queryset.filter(product_units__availability=True)
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
-
+    if category_id:
+        queryset = queryset.filter(category_id__in=category_id)
+    if category_name:
+        for name in category_name:
+            queryset = queryset.filter(category_name__contains=name)
+    if level1_category_id:
+        queryset = queryset.filter(level1_category_id__in=level1_category_id)
+    if level2_category_id:
+        queryset = queryset.filter(level2_category_id__in=level2_category_id)
 
     new = params.get("new")
     if new and not query:

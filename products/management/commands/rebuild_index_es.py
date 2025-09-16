@@ -166,7 +166,7 @@ class Command(BaseCommand):
                     # product_doc.description = product.description
                     product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
                     # product_doc.main_color = product.main_color.name if product.main_color else None
-                    # product_doc.colors = [color.name for color in product.colors.all()]
+                    product_doc.colors = [color.name for color in product.colors.all()] + [color.russian_name for color in product.colors.all()]
                     # product_doc.designer_color = product.designer_color
                     product_doc.gender = [gender.name for gender in product.gender.all()]
                     product_doc.rel_num = product.rel_num

@@ -183,8 +183,9 @@ def formula_price(product, unit, user_status):
 
     if status_name == "Privileged":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
-                         + delivery_absolute_insurance)
+        shipping_cost = (
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                + delivery_absolute_insurance)
         cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
                                  * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL + COMMISSION_FEE_ABSOLUTE)
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
@@ -192,8 +193,9 @@ def formula_price(product, unit, user_status):
         total_price = total_cost + PRIVILEGED_MARKUP
     elif status_name == "Friends & Family":
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        shipping_cost = (delivery_price_per_kg_in_rub * weight + converted_into_rub_price * delivery_decimal_insurance
-                         + delivery_absolute_insurance)
+        shipping_cost = (
+                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * (delivery_decimal_insurance - 1)
+                + delivery_absolute_insurance)
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = FRIENDS_AND_FAMILY_MARKUP

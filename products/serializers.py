@@ -310,9 +310,11 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 obj.product_units.filter(filters).order_by(
                     "final_price")[0]
             else:
+                if obj.min_price == 0:
+                    print(100)
+                    return {"final_price": 0, "start_price": 0}
                 filters &= Q(availability=True)
                 filters &= Q(final_price=obj.min_price)
-                print(obj.slug)
                 unit = \
                     obj.product_units.filter(filters).order_by(
                         "final_price")[0]

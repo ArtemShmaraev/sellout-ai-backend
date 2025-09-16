@@ -57,7 +57,6 @@ def add_product_api(data):
         product.clear_all_fields()
         product.product_units.update(availability=False)
         product_slug = product.slug
-        # print(product.slug)
     else:
         product.slug = product_slug if product_slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.save()
@@ -190,7 +189,6 @@ def add_product_api(data):
     product.save(product_slug=product_slug)
 
     t7 = time()
-
     for unit in data['units']:
         sizes = []
         tables = []

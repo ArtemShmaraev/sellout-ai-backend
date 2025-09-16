@@ -15,9 +15,6 @@ from .documents import LineDocument
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    analyzer_name = f'ngram_analyzer_{min(10, len(query))}'
-
-
     search = Search(index=index_name)
     search = search.suggest(
         'autocomplete',
@@ -87,6 +84,9 @@ def suggest_search(query):
 def similar_product(product):
     try:
         search = Search(index='product_index')  # Замените на имя вашего индекса
+        # print(search.count())
+
+
         search = search.query(
             MoreLikeThis(
                 like={'_id': product.id},
@@ -113,7 +113,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.another_configuration)).filter(available_flag=True).filter(is_custom=False)
+        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.similar_product)).filter(available_flag=True).filter(is_custom=False)
 
         # Определение порядка объектов в queryset
         preserved_order = Case(
@@ -179,7 +179,10 @@ def search_product(query, pod_queryset, page_number=1):
                               fuzziness="AUTO")],
                           # filter=Q('ids', values=list(queryset.values_list('id', flat=True)))
                           )
-
+    search = search.sort(
+        {'_score': {'order': 'desc'}},
+        {'rel_num': {'order': 'asc'}}
+    )
     # search = search.query(
     #     'multi_match',
     #     query=query,

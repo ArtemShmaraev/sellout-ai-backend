@@ -128,6 +128,7 @@ def get_product_page(request, context):
     category_name = request.query_params.getlist('category_name')
     level1_category_id = request.query_params.getlist('level1_category_id')
     level2_category_id = request.query_params.getlist('level2_category_id')
+    title = request.query_params.get('title')
 
 
 
@@ -146,6 +147,8 @@ def get_product_page(request, context):
         queryset = queryset.filter(level1_category_id__in=level1_category_id)
     if level2_category_id:
         queryset = queryset.filter(level2_category_id__in=level2_category_id)
+    if title:
+        queryset = queryset.filter(platform_info__poizon__title__contains=title)
 
     new = params.get("new")
     if new and not query:

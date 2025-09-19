@@ -142,13 +142,13 @@ def get_product_page(request, context):
         queryset = queryset.filter(category_id__in=category_id)
     if category_name:
         for name in category_name:
-            queryset = queryset.filter(category_name__contains=name)
+            queryset = queryset.filter(category_name__icontains=name)
     if level1_category_id:
         queryset = queryset.filter(level1_category_id__in=level1_category_id)
     if level2_category_id:
         queryset = queryset.filter(level2_category_id__in=level2_category_id)
     if title:
-        queryset = queryset.filter(platform_info__poizon__title__contains=title)
+        queryset = queryset.filter(platform_info__poizon__title__icontains=title)
 
     new = params.get("new")
     if new and not query:

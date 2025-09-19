@@ -21,7 +21,7 @@ def suggest_search(query):
         query,  # Часть слова, по которой будет выполняться поиск
         completion={
             'field': 'suggest',
-            'size': 10,
+            'size': 25,
             # 'analyzer': analyzer_name,
             'fuzzy': {  # Добавляем фильтр fuzzy для допуска опечаток
                 'fuzziness': 'AUTO'  # Автоматический режим допуска опечаток
@@ -125,10 +125,10 @@ def similar_product(product):
 
         # Применение порядка к queryset
         queryset = queryset.annotate(order=preserved_order).order_by('order')
-        return queryset
+        return queryset, True
     except:
         print(",kznm")
-        return []
+        return [], False
 
 
 def add_filter_search(query):
@@ -220,11 +220,11 @@ def search_product(query, pod_queryset, page_number=1):
     search = search[:192]
 
     response = search.execute()
-    for hit in response['hits']['hits'][:10]:
-        print(hit['_score'], hit['_source']['rel_num'])
-
-        result = json.dumps(hit['_source'].to_dict(), indent=4, ensure_ascii=False)
-        # print(result)
+    # for hit in response['hits']['hits'][:10]:
+    #     print(hit['_score'], hit['_source']['rel_num'])
+    #
+    #     result = json.dumps(hit['_source'].to_dict(), indent=4, ensure_ascii=False)
+    #     # print(result)
 
     # Определите пороговое значение для подходящих результатов (50% от max_score)
 

@@ -382,8 +382,10 @@ class ProductSimilarView(APIView):
         try:
             product = Product.objects.get(id=product_id)
             similar = similar_product(product)
-            res.append({"name": "Похожие товары",
-                        "products": ProductMainPageSerializer(similar, many=True, context=context).data})
+            if similar[1]:
+                if similar[0].exists():
+                    res.append({"name": "Похожие товары",
+                                "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
                 another_configuration = Product.objects.filter(Q(spu_id=product.spu_id))

@@ -5,6 +5,7 @@ from django.db.models import F
 
 from django.utils import timezone
 
+from promotions.models import AccrualBonus
 from shipping.models import AddressInfo, ProductUnit
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
 from products.formula_price import formula_price
@@ -23,8 +24,8 @@ def get_default_status():
 
 
 class Order(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, blank=False,
-                             related_name="orders")
+    user = models.ForeignKey("users.User", related_name="orders", on_delete=models.CASCADE,
+                             blank=False)
     order_units = models.ManyToManyField("OrderUnit", blank=True, related_name="orders")
     total_amount = models.IntegerField(default=0)
     final_amount = models.IntegerField(default=0)
@@ -58,6 +59,41 @@ class Order(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
+
+
+    def accrue_bonuses(self):
+        user = self.user
+        if user.user_status.base:
+            orders_count = Order.objects.filter(user=user).count()
+            units = self.order_units.order_by("-bonus")
+            k = 0
+            sum_bonus = 0
+            for unit in units:
+                if orders_count == 1 and k == 0:
+                    sum_bonus += 1000
+                else:
+                    sum_bonus += unit.bonus
+                k += 1
+            accrual_bonus = AccrualBonus(amount=sum_bonus)
+            accrual_bonus.save()
+            user.bonuses.accrual.add(accrual_bonus)
+            user.bonuses.update_total_amount()
+            user.update_user_status()
+
+        if self.promo_code is not None:
+            self.promo_code.activation_count += 1
+            self.promo_code.save()
+
+            if self.promo_code.ref_promo:
+                ref_user = self.promo_code.owner
+                ref_accrual_bonus = AccrualBonus(amount=self.promo_sale, type="Приглашение")
+                ref_accrual_bonus.save()
+                ref_user.total_ref_bonus += self.promo_sale
+                ref_user.bonuses.accrual.add(ref_accrual_bonus)
+                user.ref_user = ref_user
+                user.save()
+                ref_user.save()
+
     def update_order_status(self):
         # Получаем все статусы юнитов этого заказа
         unit_statuses = self.order_units.values_list('status__name', flat=True)
@@ -65,19 +101,19 @@ class Order(models.Model):
         # Проверяем условия и определяем статус заказа
         if 'Отменён' in unit_statuses:
             self.status = Status.objects.get(name='Отменён')
-        elif 'Доставлен' in unit_statuses:
+        elif all(status == 'Доставлен' for status in unit_statuses):
             self.status = Status.objects.get(name='Доставлен')
-        elif 'В пути' in unit_statuses and 'Получен' not in unit_statuses:
-            self.status = Status.objects.get(name='В пути')
+        elif 'В пути до московского склада' in unit_statuses and 'Доставлен' not in unit_statuses:
+            self.status = Status.objects.get(name='В пути до московского склада')
         elif 'Прибыл в Москву' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
             self.status = Status.objects.get(name='Частично прибыл в Москву')
-        elif 'Готов к самовывозу' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
-            self.status = Status.objects.get(name='Частично готов к самовывозу')
-        elif all(status == 'Готов к самовывозу' or status == 'Получен' for status in unit_statuses):
-            self.status = Status.objects.get(name='Готов к самовывозу')
+        # elif 'Готов к самовывозу' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
+        #     self.status = Status.objects.get(name='Частично готов к самовывозу')
+        # elif all(status == 'Готов к самовывозу' or status == 'Получен' for status in unit_statuses):
+        #     self.status = Status.objects.get(name='Готов к самовывозу')
         elif 'Передан в службу доставки по России' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
             self.status = Status.objects.get(name='Частично передан в службу доставки по России')
-        elif all(status == 'Передан в службу доставки по России' or status == 'Получен' for status in unit_statuses):
+        elif all(status == 'Передан в службу доставки по России' or status == 'Доставлен' for status in unit_statuses):
             self.status = Status.objects.get(name='Передан в службу доставки по России')
         else:
             self.status = Status.objects.get(name='Заказ принят')
@@ -152,7 +188,7 @@ class ShoppingCart(models.Model):
         user_status = self.user.user_status
         sum_bonus = 0
         max_bonus = 0
-        for product_unit in self.product_units.all():
+        for product_unit in self.product_units.filter(availability=True):
             if user_status.base:
                 product_unit.product.update_price()
                 price = formula_price(product_unit.product, product_unit, user_status)

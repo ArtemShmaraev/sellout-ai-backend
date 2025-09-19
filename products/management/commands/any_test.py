@@ -3,6 +3,7 @@ import random
 from itertools import count
 from time import time
 
+import requests
 from django.core import signing
 from django.core.management.base import BaseCommand
 import json
@@ -48,13 +49,19 @@ class Command(BaseCommand):
         #     #         sz.category.add(cur_cat.parent_category)
         #     #         cur_cat = cur_cat.parent_category
         #     sz.save()
-        user_s = UserStatus.objects.all()
-        print(user_s.values_list("name", flat=True).order_by("id"))
-        row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
-        print(row.table.filter_name)
-        products = Product.objects.filter(available_flag=False).values_list("spu_id", flat=True)
+        # user_s = UserStatus.objects.all()
+        # print(user_s.values_list("name", flat=True).order_by("id"))
+        # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
+        # print(row.table.filter_name)
+        products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").values_list("spu_id", flat=True))))
+        for spu in products:
+            print(spu)
+            try:
+                data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
+                add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+            except:
+                continue
         print(products)
-
         print(products.count())
         #
         # # Обновляем записи в базе данных сразу для всех продуктов

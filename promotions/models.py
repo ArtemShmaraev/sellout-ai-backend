@@ -7,7 +7,7 @@ from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from orders.models import Order
+# from orders.models import Order
 
 
 class PromoCode(models.Model):
@@ -26,7 +26,7 @@ class PromoCode(models.Model):
 
 
     def check_promo_in_cart(self, cart):
-        flag_order = Order.objects.filter(user=cart.user).exists()
+        flag_order = cart.user.orders.exists()
         promo_sale = 0
         if self.ref_promo and not flag_order:
             ref_sale = 0
@@ -57,7 +57,7 @@ class PromoCode(models.Model):
         return promo_sale
 
     def check_promo(self, cart):
-        flag_order = Order.objects.filter(user=cart.user).exists()
+        flag_order = cart.user.orders.exists()
         promo_sale = 0
         if self.ref_promo and not flag_order:
             ref_sale = 0

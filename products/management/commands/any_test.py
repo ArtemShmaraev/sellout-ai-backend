@@ -8,7 +8,8 @@ from django.core.management.base import BaseCommand
 import json
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count
+from django.db import transaction
+from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max
 
 from orders.models import ShoppingCart, Status, OrderUnit, Order
 
@@ -26,14 +27,61 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        szs = SizeTable.objects.filter(standard=True)
-        for sz in szs:
-            for cat in sz.category.all():
-                cur_cat = cat
-                while cur_cat.parent_category:
-                    sz.category.add(cur_cat.parent_category)
-                    cur_cat = cur_cat.parent_category
-            sz.save()
+
+        # def recursive_subcategories(sz, category):
+        #     subcategories = category.subcat.all()
+        #
+        #     for subcategory in subcategories:
+        #         # print(subcategory.name)  # Вы можете выполнить нужные действия с каждой подкатегорией здесь
+        #         sz.category.add(subcategory)
+        #         # print(sz.name, subcategory)
+        #         recursive_subcategories(sz, subcategory)
+        #
+        #
+        # szs = SizeTable.objects.filter(standard=True)
+        # for sz in szs:
+        #     last_cat = sz.category.order_by("-id").first()
+        #     recursive_subcategories(sz, last_cat)
+        #     # for cat in sz.category.all():
+        #     #     cur_cat = cat
+        #     #     while cur_cat.parent_category:
+        #     #         sz.category.add(cur_cat.parent_category)
+        #     #         cur_cat = cur_cat.parent_category
+        #     sz.save()
+        user_s = UserStatus.objects.all()
+        print(user_s.values_list("name", flat=True).order_by("id"))
+        row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
+        print(row.table.filter_name)
+        products = Product.objects.filter(available_flag=False).values_list("spu_id", flat=True)
+        print(products)
+
+        print(products.count())
+        #
+        # # Обновляем записи в базе данных сразу для всех продуктов
+        # k = 0
+        # for product in products:
+        #     if k % 1000 == 0:
+        #         print(k)
+        #     k += 1
+        #     product.max_profit = product.max_profit_annotation
+        #     product.save()
+        # k = 89000
+        # products = Product.objects.filter(available_flag=True)
+        #
+        # count = products.count()
+        # print(count)
+        #
+        # for page in range(89000, products.count(), 100):
+        #     page_products = products[page:page + 100].annotate(max_profit_annotation=Max('product_units__total_profit'))
+        #
+        #     for product in page_products:
+        #         product.max_profit = product.max_profit_annotation
+        #         product.save()
+        #
+        #         k += 1
+        #         if k % 1000 == 0:
+        #             print(k)
+
 
 
         # line_yeezy = Line.objects.get(view_name="Все Yeezy")

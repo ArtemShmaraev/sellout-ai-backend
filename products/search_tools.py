@@ -111,7 +111,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        queryset = Product.objects.filter(Q(id__in=product_ids) | Q(spu_id__in=product.similar_product)).filter(
+        queryset = Product.objects.filter(id__in=product_ids).filter(
             available_flag=True).filter(is_custom=False)
 
         # Определение порядка объектов в queryset
@@ -127,6 +127,7 @@ def similar_product(product):
         queryset = queryset.annotate(order=preserved_order).order_by('order')
         return queryset
     except:
+        print(",kznm")
         return []
 
 

@@ -20,10 +20,11 @@ def add_products_spu_id_api(data):
     property_ids = []
     spu_id = 0
     for product in data:
-        property_ids.append(product.get("propertyId"))
-        spu_id = product.get("spuId")
-
+        property_ids.append(product['platform_info']['poizon']["propertyId"])
+        spu_id = product['platform_info']['poizon']["spuId"]
+    # print(spu_id)
     products = Product.objects.filter(spu_id=spu_id)
+    # print(list(products.values_list("slug", flat=True)))
     products.update(available_flag=False)
     for product in data:
         add_product_api(product)
@@ -317,19 +318,26 @@ def add_product_api(data):
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.filter(availability=True):
+        print(unit.size.all())
         for s in unit.size.all():
             row = s.table.default_row
+            print(row.filter_name)
             if row.filter_name != "Один размер":
+                print("сука")
                 if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
                     sizes_info['filter_logo'] = row.filter_logo
                 if s.id not in sizes_id:
                     sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
                     sizes_id.add(s.id)
+    print(sizes_info)
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
     product.available_sizes = sizes_info
     product.one_update = True
     product.last_upd = timezone.now()
     product.save()
+    print("док")
+    print(product.slug)
+    print(product.available_sizes)
 
     t8 = time()
     # print(t2-t1)

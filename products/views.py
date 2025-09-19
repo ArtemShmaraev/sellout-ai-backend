@@ -371,6 +371,9 @@ class MainPageBlocks(APIView):
         return Response(res)
 
 
+
+
+
 class ProductSimilarView(APIView):
 
     def get(self, request, product_id):
@@ -381,6 +384,11 @@ class ProductSimilarView(APIView):
             similar = similar_product(product)
             res.append({"name": "Похожие товары",
                         "products": ProductMainPageSerializer(similar, many=True, context=context).data})
+
+            if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
+                another_configuration = Product.objects.filter(Q(spu_id=product.spu_id))
+                res.append({"name": "Другие конфигурации",
+                        "products": ProductMainPageSerializer(another_configuration, many=True, context=context).data})
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

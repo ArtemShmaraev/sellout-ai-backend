@@ -112,11 +112,11 @@ class ProductUnit(models.Model):
     platform_info = models.JSONField(default=dict)
     absolute_profit = models.IntegerField(default=0)
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['product', 'id']),
-        ]
-        unique_together = [['product', 'id']]
+    # class Meta:
+    #     indexes = [
+    #         models.Index(fields=['product', 'id']),
+    #     ]
+    #     unique_together = [['product', 'id']]
 
     def __str__(self):
         return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"

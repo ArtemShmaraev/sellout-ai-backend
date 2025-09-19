@@ -92,12 +92,28 @@ def  get_product_page_header(request):
 
 
 
-def get_product_page(request, context):
+def count_queryset(request):
+    params = request.GET.copy()
+    queryset = filter_products(request)
+    if 'page' in params:
+        del params['page']
+
+    cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
+    cached_count = cache.get(cache_count_key)
+    if cached_count is not None:
+        count_q = cached_count
+    else:
+        count_q = queryset.count()
+        cache.set(cache_count_key, (count_q), CACHE_TIME)
+    return count_q
+
+
+def filter_products(request):
     params = request.query_params
     t0 = time()
     queryset = Product.objects.all()
     t1 = time()
-    res = {'add_filter': ""}
+
     print("t0", t1 - t0)
 
     query = params.get('q')
@@ -227,24 +243,45 @@ def get_product_page(request, context):
 
     # queryset = queryset.distinct()
 
+
     queryset = queryset.values_list("id").distinct()
-    print("1111", time() - t3)
+    return queryset
+
+
+def get_product_page(request, context):
+    res = {'add_filter': ""}
+
+    params = request.query_params
+    queryset = filter_products(request)
+    t3 = time()
+    query = params.get('q')
+    size = params.getlist('size')
+    if size:
+        size = list(map(lambda x: x.split("_")[1], size))
+        table = []
+        for s in size:
+            table.append(SizeTranslationRows.objects.get(id=s).table.id)
+
+    new = params.get("new")
+    recommendations = params.get("recommendations")
+
+    print(queryset.query)
     page_number = int(params.get("page", 1))
 
-    params = request.GET.copy()
-    if 'page' in params:
-        del params['page']
+    # params = request.GET.copy()
+    # if 'page' in params:
+    #     del params['page']
+    #
+    # cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
+    # cached_count = cache.get(cache_count_key)
+    # if cached_count is not None:
+    #
+    #     count = cached_count
+    # else:
+    #     count = 100
+    #     cache.set(cache_count_key, (count), CACHE_TIME)
 
-    cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
-    cached_count = cache.get(cache_count_key)
-    if cached_count is not None:
-
-        count = cached_count
-    else:
-        count = 10000
-        cache.set(cache_count_key, (count), CACHE_TIME)
-
-    res['count'] = count
+    res['count'] = 100
     t4 = time()
     print("t3", t4 - t3)
 
@@ -291,23 +328,13 @@ def get_product_page(request, context):
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 60]
     queryset = get_queryset_from_list_id(queryset.values_list("id", flat=True))
-    # queryset = Product.objects.filter(id__in=queryset)
-    # print(queryset.query)
-    # print()
-    # print(queryset[0])
-    # t101 = time()
-    # print("12121", t101 - t100)
-    # queryset = [product.id for product in queryset]
+
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0
     res['max_price'] = 50_000_000
     t6 = time()
     print("t5", t6 - t5)
-    # list_id = list(queryset.values_list("id", flat=True))
-    # print(time() - t6)
-    # queryset = get_queryset_from_list_id(list_id)
-    # queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
     t7 = time()
     print("t6", t7-t6)
     # t7 = time()

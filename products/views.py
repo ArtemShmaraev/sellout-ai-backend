@@ -28,7 +28,7 @@ from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Colla
     RansomRequest, SGInfo, Brand, Photo
 from rest_framework import status
 
-from .product_page import get_product_page, get_product_page_header
+from .product_page import get_product_page, get_product_page_header, count_queryset
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
@@ -394,6 +394,12 @@ class ProductSimilarView(APIView):
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
+
+class ProductsCountView(APIView):
+    def get(self, request):
+        count = count_queryset(request)
+        return Response({"count": count})
 
 
 class DewuInfoListSpuIdView(APIView):

@@ -132,15 +132,16 @@ def similar_product(product):
 
 
 def add_filter_search(query):
-    search_line = search_best_line(query)
-    search_category = search_best_category(query)
-    search_color = search_best_color(query)
-    search_color = False
-    search_collab = search_best_collab(query)
     res = {"collab": "",
            "category": "",
            "line": "",
            "color": ""}
+    return res
+    search_line = search_best_line(query)
+    search_category = search_best_category(query)
+    search_color = search_best_color(query)
+    search_collab = search_best_collab(query)
+
     if search_collab:
         res['collab'] = search_collab.name
     if search_category:

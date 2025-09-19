@@ -53,16 +53,21 @@ class Command(BaseCommand):
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
-        products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").values_list("spu_id", flat=True))))
+        genders = ["M"]
+        print(Product.objects.filter(available_flag=True).filter(category_id=0).filter(categories__name="Другое").count())
+        products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
+        # print(len(products))
+        k = 0
         for spu in products:
-            print(spu)
+            k += 1
+            print(k, spu)
             try:
                 data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
                 add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
             except:
                 continue
-        print(products)
-        print(products.count())
+        # print(products)
+        # print(products.count())
         #
         # # Обновляем записи в базе данных сразу для всех продуктов
         # k = 0

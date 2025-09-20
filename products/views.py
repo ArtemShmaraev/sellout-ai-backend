@@ -552,6 +552,7 @@ class ProductView(APIView):
         if adminka:
             serializer = ProductAdminSerializer(queryset, many=True, context=context).data
         else:
+            print(queryset)
             serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         res["results"] = serializer
         t8 = time()

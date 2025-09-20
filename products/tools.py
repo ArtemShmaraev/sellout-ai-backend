@@ -83,6 +83,7 @@ def get_queryset_from_list_id(product_ids):
         output_field=IntegerField()
     )
     queryset = queryset.annotate(order=preserved_order).order_by('order')
+
     return queryset
 
 

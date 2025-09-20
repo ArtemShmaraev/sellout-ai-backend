@@ -245,10 +245,10 @@ def filter_products(request):
 
     # queryset = queryset.distinct()
     if filters:
-        queryset = queryset.values("id").distinct()
+        queryset = queryset.values_list("id", flat=True).distinct()
     else:
-        queryset = queryset.values("id")
-    print(queryset.query)
+        queryset = queryset.values_list("id", flat=True)
+    # print(queryset.query)
     return queryset
 
 
@@ -331,7 +331,7 @@ def get_product_page(request, context):
     start_index = (page_number - 1) * 60
     # print(queryset[0].id)
     queryset = queryset[start_index:start_index + 60]
-    queryset = get_queryset_from_list_id(queryset.values_list("id", flat=True))
+    queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
 
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"

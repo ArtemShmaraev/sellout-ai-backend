@@ -1,4 +1,5 @@
 import functools
+import math
 import random
 
 from django.core.cache import cache
@@ -103,7 +104,7 @@ def count_queryset(request):
     if cached_count is not None:
         count_q = cached_count
     else:
-        count_q = queryset.count()
+        count_q = math.ceil(queryset.count() / 60)
         cache.set(cache_count_key, (count_q), CACHE_TIME)
     return count_q
 

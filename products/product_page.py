@@ -3,7 +3,7 @@ import math
 import random
 
 from django.core.cache import cache
-from django.db.models import Q, Subquery, OuterRef, Min, When, Case
+from django.db.models import Q, Subquery, OuterRef, Min, When, Case, Count
 
 from sellout.settings import CACHE_TIME
 from .tools import get_queryset_from_list_id
@@ -107,6 +107,7 @@ def count_queryset(request):
         count_q = math.ceil(queryset.count() / 60)
         cache.set(cache_count_key, (count_q), CACHE_TIME)
     return count_q
+
 
 
 def filter_products(request):
@@ -219,7 +220,7 @@ def filter_products(request):
     if is_fast_ship:
         filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
     if filters:
-        filters &= Q(product_units__availability=True)
+        # filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
         queryset = queryset.filter(filters)
 
@@ -243,9 +244,11 @@ def filter_products(request):
     print("t2", t3 - t2)
 
     # queryset = queryset.distinct()
-
-
-    queryset = queryset.values_list("id").distinct()
+    if filters:
+        queryset = queryset.values("id").distinct()
+    else:
+        queryset = queryset.values("id")
+    print(queryset.query)
     return queryset
 
 

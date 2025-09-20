@@ -54,18 +54,18 @@ class Command(BaseCommand):
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
         genders = ["M"]
-        print(Product.objects.filter(available_flag=True).filter(category_id=0).filter(categories__name="Другое").count())
-        products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
-        # print(len(products))
-        k = 0
-        for spu in products:
-            k += 1
-            print(k, spu)
-            try:
-                data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
-                add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
-            except:
-                continue
+        print(Product.objects.filter(available_flag=True).count())
+        # products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
+        # # print(len(products))
+        # k = 0
+        # for spu in products:
+        #     k += 1
+        #     print(k, spu)
+        #     try:
+        #         data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
+        #         add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+        #     except:
+        #         continue
         # print(products)
         # print(products.count())
         #

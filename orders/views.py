@@ -250,36 +250,7 @@ class CheckOutView(APIView):
                     order.delivery_view_price = 0
                 order.save()
 
-                if user.user_status.base:
-                    orders_count = Order.objects.filter(user=user).count()
-                    units = order.order_units.order_by("-bonus")
-                    k = 0
-                    sum_bonus = 0
-                    for unit in units:
-                        if orders_count == 1 and k == 0:
-                            sum_bonus += 1000
-                        else:
-                            sum_bonus += unit.bonus
-                        k += 1
-                    accrual_bonus = AccrualBonus(amount=sum_bonus)
-                    accrual_bonus.save()
-                    user.bonuses.accrual.add(accrual_bonus)
-                    user.bonuses.update_total_amount()
-                    user.update_user_status()
-
-                if cart.promo_code is not None:
-                    cart.promo_code.activation_count += 1
-                    cart.promo_code.save()
-
-                    if cart.promo_code.ref_promo:
-                        ref_user = cart.promo_code.owner
-                        ref_accrual_bonus = AccrualBonus(amount=cart.promo_sale, type="Приглашение")
-                        ref_accrual_bonus.save()
-                        ref_user.total_ref_bonus += cart.promo_sale
-                        ref_user.bonuses.accrual.add(ref_accrual_bonus)
-                        cart.user.ref_user = ref_user
-                        cart.user.save()
-                        ref_user.save()
+                # order.accrue_bonuses()
 
                 serializer = OrderSerializer(order).data
                 send_email_confirmation_order(serializer, order.email)

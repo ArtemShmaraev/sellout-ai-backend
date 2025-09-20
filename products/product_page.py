@@ -96,6 +96,7 @@ def  get_product_page_header(request):
 def count_queryset(request):
     params = request.GET.copy()
     queryset = filter_products(request)
+    # print(queryset.query)
     if 'page' in params:
         del params['page']
 
@@ -104,7 +105,7 @@ def count_queryset(request):
     if cached_count is not None:
         count_q = cached_count
     else:
-        count_q = math.ceil(queryset.count() / 60)
+        count_q = math.ceil(queryset.query() / 60)
         cache.set(cache_count_key, (count_q), CACHE_TIME)
     return count_q
 
@@ -120,9 +121,10 @@ def filter_products(request):
 
     query = params.get('q')
     size = params.getlist('size')
+    table = []
     if size:
         size = list(map(lambda x: x.split("_")[1], size))
-        table = []
+
         for s in size:
             table.append(SizeTranslationRows.objects.get(id=s).table.id)
 
@@ -210,7 +212,7 @@ def filter_products(request):
 
     # Фильтр по размеру
     if size:
-        filters &= ((Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True)))
+        filters &= ((Q(product_units__size__in=size) | (Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
 
     # Фильтр по наличию скидки
     if is_sale:
@@ -227,10 +229,8 @@ def filter_products(request):
     if new and not query:
         queryset = queryset.filter(id__in=new_q)
 
-
     if recommendations and not query:
         queryset = queryset.filter(id__in=recommendations_q)
-
 
     t2 = time()
     print("t1", t2 - t1)
@@ -238,7 +238,6 @@ def filter_products(request):
         query = query.replace("_", " ")
         search = search_product(query, queryset)
         queryset = search['queryset']
-
 
     t3 = time()
     print("t2", t3 - t2)
@@ -269,7 +268,6 @@ def get_product_page(request, context):
     new = params.get("new")
     recommendations = params.get("recommendations")
 
-    print(queryset.query)
     page_number = int(params.get("page", 1))
 
     # params = request.GET.copy()

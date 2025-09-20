@@ -31,6 +31,9 @@ class ProductDocument(Document):
     gender = Keyword(multi=True)
     manufacturer_sku = Text(analyzer='standard')
     rel_num = Integer()
+    min_price = Integer()
+    materials = Text(analyzer='standard')
+    full_name = Text(analyzer='standard')
     suggest = Completion()
 
     # colors = Keyword(multi=True)

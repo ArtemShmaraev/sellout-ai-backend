@@ -389,8 +389,9 @@ class ProductSimilarView(APIView):
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
                 another_configuration = Product.objects.filter(Q(spu_id=product.spu_id))
-                res.append({"name": "Другие конфигурации",
-                        "products": ProductMainPageSerializer(another_configuration, many=True, context=context).data})
+                if another_configuration.count() > 1:
+                    res.append({"name": "Другие конфигурации",
+                            "products": ProductMainPageSerializer(another_configuration, many=True, context=context).data})
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -552,7 +553,6 @@ class ProductView(APIView):
         if adminka:
             serializer = ProductAdminSerializer(queryset, many=True, context=context).data
         else:
-            print(queryset)
             serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         res["results"] = serializer
         t8 = time()

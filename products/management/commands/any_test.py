@@ -54,9 +54,11 @@ class Command(BaseCommand):
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
         genders = ["M"]
-        print(Product.objects.filter(available_flag=True).count())
+        product = Product.objects.get(manufacturer_sku="1202A056-109").slug
+        print(product)
+        print(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).count())
         # products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
-        # # print(len(products))
+        # # # print(len(products))
         # k = 0
         # for spu in products:
         #     k += 1

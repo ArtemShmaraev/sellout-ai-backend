@@ -150,6 +150,7 @@ class Command(BaseCommand):
                         product_doc.main_category_eng = main_category.eng_name
 
                     product_doc.brands = [brand.name for brand in product.brands.all()]
+                    product_doc.materials = [material.name for material in product.materials.all()]
                     product_doc.categories = [category.name for category in
                                               product.categories.exclude(name__icontains='Все').exclude(
                                                   name__contains='Другие')]
@@ -163,6 +164,7 @@ class Command(BaseCommand):
                     product_doc.colorway = product.colorway
                     # product_doc.russian_name = product.russian_name
                     product_doc.manufacturer_sku = product.manufacturer_sku
+                    product_doc.min_price = product.min_price
                     # product_doc.description = product.description
                     product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
                     # product_doc.main_color = product.main_color.name if product.main_color else None

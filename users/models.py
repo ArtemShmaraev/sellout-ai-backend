@@ -109,7 +109,7 @@ class User(AbstractUser):
         self.save()
 
     def total_amount_order(self):
-        user_orders = Order.objects.filter(user=self)
+        user_orders = Order.objects.filter(user=self, order_in_progress=True)
         user_total = user_orders.aggregate(total=Sum('final_amount_without_shipping'))['total']
         if user_total is None:
             user_total = 0

@@ -229,12 +229,12 @@ class UserChangePassword(generics.GenericAPIView):
     def post(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
+            user = User.objects.get(id=uid)
         except (TypeError, ValueError, OverflowError):
             return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            if default_token_generator.check_token(user, token.strip()):
+            if default_token_generator.check_token(user, token):
                 data = json.loads(request.body)
                 user.set_password(data.get('password', '').strip())
                 user.save()
@@ -243,6 +243,7 @@ class UserChangePassword(generics.GenericAPIView):
                 serializer.is_valid(raise_exception=True)
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
             else:
+                print("cerf")
                 return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:

@@ -25,7 +25,7 @@ from .tools_for_user import update_user_status
 class DeliveryInfo(APIView):
     def post(self, request):
 
-        try:
+        # try:
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
@@ -66,14 +66,14 @@ class DeliveryInfo(APIView):
             # Возвращаем успешный ответ
             return Response(res)
 
-        except User.DoesNotExist:
-            return Response({"error": "Пользователь не найден"}, status=404)
-        except ShoppingCart.DoesNotExist:
-            return Response({"error": "Корзина пользователя не найдена"}, status=404)
-        except json.JSONDecodeError:
-            return Response({"error": "Ошибка разбора JSON"}, status=400)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        # except User.DoesNotExist:
+        #     return Response({"error": "Пользователь не найден"}, status=404)
+        # except ShoppingCart.DoesNotExist:
+        #     return Response({"error": "Корзина пользователя не найдена"}, status=404)
+        # except json.JSONDecodeError:
+        #     return Response({"error": "Ошибка разбора JSON"}, status=400)
+        # except Exception as e:
+        #     return Response({"error": str(e)}, status=500)
 
 
 class ChangeStatusUnit(APIView):
@@ -209,10 +209,10 @@ class CheckOutView(APIView):
 
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 time_threshold = timezone.now() - timezone.timedelta(hours=1)
-                for unit in cart.product_units.all():
-                    if unit.product.last_upd < time_threshold:
-                        print("Отмена лох")
-                        return Response("Рано", status=status.HTTP_403_FORBIDDEN)
+                # for unit in cart.product_units.all():
+                #     if unit.product.last_upd < time_threshold:
+                #         print("Отмена лох")
+                #         return Response("Рано", status=status.HTTP_403_FORBIDDEN)
                 data = json.loads(request.body)
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
@@ -253,6 +253,7 @@ class CheckOutView(APIView):
                 # order.accrue_bonuses()
 
                 serializer = OrderSerializer(order).data
+                # print(serializer)
                 send_email_confirmation_order(serializer, order.email)
                 cart.clear()
                 return Response(serializer)

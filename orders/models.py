@@ -58,6 +58,7 @@ class Order(models.Model):
     date = models.DateTimeField(default=timezone.now)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
+    order_in_progress = models.BooleanField(default=False)
 
 
 

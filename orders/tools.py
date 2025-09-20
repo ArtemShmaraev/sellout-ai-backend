@@ -47,12 +47,12 @@ def round_to_nearest(value, step=50):
 
 
 def send_email_confirmation_order(order, email):
-    url = "https://sellout.su/mail/send_customer_service_mail/"
+    url = "https://sellout.su/mail/send_order_accepted_mail"
     params = {
         "recipient_email": email,
-        "body": order
+        "order": order
     }
-    requests.get(url, params=params)
+    requests.post(url, json=params)
     return requests.status_codes
 
 

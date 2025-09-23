@@ -119,7 +119,7 @@ class ProductUnit(models.Model):
         unique_together = [['product', 'id']]
 
     def __str__(self):
-        return f"{self.product.model} {self.product.colorway} ]{self.size} {self.platform} {self.delivery_type}"
+        return f"{self.id} {self.product.model} {self.product.colorway}"
 
     def update_history(self):
         self.history_price.append(self.final_price)

@@ -194,7 +194,7 @@ def filter_products(request):
     if color:
         queryset = queryset.filter(colors__name__in=color)
     if category:
-        queryset = queryset.filter(categories__eng_name__in=category)
+        queryset = queryset.filter(Q(categories__eng_name__in=category))
 
     if gender:
         queryset = queryset.filter(gender__name__in=gender)
@@ -243,11 +243,12 @@ def filter_products(request):
     print("t2", t3 - t2)
 
     # queryset = queryset.distinct()
-    if filters:
-        queryset = queryset.values_list("id", flat=True).distinct()
-    else:
-        queryset = queryset.values_list("id", flat=True)
+
+    unique_product_ids = queryset.values("id")
+    queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
+
     # print(queryset.query)
+    # print(queryset.count())
     return queryset
 
 
@@ -310,9 +311,12 @@ def get_product_page(request, context):
             if ordering == "min_price":
                 queryset = queryset.order_by("min_price_product_unit")
             else:
+
                 queryset = queryset.order_by("-min_price_product_unit")
+
         else:
             queryset = queryset.order_by(ordering)
+
 
 
     # paginator = CustomPagination()

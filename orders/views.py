@@ -75,7 +75,6 @@ class DeliveryInfo(APIView):
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
             if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
-                print(user.user_status.name)
                 return Response({
                     "sum_part": 0,
                     "sum_all": 0,
@@ -99,14 +98,16 @@ class DeliveryInfo(APIView):
                 if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
                     tec.append(unit)
                 else:
+                    print(tec, get_delivery_price(tec, "02743", target, zip))
                     sum_part += get_delivery_price(tec, "02743", target, zip)
                     tec = [unit]
-
+            print(tec, get_delivery_price(tec, "02743", target, zip))
             sum_part += get_delivery_price(tec, "02743", target, zip)
             sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
             res = {"sum_part": round_to_nearest(sum_part), "sum_all": round_to_nearest(sum_all), "block": False}
             if ((str(data["delivery_type"]) == "1" or str((data["delivery_type"])) == "2") and product_units.count() != 1) and (sum_part != sum_all):
                 res["block"] = True
+            print("доставка", sum_part, "все", sum_all)
 
             # Возвращаем успешный ответ
             return Response(res)
@@ -288,10 +289,9 @@ class CheckOutView(APIView):
                     order.add_order_unit(unit, user.user_status)
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
-                get_delivery(order, data)
+                get_delivery(order, data, cart)
                 if order.final_amount <= user.user_status.free_ship_amount or not order.user.user_status.base:
                     order.final_amount += order.delivery_price
-
                 else:
                     order.delivery_view_price = 0
                 order.save()

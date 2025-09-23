@@ -72,7 +72,10 @@ def update_price(product):
 
 
 def get_queryset_from_list_id(product_ids):
+    # print(len(product_ids), "cerf")
+    # print(product_ids)
     queryset = Product.objects.filter(id__in=product_ids)
+    # print(queryset.count())
 
     # Определение порядка объектов в queryset
     preserved_order = Case(

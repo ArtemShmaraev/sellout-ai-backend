@@ -263,7 +263,7 @@ class CheckOutView(APIView):
                 user = get_object_or_404(User, id=user_id)
                 if not user.verify_email:
                     return Response("Подтвердите почту", status=status.HTTP_401_UNAUTHORIZED)
-                numbers = re.findall(r'\d+\.\d+|\d+', data['phone'].phone)
+                numbers = re.findall(r'\d+\.\d+|\d+', data['phone'])
                 phone_int = (''.join(numbers))
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,

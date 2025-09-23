@@ -416,6 +416,16 @@ class Product(models.Model):
                 self.slug = product_slug
 
             lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+            if self.is_collab:
+                k = 0
+                collab_brand_names = []
+                for brnad in self.brands.all():
+                    if k == 0:
+                        k += 1
+                        continue
+                    collab_brand_names.append(brnad.name)
+                lines = lines.exclude(name__in=collab_brand_names)
+
             if lines:
                 self.main_line = lines.order_by('-id').first()
 

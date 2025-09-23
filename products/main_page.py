@@ -43,20 +43,17 @@ def get_line_selection(line=None):
         filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
 
-        products = products.filter(filters).distinct()
-        if not products.exists():
+        products = products.filter(filters).order_by("-rel_num")[:10]
+        if products.count() < 5:
             return get_line_selection()
         else:
-            products = products.order_by("-rel_num")[:10]
             title = f"{line.name}"
             url = f"line={line.full_eng_name}"
     else:
         products = Product.objects.filter(lines=line)
         filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
-        products = products.filter(filters).distinct()
-        if products.exists():
-            products = products.order_by("-rel_num")[:10]
+        products = products.filter(filters).order_by("-rel_num")[:10]
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
 
@@ -72,20 +69,17 @@ def get_collab_selection(collab=None):
         products = Product.objects.filter(collab=collab)
         filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
-        products = products.filter(filters).distinct()
-        if not products.exists():
+        products = products.filter(filters).order_by("-rel_num")[:10]
+        if products.count() < 5:
             return get_collab_selection()
         else:
-            products = products.order_by("-rel_num")[:10]
             title = f"{collab.name}"
             url = f"collab={collab.query_name}"
     else:
         products = Product.objects.filter(collab=collab)
         filters = Q(available_flag=True)
         filters &= Q(is_custom=False)
-        products = products.filter(filters).distinct()
-        if products.exists():
-            products = products.order_by("-rel_num")[:10]
+        products = products.filter(filters).order_by("-rel_num")[:10]
         title = f"{collab.name}"
         url = f"collab={collab.query_name}"
 
@@ -104,12 +98,10 @@ def get_color_and_category_selection():
     products = Product.objects.filter(Q(categories=random_category) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
-    products = products.filter(filters).distinct()
-
-    if not products.exists():
+    products = products.filter(filters).order_by("-rel_num")[:10]
+    if products.count() < 5:
         return get_color_and_category_selection()
     else:
-        products = products.order_by("-rel_num")[:10]
         title = f"{random_category.name} {random_color.russian_name}"
         url = f"category={random_category.eng_name}&color={random_color.name}"
     list_id = list(products.values_list("id", flat=True))
@@ -126,12 +118,10 @@ def get_color_and_brand_selection():
     products = Product.objects.filter(Q(brands=random_brand) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
-    products = products.filter(filters).distinct()
-
-    if not products.exists():
+    products = products.filter(filters).order_by("-rel_num")[:10]
+    if products.count() < 5:
         return get_color_and_brand_selection()
     else:
-        products = products.order_by("-rel_num")[:10]
         title = f"{random_brand.name} {random_color.russian_name}"
         url = f"line={random_brand.query_name}&color={random_color.name}"
     list_id = list(products.values_list("id", flat=True))
@@ -148,12 +138,10 @@ def get_brand_and_category_selection():
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
-    products = products.filter(filters).distinct()
-
-    if not products.exists():
+    products = products.filter(filters).order_by("-rel_num")[:10]
+    if products.count() < 5:
         return get_brand_and_category_selection()
     else:
-        products = products.order_by("-rel_num")[:10]
         title = f"{random_category.name} {random_brand.name}"
         url = f"category={random_category.eng_name}&line={random_brand.query_name}"
     list_id = list(products.values_list("id", flat=True))

@@ -72,6 +72,7 @@ class Order(models.Model):
             for unit in units:
                 if orders_count == 1 and k == 0:
                     sum_bonus += 1000
+
                 else:
                     sum_bonus += unit.bonus
                 k += 1
@@ -160,6 +161,7 @@ class ShoppingCart(models.Model):
     total_amount = models.IntegerField(default=0)
     sale = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
+    first_order_bonus = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     bonus = models.IntegerField(default=0)
@@ -208,6 +210,7 @@ class ShoppingCart(models.Model):
         orders_count = Order.objects.filter(user=self.user).count()
         if orders_count == 0:
             sum_bonus += max(0, 1000 - max_bonus)
+            self.first_order_bonus = 1000
 
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь

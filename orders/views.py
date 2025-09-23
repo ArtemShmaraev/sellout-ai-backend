@@ -1,12 +1,14 @@
 import json
+import re
 
 from django.db.models import F
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from products.tools import platform_update_price
+from sellout.settings import FRONTEND_HOST
 from .models import ShoppingCart, Order, OrderUnit, Status
 # Create your views here.
 from django.shortcuts import get_object_or_404
@@ -20,6 +22,49 @@ from promotions.models import PromoCode, AccrualBonus
 from users.models import User, EmailConfirmation
 from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order, get_delivery
 from .tools_for_user import update_user_status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from urllib.parse import urlparse, quote
+import hashlib
+
+import base64
+import hmac
+
+class SignAPIView(APIView):
+
+    def get(self, request):
+        # Получение данных из POST-запроса
+        tid = self.request.query_params.get('tid')
+        name = self.request.query_params.get('name')
+        comment = self.request.query_params.get('comment')
+        partner_id = self.request.query_params.get('partner_id')
+        service_id = self.request.query_params.get('service_id')
+        order_id = self.request.query_params.get('order_id')
+        type = self.request.query_params.get('type')
+        partner_income = self.request.query_params.get('partner_income')
+        system_income = self.request.query_params.get('system_income')
+        test = self.request.query_params.get('test', "")
+
+        # Получение секретного ключа
+        secret_key = '4edec29a0dbee5013eb10dfb19e086cd'
+
+        # Создание строки для проверки
+        data_string = f"{tid}{name}{comment}{partner_id}{service_id}{order_id}{type}{partner_income}{system_income}{test}"
+        print(data_string)
+        print("111")
+
+        # Вычисление хеша и сравнение с полученным параметром 'check'
+        check = hashlib.md5(data_string.encode('utf-8') + secret_key.encode('utf-8')).hexdigest()
+        received_check = request.query_params.get('check')
+
+        # Проверка хеша
+        if check == received_check:
+            order = Order.objects.get(id=order_id)
+            order.fact_of_payment = True
+            return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
+        else:
+            return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeliveryInfo(APIView):
@@ -218,10 +263,11 @@ class CheckOutView(APIView):
                 user = get_object_or_404(User, id=user_id)
                 if not user.verify_email:
                     return Response("Подтвердите почту", status=status.HTTP_401_UNAUTHORIZED)
-
+                numbers = re.findall(r'\d+\.\d+|\d+', data['phone'].phone)
+                phone_int = (''.join(numbers))
                 order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
                               promo_code=cart.promo_code,
-                              email=data['email'], phone=data['phone'],
+                              email=data['email'], phone=data['phone'], phone_int=phone_int,
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
                               promo_sale=cart.promo_sale,
@@ -233,7 +279,7 @@ class CheckOutView(APIView):
                     order.pvz = str(data.get('target', 0))
                 order.save()
 
-                if user.patronymic == "":
+                if user.patronymic == "" and user.first_name == data['name'].lower() and user.last_name.lower() == data['surname'].lower():
                     user.patronymic = data['patronymic']
                 if user.phone_number == "":
                     user.phone_number = data['phone']
@@ -256,6 +302,7 @@ class CheckOutView(APIView):
                 # print(serializer)
                 send_email_confirmation_order(serializer, order.email)
                 cart.clear()
+                # print(serializer)
                 return Response(serializer)
             else:
                 return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
@@ -286,7 +333,7 @@ class UserOrdersView(APIView):
     def get(self, request, user_id):
         try:
             if request.user.id == user_id or request.user.is_staff:
-                orders = Order.objects.filter(user_id=user_id).order_by("-id")
+                orders = Order.objects.filter(user_id=user_id, fact_of_payment=True).order_by("-id")
                 serializer = OrderSerializer(orders, many=True)
                 return Response(serializer.data)
             else:

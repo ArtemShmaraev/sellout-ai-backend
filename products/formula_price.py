@@ -194,8 +194,8 @@ def formula_price(product, unit, user_status):
     elif status_name == "Friends & Family":
 
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
-        print(converted_into_rub_price)
-        print()
+        # print(converted_into_rub_price)
+        # print()
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0, delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)

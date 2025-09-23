@@ -13,6 +13,7 @@ from django.db import transaction
 from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max
 
 from orders.models import ShoppingCart, Status, OrderUnit, Order
+from orders.serializers import OrderSerializer
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
@@ -53,10 +54,12 @@ class Command(BaseCommand):
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
+        order = Order.objects.get(id=93)
+        print(OrderSerializer(order).data)
         genders = ["M"]
-        product = Product.objects.get(id=46644).spu_id
-        print(product)
-        print(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).count())
+        # product = Product.objects.get(id=46644).spu_id
+        # print(product)
+        # print(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).count())
         # products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
         # # # print(len(products))
         # k = 0

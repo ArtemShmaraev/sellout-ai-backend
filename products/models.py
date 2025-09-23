@@ -393,6 +393,9 @@ class Product(models.Model):
             # Добавьте индексы для остальных полей с db_index=True
         ]
 
+    def get_full_name(self):
+        return f"{self.brands.first().name if not self.is_collab else self.collab.name} {self.model} {self.colorway}"
+
     def update_min_price(self):
         if self.product_units.exists():
             self.min_price = 0

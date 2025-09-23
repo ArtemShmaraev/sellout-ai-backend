@@ -54,7 +54,9 @@ class Command(BaseCommand):
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
-        order = Order.objects.get(id=104)
+        order = Order.objects.order_by("-id").first()
+        print(order.id)
+        print(order)
         print(OrderSerializer(order).data)
         genders = ["M"]
         # product = Product.objects.get(id=46644).spu_id

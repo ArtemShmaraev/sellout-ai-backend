@@ -258,9 +258,9 @@ def add_product_api(data):
 
             platform_info['poizon'].update(offer["platform_info"])
             # 670870
-            print(100)
+            # print(100)
             if not create and i < len(ids):
-                print(ids[i])
+                # print(ids[i])
                 product_unit = ProductUnit.objects.create(
                     id=ids[i],
                     product=product,
@@ -318,26 +318,26 @@ def add_product_api(data):
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.filter(availability=True):
-        print(unit.size.all())
+        # print(unit.size.all())
         for s in unit.size.all():
             row = s.table.default_row
-            print(row.filter_name)
+            # print(row.filter_name)
             if row.filter_name != "Один размер":
-                print("сука")
+                # print("сука")
                 if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
                     sizes_info['filter_logo'] = row.filter_logo
                 if s.id not in sizes_id:
                     sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
                     sizes_id.add(s.id)
-    print(sizes_info)
+
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
     product.available_sizes = sizes_info
     product.one_update = True
     product.last_upd = timezone.now()
     product.save()
-    print("док")
-    print(product.slug)
-    print(product.available_sizes)
+
+    # print(product.slug)
+
 
     t8 = time()
     # print(t2-t1)

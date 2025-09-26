@@ -69,7 +69,11 @@ class SignAPIView(APIView):
             print("ff2")
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
         else:
-            return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
+            order = Order.objects.get(id=order_id)
+            cart = ShoppingCart.objects.get(user=order.user)
+            cart.clear()
+            return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
+            # return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeliveryInfo(APIView):

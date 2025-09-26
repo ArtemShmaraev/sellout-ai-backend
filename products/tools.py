@@ -263,6 +263,10 @@ def build_category_tree(categories):
             parent_category.setdefault("children", []).append(category)
         else:
             root_categories.append(category)
+
+    for root_category in root_categories:
+        if "children" in root_category:
+            root_category["children"] = sorted(root_category["children"], key=lambda x: x["id"])
     return root_categories
 
 

@@ -29,6 +29,15 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        order = Order.objects.get(id=134)
+        print(order.fact_of_payment)
+        order.fact_of_payment = True
+        order.save()
+        # hps = HeaderPhoto.objects.all()
+        # for h in hps:
+        #     h.header_text = get_text(h, [])
+        #     h.save()
+        #     print(h)
 
         # def recursive_subcategories(sz, category):
         #     subcategories = category.subcat.all()
@@ -64,8 +73,7 @@ class Command(BaseCommand):
         #         product.save()
         # print(pr.slug)
         # print(pr.available_flag)
-        order = Order.objects.order_by("-id").first()
-        print(order.id)
+
         # print(order)
         # print(OrderSerializer(order).data)
         # product = Product.objects.get(id=46644).spu_id
@@ -145,7 +153,8 @@ class Command(BaseCommand):
         #         p.available_flag = False
         #     p.save()
         # print(Product.objects.all().count())
-
+        # products = Product.objects.all()
+        # products.update(one_update=False)
         # order_status = [
         #     "В пути до международного склада",
         #     "В пути до московского склада",

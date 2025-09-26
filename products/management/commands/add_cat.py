@@ -24,7 +24,7 @@ class Command(BaseCommand):
             if parent is not None:
                 category.parent_category = parent
                 category.save()
-                print(category)
+            print(category.name)
 
             self.create_categories(subcategories, parent=category)
 

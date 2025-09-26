@@ -60,8 +60,10 @@ class SignAPIView(APIView):
 
         # Проверка хеша
         if check == received_check:
+            print(order_id)
             order = Order.objects.get(id=order_id)
             order.fact_of_payment = True
+            order.save()
             cart = ShoppingCart.objects.get(user=order.user)
             cart.clear()
             print("ff2")

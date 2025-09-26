@@ -88,13 +88,14 @@ class Command(BaseCommand):
                     url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
                     # print(url)
                     if not HeaderPhoto.objects.filter(photo=url).exists():
-                        # content_type = 'image/png'
-                        # s3_client.upload_file(
-                        #     full_local_path,
-                        #     bucket_name,
-                        #     path,
-                        #     ExtraArgs={'ContentType': content_type}
-                        # )
+                        content_type = 'image/png'
+                        s3_client.upload_file(
+                            full_local_path,
+                            bucket_name,
+                            path,
+                            ExtraArgs={'ContentType': content_type}
+                        )
+                        print(url)
 
                         try:
                             if "Mobile" in path:

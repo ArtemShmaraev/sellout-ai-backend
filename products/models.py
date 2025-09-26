@@ -21,6 +21,7 @@ class Photo(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=255)
     query_name = models.CharField(max_length=255, default="")
+    # search_filter_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.name
@@ -57,6 +58,7 @@ class Line(models.Model):
     view_name = models.CharField(max_length=255, default="")  # для отображения в фильтрах
     full_name = models.CharField(max_length=255, default="")  # полный путь
     full_eng_name = models.CharField(max_length=255, default="")  # для отправки запроса
+    search_filter_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return self.full_name

@@ -29,10 +29,34 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        order = Order.objects.get(id=134)
-        print(order.fact_of_payment)
-        order.fact_of_payment = True
-        order.save()
+        alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
+        brands = Line.objects.all()
+        for brand in brands:
+            serach_name = ""
+            for i in range(len(brand.name)):
+                if brand.name[i].lower() not in alf:
+                    print(f"Замена для {brand.name} - [{brand.name[i]}]")
+                    buk = input()
+                    if buk == "!":
+                        serach_name += brand.name[i]
+                    else:
+                        serach_name += buk
+                else:
+                    serach_name += brand.name[i]
+            print(f"search {serach_name}")
+            brand.search_filter_name = serach_name
+            brand.save()
+
+
+
+
+        # order = Order.objects.get(id=149)
+        #
+        #
+        # for ou in order.order_units.all():
+        #     print(ou.track_number)
+        #     # ou.save()
+        # order.save()
         # hps = HeaderPhoto.objects.all()
         # for h in hps:
         #     h.header_text = get_text(h, [])

@@ -41,19 +41,19 @@ class Command(BaseCommand):
         # gender = users.models.Gender(name="F")
         # gender.save()
         #
-        collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
-        collab.save()
-        main_collab = json.load(open("collabs.json", encoding="utf-8"))
-
-        for collab_name in main_collab:
-            print(collab_name)
-            collab = Collab(name=collab_name, is_main_collab=True)
-            collab.save()
-
-        collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
-        collab.save()
+        # collab = Collab(name="Все коллаборации", query_name="all", is_all=True, is_main_collab=True)
+        # collab.save()
+        # main_collab = json.load(open("collabs.json", encoding="utf-8"))
         #
-        all_data = json.load(open("category.json", encoding="utf-8"))
+        # for collab_name in main_collab:
+        #     print(collab_name)
+        #     collab = Collab(name=collab_name, is_main_collab=True)
+        #     collab.save()
+        #
+        # collab = Collab(name="Другие коллаборации", query_name="other_collab", is_main_collab=True)
+        # collab.save()
+        #
+        all_data = json.load(open("category2.json", encoding="utf-8"))
         self.create_categories(all_data)
         #
         #

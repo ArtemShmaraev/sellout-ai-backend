@@ -492,7 +492,7 @@ class UserRegister(generics.GenericAPIView):
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
             register_user(data)
 
-            log_data = {'username': data["username"], 'password': data['password']}
+            log_data = {'username': data["username"].strip(), 'password': data['password'].strip()}
             serializer = self.get_serializer(data=log_data)
             serializer.is_valid(raise_exception=True)
 

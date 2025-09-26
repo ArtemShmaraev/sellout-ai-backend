@@ -54,11 +54,20 @@ class Command(BaseCommand):
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
         # print(row.table.filter_name)
+        # prod = Product.objects.get(id=590362)
+        # print(prod.slug)
+        # pr = Product.objects.filter(spu_id=1249082)
+        # for product in pr:
+        #     if product.bucket_link.all().count() == 0:
+        #         print(product.slug)
+        #         product.available_flag = False
+        #         product.save()
+        # print(pr.slug)
+        # print(pr.available_flag)
         order = Order.objects.order_by("-id").first()
         print(order.id)
-        print(order)
-        print(OrderSerializer(order).data)
-        genders = ["M"]
+        # print(order)
+        # print(OrderSerializer(order).data)
         # product = Product.objects.get(id=46644).spu_id
         # print(product)
         # print(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).count())
@@ -101,9 +110,7 @@ class Command(BaseCommand):
         #         if k % 1000 == 0:
         #             print(k)
 
-
-
-        # line_yeezy = Line.objects.get(view_name="Все Yeezy")
+       # line_yeezy = Line.objects.get(view_name="Все Yeezy")
         # line_yeezy.full_eng_name = "adidas_yeezy"
         # line_yeezy.save()
         # duplicate_photos = Photo.objects.values('url').annotate(url_count=Count('url')).filter(url_count__gt=1)
@@ -139,7 +146,6 @@ class Command(BaseCommand):
         #     p.save()
         # print(Product.objects.all().count())
 
-
         # order_status = [
         #     "В пути до международного склада",
         #     "В пути до московского склада",
@@ -155,7 +161,6 @@ class Command(BaseCommand):
         # for ou in ous:
         #     ou.status = Status.objects.get_or_create(name="Принят")[0]
         #     ou.save()
-
 
         # users = User.objects.all()
         # for user in users:
@@ -200,8 +205,6 @@ class Command(BaseCommand):
         #     unit.save()
         # pr.update_min_price()
         # pr.save()
-
-
         # print(ps.count())
         # k = 0
         # for p in ps:
@@ -235,7 +238,7 @@ class Command(BaseCommand):
         # print(list(queryset.values_list("id", flat=True)))
         #
         # # paginator = Paginator(queryset,
-        # #                       per_page=48)  # Инициализация Paginator с количеством объектов на странице (10 в данном случае)
+        # per_page=48)  # Инициализация Paginator с количеством объектов на странице (10 в данном случае)
         #
         # #
         # mxt = time() - time()

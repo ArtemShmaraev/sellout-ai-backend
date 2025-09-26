@@ -272,7 +272,7 @@ class ProductSerializer(serializers.ModelSerializer):
             s = []
             if obj.main_line is not None:
                 s = get_line_parents(obj.main_line)
-                if len(s) == 1:
+                if len(s) == 1 and obj.categories.exists():
                     s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
         return s
 

@@ -51,8 +51,8 @@ class SignAPIView(APIView):
 
         # Создание строки для проверки
         data_string = f"{tid}{name}{comment}{partner_id}{service_id}{order_id}{type}{partner_income}{system_income}{test}"
-        print(data_string)
-        print("111")
+        # print(data_string)
+        # print("111")
 
         # Вычисление хеша и сравнение с полученным параметром 'check'
         check = hashlib.md5(data_string.encode('utf-8') + secret_key.encode('utf-8')).hexdigest()
@@ -62,6 +62,9 @@ class SignAPIView(APIView):
         if check == received_check:
             order = Order.objects.get(id=order_id)
             order.fact_of_payment = True
+            cart = ShoppingCart.objects.get(user=order.user)
+            cart.clear()
+            print("ff2")
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
         else:
             return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
@@ -294,14 +297,21 @@ class CheckOutView(APIView):
                     order.final_amount += order.delivery_price
                 else:
                     order.delivery_view_price = 0
+
+                if not user.user_status.base:
+                    order.fact_of_payment = True
+                    print("ff")
+                    cart.clear()
                 order.save()
+
 
                 # order.accrue_bonuses()
 
                 serializer = OrderSerializer(order).data
+
                 # print(serializer)
                 send_email_confirmation_order(serializer, order.email)
-                cart.clear()
+
                 # print(serializer)
                 return Response(serializer)
             else:

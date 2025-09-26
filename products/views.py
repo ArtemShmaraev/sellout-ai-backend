@@ -388,7 +388,7 @@ class ProductSimilarView(APIView):
                                 "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
-                another_configuration = Product.objects.filter(Q(spu_id=product.spu_id))
+                another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).order_by("min_price")
                 if another_configuration.count() > 1:
                     res.append({"name": "Другие конфигурации",
                             "products": ProductMainPageSerializer(another_configuration, many=True, context=context).data})

@@ -57,7 +57,7 @@ def add_product_api(data):
     if not create:
         product.clear_all_fields()
         product.product_units.update(availability=False)
-        product_slug = product.slug
+        product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     else:
         product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.save()

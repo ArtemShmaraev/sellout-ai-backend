@@ -9,12 +9,12 @@ connections.create_connection(hosts=[f"{ELASTIC_HOST}:9200"])
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
 russian_stemmer = token_filter('russian_stemmer', type='stemmer', language='russian')
+russian_morphology = token_filter('russian_morphology', type='morphology', language='russian')
 
 russian_analyzer = analyzer(
     'russian_analyzer',
     tokenizer='standard',
-    filter=['lowercase', russian_stop, russian_stemmer]
-)
+    filter=['lowercase', russian_stop, russian_stemmer, russian_morphology])
 
 
 class ProductDocument(Document):
@@ -28,11 +28,11 @@ class ProductDocument(Document):
     model = Text(analyzer='standard')
     colorway = Text(analyzer='standard')
     collab = Text(analyzer='standard')
-    gender = Keyword(multi=True)
+    gender = Keyword(multi=True, analyzer=russian_analyzer)
     manufacturer_sku = Text(analyzer='standard')
     rel_num = Integer()
     min_price = Integer()
-    materials = Text(analyzer='standard')
+    materials = Text(analyzer=russian_analyzer)
     full_name = Text(analyzer='standard')
     suggest = Completion()
 
@@ -52,6 +52,8 @@ custom_analyzer = analyzer(
     tokenizer='keyword',
     filter=['lowercase']
 )
+
+
 class SuggestDocument(Document):
     name = Text()
     type = Text()
@@ -60,7 +62,6 @@ class SuggestDocument(Document):
 
     class Index:
         name = 'suggest_index'
-
 
 
 class LineDocument(Document):

@@ -183,16 +183,16 @@ def search_product(query, pod_queryset, page_number=1):
                               Q('match', colorway={'query': query, 'fuzziness': 'AUTO'})
                           ]
                           )
-    # search = search.query('function_score',
-    #                       functions=[
-    #                           {
-    #                               'field_value_factor': {
-    #                                   'field': 'rel_num',
-    #                                   'factor': 100000,
-    #                                   'modifier': 'log1p'
-    #                               }
-    #                           }
-    #                       ])
+    search = search.query('function_score',
+                          functions=[
+                              {
+                                  'field_value_factor': {
+                                      'field': 'rel_num',
+                                      'factor': 100000,
+                                      'modifier': 'log1p'
+                                  }
+                              }
+                          ])
 
     # search = search.query('bool',
     #                       must=[Q(

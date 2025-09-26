@@ -197,17 +197,23 @@ def filter_products(request):
         queryset = queryset.filter(Q(categories__eng_name__in=category))
 
     if gender:
-        queryset = queryset.filter(gender__name__in=gender)
+        queryset = queryset.filter(Q(gender__name__in=gender))
 
     filters = Q()
 
     # Фильтр по цене
     if price_min:
-        filters &= Q(product_units__final_price__gte=price_min)
+        if size:
+            filters &= Q(product_units__final_price__gte=price_min)
+        else:
+            filters &= Q(min_price__gte=price_min)
 
         # Фильтр по максимальной цене
     if price_max:
-        filters &= Q(product_units__final_price__lte=price_max)
+        if size:
+            filters &= Q(product_units__final_price__lte=price_max)
+        else:
+            filters &= Q(min_price__lte=price_max)
 
 
     # Фильтр по размеру
@@ -246,6 +252,8 @@ def filter_products(request):
 
     unique_product_ids = queryset.values("id")
     queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
+
+    # queryset = queryset.values_list("id", flat=True).distinct()
 
     # print(queryset.query)
     # print(queryset.count())

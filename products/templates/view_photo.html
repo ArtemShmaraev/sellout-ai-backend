@@ -10,7 +10,7 @@
 
         img {
             width: auto;
-            max-height: 600px;
+            max-height: 450px;
             margin-bottom: 20px;
         }
 
@@ -61,6 +61,7 @@
 </head>
 <body>
 <img src="{{ photo.photo }}" alt="Фото">
+<p><h2>Оценка: {{ photo.rating }}</h2></p>
 <form method="post" action="{% url 'rate_photo' %}">
     {% csrf_token %}
     <input type="hidden" name="photo_id" value="{{ photo.id }}">
@@ -73,8 +74,8 @@
 
 </form>
 
-<a class="button" href="https//sellout.su/api/v1/product/pict?id={{ last_photo }}">Предыдущее фото</a>
+<a class="button" href="https://sellout.su/api/v1/product/pict?id={{ last_photo }}">Предыдущее фото</a>
 <a class="button" href="https://sellout.su/api/v1/product/pict?id={{ next_photo }}&next=1">Следующее фото</a>
-<p><h2>Оценка: {{ photo.rating }}</h2></p>
+
 </body>
 </html>

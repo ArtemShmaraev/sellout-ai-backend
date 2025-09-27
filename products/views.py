@@ -63,17 +63,17 @@ def view_photo_for_rate(request):
     # first_id = HeaderPhoto.objects.order_by("id").first().id
     first_id = 15434
     # print(last_id, first_id)
-    photo = HeaderPhoto.objects.filter(id=photo_id).exists()
+    photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page").exists()
     while not photo:
         photo_id += t
         if photo_id <= first_id:
-            photo = HeaderPhoto.objects.filter(id=first_id).exists()
+            photo = HeaderPhoto.objects.filter(id=first_id, where="product_page").exists()
             photo_id = first_id
         elif photo_id >= last_id:
-            photo = HeaderPhoto.objects.filter(id=last_id).exists()
+            photo = HeaderPhoto.objects.filter(id=last_id, where="product_page").exists()
             photo_id = last_id
         else:
-            photo = HeaderPhoto.objects.filter(id=photo_id).exists()
+            photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page").exists()
     photo = HeaderPhoto.objects.get(id=photo_id)
 
     return render(request, 'view_photo.html', {'photo': photo, "next_photo": photo.id + 1, "last_photo": photo.id - 1})
@@ -420,7 +420,7 @@ class MainPageBlocks(APIView):
                     res.append(photo)
         response = Response(res)
         response.set_cookie('number_main_page', str(number_page + 1),
-                            max_age=3600)  # Установка нового значения куки (истечет через 1 час)
+                            max_age=3600, path='/', domain=None)  # Установка нового значения куки (истечет через 1 час)
 
         return response
 

@@ -361,8 +361,8 @@ class MainPageBlocks(APIView):
 
     def get(self, request):
         number_page = int(request.COOKIES.get('number_main_page', '1'))
-        print(self.request.COOKIES)
-        print(number_page)
+        # print(self.request.COOKIES)
+        # print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
         s = [2 if int(number_page) == 1 else 0, 1, 0, 0, 1, 0, 1, 1]
@@ -420,7 +420,7 @@ class MainPageBlocks(APIView):
                     res.append(photo)
         response = Response(res)
         response.set_cookie('number_main_page', str(number_page + 1),
-                            max_age=3600, path='/', domain=None)  # Установка нового значения куки (истечет через 1 час)
+                            max_age=3600)  # Установка нового значения куки (истечет через 1 час)
 
         return response
 

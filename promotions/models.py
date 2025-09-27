@@ -26,72 +26,77 @@ class PromoCode(models.Model):
 
 
     def check_promo_in_cart(self, cart):
-        flag_order = cart.user.orders.exists()
         promo_sale = 0
-        if self.ref_promo and not flag_order:
-            ref_sale = 0
-            if 3000 <= cart.final_amount < 5000:
-                ref_sale = 500
-            elif 5000 <= cart.final_amount < 15000:
-                ref_sale = 750
-            elif 15000 <= cart.final_amount < 35000:
-                ref_sale = 1000
-            elif 35000 <= cart.final_amount < 70000:
-                ref_sale = 1250
-            elif 70000 <= cart.final_amount < 130000:
-                ref_sale = 2000
-            elif 130000 <= cart.final_amount < 150000:
-                ref_sale = 2500
-            elif cart.final_amount >= 150000:
-                ref_sale = 3000
-            promo_sale = ref_sale
+        if cart.user.user_status.base:
+            flag_order = cart.user.orders.exists()
 
-        elif self.discount_percentage > 0:
-            pred = round(cart.final_amount * (100 - self.discount_percentage) // 100)
-            promo_sale = cart.final_amount - pred
+            if self.ref_promo and not flag_order:
+                ref_sale = 0
+                if 3000 <= cart.final_amount < 5000:
+                    ref_sale = 500
+                elif 5000 <= cart.final_amount < 15000:
+                    ref_sale = 750
+                elif 15000 <= cart.final_amount < 35000:
+                    ref_sale = 1000
+                elif 35000 <= cart.final_amount < 70000:
+                    ref_sale = 1250
+                elif 70000 <= cart.final_amount < 130000:
+                    ref_sale = 2000
+                elif 130000 <= cart.final_amount < 150000:
+                    ref_sale = 2500
+                elif cart.final_amount >= 150000:
+                    ref_sale = 3000
+                promo_sale = ref_sale
 
-        elif self.discount_absolute > 0:
-            pred = round(cart.final_amount - self.discount_absolute)
-            promo_sale = cart.final_amount - pred
+            elif self.discount_percentage > 0:
+                pred = round(cart.final_amount * (100 - self.discount_percentage) // 100)
+                promo_sale = cart.final_amount - pred
+
+            elif self.discount_absolute > 0:
+                pred = round(cart.final_amount - self.discount_absolute)
+                promo_sale = cart.final_amount - pred
 
         return promo_sale
 
     def check_promo(self, cart):
-        flag_order = cart.user.orders.exists()
         promo_sale = 0
-        if self.ref_promo and not flag_order:
-            ref_sale = 0
-            if 3000 <= cart.final_amount < 5000:
-                ref_sale = 500
-            elif 5000 <= cart.final_amount < 15000:
-                ref_sale = 750
-            elif 15000 <= cart.final_amount < 35000:
-                ref_sale = 1000
-            elif 35000 <= cart.final_amount < 70000:
-                ref_sale = 1250
-            elif 70000 <= cart.final_amount < 130000:
-                ref_sale = 2000
-            elif 130000 <= cart.final_amount < 150000:
-                ref_sale = 2500
-            elif cart.final_amount >= 150000:
-                ref_sale = 3000
-            promo_sale = ref_sale
+        if cart.user.user_status.base:
+            flag_order = cart.user.orders.exists()
 
-        elif self.discount_percentage > 0:
-            pred = round(cart.final_amount * (100 - self.discount_percentage) // 100)
-            promo_sale = cart.final_amount - pred
+            if self.ref_promo and not flag_order:
+                ref_sale = 0
+                if 3000 <= cart.final_amount < 5000:
+                    ref_sale = 500
+                elif 5000 <= cart.final_amount < 15000:
+                    ref_sale = 750
+                elif 15000 <= cart.final_amount < 35000:
+                    ref_sale = 1000
+                elif 35000 <= cart.final_amount < 70000:
+                    ref_sale = 1250
+                elif 70000 <= cart.final_amount < 130000:
+                    ref_sale = 2000
+                elif 130000 <= cart.final_amount < 150000:
+                    ref_sale = 2500
+                elif cart.final_amount >= 150000:
+                    ref_sale = 3000
+                promo_sale = ref_sale
 
-        elif self.discount_absolute > 0:
-            pred = round(cart.final_amount - self.discount_absolute)
-            promo_sale = cart.final_amount - pred
+            elif self.discount_percentage > 0:
+                pred = round(cart.final_amount * (100 - self.discount_percentage) // 100)
+                promo_sale = cart.final_amount - pred
 
-        if (self.activation_count >= self.max_activation_count) and not self.unlimited:
-            return 0, "Промокод закончился"
-        if ((
-                    self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0:
-            return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale
-        else:
-            return 0, "Промокод не активен"
+            elif self.discount_absolute > 0:
+                pred = round(cart.final_amount - self.discount_absolute)
+                promo_sale = cart.final_amount - pred
+
+            if (self.activation_count >= self.max_activation_count) and not self.unlimited:
+                return 0, "Промокод закончился"
+            if ((
+                        self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0:
+                return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale
+            else:
+                return 0, "Промокод не активен"
+        return 1, "Для Вас уже учтены все скидки", promo_sale
 
 
     def check_anon_promo(self, final_amount, total_amount):

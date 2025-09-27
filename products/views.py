@@ -20,7 +20,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 import json
 from time import time
-from django.http import JsonResponse, FileResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
 from .add_product_api import add_product_api, add_products_spu_id_api
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
@@ -47,6 +47,50 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 from collections import OrderedDict
+
+
+from django.shortcuts import render, redirect
+
+def view_photo_for_rate(request):
+    # Получаем случайное фото из базы данных
+    photo_id = int(request.GET.get('id'))
+    t = -1
+    next = request.GET.get('next', False)
+    if next:
+        t = 1
+    # last_id = HeaderPhoto.objects.order_by("-id").first().id
+    last_id = 17290
+    # first_id = HeaderPhoto.objects.order_by("id").first().id
+    first_id = 15434
+    # print(last_id, first_id)
+    photo = HeaderPhoto.objects.filter(id=photo_id).exists()
+    while not photo:
+        photo_id += t
+        if photo_id <= first_id:
+            photo = HeaderPhoto.objects.filter(id=first_id).exists()
+            photo_id = first_id
+        elif photo_id >= last_id:
+            photo = HeaderPhoto.objects.filter(id=last_id).exists()
+            photo_id = last_id
+        else:
+            photo = HeaderPhoto.objects.filter(id=photo_id).exists()
+    photo = HeaderPhoto.objects.get(id=photo_id)
+
+    return render(request, 'view_photo.html', {'photo': photo, "next_photo": photo.id + 1, "last_photo": photo.id - 1})
+
+def rate_photo(request):
+    if request.method == 'POST':
+        photo_id = int(request.POST['photo_id'])
+        photo = HeaderPhoto.objects.get(id=photo_id)
+        rating = int(request.POST['rating'])
+        photo.rating = rating
+        photo.save()
+        print(photo.rating)
+        # Сохраняем оценку в базе данных
+        # Здесь должен быть ваш код для сохранения оценки в модели Photo
+    return redirect(f"https://sellout.su/api/v1/product/pict?id={photo_id}")
+
+
 
 
 class ProductSlugAndPhoto(APIView):
@@ -313,62 +357,70 @@ class GetHeaderPhoto(APIView):
 class MainPageBlocks(APIView):
 
     def get(self, request):
-        page = request.query_params.get("page", 1)
+        number_page = int(request.COOKIES.get('number_main_page', '1'))
+        print(self.request.COOKIES)
+        print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
-        s = [2 if int(page) == 1 else 0, 1, 0, 0, 1, 0, 1, 1]
+        s = [2 if int(number_page) == 1 else 0, 1, 0, 0, 1, 0, 1, 1]
 
-        t1 = time()
-        last = "any"
-        for i in range(len(s)):
-            type = s[i]
-            if type == 0:
-                cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
-                cached_data = cache.get(cache_photo_key)
+        for page in range(number_page):
+            print(page)
+            t1 = time()
+            last = "any"
+            for i in range(len(s)):
+                type = s[i]
+                if type == 0:
+                    cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_photo_key)
 
-                if cached_data is not None:
-                    photo, last, list_id = cached_data
-                else:
-                    photo, last, list_id = get_photo_text(last)
+                    if cached_data is not None:
+                        photo, last, list_id = cached_data
+                    else:
+                        photo, last, list_id = get_photo_text(last)
 
-                    cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
+                        cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
 
-                queryset = get_queryset_from_list_id(list_id)
-                if queryset.exists():
-                    res.append(photo)
-                    selection = {"type": "selection", "title": photo['mobile']['title'],
-                                 "url": photo['mobile']['url'],
-                                 'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
+                    queryset = get_queryset_from_list_id(list_id)
+                    if queryset.exists():
+                        res.append(photo)
+                        selection = {"type": "selection", "title": photo['mobile']['title'],
+                                     "url": photo['mobile']['url'],
+                                     'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
+                        res.append(selection)
+
+                elif type == 1:
+                    cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_sellection_key)
+
+                    if cached_data is not None:
+                        list_id, selection = cached_data
+                    else:
+                        list_id, selection = get_selection()
+
+                        cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
+
+                    queryset = get_queryset_from_list_id(list_id)
+
+                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+
                     res.append(selection)
-
-            elif type == 1:
-                cache_sellection_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
-                cached_data = cache.get(cache_sellection_key)
-
-                if cached_data is not None:
-                    list_id, selection = cached_data
                 else:
-                    list_id, selection = get_selection()
+                    cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
+                    cached_data = cache.get(cache_photo_key)
+                    if cached_data is not None:
+                        photo, last = cached_data
+                    else:
 
-                    cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
+                        photo, last = get_sellout_photo_text(last)
+                        cache.set(cache_photo_key, (photo, last), CACHE_TIME)
+                    res.append(photo)
+        response = Response(res)
+        response.set_cookie('number_main_page', str(number_page + 1),
+                            max_age=3600)  # Установка нового значения куки (истечет через 1 час)
 
-                queryset = get_queryset_from_list_id(list_id)
+        return response
 
-                selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
-
-                res.append(selection)
-            else:
-                cache_photo_key = f"main_page:{i}_{page}"  # Уникальный ключ для каждой URL
-                cached_data = cache.get(cache_photo_key)
-                if cached_data is not None:
-                    photo, last = cached_data
-                else:
-
-                    photo, last = get_sellout_photo_text(last)
-                    cache.set(cache_photo_key, (photo, last), CACHE_TIME)
-                res.append(photo)
-
-        return Response(res)
 
 
 

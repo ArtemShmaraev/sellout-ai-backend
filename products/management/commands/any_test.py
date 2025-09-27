@@ -29,23 +29,31 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
-        brands = Line.objects.all()
-        for brand in brands:
-            serach_name = ""
-            for i in range(len(brand.name)):
-                if brand.name[i].lower() not in alf:
-                    print(f"Замена для {brand.name} - [{brand.name[i]}]")
-                    buk = input()
-                    if buk == "!":
-                        serach_name += brand.name[i]
-                    else:
-                        serach_name += buk
-                else:
-                    serach_name += brand.name[i]
-            print(f"search {serach_name}")
-            brand.search_filter_name = serach_name
-            brand.save()
+        # user = User.objects.all()
+        # for us in user:
+        #     us.extra_contact = us.email
+        #     us.save()
+        line = Line.objects.get(full_name="adidas | adidas Yeezy | Все Yeezy")
+        line.full_eng_name = "adidas_yeezy"
+        line.save()
+
+        # alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
+        # brands = Line.objects.all()
+        # for brand in brands:
+        #     serach_name = ""
+        #     for i in range(len(brand.name)):
+        #         if brand.name[i].lower() not in alf:
+        #             print(f"Замена для {brand.name} - [{brand.name[i]}]")
+        #             buk = input()
+        #             if buk == "!":
+        #                 serach_name += brand.name[i]
+        #             else:
+        #                 serach_name += buk
+        #         else:
+        #             serach_name += brand.name[i]
+        #     print(f"search {serach_name}")
+        #     brand.search_filter_name = serach_name
+        #     brand.save()
 
 
 

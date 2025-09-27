@@ -71,15 +71,15 @@ def get_delivery(order, data, cart):
 
     if int(data['delivery_type']) == 0:
         order.delivery_price = 0
-        order.delivery = "по Москве без консолидации"
+        order.delivery = "Курьером по Москве"
         order.groups_delivery.append([unit.id for unit in order.order_units.all()])
     else:
         if int(data['delivery_type']) == 1:
             zip = "0"
-            name_delivery = "Пункт выдачи"
+            name_delivery = "До ПВЗ Boxberry"
         else:
             target = "0"
-            name_delivery = "Курьер"
+            name_delivery = "Курьером"
 
         if data['consolidation']:
             order.groups_delivery.append([unit.id for unit in order.order_units.all()])
@@ -120,7 +120,7 @@ def get_delivery(order, data, cart):
             print(tec, get_delivery_price(tec, "02743", target, zip))
             sum_part += get_delivery_price(tec, "02743", target, zip)
             order.delivery_price = sum_part
-            order.delivery = f"{name_delivery} + консолидация"
+            order.delivery = f"{name_delivery} по частям-"
             print(sum_part)
 
     # print(order.delivery_price)

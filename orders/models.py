@@ -60,11 +60,12 @@ class Order(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
     order_in_progress = models.BooleanField(default=False)
+    total_bonus = models.IntegerField(default=0)
 
 
-
-    def accrue_bonuses(self):
+    def get_total_bonus(self):
         user = self.user
+        sum_bonus = 0
         if user.user_status.base:
             orders_count = Order.objects.filter(user=user).count()
             units = self.order_units.order_by("-bonus")
@@ -77,25 +78,34 @@ class Order(models.Model):
                 else:
                     sum_bonus += unit.bonus
                 k += 1
+        self.total_bonus = sum_bonus
+        self.save()
+
+
+
+    def accrue_bonuses(self):
+        user = self.user
+        if user.user_status.base:
+            sum_bonus = self.total_bonus
             accrual_bonus = AccrualBonus(amount=sum_bonus)
             accrual_bonus.save()
             user.bonuses.accrual.add(accrual_bonus)
             user.bonuses.update_total_amount()
             user.update_user_status()
 
-        if self.promo_code is not None:
-            self.promo_code.activation_count += 1
-            self.promo_code.save()
+            if self.promo_code is not None:
+                self.promo_code.activation_count += 1
+                self.promo_code.save()
 
-            if self.promo_code.ref_promo:
-                ref_user = self.promo_code.owner
-                ref_accrual_bonus = AccrualBonus(amount=self.promo_sale, type="Приглашение")
-                ref_accrual_bonus.save()
-                ref_user.total_ref_bonus += self.promo_sale
-                ref_user.bonuses.accrual.add(ref_accrual_bonus)
-                user.ref_user = ref_user
-                user.save()
-                ref_user.save()
+                if self.promo_code.ref_promo:
+                    ref_user = self.promo_code.owner
+                    ref_accrual_bonus = AccrualBonus(amount=self.promo_sale, type="Приглашение")
+                    ref_accrual_bonus.save()
+                    ref_user.total_ref_bonus += self.promo_sale
+                    ref_user.bonuses.accrual.add(ref_accrual_bonus)
+                    user.ref_user = ref_user
+                    user.save()
+                    ref_user.save()
 
     def update_order_status(self):
         # Получаем все статусы юнитов этого заказа
@@ -126,7 +136,7 @@ class Order(models.Model):
     def add_order_unit(self, product_unit, user_status):
         if user_status.base:
             product_unit.product.update_price()
-            price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+            price = formula_price(product_unit.product, product_unit, user_status)
         else:
             price = formula_price(product_unit.product, product_unit, user_status)
         order_unit = OrderUnit(
@@ -143,7 +153,7 @@ class Order(models.Model):
             is_return=product_unit.is_return,
             is_fast_shipping=product_unit.is_fast_shipping,
             is_sale=product_unit.is_sale,
-            bonus=product_unit.bonus,
+            bonus=price["bonus"],
             original_price=product_unit.original_price,
             total_profit=product_unit.total_profit
         )
@@ -230,9 +240,15 @@ class ShoppingCart(models.Model):
         else:
             self.promo_sale = 0
 
+
+        if not user_status.base:
+            self.bonus = 0
+        else:
+            self.bonus = sum_bonus
+
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
-        self.bonus = sum_bonus
+
         self.save()
 
     def __str__(self):

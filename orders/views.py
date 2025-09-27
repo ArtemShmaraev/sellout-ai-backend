@@ -308,6 +308,7 @@ class CheckOutView(APIView):
                     order.fact_of_payment = True
                     print("ff")
                     cart.clear()
+                order.get_total_bonus()
                 order.save()
 
 

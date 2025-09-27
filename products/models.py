@@ -503,6 +503,7 @@ class HeaderPhoto(models.Model):
     photo = models.CharField(max_length=1024, default="")
     header_text = models.ForeignKey("HeaderText", related_name='headers_photo', blank=True, on_delete=models.CASCADE,
                                     null=True)
+    rating = models.IntegerField(default=0)
 
 
 class HeaderText(models.Model):

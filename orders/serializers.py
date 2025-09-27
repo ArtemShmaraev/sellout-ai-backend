@@ -52,7 +52,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class OrderUnitSerializer(serializers.ModelSerializer):
-    product = ProductMainPageSerializer()
+    product = ProductSerializer()
 
 
     class Meta:

@@ -9,8 +9,8 @@
         }
 
         img {
-            max-width: 100%;
-            height: auto;
+            width: auto;
+            max-height: 600px;
             margin-bottom: 20px;
         }
 
@@ -32,6 +32,7 @@
         button:hover {
             background-color: #45a049;
             border-radius: 10px;
+            transform: scale(1.1);
         }
 
         a.button {
@@ -63,13 +64,15 @@
 <form method="post" action="{% url 'rate_photo' %}">
     {% csrf_token %}
     <input type="hidden" name="photo_id" value="{{ photo.id }}">
-    <button type="submit" name="rating" value="1">1</button>
-    <button type="submit" name="rating" value="2">2</button>
-    <button type="submit" name="rating" value="3">3</button>
-    <button type="submit" name="rating" value="4">4</button>
-    <button type="submit" name="rating" value="5">5</button>
+
+    <button type="submit" name="rating" value="1" style="background-color: #fd5b5b;"><h3>1</h3></button>
+    <button type="submit" name="rating" value="2" style="background-color: #ff924b;"><h3>2</h3></button>
+    <button type="submit" name="rating" value="3" style="background-color: #ffda5c;"><h3>3</h3></button>
+    <button type="submit" name="rating" value="4" style="background-color: #a6f55b;"><h3>4</h3></button>
+    <button type="submit" name="rating" value="5" style="background-color: #4bff4b;"><h3>5</h3></button>
+
 </form>
-<p>Оценка: {{ photo.rating }}</p>
+<p><h2>Оценка: {{ photo.rating }}</h2></p>
 <a class="button" href="https://sellout.su/api/v1/product/pict?id={{ last_photo }}">Предыдущее фото</a>
 <a class="button" href="https://sellout.su/api/v1/product/pict?id={{ next_photo }}&next=1">Следующее фото</a>
 </body>

@@ -47,7 +47,7 @@ from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
 from sellout.settings import CACHE_TIME
 from collections import OrderedDict
-
+from sellout.settings import HOST
 
 from django.shortcuts import render, redirect
 
@@ -85,10 +85,13 @@ def rate_photo(request):
         rating = int(request.POST['rating'])
         photo.rating = rating
         photo.save()
-        print(photo.rating)
+        # print(photo.rating)
         # Сохраняем оценку в базе данных
         # Здесь должен быть ваш код для сохранения оценки в модели Photo
-    return redirect(f"https://sellout.su/api/v1/product/pict?id={photo_id}")
+        if HOST == "sellout.su":
+            return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id}")
+        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id}")
+
 
 
 

@@ -33,9 +33,9 @@ class Command(BaseCommand):
         # for us in user:
         #     us.extra_contact = us.email
         #     us.save()
-        line = Line.objects.get(full_name="adidas | adidas Yeezy | Все Yeezy")
-        line.full_eng_name = "adidas_yeezy"
-        line.save()
+        users = User.objects.filter(gender__name__in=["M"]).first()
+        print(users)
+        print(users.gender.name)
 
         # alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
         # brands = Line.objects.all()

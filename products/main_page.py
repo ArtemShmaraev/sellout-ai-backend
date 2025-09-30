@@ -34,25 +34,24 @@ def get_random(queryset):
         return None
 
 
-def get_line_selection(line=None):
+def get_line_selection(gender, line=None):
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
     if line is None:
         lines = Line.objects.filter(~Q(parent_line=None))
         line = get_random(lines)
         products = Product.objects.filter(lines=line)
 
-        filters = Q(available_flag=True)
-        filters &= Q(is_custom=False)
-
         products = products.filter(filters).order_by("-rel_num")[:10]
         if products.count() < 5:
-            return get_line_selection()
+            return get_line_selection(gender)
         else:
             title = f"{line.name}"
             url = f"line={line.full_eng_name}"
     else:
         products = Product.objects.filter(lines=line)
-        filters = Q(available_flag=True)
-        filters &= Q(is_custom=False)
+
         products = products.filter(filters).order_by("-rel_num")[:10]
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
@@ -62,23 +61,23 @@ def get_line_selection(line=None):
     return title, list_id, url
 
 
-def get_collab_selection(collab=None):
+def get_collab_selection(gender, collab=None):
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
     if collab is None:
         collabs = Collab.objects.all()
         collab = get_random(collabs)
         products = Product.objects.filter(collab=collab)
-        filters = Q(available_flag=True)
-        filters &= Q(is_custom=False)
+
         products = products.filter(filters).order_by("-rel_num")[:10]
         if products.count() < 5:
-            return get_collab_selection()
+            return get_collab_selection(gender)
         else:
             title = f"{collab.name}"
             url = f"collab={collab.query_name}"
     else:
         products = Product.objects.filter(collab=collab)
-        filters = Q(available_flag=True)
-        filters &= Q(is_custom=False)
         products = products.filter(filters).order_by("-rel_num")[:10]
         title = f"{collab.name}"
         url = f"collab={collab.query_name}"
@@ -88,7 +87,7 @@ def get_collab_selection(collab=None):
     return title, list_id, url
 
 
-def get_color_and_category_selection():
+def get_color_and_category_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
 
@@ -98,9 +97,10 @@ def get_color_and_category_selection():
     products = Product.objects.filter(Q(categories=random_category) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")[:10]
     if products.count() < 5:
-        return get_color_and_category_selection()
+        return get_color_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_color.russian_name}"
         url = f"category={random_category.eng_name}&color={random_color.name}"
@@ -108,7 +108,7 @@ def get_color_and_category_selection():
     return title, list_id, url
 
 
-def get_color_and_brand_selection():
+def get_color_and_brand_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
 
@@ -118,9 +118,10 @@ def get_color_and_brand_selection():
     products = Product.objects.filter(Q(brands=random_brand) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")[:10]
     if products.count() < 5:
-        return get_color_and_brand_selection()
+        return get_color_and_brand_selection(gender)
     else:
         title = f"{random_brand.name} {random_color.russian_name}"
         url = f"line={random_brand.query_name}&color={random_color.name}"
@@ -128,7 +129,7 @@ def get_color_and_brand_selection():
     return title, list_id, url
 
 
-def get_brand_and_category_selection():
+def get_brand_and_category_selection(gender):
     brands = Brand.objects.all()
     random_brand = get_random(brands)
 
@@ -138,9 +139,10 @@ def get_brand_and_category_selection():
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")[:10]
     if products.count() < 5:
-        return get_brand_and_category_selection()
+        return get_brand_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_brand.name}"
         url = f"category={random_category.eng_name}&line={random_brand.query_name}"
@@ -148,18 +150,18 @@ def get_brand_and_category_selection():
     return title, list_id, url
 
 
-def get_selection():
+def get_selection(gender):
     type = randint(1, 5)
     if type == 1:
-        title, queryset, url = get_brand_and_category_selection()
+        title, queryset, url = get_brand_and_category_selection(gender)
     elif type == 2:
-        title, queryset, url = get_collab_selection()
+        title, queryset, url = get_collab_selection(gender)
     elif type == 3:
-        title, queryset, url = get_color_and_category_selection()
+        title, queryset, url = get_color_and_category_selection(gender)
     elif type == 4:
-        title, queryset, url = get_color_and_brand_selection()
+        title, queryset, url = get_color_and_brand_selection(gender)
     else:
-        title, queryset, url = get_line_selection()
+        title, queryset, url = get_line_selection(gender)
     res = {"type": "selection", "title": title, "url": url}
 
     return queryset, res
@@ -211,7 +213,7 @@ def get_sellout_photo_text(last):
     return res, type
 
 
-def get_photo_text(last):
+def get_photo_text(last, gender):
     type = ["left", "right"]
     if last == "any":
         last = type[randint(0, 1)]
@@ -222,11 +224,11 @@ def get_photo_text(last):
     if random_photo_mobile.lines.exists():
         line = random_photo_mobile.lines.all().order_by("-id").first()
         url_mobile = f"line={line.full_eng_name}"
-        title, queryset, url = get_line_selection(line=line)
+        title, queryset, url = get_line_selection(gender, line=line)
     elif random_photo_mobile.collabs.exists():
         collab = random_photo_mobile.collabs.first()
         url_mobile = f"collab={collab.query_name}"
-        title, queryset, url = get_collab_selection(collab=collab)
+        title, queryset, url = get_collab_selection(gender, collab=collab)
 
     else:
         url_mobile = ""

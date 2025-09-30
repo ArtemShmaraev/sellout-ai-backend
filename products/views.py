@@ -365,7 +365,12 @@ class MainPageBlocks(APIView):
         # print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
-        s = [2 if int(number_page) == 1 else 0, 1, 0, 0, 1, 0, 1, 1]
+        # 1 подборка
+        # 0 фото
+        s = [2 if int(number_page) == 1 else 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0]
+        gender = ["F"]
+        if request.user.id:
+            gender = [request.user.gender.name]
 
         for page in range(number_page):
             print(page)
@@ -380,7 +385,7 @@ class MainPageBlocks(APIView):
                     if cached_data is not None:
                         photo, last, list_id = cached_data
                     else:
-                        photo, last, list_id = get_photo_text(last)
+                        photo, last, list_id = get_photo_text(last, gender)
 
                         cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
 
@@ -399,7 +404,8 @@ class MainPageBlocks(APIView):
                     if cached_data is not None:
                         list_id, selection = cached_data
                     else:
-                        list_id, selection = get_selection()
+
+                        list_id, selection = get_selection(gender)
 
                         cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
 

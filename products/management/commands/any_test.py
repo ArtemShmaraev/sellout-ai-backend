@@ -29,13 +29,28 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        # products = list(set(list(Product.objects.filter(available_flag=False).values_list("spu_id"))))
+        # # # print(len(products))
+        # k = 0
+        # for spu in products:
+        #     k += 1
+        #     print(k, spu)
+        #     try:
+        #         data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
+        #         add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+        #     except:
+        #         continue
         # user = User.objects.all()
         # for us in user:
         #     us.extra_contact = us.email
         #     us.save()
-        users = User.objects.filter(gender__name__in=["M"]).first()
-        print(users)
-        print(users.gender.name)
+        # users = User.objects.filter(gender__name__in=["M"]).first()
+        # print(users)
+        # print(users.gender.name)
+
+        products = Product.objects.filter(available_flag=False)
+
+        print(products.count())
 
         # alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
         # brands = Line.objects.all()
@@ -111,17 +126,7 @@ class Command(BaseCommand):
         # product = Product.objects.get(id=46644).spu_id
         # print(product)
         # print(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).count())
-        # products = list(set(list(Product.objects.filter(available_flag=True).filter(categories__name="Другое").filter(category_id=0).values_list("spu_id", flat=True).order_by("-rel_num"))))
-        # # # print(len(products))
-        # k = 0
-        # for spu in products:
-        #     k += 1
-        #     print(k, spu)
-        #     try:
-        #         data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
-        #         add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
-        #     except:
-        #         continue
+
         # print(products)
         # print(products.count())
         #

@@ -360,20 +360,24 @@ class GetHeaderPhoto(APIView):
 class MainPageBlocks(APIView):
 
     def get(self, request):
-        number_page = int(request.COOKIES.get('number_main_page', '1'))
+        # number_page = int(request.COOKIES.get('number_main_page', '1'))
+        number_page = int(request.query_params.get("page", 1))
+        print(number_page)
+        next = request.query_params.get("next", False)
+        new = request.query_params.get("next", False)
         # print(self.request.COOKIES)
         # print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
         # 1 подборка
         # 0 фото
-        s = [2 if int(number_page) == 1 else 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0]
-        gender = ["F"]
+
+        gender = ["M", "F"]
         if request.user.id:
             gender = [request.user.gender.name]
 
-        for page in range(number_page):
-            print(page)
+        for page in range(0 if not next else number_page - 1, number_page):
+            s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0]
             t1 = time()
             last = "any"
             for i in range(len(s)):
@@ -382,7 +386,7 @@ class MainPageBlocks(APIView):
                     cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}"  # Уникальный ключ для каждой URL
                     cached_data = cache.get(cache_photo_key)
 
-                    if cached_data is not None:
+                    if cached_data is not None and not new:
                         photo, last, list_id = cached_data
                     else:
                         photo, last, list_id = get_photo_text(last, gender)
@@ -401,7 +405,7 @@ class MainPageBlocks(APIView):
                     cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
                     cached_data = cache.get(cache_sellection_key)
 
-                    if cached_data is not None:
+                    if cached_data is not None and not new:
                         list_id, selection = cached_data
                     else:
 
@@ -417,7 +421,7 @@ class MainPageBlocks(APIView):
                 else:
                     cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
                     cached_data = cache.get(cache_photo_key)
-                    if cached_data is not None:
+                    if cached_data is not None and not new:
                         photo, last = cached_data
                     else:
 
@@ -427,6 +431,7 @@ class MainPageBlocks(APIView):
         response = Response(res)
         response.set_cookie('number_main_page', str(number_page + 1),
                             max_age=3600)  # Установка нового значения куки (истечет через 1 час)
+        # print(len(res))
 
         return response
 

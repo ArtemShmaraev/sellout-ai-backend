@@ -334,6 +334,7 @@ def add_product_api(data):
     product.available_sizes = sizes_info
     product.one_update = True
     product.last_upd = timezone.now()
+    product.available_flag = True
     product.save()
 
     # print(product.slug)

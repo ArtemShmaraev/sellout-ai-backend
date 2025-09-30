@@ -51,6 +51,22 @@ from sellout.settings import HOST
 
 from django.shortcuts import render, redirect
 
+
+class SearchBySkuView(APIView):
+    def get(self, request):
+        params = request.query_params
+        type = params.get("page", "product")
+        formatted_manufacturer_sku = params.get("formatted_manufacturer_sku")
+        if type == "product":
+            products = Product.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
+            return Response(ProductSerializer(products, many=True).data)
+        elif type == "dewu_info":
+            dewu_infos = DewuInfo.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
+            return Response(DewuInfoSerializer(dewu_infos, many=True).data)
+        else:
+            sg_infos = SGInfo.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
+            return Response(SGInfoSerializer(sg_infos, many=True).data)
+
 def view_photo_for_rate(request):
     # Получаем случайное фото из базы данных
     photo_id = int(request.GET.get('id'))
@@ -89,8 +105,8 @@ def rate_photo(request):
         # Сохраняем оценку в базе данных
         # Здесь должен быть ваш код для сохранения оценки в модели Photo
         if HOST == "sellout.su":
-            return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id}")
-        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id}")
+            return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id+1}")
+        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id+1}")
 
 
 

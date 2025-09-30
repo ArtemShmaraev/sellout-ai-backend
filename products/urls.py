@@ -9,7 +9,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo
+    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -71,5 +71,5 @@ urlpatterns = [
     path("product_photo_and_slug", ProductSlugAndPhoto.as_view()),
     path("add_list_spu_id_products", AddListProductsView.as_view()), path("products_count", ProductsCountView.as_view()),
     path('pict', view_photo_for_rate, name='view_photo'),
-    path('rate_pict', rate_photo, name='rate_photo')
+    path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view())
 ]

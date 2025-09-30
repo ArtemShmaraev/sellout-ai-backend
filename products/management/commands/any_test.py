@@ -29,6 +29,9 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        photo = HeaderPhoto.objects.filter(where="product_page", rating=0)
+        print(photo.count())
+        # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
         # products = list(set(list(Product.objects.filter(available_flag=False).values_list("spu_id"))))
         # # # print(len(products))
         # k = 0

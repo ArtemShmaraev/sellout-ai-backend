@@ -44,7 +44,7 @@ def get_line_selection(gender, line=None):
         products = Product.objects.filter(lines=line)
 
         products = products.filter(filters).order_by("-rel_num")
-        if products.count() < 5:
+        if products.count() < 7:
             return get_line_selection(gender)
         else:
             title = f"{line.name}"
@@ -71,7 +71,7 @@ def get_collab_selection(gender, collab=None):
         products = Product.objects.filter(collab=collab)
 
         products = products.filter(filters).order_by("-rel_num")
-        if products.count() < 5:
+        if products.count() < 7:
             return get_collab_selection(gender)
         else:
             title = f"{collab.name}"
@@ -99,7 +99,7 @@ def get_color_and_category_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 5:
+    if products.count() < 7:
         return get_color_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_color.russian_name}"
@@ -120,7 +120,7 @@ def get_color_and_brand_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 5:
+    if products.count() < 7:
         return get_color_and_brand_selection(gender)
     else:
         title = f"{random_brand.name} {random_color.russian_name}"
@@ -140,13 +140,13 @@ def get_brand_and_category_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")[:10]
-    if products.count() < 5:
+    products = products.filter(filters).order_by("-rel_num")
+    if products.count() < 7:
         return get_brand_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_brand.name}"
         url = f"category={random_category.eng_name}&line={random_brand.query_name}"
-    list_id = list(products.values_list("id", flat=True))
+    list_id = list(products[:10].values_list("id", flat=True))
     return title, list_id, url
 
 

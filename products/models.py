@@ -185,11 +185,13 @@ class DewuInfo(models.Model):
     preprocessed_data = models.JSONField(default=dict)
     web_data = models.JSONField(default=dict)
     processed_data = models.JSONField(default=list)
+    formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
 
 
 class SGInfo(models.Model):
     manufacturer_sku = models.CharField(max_length=256, default="")
     data = models.JSONField(default=dict)
+    formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
 
 
 class Product(models.Model):
@@ -277,6 +279,7 @@ class Product(models.Model):
     category_name = models.CharField(max_length=128, default="")
     level1_category_id = models.IntegerField(default=0)
     level2_category_id = models.IntegerField(default=0)
+    formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
 
     objects = ProductManager()
 

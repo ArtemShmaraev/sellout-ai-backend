@@ -328,6 +328,8 @@ class SGInfoView(APIView):
 
         if "data" in data:
             sg_info.data = data['data']
+        if "formatted_manufacturer_sku" in data:
+            sg_info.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
 
         sg_info.save()
         return Response(SGInfoSerializer(sg_info).data)
@@ -539,6 +541,8 @@ class DewuInfoView(APIView):
             dewu_info.web_data = data['web_data']
         if "processed_data" in data:
             dewu_info.processed_data = data["processed_data"]
+        if "formatted_manufacturer_sku" in data:
+            dewu_info.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
         dewu_info.save()
         return Response(DewuInfoSerializer(dewu_info).data)
 

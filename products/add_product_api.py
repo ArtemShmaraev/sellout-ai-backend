@@ -71,6 +71,8 @@ def add_product_api(data):
     product.model = data['model']
     product.colorway = data['colorway']
     product.is_custom = data['custom']
+    if "formatted_manufacturer_sku" in data:
+        product.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
     product.in_sg = data.get("product_on_stadium_goods", False)
 
     product.category_id = data['platform_info']["poizon"].get("categoryId", 0)

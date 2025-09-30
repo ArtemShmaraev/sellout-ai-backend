@@ -29,20 +29,37 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        photo = HeaderPhoto.objects.filter(where="product_page", rating=0)
-        print(photo.count())
+        for i in range(6):
+            photo = HeaderPhoto.objects.filter(where="product_page", rating=i)
+            print(i, photo.count())
+        products = Product.objects.filter(available_flag=False)
+
+        print(products.count())
         # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
-        # products = list(set(list(Product.objects.filter(available_flag=False).values_list("spu_id"))))
-        # # # print(len(products))
-        # k = 0
-        # for spu in products:
-        #     k += 1
-        #     print(k, spu)
-        #     try:
-        #         data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
-        #         add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
-        #     except:
-        #         continue
+        # product = Product.objects.get(slug="")
+        # product.slug = "1"
+        # product.save()
+        products = list(set(list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))))
+        # # print(len(products))
+        k = 0
+        st = []
+        for spu in products:
+            k += 1
+            print(k, spu)
+            try:
+                data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
+                # print(data)
+                add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+                if add_product.status_code == 500:
+                    st.append(spu)
+                    print(st)
+                # print(";f")
+                # print(add_product.json())
+            except:
+                continue
+
+
+
         # user = User.objects.all()
         # for us in user:
         #     us.extra_contact = us.email
@@ -51,9 +68,7 @@ class Command(BaseCommand):
         # print(users)
         # print(users.gender.name)
 
-        products = Product.objects.filter(available_flag=False)
 
-        print(products.count())
 
         # alf = "qwertyuiopasdfghjklzxcvbnmйцукенгшщзхъэждлорпавыфячсмитьбю1234567890.&' "
         # brands = Line.objects.all()

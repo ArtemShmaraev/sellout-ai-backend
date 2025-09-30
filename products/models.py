@@ -414,10 +414,12 @@ class Product(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = f"{self.spu_id}_{self.property_id}_{self.manufacturer_sku}"
 
         product_slug = kwargs.pop('product_slug', "1")
         if product_slug != "1":
-            if product_slug == f"{self.spu_id}_{self.property_id}_{self.manufacturer_sku}":
+            if f"{self.spu_id}_{self.property_id}" in product_slug:
                 self.slug = slugify(
                     f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
             else:

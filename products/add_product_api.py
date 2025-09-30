@@ -44,22 +44,26 @@ def sklon_days(n):
 def add_product_api(data):
     spu_id = data['platform_info']["poizon"].get("spuId")
     property_id = data['platform_info']["poizon"].get("propertyId")
-    manufacturer_sku = data['platform_info']["poizon"].get("manufacturer_sku")
+    manufacturer_sku = data.get("manufacturer_sku")
 
     t1 = time()
     # prs = Product.objects.filter(spu_id=spu_id, property_id=property_id,
     #                              manufacturer_sku=manufacturer_sku)
     # prs.delete()
+    print(spu_id)
+    print(property_id)
+    print(manufacturer_sku)
 
-    product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id,
-                                                    manufacturer_sku=manufacturer_sku)
+    product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
+    print(product.slug)
     product_slug = ""
     if not create:
         product.clear_all_fields()
         product.product_units.update(availability=False)
         product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     else:
-        product.slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+        product_slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+    product.slug = product_slug
     product.save()
     t2 = time()
 

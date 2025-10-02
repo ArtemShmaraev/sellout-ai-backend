@@ -539,8 +539,8 @@ class DewuInfoView(APIView):
             dewu_info.preprocessed_data = data['preprocessed_data']
         if "web_data" in data:
             dewu_info.web_data = data['web_data']
-        if "processed_data" in data:
-            dewu_info.processed_data = data["processed_data"]
+        # if "processed_data" in data:
+        #     dewu_info.processed_data = data["processed_data"]
         if "formatted_manufacturer_sku" in data:
             dewu_info.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
         dewu_info.save()

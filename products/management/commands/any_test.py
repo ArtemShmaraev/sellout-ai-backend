@@ -29,11 +29,12 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # pro = Product.objects.get(slug="jordan-air-jordan-3-retro-oregon-ducks-pit-crew-black-469919")
+        pro = Product.objects.filter(colors__name="gray")
+        print(pro.count())
         # pro.available_flag = False
         # pro.save()
-        # products = Product.objects.filter(available_flag=True, min_price=0)
-        # products.update(available_flag=False)
+        products = Product.objects.filter(available_flag=True, min_price=0)
+        products.update(available_flag=False)
 
         # print(products.count())
         # # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
@@ -122,13 +123,13 @@ class Command(BaseCommand):
                 recursive_subcategories(sz, subcategory)
 
 
-        szs = SizeTable.objects.filter(standard=True)
-        for sz in szs:
-            print(sz)
-            c = input()
-            if c != "0":
-                last_cat = Category.objects.get(name=c)
-                sz.category.add(last_cat)
+        # szs = SizeTable.objects.filter(standard=True)
+        # for sz in szs:
+        #     print(sz)
+        #     c = input()
+        #     if c != "0":
+        #         last_cat = Category.objects.get(name=c)
+        #         sz.category.add(last_cat)
             # for cat in sz.category.all():
             #     cur_cat = cat
             #     while cur_cat.parent_category:

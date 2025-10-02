@@ -184,7 +184,7 @@ class DewuInfo(models.Model):
     api_data = models.JSONField(default=dict)
     preprocessed_data = models.JSONField(default=dict)
     web_data = models.JSONField(default=dict)
-    processed_data = models.JSONField(default=list)
+    # processed_data = models.JSONField(default=list)
     formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
 
 

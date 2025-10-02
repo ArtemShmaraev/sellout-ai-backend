@@ -79,17 +79,17 @@ def view_photo_for_rate(request):
     # first_id = HeaderPhoto.objects.order_by("id").first().id
     first_id = 15434
     # print(last_id, first_id)
-    photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page").exists()
+    photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=4).exists()
     while not photo:
         photo_id += t
         if photo_id <= first_id:
-            photo = HeaderPhoto.objects.filter(id=first_id, where="product_page").exists()
+            photo = HeaderPhoto.objects.filter(id=first_id, where="product_page", rating=4).exists()
             photo_id = first_id
         elif photo_id >= last_id:
-            photo = HeaderPhoto.objects.filter(id=last_id, where="product_page").exists()
+            photo = HeaderPhoto.objects.filter(id=last_id, where="product_page", rating=4).exists()
             photo_id = last_id
         else:
-            photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page").exists()
+            photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=4).exists()
     photo = HeaderPhoto.objects.get(id=photo_id)
 
     return render(request, 'view_photo.html', {'photo': photo, "next_photo": photo.id + 1, "last_photo": photo.id - 1})

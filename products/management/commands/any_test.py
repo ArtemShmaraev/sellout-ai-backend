@@ -29,40 +29,41 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        for i in range(6):
-            photo = HeaderPhoto.objects.filter(where="product_page", rating=i)
-            print(i, photo.count())
-        products = Product.objects.filter(available_flag=True)
+        # pro = Product.objects.get(slug="jordan-air-jordan-3-retro-oregon-ducks-pit-crew-black-469919")
+        # pro.available_flag = False
+        # pro.save()
+        # products = Product.objects.filter(available_flag=True, min_price=0)
+        # products.update(available_flag=False)
 
-        print(products.count())
-        # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
-        # product = Product.objects.get(slug="")
-        # product.slug = "1"
-        # product.save()
-        products = list(set(list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True))))
-        # # print(len(products))
-        k = 0
-        st = []
-        f = open("bags.txt", "w")
-        for spu in products:
-            k += 1
-            print(k, spu)
-            try:
-                data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
-                # print(data)
-                add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
-                if add_product.status_code == 500:
-                    products_spu = Product.objects.filter(spu_id=spu)
-                    products_spu.delete()
-                    add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
-                    if add_product.status_code == 500:
-                        f.write(f"{spu}\n")
-                        print("cerf")
-
-                # print(";f")
-                # print(add_product.json())
-            except:
-                continue
+        # print(products.count())
+        # # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
+        # # product = Product.objects.get(slug="")
+        # # product.slug = "1"
+        # # product.save()
+        # products = list(set(list(Product.objects.filter(available_flag=False, min_price__gt=0).values_list("spu_id", flat=True))))
+        # # # print(len(products))
+        # k = 0
+        # st = []
+        # f = open("bags.txt", "w")
+        # for spu in products:
+        #     k += 1
+        #     print(k, spu)
+        #     try:
+        #         data = requests.get(f"https://sellout.su/product_processing/info_for_db?spu_id={spu}").json()
+        #         # print(data)
+        #         add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+        #         if add_product.status_code == 500:
+        #             products_spu = Product.objects.filter(spu_id=spu)
+        #             products_spu.delete()
+        #             add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+        #             if add_product.status_code == 500:
+        #                 f.write(f"{spu}\n")
+        #                 print("cerf")
+        #
+        #         # print(";f")
+        #         # print(add_product.json())
+        #     except:
+        #         continue
 
 
 
@@ -110,26 +111,30 @@ class Command(BaseCommand):
         #     h.save()
         #     print(h)
 
-        # def recursive_subcategories(sz, category):
-        #     subcategories = category.subcat.all()
-        #
-        #     for subcategory in subcategories:
-        #         # print(subcategory.name)  # Вы можете выполнить нужные действия с каждой подкатегорией здесь
-        #         sz.category.add(subcategory)
-        #         # print(sz.name, subcategory)
-        #         recursive_subcategories(sz, subcategory)
-        #
-        #
-        # szs = SizeTable.objects.filter(standard=True)
-        # for sz in szs:
-        #     last_cat = sz.category.order_by("-id").first()
-        #     recursive_subcategories(sz, last_cat)
-        #     # for cat in sz.category.all():
-        #     #     cur_cat = cat
-        #     #     while cur_cat.parent_category:
-        #     #         sz.category.add(cur_cat.parent_category)
-        #     #         cur_cat = cur_cat.parent_category
-        #     sz.save()
+        def recursive_subcategories(sz, category):
+            print(category)
+            subcategories = category.subcat.all()
+
+            for subcategory in subcategories:
+                # print(subcategory.name)  # Вы можете выполнить нужные действия с каждой подкатегорией здесь
+                sz.category.add(subcategory)
+                # print(sz.name, subcategory)
+                recursive_subcategories(sz, subcategory)
+
+
+        szs = SizeTable.objects.filter(standard=True)
+        for sz in szs:
+            print(sz)
+            c = input()
+            if c != "0":
+                last_cat = Category.objects.get(name=c)
+                sz.category.add(last_cat)
+            # for cat in sz.category.all():
+            #     cur_cat = cat
+            #     while cur_cat.parent_category:
+            #         sz.category.add(cur_cat.parent_category)
+            #         cur_cat = cur_cat.parent_category
+            sz.save()
         # user_s = UserStatus.objects.all()
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()

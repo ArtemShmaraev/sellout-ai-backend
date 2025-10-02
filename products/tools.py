@@ -264,9 +264,15 @@ def build_category_tree(categories):
         else:
             root_categories.append(category)
 
+    def recursive_sort_categories(category):
+        if "children" in category:
+            category["children"] = sorted(category["children"], key=lambda x: x["id"])
+            for child in category["children"]:
+                recursive_sort_categories(child)
+
+    # Применить функцию к корневым категориям
     for root_category in root_categories:
-        if "children" in root_category:
-            root_category["children"] = sorted(root_category["children"], key=lambda x: x["id"])
+        recursive_sort_categories(root_category)
     return root_categories
 
 

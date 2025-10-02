@@ -150,16 +150,35 @@ def get_brand_and_category_selection(gender):
     return title, list_id, url
 
 
+def get_brand_selection(gender):
+    brands = Brand.objects.all()
+    random_brand = get_random(brands)
+    products = Product.objects.filter(Q(brands=random_brand))
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
+    products = products.filter(filters).order_by("-rel_num")
+    if products.count() < 7:
+        return get_brand_selection(gender)
+    else:
+        title = f"{random_brand.name}"
+        url = f"line={random_brand.query_name}"
+    list_id = list(products[:10].values_list("id", flat=True))
+    return title, list_id, url
+
+
 def get_selection(gender):
-    type = randint(1, 5)
-    if type == 1:
+    type = randint(1, 100)
+    if 1 < type < 25:
         title, queryset, url = get_brand_and_category_selection(gender)
-    elif type == 2:
+    elif 25 <= type < 40:
         title, queryset, url = get_collab_selection(gender)
-    elif type == 3:
+    elif 40 <= type < 48:
         title, queryset, url = get_color_and_category_selection(gender)
-    elif type == 4:
+    elif 48 <= type < 60:
         title, queryset, url = get_color_and_brand_selection(gender)
+    elif 60 <= type < 80:
+        title, queryset, url = get_brand_selection(gender)
     else:
         title, queryset, url = get_line_selection(gender)
     res = {"type": "selection", "title": title, "url": url}
@@ -168,12 +187,12 @@ def get_selection(gender):
 
 
 def get_photo():
-    photos_desk = HeaderPhoto.objects.filter(type="desktop").filter(where="product_page")
+    photos_desk = HeaderPhoto.objects.filter(type="desktop", where="product_page", rating=5)
     random_photo_desk = get_random(photos_desk)
     line_desk = random_photo_desk.lines.order_by("-id").first()
     collab_desk = random_photo_desk.collabs.first()
 
-    photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
+    photos_mobile = HeaderPhoto.objects.filter(type="mobile", where="product_page", rating=5)
     if line_desk is not None:
         photos_mobile = photos_mobile.filter(lines=line_desk)
 
@@ -181,7 +200,7 @@ def get_photo():
         photos_mobile = photos_mobile.filter(collabs=collab_desk)
 
     if not photos_mobile.exists():
-        photos_mobile = HeaderPhoto.objects.filter(type="mobile").filter(where="product_page")
+        photos_mobile = HeaderPhoto.objects.filter(type="mobile", where="product_page", rating=5)
 
     random_photo_mobile = get_random(photos_mobile)
     return random_photo_desk, random_photo_mobile

@@ -197,6 +197,7 @@ def add_product_api(data):
 
     t7 = time()
     for unit in data['units']:
+        product.available_flag = True
         sizes = []
         tables = []
         if "size_table_info" in unit:
@@ -340,7 +341,6 @@ def add_product_api(data):
     product.available_sizes = sizes_info
     product.one_update = True
     product.last_upd = timezone.now()
-    product.available_flag = True
     product.save()
 
     # print(product.slug)

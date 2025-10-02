@@ -62,10 +62,12 @@ def  get_product_page_header(request):
         else:
             header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
 
-    header_photos_desktop = header_photos.filter(type="desktop")
-    header_photos_mobile = header_photos.filter(type="mobile")
+    header_photos_desktop = header_photos.filter(type="desktop", rating=5)
+    header_photos_mobile = header_photos.filter(type="mobile", rating=5)
     if not header_photos_desktop.exists():
-        header_photos_desktop = HeaderPhoto.objects.filter(type="desktop")
+        header_photos_desktop = header_photos.filter(type="desktop")
+        if not header_photos_desktop.exists():
+            header_photos_desktop = HeaderPhoto.objects.filter(type="desktop")
     count = header_photos_desktop.count()
 
     photo_desktop = header_photos_desktop[random.randint(0, count - 1)]
@@ -76,11 +78,12 @@ def  get_product_page_header(request):
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
     res['desktop']['photo'] = photo_desktop.photo
 
-    if header_photos_mobile.count() > 0:
-        count = header_photos_mobile.count()
-    else:
-        header_photos_mobile = HeaderPhoto.objects.filter(type="mobile")
-        count = header_photos_mobile.count()
+    if not header_photos_mobile.exists():
+        header_photos_mobile = header_photos.filter(type="mobile")
+        if not header_photos_mobile.exists():
+            header_photos_mobile = HeaderPhoto.objects.filter(type="mobile")
+    count = header_photos_mobile.count()
+
 
     photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
     text_mobile = get_product_text(photo_mobile, line, collab, category, new, recommendations)

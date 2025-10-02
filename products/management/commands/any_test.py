@@ -32,7 +32,7 @@ class Command(BaseCommand):
         for i in range(6):
             photo = HeaderPhoto.objects.filter(where="product_page", rating=i)
             print(i, photo.count())
-        products = Product.objects.filter(available_flag=False)
+        products = Product.objects.filter(available_flag=True)
 
         print(products.count())
         # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()
@@ -43,6 +43,7 @@ class Command(BaseCommand):
         # # print(len(products))
         k = 0
         st = []
+        f = open("bags.txt", "w")
         for spu in products:
             k += 1
             print(k, spu)
@@ -51,8 +52,13 @@ class Command(BaseCommand):
                 # print(data)
                 add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
                 if add_product.status_code == 500:
-                    st.append(spu)
-                    print(st)
+                    products_spu = Product.objects.filter(spu_id=spu)
+                    products_spu.delete()
+                    add_product = requests.post("https://sellout.su/api/v1/product/add_list_spu_id_products", json=data)
+                    if add_product.status_code == 500:
+                        f.write(f"{spu}\n")
+                        print("cerf")
+
                 # print(";f")
                 # print(add_product.json())
             except:

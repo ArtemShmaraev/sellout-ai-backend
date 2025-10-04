@@ -127,7 +127,7 @@ def get_color_and_category_selection(gender):
     if products.count() < 10:
         return get_color_and_category_selection(gender)
     else:
-        title = f"{random_category.name} {random_color.russian_name}"
+        title = f"{random_category.name}"
         url = f"category={random_category.eng_name}&color={random_color.name}"
     list_id = get_product_for_selecet(products)
     return title, list_id, url
@@ -148,7 +148,7 @@ def get_color_and_brand_selection(gender):
     if products.count() < 10:
         return get_color_and_brand_selection(gender)
     else:
-        title = f"{random_brand.name} {random_color.russian_name}"
+        title = f"{random_brand.name}"
         url = f"line={random_brand.query_name}&color={random_color.name}"
     list_id = get_product_for_selecet(products)
     return title, list_id, url

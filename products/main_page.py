@@ -1,4 +1,5 @@
-from random import randint, choice
+
+from random import randint, choice, sample
 import json
 from functools import lru_cache
 from datetime import datetime, date
@@ -9,6 +10,10 @@ from django.db.models import Q
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto
 from products.serializers import LineSerializer, ProductMainPageSerializer
+
+def get_product_for_selecet(queryset):
+    return sample(list(queryset[:100].values_list("id", flat=True)), 10)
+
 
 
 def get_header_photo():
@@ -56,7 +61,7 @@ def get_line_selection(gender, line=None):
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
 
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
 
     return title, list_id, url
 
@@ -82,7 +87,7 @@ def get_collab_selection(gender, collab=None):
         title = f"{collab.name}"
         url = f"collab={collab.query_name}"
 
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
 
     return title, list_id, url
 
@@ -104,7 +109,7 @@ def get_color_and_category_selection(gender):
     else:
         title = f"{random_category.name} {random_color.russian_name}"
         url = f"category={random_category.eng_name}&color={random_color.name}"
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
     return title, list_id, url
 
 
@@ -125,7 +130,7 @@ def get_color_and_brand_selection(gender):
     else:
         title = f"{random_brand.name} {random_color.russian_name}"
         url = f"line={random_brand.query_name}&color={random_color.name}"
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
     return title, list_id, url
 
 
@@ -141,12 +146,13 @@ def get_brand_and_category_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
+
     if products.count() < 7:
         return get_brand_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_brand.name}"
         url = f"category={random_category.eng_name}&line={random_brand.query_name}"
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
     return title, list_id, url
 
 
@@ -163,14 +169,32 @@ def get_brand_selection(gender):
     else:
         title = f"{random_brand.name}"
         url = f"line={random_brand.query_name}"
-    list_id = list(products[:10].values_list("id", flat=True))
+    list_id = get_product_for_selecet(products)
     return title, list_id, url
 
 
+def get_category_selection(gender):
+    categories = Category.objects.all()
+    random_cat = get_random(categories)
+    products = Product.objects.filter(Q(category=random_cat))
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
+    products = products.filter(filters).order_by("-rel_num")
+    if products.count() < 7:
+        return get_category_selection(gender)
+    else:
+        title = f"{random_cat.name}"
+        url = f"category={random_cat.eng_name}"
+    list_id = get_product_for_selecet(products)
+    return title, list_id, url
+
 def get_selection(gender):
     type = randint(1, 100)
-    if 1 < type < 25:
+    if 1 < type < 15:
         title, queryset, url = get_brand_and_category_selection(gender)
+    elif 15 <= type < 25:
+        title, queryset, url = get_category_selection(gender)
     elif 25 <= type < 40:
         title, queryset, url = get_collab_selection(gender)
     elif 40 <= type < 48:

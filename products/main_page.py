@@ -12,7 +12,7 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from products.serializers import LineSerializer, ProductMainPageSerializer
 
 def get_product_for_selecet(queryset):
-    return sample(list(queryset[:100].values_list("id", flat=True)), 10)
+    return sample(list(queryset[:100].values_list("id", flat=True)), min(10, queryset.count()))
 
 
 
@@ -174,9 +174,9 @@ def get_brand_selection(gender):
 
 
 def get_category_selection(gender):
-    categories = Category.objects.all()
-    random_cat = get_random(categories)
-    products = Product.objects.filter(Q(category=random_cat))
+    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
+    random_cat = get_random(category)
+    products = Product.objects.filter(Q(categories=random_cat))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)

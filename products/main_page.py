@@ -49,7 +49,7 @@ def get_line_selection(gender, line=None):
         products = Product.objects.filter(lines=line)
 
         products = products.filter(filters).order_by("-rel_num")
-        if products.count() < 7:
+        if products.count() < 10:
             return get_line_selection(gender)
         else:
             title = f"{line.name}"
@@ -76,7 +76,7 @@ def get_collab_selection(gender, collab=None):
         products = Product.objects.filter(collab=collab)
 
         products = products.filter(filters).order_by("-rel_num")
-        if products.count() < 7:
+        if products.count() < 10:
             return get_collab_selection(gender)
         else:
             title = f"{collab.name}"
@@ -92,6 +92,26 @@ def get_collab_selection(gender, collab=None):
     return title, list_id, url
 
 
+def get_color_and_line_selection(gender):
+    colors = Color.objects.filter(is_main_color=True)
+    random_color = get_random(colors)
+
+    lines = Line.objects.filter(~Q(parent_line=None))
+    line = get_random(lines)
+    products = Product.objects.filter(Q(lines=line) & Q(colors=random_color))
+    filters = Q(available_flag=True)
+    filters &= Q(is_custom=False)
+    filters &= Q(gender__name__in=gender)
+    products = products.filter(filters).order_by("-rel_num")
+    if products.count() < 10:
+        return get_color_and_line_selection(gender)
+    else:
+        title = f"{line.name}"
+        url = f"line={line.full_eng_name}&color={random_color.name}"
+    list_id = get_product_for_selecet(products)
+    return title, list_id, url
+
+
 def get_color_and_category_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
@@ -104,7 +124,7 @@ def get_color_and_category_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 7:
+    if products.count() < 10:
         return get_color_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_color.russian_name}"
@@ -125,7 +145,7 @@ def get_color_and_brand_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 7:
+    if products.count() < 10:
         return get_color_and_brand_selection(gender)
     else:
         title = f"{random_brand.name} {random_color.russian_name}"
@@ -147,7 +167,7 @@ def get_brand_and_category_selection(gender):
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
 
-    if products.count() < 7:
+    if products.count() < 10:
         return get_brand_and_category_selection(gender)
     else:
         title = f"{random_category.name} {random_brand.name}"
@@ -164,7 +184,7 @@ def get_brand_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 7:
+    if products.count() < 10:
         return get_brand_selection(gender)
     else:
         title = f"{random_brand.name}"
@@ -181,7 +201,7 @@ def get_category_selection(gender):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     products = products.filter(filters).order_by("-rel_num")
-    if products.count() < 7:
+    if products.count() < 10:
         return get_category_selection(gender)
     else:
         title = f"{random_cat.name}"
@@ -201,8 +221,10 @@ def get_selection(gender):
         title, queryset, url = get_color_and_category_selection(gender)
     elif 48 <= type < 60:
         title, queryset, url = get_color_and_brand_selection(gender)
-    elif 60 <= type < 80:
+    elif 60 <= type < 75:
         title, queryset, url = get_brand_selection(gender)
+    elif 75 <= type < 85:
+        title, queryset, url = get_color_and_line_selection(gender)
     else:
         title, queryset, url = get_line_selection(gender)
     res = {"type": "selection", "title": title, "url": url}

@@ -382,7 +382,7 @@ class MainPageBlocks(APIView):
         number_page = int(request.query_params.get("page", 1))
         print(number_page)
         next = request.query_params.get("next", False)
-        new = request.query_params.get("next", False)
+        new = request.query_params.get("new", False)
         # print(self.request.COOKIES)
         # print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}

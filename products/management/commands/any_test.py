@@ -57,7 +57,7 @@ class Command(BaseCommand):
         with open("lines_score.json", "w", encoding="utf-8") as file:
             file.write(json_string)
 
-        collabs = list(Collab.objects.all().order_by("name").values_list("name", flat=True))
+        collabs = list(Collab.objects.all().order_by("id").values_list("name", flat=True))
         d = []
         for collab in collabs:
             d.append({"name": collab, "score": 0})
@@ -67,7 +67,7 @@ class Command(BaseCommand):
         with open("collabs_score.json", "w", encoding="utf-8") as file:
             file.write(json_string)
 
-        cats = list(Category.objects.all().order_by("name").values_list("name", flat=True))
+        cats = list(Category.objects.all().order_by("id").values_list("name", flat=True))
         d = []
         for cat in cats:
             d.append({"name": cat, "score": 0})

@@ -489,9 +489,9 @@ class SizeRow(models.Model):
 
 
 class SizeTranslationRows(models.Model):
-    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows")
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows", db_index=True)
     row = models.JSONField(blank=True, null=True)
-    is_one_size = models.BooleanField(default=False)
+    is_one_size = models.BooleanField(default=False, db_index=True)
 
     def __str__(self):
         return f"{self.table} {self.id}"

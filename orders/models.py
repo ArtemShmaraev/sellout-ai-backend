@@ -61,6 +61,7 @@ class Order(models.Model):
     cancel_reason = models.CharField(default="", max_length=1024)
     order_in_progress = models.BooleanField(default=False)
     total_bonus = models.IntegerField(default=0)
+    invoice_data = models.JSONField(default=dict)
 
 
     def get_total_bonus(self):
@@ -131,6 +132,64 @@ class Order(models.Model):
         else:
             self.status = Status.objects.get(name='Заказ принят')
 
+        self.save()
+
+    def evenly_distribute_discount(self):
+        # final_price = self.total_amount
+        discount = self.total_sale
+        total_cost = self.total_amount
+        discount_per_cost = discount / total_cost
+        # print(discount_per_cost, self.total_amount)
+        new_item_costs = []
+        sum_unit = 0
+        # Распределение скидки на позиции (кроме последней)
+        k = self.order_units.count()
+        ck = 0
+        for unit in self.order_units.all():
+            ck += 1
+            if ck == k:
+                last_item_cost = self.total_amount - sum_unit - discount
+                unit.final_price = last_item_cost
+                unit.save()
+            else:
+
+                item_discount = round(unit.start_price * discount_per_cost)
+                unit.final_price = unit.start_price - item_discount
+                unit.save()
+                # print(unit.final_price)
+                sum_unit += unit.final_price
+
+
+    def get_invoice_data(self):
+        invoice_data = {}
+        items = []
+        for order_unit in self.order_units.all():
+            position = {}
+            position["code"] = order_unit.product.id
+            position['name'] = order_unit.product.get_full_name()
+            position['price'] = order_unit.start_price
+            position['unit'] = "piece"
+            position['quantity'] = 1
+            position['sum'] = order_unit.start_price
+            position['vat_mode'] = 'none'
+            if order_unit.start_price != order_unit.final_price:
+                position['discount_amount'] = order_unit.start_price - order_unit.final_price
+            position['payment_object'] = "service"
+            items.append(position)
+
+        position = {}
+        position["code"] = 1
+        position['name'] = "Доставка"
+        position['price'] = self.delivery_view_price
+        position['unit'] = "piece"
+        position['quantity'] = 1
+        position['sum'] = self.delivery_view_price
+        position['vat_mode'] = 'none'
+        position['payment_object'] = "service"
+        items.append(position)
+
+        invoice_data['items'] = items
+        self.invoice_data = invoice_data
         self.save()
 
     def add_order_unit(self, product_unit, user_status):

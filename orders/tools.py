@@ -10,6 +10,9 @@ from shipping.models import AddressInfo
 
 
 
+
+
+
 def get_delivery_price(units, target_start, target, zip):
     sum = 0
     sum_weight = 0

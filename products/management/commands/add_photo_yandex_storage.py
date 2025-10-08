@@ -88,14 +88,7 @@ class Command(BaseCommand):
                     url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
                     # print(url)
                     if not HeaderPhoto.objects.filter(photo=url).exists():
-                        content_type = 'image/png'
-                        s3_client.upload_file(
-                            full_local_path,
-                            bucket_name,
-                            path,
-                            ExtraArgs={'ContentType': content_type}
-                        )
-                        print(url)
+
 
                         try:
                             if "Mobile" in path:
@@ -108,7 +101,7 @@ class Command(BaseCommand):
                                 paths = path.split("/")
                                 collab_name = paths[-2]
                                 # print(collab_name)
-                                add_photo(url, type, where, collab_name=collab_name, category_name="Обувь")
+                                # add_photo(url, type, where, collab_name=collab_name, category_name="Обувь")
 
                             elif "линейки" in path:
                                 where = "product_page"
@@ -117,8 +110,17 @@ class Command(BaseCommand):
                                 if "new" in line_name.lower():
                                     line_name = line_name.replace("-", "/")
                                 # print(line_name)
-                                add_photo(url, type, where, line_name=line_name, category_name="Обувь")
+                                # add_photo(url, type, where, line_name=line_name, category_name="Обувь")
                             else:
+                                content_type = 'image/jpeg'
+                                s3_client.upload_file(
+                                    full_local_path,
+                                    bucket_name,
+                                    path,
+                                    ExtraArgs={'ContentType': content_type}
+                                )
+                                print(url)
+
                                 where = "header"
                                 paths = path.split("/")
                                 category_name = paths[-2]
@@ -136,8 +138,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-        hp = HeaderPhoto.objects.all()
-        hp.delete()
+        # hp = HeaderPhoto.objects.all()
+        # hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

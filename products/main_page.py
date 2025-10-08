@@ -22,9 +22,11 @@ def get_header_photo():
     shoes = choice(header.filter(categories__eng_name="shoes_category"))
     clothes = choice(header.filter(categories__eng_name="clothes"))
     accessories = choice(header.filter(categories__eng_name="accessories"))
+    bags = choice(header.filter(categories__eng_name="bags"))
     res = {"brand": brand.photo,
            "shoes": shoes.photo,
            "clothes": clothes.photo,
+           "bags": bags.photo,
            "accessories": accessories.photo}
     return res
 
@@ -211,7 +213,7 @@ def get_category_selection(gender):
 
 def get_selection(gender):
     type = randint(1, 100)
-    if 1 < type < 15:
+    if 1 <= type < 15:
         title, queryset, url = get_brand_and_category_selection(gender)
     elif 15 <= type < 25:
         title, queryset, url = get_category_selection(gender)

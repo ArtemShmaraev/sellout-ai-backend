@@ -289,10 +289,12 @@ class CheckOutView(APIView):
                     order.pvz = str(data.get('target', 0))
                 order.save()
 
-                if user.patronymic == "" and user.first_name == data['name'].lower() and user.last_name.lower() == data['surname'].lower():
+                if user.first_name.lower() == data['name'].lower() and user.last_name.lower() == data['surname'].lower():
                     user.patronymic = data['patronymic']
                 if user.phone_number == "":
                     user.phone_number = data['phone']
+                user.save()
+                print(user.patronymic)
 
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit, user.user_status)

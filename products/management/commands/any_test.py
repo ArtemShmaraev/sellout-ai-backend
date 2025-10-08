@@ -31,6 +31,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         order = Order.objects.all().order_by("-id").first()
         print(order.invoice_data)
+        print(order.surname)
         # pro = Product.objects.filter(colors__name="gray")
         # print(pro.count())
         # # pro.available_flag = False

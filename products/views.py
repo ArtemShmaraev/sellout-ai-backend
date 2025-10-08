@@ -606,7 +606,7 @@ class ProductView(APIView):
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
-        params = request.GET.copy()
+        params = request.GET.copy().copy()
         if 'page' in params:
             del params['page']
 

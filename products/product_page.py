@@ -99,7 +99,7 @@ def  get_product_page_header(request):
 def count_queryset(request):
     params = request.GET.copy()
     queryset = filter_products(request)
-    print(queryset.query)
+    # print(queryset.query)
     # print(queryset.query)
     if 'page' in params:
         del params['page']

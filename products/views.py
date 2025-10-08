@@ -326,12 +326,14 @@ class SGInfoView(APIView):
             sg_info = SGInfo.objects.get(manufacturer_sku=sku)
         else:
             sg_info = SGInfo(manufacturer_sku=sku)
-
         if "data" in data:
             sg_info.data = data['data']
         if "formatted_manufacturer_sku" in data:
             sg_info.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
-
+        if "relevant_number" in data:
+            sg_info.relevant_number = int(data['relevant_number'])
+        if "novelty_number" in data:
+            sg_info.novelty_number = int(data["novelty_number"])
         sg_info.save()
         return Response(SGInfoSerializer(sg_info).data)
 
@@ -861,7 +863,7 @@ class SizeTableForFilter(APIView):
             gender = self.request.query_params.getlist("gender")
             categories = self.request.query_params.getlist("category")
 
-            cache_key = f'size_table_2{"".join(sorted(gender))}{"".join(sorted(categories))}{request.user.id}'
+            cache_key = f'size_table_2{"".join(sorted(gender))}{"".join(sorted(categories))}'
 
             # Попробуйте сначала получить результат из кэша
             size_tables = cache.get(cache_key)

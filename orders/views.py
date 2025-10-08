@@ -65,6 +65,7 @@ class SignAPIView(APIView):
             order.fact_of_payment = True
             order.save()
             cart = ShoppingCart.objects.get(user=order.user)
+            send_email_confirmation_order(OrderSerializer(order).data, order.email)
             cart.clear()
             print("ff2")
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
@@ -315,6 +316,7 @@ class CheckOutView(APIView):
                 if not user.user_status.base:
                     order.fact_of_payment = True
                     print("ff")
+                    send_email_confirmation_order(serializer, order.email)
                     cart.clear()
                 order.get_total_bonus()
                 order.save()
@@ -323,9 +325,7 @@ class CheckOutView(APIView):
                 # order.accrue_bonuses()
 
                 serializer = OrderSerializer(order).data
-
                 # print(serializer)
-                send_email_confirmation_order(serializer, order.email)
 
                 # print(serializer)
                 return Response(serializer)

@@ -12,7 +12,7 @@ from users.models import UserStatus
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=512, db_index=True)
+    url = models.CharField(max_length=512)
 
     def __str__(self):
         return str(self.product)
@@ -35,7 +35,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
                                         null=True)
-    eng_name = models.CharField(max_length=255, default="", db_index=True)  # для запросов
+    eng_name = models.CharField(max_length=255, default="")  # для запросов
     is_all = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, default="")  # полный путь
 
@@ -127,7 +127,7 @@ class Collection(models.Model):
 
 class Collab(models.Model):
     name = models.CharField(max_length=255)
-    query_name = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    query_name = models.CharField(max_length=255, blank=True, null=True)
     is_main_collab = models.BooleanField(default=False)
     is_all = models.BooleanField(default=False)
 
@@ -142,7 +142,7 @@ class Collab(models.Model):
 
 
 class Color(models.Model):
-    name = models.CharField(max_length=255, db_index=True)
+    name = models.CharField(max_length=255)
     is_main_color = models.BooleanField(default=False)
     russian_name = models.CharField(max_length=255, default="")
     hex = models.CharField(max_length=255, default="")
@@ -153,7 +153,7 @@ class Color(models.Model):
 
 
 class Material(models.Model):
-    name = models.CharField(max_length=255, db_index=True)
+    name = models.CharField(max_length=255)
     eng_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
@@ -166,7 +166,7 @@ class Gender(models.Model):
         ('F', 'Female'),
         ('K', 'Kids')
     )
-    name = models.CharField(max_length=255, choices=GENDER_CHOICES, db_index=True)
+    name = models.CharField(max_length=255, choices=GENDER_CHOICES)
 
     def __str__(self):
         return self.name
@@ -192,15 +192,17 @@ class DewuInfo(models.Model):
 class SGInfo(models.Model):
     manufacturer_sku = models.CharField(max_length=256, default="")
     data = models.JSONField(default=dict)
+    relevant_number = models.IntegerField(default=0)
+    novelty_number = models.IntegerField(default=0)
     formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
 
 
 class Product(models.Model):
     spu_id = models.IntegerField(default=0, db_index=True)
-    property_id = models.IntegerField(default=0, db_index=True, )
+    property_id = models.IntegerField(default=0)
     # dewu_info = models.ForeignKey("DewuInfo", on_delete=models.PROTECT, blank=True, null=True, related_name="products")
     brands = models.ManyToManyField("Brand", related_name='products',
-                                    blank=True, db_index=True)
+                                    blank=True)
     categories = models.ManyToManyField("Category", related_name='products',
                                         blank=True, db_index=True)
     lines = models.ManyToManyField("Line", related_name='products',
@@ -211,22 +213,21 @@ class Product(models.Model):
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
 
-    model = models.CharField(max_length=255, null=False, blank=True, db_index=True)
-    colorway = models.CharField(max_length=255, null=False, blank=True, db_index=True)
+    model = models.CharField(max_length=255, null=False, blank=True)
+    colorway = models.CharField(max_length=255, null=False, blank=True)
     russian_name = models.CharField(max_length=255, null=False, blank=True, default="")
     slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
     manufacturer_sku = models.CharField(max_length=255, default="")  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
-    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True, db_index=True)
+    bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True)
     black_bucket_link = models.ManyToManyField("Photo", related_name='black_product', blank=True)
 
     is_custom = models.BooleanField(default=False, db_index=True)
-    is_collab = models.BooleanField(default=False, db_index=True)
-    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products",
-                               db_index=True)
+    is_collab = models.BooleanField(default=False)
+    collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products", db_index=True)
 
     main_color = models.ForeignKey("Color", on_delete=models.SET_NULL, blank=True, null=True,
-                                   related_name="products_main", db_index=True)
+                                   related_name="products_main")
     colors = models.ManyToManyField("Color", related_name='products', blank=True, db_index=True)
     designer_color = models.SlugField(max_length=255, blank=True, default="")
 
@@ -238,7 +239,7 @@ class Product(models.Model):
                                    related_name='products')
     size_table_platform = models.JSONField(default=dict)
 
-    min_price = models.IntegerField(blank=True, null=True, db_index=True, default=0)
+    min_price = models.IntegerField(blank=True, null=True, default=0, db_index=True)
     max_profit = models.IntegerField(blank=True, null=True, default=0)
     max_bonus = models.IntegerField(blank=True, null=True, default=0)
     min_price_without_sale = models.IntegerField(blank=True, null=True, default=0)
@@ -255,7 +256,7 @@ class Product(models.Model):
     last_upd = models.DateTimeField(default=timezone.now)
     add_date = models.DateField(default=date.today)
 
-    exact_date = models.DateField(default=date.today, blank=True)
+    exact_date = models.DateField(default=date.today, blank=True, db_index=True)
     approximate_date = models.CharField(max_length=63, null=False, blank=True, default="")
 
     fit = models.IntegerField(default=0)
@@ -268,8 +269,8 @@ class Product(models.Model):
     another_configuration = models.JSONField(blank=True, null=True, default=list)
     size_row_name = models.CharField(max_length=255, null=True, blank=True, default="")
     extra_name = models.CharField(max_length=255, null=True, blank=True, default="")
-    is_sale = models.BooleanField(default=False)
-    in_sg = models.BooleanField(default=False)
+    is_sale = models.BooleanField(default=False, db_index=True)
+    in_sg = models.BooleanField(default=False, db_index=True)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
     actual_price = models.BooleanField(default=False)
@@ -280,7 +281,7 @@ class Product(models.Model):
     category_name = models.CharField(max_length=128, default="")
     level1_category_id = models.IntegerField(default=0)
     level2_category_id = models.IntegerField(default=0)
-    formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
+    formatted_manufacturer_sku = models.CharField(default="", max_length=128)
 
     objects = ProductManager()
 
@@ -382,22 +383,19 @@ class Product(models.Model):
             self.save()
 
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['id']),
-            models.Index(fields=['spu_id']),
-            models.Index(fields=['model']),
-            models.Index(fields=['colorway']),
-            models.Index(fields=['slug']),
-            models.Index(fields=['manufacturer_sku']),
-            models.Index(fields=['is_custom']),
-            models.Index(fields=['is_collab']),
-            models.Index(fields=['min_price']),
-            models.Index(fields=['rel_num']),
-            models.Index(fields=['available_flag']),
-
-            # Добавьте индексы для остальных полей с db_index=True
-        ]
+    # class Meta:
+    #     indexes = [
+    #         models.Index(fields=['id']),
+    #         models.Index(fields=['spu_id']),
+    #         models.Index(fields=['slug']),
+    #         models.Index(fields=['manufacturer_sku']),
+    #         models.Index(fields=['is_custom']),
+    #         models.Index(fields=['min_price']),
+    #         models.Index(fields=['rel_num']),
+    #         models.Index(fields=['available_flag']),
+    #
+    #         # Добавьте индексы для остальных полей с db_index=True
+    #     ]
 
     def get_full_name(self):
         return f"{self.brands.first().name if not self.is_collab else self.collab.name} {self.model} {self.colorway}"
@@ -489,9 +487,9 @@ class SizeRow(models.Model):
 
 
 class SizeTranslationRows(models.Model):
-    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows", db_index=True)
+    table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows")
     row = models.JSONField(blank=True, null=True)
-    is_one_size = models.BooleanField(default=False, db_index=True)
+    is_one_size = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.table} {self.id}"

@@ -99,6 +99,7 @@ def  get_product_page_header(request):
 def count_queryset(request):
     params = request.GET.copy()
     queryset = filter_products(request)
+    print(queryset.query)
     # print(queryset.query)
     # print(queryset.query)
     if 'page' in params:
@@ -181,6 +182,8 @@ def filter_products(request):
     recommendations = params.get("recommendations")
     if recommendations and not query:
         recommendations_q = queryset.order_by('-rel_num')[:250]
+    if gender:
+        queryset = queryset.filter(gender__name__in=gender)
 
     if collab:
         if "all" in collab:
@@ -196,12 +199,10 @@ def filter_products(request):
         queryset = queryset.filter(lines__full_eng_name__in=line)
 
     if color:
-        queryset = queryset.filter(Q(colors__name__in=color))
+        queryset = queryset.filter(colors__name__in=color)
     if category:
-        queryset = queryset.filter(Q(categories__eng_name__in=category))
+        queryset = queryset.filter(categories__eng_name__in=category)
 
-    if gender:
-        queryset = queryset.filter(Q(gender__name__in=gender))
 
     filters = Q()
 
@@ -345,7 +346,9 @@ def get_product_page(request, context):
 
     start_index = (page_number - 1) * 60
     # print(queryset[0].id)
+    # queryset = queryset.distinct()
     queryset = queryset[start_index:start_index + 60]
+    print(queryset.query)
     queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
 
     res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"

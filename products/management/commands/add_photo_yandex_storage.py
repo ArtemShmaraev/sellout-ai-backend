@@ -121,11 +121,13 @@ class Command(BaseCommand):
                                 )
                                 print(url)
 
+
                                 where = "header"
                                 paths = path.split("/")
                                 category_name = paths[-2]
-                                type = "any"
-                                add_photo(url, type, where, category_name=category_name)
+                                if category_name == "Аксессуары":
+                                    type = "any"
+                                    add_photo(url, type, where, category_name=category_name)
                         except Exception as e:
                             print(e)
                             print(path)
@@ -138,8 +140,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-        # hp = HeaderPhoto.objects.all()
-        # hp.delete()
+        hp = HeaderPhoto.objects.filter(categories__name="Аксессуары", where="header")
+        hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

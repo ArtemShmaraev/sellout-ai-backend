@@ -123,7 +123,7 @@ def get_delivery(order, data, cart):
             print(tec, get_delivery_price(tec, "02743", target, zip))
             sum_part += get_delivery_price(tec, "02743", target, zip)
             order.delivery_price = sum_part
-            order.delivery = f"{name_delivery} по частям-"
+            order.delivery = f"{name_delivery} по частям"
             print(sum_part)
 
     # print(order.delivery_price)

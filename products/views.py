@@ -4,6 +4,7 @@ import hashlib
 import math
 import random
 import threading
+from urllib.parse import urlencode
 
 import httpx
 from django.core.cache import cache
@@ -605,9 +606,14 @@ class ProductView(APIView):
         context['price_max'] = price_max if price_max else None
         context['price_min'] = price_min if price_min else None
         context['ordering'] = ordering if ordering else None
+        params = request.GET.copy()
+        if 'page' in params:
+            del params['page']
 
-        url = request.build_absolute_uri()
-        url_hash = hashlib.md5(url.encode()).hexdigest()
+
+        # url = request.build_absolute_uri()
+        # url_hash = hashlib.md5(url.encode()).hexdigest()
+        url_hash = urlencode(params)
 
         cache_product_key = f"product_page:{url_hash}_{f'{request.user.id}_{request.user.user_status.id}' if request.user.id else 0}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)

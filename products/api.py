@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.db.models import IntegerField
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from sellout.settings import CACHE_TIME
@@ -36,8 +37,21 @@ class ColorViewSet(viewsets.ModelViewSet):
         queryset = cache.get('color_queryset')
 
         if queryset is None:
-            # Если результат не найден в кэше, выполните запрос к базе данных
-            queryset = Color.objects.filter(is_main_color=True)
+            color_poryadok = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 13, 14, 15]
+            queryset = Color.objects.filter(id__in=color_poryadok)
+            # print(queryset.count())
+
+            # Определение порядка объектов в queryset
+            preserved_order = Case(
+                *[
+                    When(id=pk, then=pos) for pos, pk in enumerate(color_poryadok)
+                ],
+                default=Value(len(color_poryadok)),
+                output_field=IntegerField()
+            )
+            queryset = queryset.annotate(order=preserved_order).order_by('order')
+            # # Если результат не найден в кэше, выполните запрос к базе данных
+            # queryset = Color.objects.filter(is_main_color=True)
 
             # Затем сохраните результат в кэш
             cache.set('color_queryset', queryset, CACHE_TIME)
@@ -161,6 +175,7 @@ class ProductPagination(pagination.PageNumberPagination):
                     return found_name
 
             return None
+
         request = self.request
         lines = request.query_params.getlist('line')
         categories = request.query_params.getlist('category')

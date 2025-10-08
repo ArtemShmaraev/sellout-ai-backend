@@ -99,6 +99,7 @@ def  get_product_page_header(request):
 def count_queryset(request):
     params = request.GET.copy()
     queryset = filter_products(request)
+    print(queryset.query)
     # print(queryset.query)
     if 'page' in params:
         del params['page']
@@ -195,7 +196,7 @@ def filter_products(request):
         queryset = queryset.filter(lines__full_eng_name__in=line)
 
     if color:
-        queryset = queryset.filter(colors__name__in=color)
+        queryset = queryset.filter(Q(colors__name__in=color))
     if category:
         queryset = queryset.filter(Q(categories__eng_name__in=category))
 

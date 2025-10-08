@@ -29,12 +29,61 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        pro = Product.objects.filter(colors__name="gray")
-        print(pro.count())
-        # pro.available_flag = False
-        # pro.save()
-        products = Product.objects.filter(available_flag=True, min_price=0)
-        products.update(available_flag=False)
+        # pro = Product.objects.filter(colors__name="gray")
+        # print(pro.count())
+        # # pro.available_flag = False
+        # # pro.save()
+        # products = Product.objects.filter(available_flag=True, min_price=0)
+        # products.update(available_flag=False)
+
+
+        brands = list(Brand.objects.all().order_by("name").values_list("name", flat=True))
+        d = []
+        for brand in brands:
+            d.append({"name": brand, "score": 0})
+        json_string = json.dumps(d, ensure_ascii=False)
+
+        # Запись JSON-строки в файл
+        with open("brands_score.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+
+        lines = list(Line.objects.all().order_by("name").values_list("name", flat=True))
+        d = []
+        for line in lines:
+            d.append({"name": line, "score": 0})
+        json_string = json.dumps(d, ensure_ascii=False)
+
+        # Запись JSON-строки в файл
+        with open("lines_score.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+
+        collabs = list(Collab.objects.all().order_by("name").values_list("name", flat=True))
+        d = []
+        for collab in collabs:
+            d.append({"name": collab, "score": 0})
+        json_string = json.dumps(d, ensure_ascii=False)
+
+        # Запись JSON-строки в файл
+        with open("collabs_score.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+
+        cats = list(Category.objects.all().order_by("name").values_list("name", flat=True))
+        d = []
+        for cat in cats:
+            d.append({"name": cat, "score": 0})
+        json_string = json.dumps(d, ensure_ascii=False)
+
+        # Запись JSON-строки в файл
+        with open("categories_score.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+
+        print(len(brands))
+        print(len(cats))
+        print(len(collabs))
+        print(len(lines))
+
+        print(len(lines) + len(cats) + len(collabs) + len(brands))
+
 
         # print(products.count())
         # # s = (res["manufacturer_sku"].replace(" ", "").replace("-", "")).lower()

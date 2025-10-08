@@ -35,7 +35,7 @@ class Category(models.Model):
     name = models.CharField(max_length=255)
     parent_category = models.ForeignKey("Category", related_name='subcat', blank=True, on_delete=models.CASCADE,
                                         null=True)
-    eng_name = models.CharField(max_length=255, default="")  # для запросов
+    eng_name = models.CharField(max_length=255, default="", db_index=True)  # для запросов
     is_all = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, default="")  # полный путь
 
@@ -57,7 +57,7 @@ class Line(models.Model):
     is_all = models.BooleanField(default=False)
     view_name = models.CharField(max_length=255, default="")  # для отображения в фильтрах
     full_name = models.CharField(max_length=255, default="")  # полный путь
-    full_eng_name = models.CharField(max_length=255, default="")  # для отправки запроса
+    full_eng_name = models.CharField(max_length=255, default="", db_index=True)  # для отправки запроса
     search_filter_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
@@ -127,7 +127,7 @@ class Collection(models.Model):
 
 class Collab(models.Model):
     name = models.CharField(max_length=255)
-    query_name = models.CharField(max_length=255, blank=True, null=True)
+    query_name = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     is_main_collab = models.BooleanField(default=False)
     is_all = models.BooleanField(default=False)
 
@@ -142,17 +142,18 @@ class Collab(models.Model):
 
 
 class Color(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
     is_main_color = models.BooleanField(default=False)
     russian_name = models.CharField(max_length=255, default="")
     hex = models.CharField(max_length=255, default="")
+    # poryadok = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
 
 
 class Material(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
     eng_name = models.CharField(max_length=255, default="")
 
     def __str__(self):

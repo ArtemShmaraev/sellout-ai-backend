@@ -165,7 +165,7 @@ class Order(models.Model):
         items = []
         for order_unit in self.order_units.all():
             position = {}
-            position["code"] = order_unit.product.id
+            position["code"] = str(order_unit.product.id)
             position['name'] = order_unit.product.get_full_name()
             position['price'] = order_unit.start_price
             position['unit'] = "piece"
@@ -178,7 +178,7 @@ class Order(models.Model):
             items.append(position)
 
         position = {}
-        position["code"] = 1
+        position["code"] = "1"
         position['name'] = "Доставка"
         position['price'] = self.delivery_view_price
         position['unit'] = "piece"
@@ -189,6 +189,7 @@ class Order(models.Model):
         items.append(position)
 
         invoice_data['items'] = items
+        # print(invoice_data)
         self.invoice_data = invoice_data
         self.save()
 

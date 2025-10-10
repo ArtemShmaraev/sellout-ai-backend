@@ -66,9 +66,8 @@ def get_line_selection(gender, line=None):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     if line is None:
-        lines = Line.objects.filter(~Q(parent_line=None))
         # line = get_random_model(Line, "line")
-        line = get_random(lines)
+        line = get_random_model(Line, "line")
         products = Product.objects.filter(lines=line)
 
         products = products.filter(filters).order_by("-rel_num")
@@ -117,9 +116,8 @@ def get_collab_selection(gender, collab=None):
 def get_color_and_line_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
-    lines = Line.objects.filter(~Q(parent_line=None))
-    line = get_random(lines)
-    # line = get_random_model(Line, "line")
+    get_random_model(Line, "line")
+    line = get_random_model(Line, "line")
     products = Product.objects.filter(Q(lines=line) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)

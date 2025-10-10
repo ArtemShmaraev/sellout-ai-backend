@@ -30,9 +30,10 @@ class Command(BaseCommand):
                     print(model_name)
 
         # update_model_scores(Line, data)
-        update_model_scores(Category, "categories_score.json")
-        update_model_scores(Collab, "collabs_score.json")
-        update_model_scores(Brand, "brands_score.json")
+        # update_model_scores(Category, "categories_score.json")
+        # update_model_scores(Collab, "collabs_score.json")
+        # update_model_scores(Brand, "brands_score.json")
+        update_model_scores(Line, "lines_score.json")
 
         print("Данные о брендах успешно обновлены.")
 

@@ -1,10 +1,11 @@
-
+import random
 from random import randint, choice, sample
 import json
 from functools import lru_cache
 from datetime import datetime, date
 from time import time
 
+from django.core.cache import cache
 from django.db.models import Q
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
@@ -15,6 +16,25 @@ def get_product_for_selecet(queryset):
     return sample(list(queryset[:100].values_list("id", flat=True)), min(10, queryset.count()))
 
 
+
+def get_random_model(model, type):
+    # Попытаться получить данные из кэша
+    cached_data = cache.get(f'random_{type}_data')
+
+    if cached_data:
+        queryset, probabilities = cached_data
+    else:
+        # Если данные не найдены в кэше, вычислить их
+        queryset = model.objects.filter(score__gt=0)
+        total_score = sum(model.score for model in queryset)
+        probabilities = [model.score / total_score for model in queryset]
+
+        # Сохранить данные в кэше на 10 минут
+        cache.set(f'random_{type}_data', (queryset, probabilities), 600)
+
+    random_model = random.choices(queryset, probabilities)[0]
+    # print(random_model, random_model.score)
+    return random_model
 
 def get_header_photo():
     header = HeaderPhoto.objects.exclude(where='product_page')
@@ -47,6 +67,7 @@ def get_line_selection(gender, line=None):
     filters &= Q(gender__name__in=gender)
     if line is None:
         lines = Line.objects.filter(~Q(parent_line=None))
+        # line = get_random_model(Line, "line")
         line = get_random(lines)
         products = Product.objects.filter(lines=line)
 
@@ -73,8 +94,7 @@ def get_collab_selection(gender, collab=None):
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
     if collab is None:
-        collabs = Collab.objects.all()
-        collab = get_random(collabs)
+        collab = get_random_model(Collab, "collab")
         products = Product.objects.filter(collab=collab)
 
         products = products.filter(filters).order_by("-rel_num")
@@ -97,9 +117,9 @@ def get_collab_selection(gender, collab=None):
 def get_color_and_line_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
-
     lines = Line.objects.filter(~Q(parent_line=None))
     line = get_random(lines)
+    # line = get_random_model(Line, "line")
     products = Product.objects.filter(Q(lines=line) & Q(colors=random_color))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
@@ -117,9 +137,7 @@ def get_color_and_line_selection(gender):
 def get_color_and_category_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
-
-    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
-    random_category = get_random(category)
+    random_category = get_random_model(Category, "category")
 
     products = Product.objects.filter(Q(categories=random_category) & Q(colors=random_color))
     filters = Q(available_flag=True)
@@ -139,8 +157,7 @@ def get_color_and_brand_selection(gender):
     colors = Color.objects.filter(is_main_color=True)
     random_color = get_random(colors)
 
-    brands = Brand.objects.all()
-    random_brand = get_random(brands)
+    random_brand = get_random_model(Brand, "brand")
 
     products = Product.objects.filter(Q(brands=random_brand) & Q(colors=random_color))
     filters = Q(available_flag=True)
@@ -157,11 +174,9 @@ def get_color_and_brand_selection(gender):
 
 
 def get_brand_and_category_selection(gender):
-    brands = Brand.objects.all()
-    random_brand = get_random(brands)
+    random_brand = get_random_model(Brand, "brand")
 
-    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
-    random_category = get_random(category)
+    random_category = get_random_model(Category, "category")
 
     products = Product.objects.filter(Q(categories=random_category) & Q(brands=random_brand))
     filters = Q(available_flag=True)
@@ -179,8 +194,7 @@ def get_brand_and_category_selection(gender):
 
 
 def get_brand_selection(gender):
-    brands = Brand.objects.all()
-    random_brand = get_random(brands)
+    random_brand = get_random_model(Brand, "brand")
     products = Product.objects.filter(Q(brands=random_brand))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
@@ -196,8 +210,7 @@ def get_brand_selection(gender):
 
 
 def get_category_selection(gender):
-    category = Category.objects.all().exclude(name__icontains='Все').exclude(name__icontains='Вся')
-    random_cat = get_random(category)
+    random_cat = get_random_model(Category, "category")
     products = Product.objects.filter(Q(categories=random_cat))
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)

@@ -21,6 +21,7 @@ class Photo(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=255)
     query_name = models.CharField(max_length=255, default="")
+    score = models.IntegerField(default=0)
     # search_filter_name = models.CharField(max_length=255, default="")
 
     def __str__(self):
@@ -38,6 +39,7 @@ class Category(models.Model):
     eng_name = models.CharField(max_length=255, default="")  # для запросов
     is_all = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, default="")  # полный путь
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return self.full_name
@@ -52,13 +54,14 @@ class Category(models.Model):
 
 
 class Line(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, db_index=True)
     parent_line = models.ForeignKey("Line", related_name='subline', blank=True, on_delete=models.CASCADE, null=True)
     is_all = models.BooleanField(default=False)
     view_name = models.CharField(max_length=255, default="")  # для отображения в фильтрах
     full_name = models.CharField(max_length=255, default="")  # полный путь
     full_eng_name = models.CharField(max_length=255, default="", db_index=True)  # для отправки запроса
     search_filter_name = models.CharField(max_length=255, default="")
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return self.full_name
@@ -130,6 +133,7 @@ class Collab(models.Model):
     query_name = models.CharField(max_length=255, blank=True, null=True)
     is_main_collab = models.BooleanField(default=False)
     is_all = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -489,7 +493,11 @@ class SizeRow(models.Model):
 class SizeTranslationRows(models.Model):
     table = models.ForeignKey("SizeTable", blank=True, null=True, on_delete=models.CASCADE, related_name="rows")
     row = models.JSONField(blank=True, null=True)
-    is_one_size = models.BooleanField(default=False)
+    is_one_size = models.BooleanField(default=False, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['id']), models.Index(fields=['is_one_size'])]
 
     def __str__(self):
         return f"{self.table} {self.id}"

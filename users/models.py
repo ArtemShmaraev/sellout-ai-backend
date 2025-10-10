@@ -53,7 +53,7 @@ class User(AbstractUser):
         related_name='my_users'
     )
     patronymic = models.CharField(max_length=100, default="", null=True, blank=True)
-    verify_email = models.BooleanField(default=False)
+    verify_email = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20, default="")
     extra_contact = models.CharField(max_length=64, default="", blank=True)
 

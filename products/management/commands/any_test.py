@@ -24,31 +24,54 @@ from promotions.models import PromoCode
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation, UserStatus
 from products.tools import get_text
-
+import matplotlib.pyplot as plt
+from collections import Counter
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # product = Product.objects.filter(available_flag=False)
+        lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
+        json_string = json.dumps(lc, ensure_ascii=False)
+
+            # Запись JSON-строки в файл
+        with open("lc.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+        # print(lc)
+        # Используйте Counter для подсчета уникальных значений параметра rel_num
+        # rel_num_counts = Counter(lc)
+        # rel_nums = list(rel_num_counts.keys())
+        # counts = list(rel_num_counts.values())
+        # plt.figure(figsize=(10, 6))
+        # plt.bar(rel_nums, counts, width=0.8, align='center')
+        # plt.xlabel('rel_num')
+        # plt.ylabel('Количество')
+        # plt.title('Распределение параметра rel_num')
+        # plt.xticks(rotation=45)  # Поворачиваем подписи оси X для лучшей читаемости
+        # plt.tight_layout()
+        # plt.show()
+
+        # pr = Product.objects.get(manufacturer_sku="dh7722-001")
+        # print(pr.slug)
+        # # product = Product.objects.filter(available_flag=False)
         # product.delete()
-        print('cerf')
-        duplicates = Product.objects.values('spu_id', 'property_id').annotate(count=Count('id')).filter(count__gt=1)
-        print(duplicates.count())
-        k = 0
+        # print('cerf')
+        # duplicates = Product.objects.values('spu_id', 'property_id').annotate(count=Count('id')).filter(count__gt=1)
+        # print(duplicates.count())
+        # k = 0
 
         # min_ids = Product.objects.values('spu_id', 'property_id').annotate(min_id=Min('id'))
         # print(duplicates)
-        for duplicate in duplicates:
-            k += 1
-            # products_to_delete = Product.objects.filter(spu_id=duplicate['spu_id'],
-            #                                             property_id=duplicate['property_id'],
-            #                                             id__gt=duplicate['min_id'])
-            prs = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id'], available_flag=False)
-            prs.delete()
-            prs2 = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).order_by("id")[1:].values_list("id", flat=True)
-            prs_d = Product.objects.filter(id__in=prs2)
-            prs_d.delete()
-            print(k, Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).values_list("id", flat=True))
+        # for duplicate in duplicates:
+        #     k += 1
+        #     # products_to_delete = Product.objects.filter(spu_id=duplicate['spu_id'],
+        #     #                                             property_id=duplicate['property_id'],
+        #     #                                             id__gt=duplicate['min_id'])
+        #     prs = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id'], available_flag=False)
+        #     prs.delete()
+        #     prs2 = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).order_by("id")[1:].values_list("id", flat=True)
+        #     prs_d = Product.objects.filter(id__in=prs2)
+        #     prs_d.delete()
+        #     print(k, Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).values_list("id", flat=True))
             # products_to_delete.delete()
         # Проходимся по дубликатам и удаляем лишние записи
         # for duplicate in duplicates:

@@ -1,6 +1,7 @@
 import functools
 import math
 import random
+from datetime import date, timedelta
 
 from django.core.cache import cache
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case, Count
@@ -25,13 +26,11 @@ from rest_framework.response import Response
 from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product
 from django.views.decorators.cache import cache_page
 
+
 # Используйте декоратор с заданным временем жизни (в секундах)
 
 
-
-
-
-def  get_product_page_header(request):
+def get_product_page_header(request):
     res = {}
 
     line = request.query_params.getlist('line')
@@ -84,7 +83,6 @@ def  get_product_page_header(request):
             header_photos_mobile = HeaderPhoto.objects.filter(type="mobile")
     count = header_photos_mobile.count()
 
-
     photo_mobile = header_photos_mobile[random.randint(0, count - 1)]
     text_mobile = get_product_text(photo_mobile, line, collab, category, new, recommendations)
     if text_mobile is None:
@@ -95,11 +93,10 @@ def  get_product_page_header(request):
     return res
 
 
-
 def count_queryset(request):
     params = request.GET.copy()
     queryset = filter_products(request)
-    print(queryset.query)
+    # print(queryset.query)
     # print(queryset.query)
     # print(queryset.query)
     if 'page' in params:
@@ -113,6 +110,32 @@ def count_queryset(request):
         count_q = math.ceil(queryset.count() / 60)
         cache.set(cache_count_key, (count_q), CACHE_TIME)
     return count_q
+
+
+def get_new_products():
+    cached_result = cache.get('new_products_cache')
+
+    # Если результат найден в кэше, возвращаем его
+    if cached_result:
+        return cached_result
+
+    current_date = date.today()
+
+    # Вычисляем дату, которая находится полгода назад
+    six_months_ago = current_date + timedelta(days=180)
+    filtered_products = Product.objects.filter(
+        Q(exact_date__lte=six_months_ago) &
+        (Q(gender__name='M') | Q(gender__name='F')) & Q(categories__name__in=["Обувь", "Одежда"])
+    )
+    sort_products = filtered_products.order_by("-exact_date").values_list("id", flat=True)[:600]
+    new_sneakers = filtered_products.filter(categories__name__in=["Кроссовки"]).order_by("-exact_date").values_list("id", flat=True)[:200]
+
+    result = Product.objects.filter(Q(id__in=sort_products) | Q(id__in=new_sneakers)).values_list("id", flat=True)
+
+    # Кэшируем результат на 10 минут
+    cache.set('new_products_cache', result, CACHE_TIME)
+    return result
+
 
 
 
@@ -155,8 +178,6 @@ def filter_products(request):
     level2_category_id = request.query_params.getlist('level2_category_id')
     title = request.query_params.get('title')
 
-
-
     if not available:
         queryset = queryset.filter(available_flag=True)
         # queryset = queryset.filter(product_units__availability=True)
@@ -177,7 +198,8 @@ def filter_products(request):
 
     new = params.get("new")
     if new and not query:
-        new_q = queryset.order_by('-exact_date')[:250]
+        # new_q = queryset.order_by('-exact_date')[:250]
+        new_q = get_new_products()
 
     recommendations = params.get("recommendations")
     if recommendations and not query:
@@ -203,7 +225,6 @@ def filter_products(request):
     if category:
         queryset = queryset.filter(categories__eng_name__in=category)
 
-
     filters = Q()
 
     # Фильтр по цене
@@ -220,10 +241,10 @@ def filter_products(request):
         else:
             filters &= Q(min_price__lte=price_max)
 
-
     # Фильтр по размеру
     if size:
-        filters &= ((Q(product_units__size__in=size) | (Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
+        filters &= ((Q(product_units__size__in=size) | (
+                    Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
 
     # Фильтр по наличию скидки
     if is_sale:
@@ -302,7 +323,6 @@ def get_product_page(request, context):
     t4 = time()
     print("t3", t4 - t3)
 
-
     default_ordering = "-rel_num"
     if new:
         default_ordering = "-exact_date"
@@ -318,7 +338,7 @@ def get_product_page(request, context):
                 min_price_product_unit=Subquery(
                     Product.objects.filter(pk=OuterRef('pk'))
                     .annotate(unit_min_price=Min('product_units__final_price', filter=(
-                        Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))))
+                            Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))))
                     .values('unit_min_price')[:1]
                 )
             )
@@ -331,8 +351,6 @@ def get_product_page(request, context):
         else:
             queryset = queryset.order_by(ordering)
 
-
-
     # paginator = CustomPagination()
     # Применяем пагинацию к списку объектов Product
     # paginated_products = paginator.paginate_queryset(queryset, request)
@@ -341,8 +359,6 @@ def get_product_page(request, context):
 
     t5 = time()
     print("t4", t5 - t4)
-
-
 
     start_index = (page_number - 1) * 60
     # print(queryset[0].id)
@@ -358,7 +374,7 @@ def get_product_page(request, context):
     t6 = time()
     print("t5", t6 - t5)
     t7 = time()
-    print("t6", t7-t6)
+    print("t6", t7 - t6)
     # t7 = time()
     # print("t6", t7 - t6)
     # queryset = list(serializer.data)

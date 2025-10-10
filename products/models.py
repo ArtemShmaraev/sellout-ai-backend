@@ -12,7 +12,7 @@ from users.models import UserStatus
 
 
 class Photo(models.Model):
-    url = models.CharField(max_length=512)
+    url = models.CharField(max_length=512, db_index=True)
 
     def __str__(self):
         return str(self.product)
@@ -471,7 +471,7 @@ class Product(models.Model):
 
 
 class SizeTable(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     filter_name = models.CharField(max_length=255, blank=True, null=True)
     category = models.ManyToManyField("Category", related_name='size_tables', blank=True)
     gender = models.ManyToManyField("Gender", related_name='size_tables', blank=True)

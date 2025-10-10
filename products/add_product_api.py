@@ -220,7 +220,6 @@ def add_product_api(data):
         else:
             row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
             sizes.append(row.id)
-
         platform_info = unit['platform_info']
         poizon_info = platform_info['poizon']
         del poizon_info['offers']
@@ -229,7 +228,6 @@ def add_product_api(data):
 
         show_true_offers = [offer for offer in unit['offers']]
         sort_offers = sorted(show_true_offers, key=lambda x: x["days_max"])
-
         ids = []
         if not create:
             units = product.product_units.filter(platform_info__poizon__header=header).order_by(
@@ -313,15 +311,16 @@ def add_product_api(data):
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
             product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
             product_unit.update_history()
-
+    t9 = time()
 
     for ost_unit in product.product_units.filter(availability=False):
         has_product_unit_in_cart = ShoppingCart.objects.filter(product_units=ost_unit).exists()
         if not has_product_unit_in_cart:
             ost_unit.delete()
-
+    t10 = time()
 
     product.update_price()
+    t11 = time()
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.filter(availability=True):
@@ -336,6 +335,7 @@ def add_product_api(data):
                 if s.id not in sizes_id:
                     sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
                     sizes_id.add(s.id)
+    t12 = time()
 
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
     product.available_sizes = sizes_info
@@ -344,17 +344,19 @@ def add_product_api(data):
     product.save()
 
     # print(product.slug)
+    t13 = time()
 
-
-    t8 = time()
     # print(t2-t1)
     # print(t3-t2)
     # print(t4-t3)
     # print(t5-t4)
     # print(t6-t5)
     # print(t7-t6)
-    # print(t8-t7)
-    # print(t8-t1)
+    # print(t9-t7)
+    # print(t10-t9)
+    # print(t11-t10)
+    # print(t12-t11)
+    # print(t13-t12)
     # print(product.slug)
     return product
 

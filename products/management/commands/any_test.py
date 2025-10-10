@@ -10,7 +10,7 @@ import json
 
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max
+from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min
 
 from orders.models import ShoppingCart, Status, OrderUnit, Order
 from orders.serializers import OrderSerializer
@@ -29,63 +29,91 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        order = Order.objects.all().order_by("-id").first()
-        print(order.invoice_data)
-        print(order.surname)
-        # pro = Product.objects.filter(colors__name="gray")
-        # print(pro.count())
-        # # pro.available_flag = False
-        # # pro.save()
-        # products = Product.objects.filter(available_flag=True, min_price=0)
-        # products.update(available_flag=False)
+        # product = Product.objects.filter(available_flag=False)
+        # product.delete()
+        print('cerf')
+        duplicates = Product.objects.values('spu_id', 'property_id').annotate(count=Count('id')).filter(count__gt=1)
+        print(duplicates.count())
+        k = 0
 
+        # min_ids = Product.objects.values('spu_id', 'property_id').annotate(min_id=Min('id'))
+        # print(duplicates)
+        for duplicate in duplicates:
+            k += 1
+            # products_to_delete = Product.objects.filter(spu_id=duplicate['spu_id'],
+            #                                             property_id=duplicate['property_id'],
+            #                                             id__gt=duplicate['min_id'])
+            prs = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id'], available_flag=False)
+            prs.delete()
+            prs2 = Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).order_by("id")[1:].values_list("id", flat=True)
+            prs_d = Product.objects.filter(id__in=prs2)
+            prs_d.delete()
+            print(k, Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).values_list("id", flat=True))
+            # products_to_delete.delete()
+        # Проходимся по дубликатам и удаляем лишние записи
+        # for duplicate in duplicates:
+        #     products_to_delete = Product.objects.filter(spu_id=duplicate['spu_id'],
+        #                                                 property_id=duplicate['property_id'])[1:]
+        #     # print(Product.objects.get(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']))
+        #     print(products_to_delete)
 
-        brands = list(Brand.objects.all().order_by("name").values_list("name", flat=True))
-        d = []
-        for brand in brands:
-            d.append({"name": brand, "score": 0})
-        json_string = json.dumps(d, ensure_ascii=False)
-
-        # Запись JSON-строки в файл
-        with open("brands_score.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
-
-        lines = list(Line.objects.all().order_by("name").values_list("name", flat=True))
-        d = []
-        for line in lines:
-            d.append({"name": line, "score": 0})
-        json_string = json.dumps(d, ensure_ascii=False)
-
-        # Запись JSON-строки в файл
-        with open("lines_score.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
-
-        collabs = list(Collab.objects.all().order_by("id").values_list("name", flat=True))
-        d = []
-        for collab in collabs:
-            d.append({"name": collab, "score": 0})
-        json_string = json.dumps(d, ensure_ascii=False)
-
-        # Запись JSON-строки в файл
-        with open("collabs_score.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
-
-        cats = list(Category.objects.all().order_by("id").values_list("name", flat=True))
-        d = []
-        for cat in cats:
-            d.append({"name": cat, "score": 0})
-        json_string = json.dumps(d, ensure_ascii=False)
-
-        # Запись JSON-строки в файл
-        with open("categories_score.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
-
-        print(len(brands))
-        print(len(cats))
-        print(len(collabs))
-        print(len(lines))
-
-        print(len(lines) + len(cats) + len(collabs) + len(brands))
+        #     order = Order.objects.all().order_by("-id").first()
+    #     print(order.invoice_data)
+    #     print(order.surname)
+    #     # pro = Product.objects.filter(colors__name="gray")
+    #     # print(pro.count())
+    #     # # pro.available_flag = False
+    #     # # pro.save()
+    #     # products = Product.objects.filter(available_flag=True, min_price=0)
+    #     # products.update(available_flag=False)
+    #
+    #
+    #     brands = list(Brand.objects.all().order_by("name").values_list("name", flat=True))
+    #     d = []
+    #     for brand in brands:
+    #         d.append({"name": brand, "score": 0})
+    #     json_string = json.dumps(d, ensure_ascii=False)
+    #
+    #     # Запись JSON-строки в файл
+    #     with open("brands_score.json", "w", encoding="utf-8") as file:
+    #         file.write(json_string)
+    #
+    #     lines = list(Line.objects.all().order_by("name").values_list("name", flat=True))
+    #     d = []
+    #     for line in lines:
+    #         d.append({"name": line, "score": 0})
+    #     json_string = json.dumps(d, ensure_ascii=False)
+    #
+    #     # Запись JSON-строки в файл
+    #     with open("lines_score.json", "w", encoding="utf-8") as file:
+    #         file.write(json_string)
+    #
+    #     collabs = list(Collab.objects.all().order_by("id").values_list("name", flat=True))
+    #     d = []
+    #     for collab in collabs:
+    #         d.append({"name": collab, "score": 0})
+    #     json_string = json.dumps(d, ensure_ascii=False)
+    #
+    #     # Запись JSON-строки в файл
+    #     with open("collabs_score.json", "w", encoding="utf-8") as file:
+    #         file.write(json_string)
+    #
+    #     cats = list(Category.objects.all().order_by("id").values_list("name", flat=True))
+    #     d = []
+    #     for cat in cats:
+    #         d.append({"name": cat, "score": 0})
+    #     json_string = json.dumps(d, ensure_ascii=False)
+    #
+    #     # Запись JSON-строки в файл
+    #     with open("categories_score.json", "w", encoding="utf-8") as file:
+    #         file.write(json_string)
+    #
+    #     print(len(brands))
+    #     print(len(cats))
+    #     print(len(collabs))
+    #     print(len(lines))
+    #
+    #     print(len(lines) + len(cats) + len(collabs) + len(brands))
 
 
         # print(products.count())

@@ -55,11 +55,15 @@ def get_product_page_header(request):
     elif line:
         header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
 
+
     elif collab:
         if "all" in collab:
             header_photos = header_photos.filter(~Q(collabs=None))
         else:
             header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
+
+    if not header_photos.exists():
+        header_photos = header_photos.filter(where="product_page")
 
     header_photos_desktop = header_photos.filter(type="desktop", rating=5)
     header_photos_mobile = header_photos.filter(type="mobile", rating=5)

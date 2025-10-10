@@ -277,11 +277,11 @@ class ShoppingCart(models.Model):
         # Обновить поле total_amount для текущей корзины
         self.total_amount = total_amount
         self.sale = sale
-
-        orders_count = Order.objects.filter(user=self.user).count()
-        if orders_count == 0:
-            sum_bonus += max(0, 1000 - max_bonus)
-            self.first_order_bonus = 1000
+        if user_status.is_base:
+            orders_count = Order.objects.filter(user=self.user).count()
+            if orders_count == 0:
+                sum_bonus += max(0, 1000 - max_bonus)
+                self.first_order_bonus = 1000
 
         # Выполнить проверку активности промокода и его применимости
         # Ваш код для проверки промокода здесь

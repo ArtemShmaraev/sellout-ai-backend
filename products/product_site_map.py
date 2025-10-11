@@ -25,7 +25,7 @@ class ProductSitemap(Sitemap):
         return 'weekly'
 
     def limit(self):
-        return 10000
+        return 20000
 
     def get_urls(self, page=1, site=None, protocol="https"):
         self.limit = self.limit()  # вызываем метод limit() и присваиваем его результат переменной limit

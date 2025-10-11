@@ -56,7 +56,7 @@ from django.shortcuts import render, redirect
 class SearchBySkuView(APIView):
     def get(self, request):
         params = request.query_params
-        type = params.get("page", "product")
+        type = params.get("type", "product")
         formatted_manufacturer_sku = params.get("formatted_manufacturer_sku")
         if type == "product":
             products = Product.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
@@ -65,6 +65,7 @@ class SearchBySkuView(APIView):
             dewu_infos = DewuInfo.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
             return Response(DewuInfoSerializer(dewu_infos, many=True).data)
         else:
+            print(formatted_manufacturer_sku)
             sg_infos = SGInfo.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
             return Response(SGInfoSerializer(sg_infos, many=True).data)
 

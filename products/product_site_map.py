@@ -11,10 +11,24 @@ class ProductSitemap(Sitemap):
     priority_default = 0.5
     #
     def items(self):
-        return Product.objects.filter(available_flag=True)
+        all_products = Product.objects.filter(available_flag=True)
+        total_products = all_products.count()
+        products_per_sitemap = total_products // 100
+
+        # Создаем список списков товаров для каждой карты
+        sitemaps = []
+        start_index = 0
+        end_index = products_per_sitemap
+        for i in range(100):
+            sitemap_products = all_products[start_index:end_index]
+            sitemaps.append(sitemap_products)
+            start_index = end_index
+            end_index += products_per_sitemap
+
+        return sitemaps
 
     def lastmod(self, obj):
-        return obj.last_upd   # Предполагается, что у вас есть поле updated_at в вашей модели Product
+        return obj.last_upd
 
     def location(self, obj):
         return reverse('product_detail', args=[obj.slug])  # Предположим, что ваш URL-путь к товару - 'product_detail'

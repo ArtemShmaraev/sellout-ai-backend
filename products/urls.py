@@ -44,7 +44,7 @@ router_material = routers.DefaultRouter()
 router_material.register("materials", MaterialViewSet, basename="materials")
 
 sitemaps = {
-    'products': ProductSitemap,
+    'products': ProductSitemap
 }
 
 urlpatterns = [

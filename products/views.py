@@ -30,6 +30,7 @@ from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Colla
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header, count_queryset
+from .product_site_map import ProductSitemap
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
@@ -49,8 +50,16 @@ from products.main_page import get_selection, get_photo_text, get_sellout_photo_
 from sellout.settings import CACHE_TIME
 from collections import OrderedDict
 from sellout.settings import HOST
-
+from django.contrib.sitemaps import views as sitemaps_views
 from django.shortcuts import render, redirect
+
+
+def sitemap_view(request):
+    sitemaps = {
+        'products': ProductSitemap,
+    }
+    response = sitemaps_views.sitemap(request, sitemaps)
+    return render(request, 'sitemap.xml', {'urls': response.content})
 
 
 class SearchBySkuView(APIView):
@@ -68,6 +77,7 @@ class SearchBySkuView(APIView):
             print(formatted_manufacturer_sku)
             sg_infos = SGInfo.objects.filter(formatted_manufacturer_sku=formatted_manufacturer_sku)
             return Response(SGInfoSerializer(sg_infos, many=True).data)
+
 
 def view_photo_for_rate(request):
     # Получаем случайное фото из базы данных
@@ -96,6 +106,7 @@ def view_photo_for_rate(request):
 
     return render(request, 'view_photo.html', {'photo': photo, "next_photo": photo.id + 1, "last_photo": photo.id - 1})
 
+
 def rate_photo(request):
     if request.method == 'POST':
         photo_id = int(request.POST['photo_id'])
@@ -107,11 +118,8 @@ def rate_photo(request):
         # Сохраняем оценку в базе данных
         # Здесь должен быть ваш код для сохранения оценки в модели Photo
         if HOST == "sellout.su":
-            return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id+1}")
-        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id+1}")
-
-
-
+            return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id + 1}")
+        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id + 1}")
 
 
 class ProductSlugAndPhoto(APIView):
@@ -158,6 +166,7 @@ class PhotoWhiteList(APIView):
         product.save()
         return Response("Готово")
 
+
 class AddPhotoBlackList(APIView):
     def get(self, request, product_id, photo_id):
         try:
@@ -180,6 +189,7 @@ class AddPhotoBlackList(APIView):
 
         return Response("Готово")
 
+
 class DewuInfoCount(APIView):
     def get(self, request):
         count = DewuInfo.objects.values_list("id", flat=True).count()
@@ -192,6 +202,7 @@ class HideProductView(APIView):
         product.update(available_flag=True)
         return Response("Готово")
 
+
 class HideProductSpiIdView(APIView):
     def get(self, request, spu_id, ):
         product = Product.objects.filter(spu_id=spu_id)
@@ -199,29 +210,32 @@ class HideProductSpiIdView(APIView):
         return Response("Готово")
 
 
-
 class PopularSpuIdView(APIView):
     def get(self, request):
         count = int(request.query_params.get('count', 5000))
-        popular_product = list(Product.objects.filter(available_flag=True, is_custom=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:count]
+        popular_product = list(
+            Product.objects.filter(available_flag=True, is_custom=False).values_list("spu_id", flat=True).order_by(
+                "-rel_num"))[:count]
 
-        other = list(Product.objects.filter(available_flag=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:10000]
-
+        other = list(
+            Product.objects.filter(available_flag=False).values_list("spu_id", flat=True).order_by("-rel_num"))[:10000]
 
         def remove_duplicates(lst):
             return list(OrderedDict.fromkeys(lst))
+
         popular_product = remove_duplicates(popular_product)
         return Response(popular_product)
+
 
 class UpdatePrice(APIView):
     def get(self, request):
         page = int(request.query_params.get('page', 1))
+
         def update_prices(products, start, end):
             for product_id in products[start:end]:
                 product = Product.objects.get(id=product_id)
                 with transaction.atomic():
                     product.update_price()
-
 
         # Получите все продукты, которые вы хотите обновить
         products = Product.objects.filter(available_flag=True).filter(actual_price=False).values_list("id", flat=True)
@@ -252,6 +266,8 @@ class UpdatePrice(APIView):
             thread.join()
 
         return Response("Цены успешно обновлены.")
+
+
 class AvailableSize(APIView):
     def get(self, request, product_id):
         try:
@@ -458,10 +474,6 @@ class MainPageBlocks(APIView):
         return response
 
 
-
-
-
-
 class ProductSimilarView(APIView):
 
     def get(self, request, product_id):
@@ -476,10 +488,12 @@ class ProductSimilarView(APIView):
                                 "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
-                another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).exclude(id=product.id).order_by("min_price")
+                another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).exclude(
+                    id=product.id).order_by("min_price")
                 if another_configuration.count() > 1:
                     res.append({"name": "Другие конфигурации",
-                            "products": ProductMainPageSerializer(another_configuration, many=True, context=context).data})
+                                "products": ProductMainPageSerializer(another_configuration, many=True,
+                                                                      context=context).data})
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -630,7 +644,6 @@ class ProductView(APIView):
             t_old = time()
             print(f"cache: {t_old - t_new}")
 
-
         # t5 = time()
         # # queryset = get_queryset_from_list_id(queryset)
         #
@@ -674,7 +687,6 @@ class SuggestSearch(APIView):
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
-
 
     def get(self, request, slug):
         try:
@@ -788,8 +800,6 @@ class CollabView(APIView):
             # Сохраните результат в кэш с уникальным ключом
             cache.set(cache_key, collabs, CACHE_TIME)
 
-
-
         return Response(collabs)
 
 
@@ -865,7 +875,6 @@ class SizeTableForFilter(APIView):
             # Попробуйте сначала получить результат из кэша
             size_tables = cache.get(cache_key)
 
-
             if size_tables is None:
                 size_tables = SizeTable.objects.filter(standard=True)
 
@@ -879,7 +888,7 @@ class SizeTableForFilter(APIView):
 
                 cache.set(cache_key, size_tables, CACHE_TIME)
             return Response(size_tables
-                )
+                            )
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

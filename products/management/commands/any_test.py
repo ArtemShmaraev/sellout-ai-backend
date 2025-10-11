@@ -16,7 +16,7 @@ from orders.models import ShoppingCart, Status, OrderUnit, Order
 from orders.serializers import OrderSerializer
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
+    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo
 from django.core.exceptions import ObjectDoesNotExist
 
 from products.serializers import ProductMainPageSerializer
@@ -36,12 +36,15 @@ class Command(BaseCommand):
         #     # Запись JSON-строки в файл
         # with open("lc.json", "w", encoding="utf-8") as file:
         #     file.write(json_string)
+        sgs = SGInfo.objects.filter(Q(formatted_manufacturer_sku=""))
+        sg = SGInfo.objects.all()
+        print(sg.count() - sgs.count())
+        print(sgs)
 
-
-        product = Product.objects.filter(product_units=None)
-        print(product.count())
-        for p in product:
-            print(p)
+        # product = Product.objects.filter(product_units=None)
+        # print(product.count())
+        # for p in product:
+        #     print(p)
         # print(lc)
         # Используйте Counter для подсчета уникальных значений параметра rel_num
         # rel_num_counts = Counter(lc)

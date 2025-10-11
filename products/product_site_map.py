@@ -5,16 +5,16 @@ from .models import Product
 
 class ProductSitemap(Sitemap):
     def items(self):
-        return Product.objects.filter(available_flag=True)
+        return Product.objects.filter(available_flag=True).values("slug", "last_upd", "rel_num")
 
     def lastmod(self, obj):
-        return obj.last_upd
+        return obj['last_upd']
 
     def location(self, obj):
-        return reverse('product_detail', args=[obj.slug])
+        return reverse('product_detail', args=[obj['slug']])
 
     def calculate_priority(self, obj):
-        rel_num = obj.rel_num
+        rel_num = obj['rel_num']
         priority = math.log2(rel_num + 1) / 25
         return round(priority, 2)
 
@@ -25,7 +25,7 @@ class ProductSitemap(Sitemap):
         return 'weekly'
 
     def limit(self):
-        return 1000
+        return 10000
 
     def get_urls(self, page=1, site=None, protocol="https"):
         self.limit = self.limit()  # вызываем метод limit() и присваиваем его результат переменной limit

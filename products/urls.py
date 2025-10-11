@@ -1,7 +1,9 @@
+from django.contrib.sitemaps.views import sitemap
 from rest_framework import routers
 from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
     CollabViewSet, MaterialViewSet
 from django.urls import include, path
+from .product_site_map import ProductSitemap
 from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, \
     ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
@@ -41,6 +43,10 @@ router_collection.register("collections", CollectionViewSet, basename="collectio
 router_material = routers.DefaultRouter()
 router_material.register("materials", MaterialViewSet, basename="materials")
 
+sitemaps = {
+    'products': ProductSitemap,
+}
+
 urlpatterns = [
     path("products/", ProductView.as_view(), name="home"),
     path("", include(router_collection.urls)),
@@ -48,7 +54,7 @@ urlpatterns = [
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
-    path('slug/<str:slug>', ProductSlugView.as_view()), path('similar/<int:product_id>', ProductSimilarView.as_view()),
+    path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'), path('similar/<int:product_id>', ProductSimilarView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
     path("update/<int:product_id>", ProductUpdateView.as_view()), path("size", ProductSizeView.as_view()),
@@ -71,5 +77,8 @@ urlpatterns = [
     path("product_photo_and_slug", ProductSlugAndPhoto.as_view()),
     path("add_list_spu_id_products", AddListProductsView.as_view()), path("products_count", ProductsCountView.as_view()),
     path('pict', view_photo_for_rate, name='view_photo'),
-    path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view())
+    path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()), path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
+
+
+

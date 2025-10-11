@@ -30,12 +30,18 @@ from collections import Counter
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
-        json_string = json.dumps(lc, ensure_ascii=False)
+        # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
+        # json_string = json.dumps(lc, ensure_ascii=False)
+        #
+        #     # Запись JSON-строки в файл
+        # with open("lc.json", "w", encoding="utf-8") as file:
+        #     file.write(json_string)
 
-            # Запись JSON-строки в файл
-        with open("lc.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
+
+        product = Product.objects.filter(product_units=None)
+        print(product.count())
+        for p in product:
+            print(p)
         # print(lc)
         # Используйте Counter для подсчета уникальных значений параметра rel_num
         # rel_num_counts = Counter(lc)

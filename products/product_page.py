@@ -63,6 +63,7 @@ def get_product_page_header(request):
             header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
 
     if not header_photos.exists():
+        header_photos = HeaderPhoto.objects.all()
         header_photos = header_photos.filter(where="product_page")
 
     header_photos_desktop = header_photos.filter(type="desktop", rating=5)

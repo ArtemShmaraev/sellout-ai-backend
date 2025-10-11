@@ -23,16 +23,16 @@ class Command(BaseCommand):
 
                 # Если запись не найдена, создаем новую запись
                 if model_instance:
+                    if "все" not in model_instance.name.lower() and "вся" not in model_instance.name.lower():
                     # Если запись найдена, обновляем поле score
-                    model_instance.score = score
-                    model_instance.save()
+                        model_instance.score = score
+                        model_instance.save()
                 else:
                     print(model_name)
 
-        # update_model_scores(Line, data)
-        # update_model_scores(Category, "categories_score.json")
-        # update_model_scores(Collab, "collabs_score.json")
-        # update_model_scores(Brand, "brands_score.json")
+        update_model_scores(Category, "categories_score.json")
+        update_model_scores(Collab, "collabs_score.json")
+        update_model_scores(Brand, "brands_score.json")
         update_model_scores(Line, "lines_score.json")
 
         print("Данные о брендах успешно обновлены.")

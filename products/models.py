@@ -40,6 +40,7 @@ class Category(models.Model):
     is_all = models.BooleanField(default=False)
     full_name = models.CharField(max_length=255, default="")  # полный путь
     score = models.IntegerField(default=0)
+    score_product_page = models.IntegerField(default=0)
 
     def __str__(self):
         return self.full_name
@@ -62,6 +63,7 @@ class Line(models.Model):
     full_eng_name = models.CharField(max_length=255, default="", db_index=True)  # для отправки запроса
     search_filter_name = models.CharField(max_length=255, default="")
     score = models.IntegerField(default=0)
+    score_product_page = models.IntegerField(default=0)
 
     def __str__(self):
         return self.full_name
@@ -134,6 +136,7 @@ class Collab(models.Model):
     is_main_collab = models.BooleanField(default=False)
     is_all = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
+    score_product_page = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -286,6 +289,7 @@ class Product(models.Model):
     level1_category_id = models.IntegerField(default=0)
     level2_category_id = models.IntegerField(default=0)
     formatted_manufacturer_sku = models.CharField(default="", max_length=128)
+    score_product_page = models.IntegerField(default=0)
 
     objects = ProductManager()
 

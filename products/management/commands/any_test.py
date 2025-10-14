@@ -33,13 +33,16 @@ class Command(BaseCommand):
         # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
         # json_string = json.dumps(lc, ensure_ascii=False)
         #
+        prs = Product.objects.filter(categories__name="Кроссовки")
+        print(prs.count())
+        print(Product.objects.all().count())
         #     # Запись JSON-строки в файл
         # with open("lc.json", "w", encoding="utf-8") as file:
         #     file.write(json_string)
-        sgs = SGInfo.objects.filter(Q(formatted_manufacturer_sku=""))
-        sg = SGInfo.objects.all()
-        print(sg.count() - sgs.count())
-        print(sgs)
+        # sgs = SGInfo.objects.filter(Q(formatted_manufacturer_sku=""))
+        # sg = SGInfo.objects.all()
+        # print(sg.count() - sgs.count())
+        # print(sgs)
 
         # product = Product.objects.filter(product_units=None)
         # print(product.count())

@@ -354,49 +354,51 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         depth = 2
 
     def get_price(self, obj):
-        size = self.context.get('size')
-        from .tools import update_price
-        update_price(obj)
+        return {"start_price": obj.score_product_page, "final_price": obj.score_product_page}
 
-        # Проверьте, соответствуют ли значения фильтров product_unit
-        filters = Q()
-
-        if size:
-            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
-
-        wl = self.context.get('wishlist')
-        if wl and not wl.user.user_status.base:
-            user_status = wl.user.user_status
-            if filters:
-                filters &= Q(availability=True)
-                min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-                filters &= Q(final_price=min_final_price)
-                unit = \
-                obj.product_units.filter(filters).order_by(
-                    "final_price")[0]
-            else:
-                if obj.min_price == 0:
-                    return {"final_price": 0, "start_price": 0}
-                filters &= Q(availability=True)
-                filters &= Q(final_price=obj.min_price)
-                unit = \
-                    obj.product_units.filter(filters).order_by(
-                        "final_price")[0]
-            return formula_price(obj, unit, user_status)
-
-        else:
-            if filters:
-                filters &= Q(availability=True)
-                min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-                filters &= Q(final_price=min_final_price)
-                corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
-
-                return {"final_price": min_final_price, "start_price": corresponding_start_price}
-
-            else:
-                if not obj.actual_price:
-                    obj.update_price()
-                return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
+        # size = self.context.get('size')
+        # from .tools import update_price
+        # update_price(obj)
+        #
+        # # Проверьте, соответствуют ли значения фильтров product_unit
+        # filters = Q()
+        #
+        # if size:
+        #     filters &= (Q(size__in=size) | Q(size__is_one_size=True))
+        #
+        # wl = self.context.get('wishlist')
+        # if wl and not wl.user.user_status.base:
+        #     user_status = wl.user.user_status
+        #     if filters:
+        #         filters &= Q(availability=True)
+        #         min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+        #         filters &= Q(final_price=min_final_price)
+        #         unit = \
+        #         obj.product_units.filter(filters).order_by(
+        #             "final_price")[0]
+        #     else:
+        #         if obj.min_price == 0:
+        #             return {"final_price": 0, "start_price": 0}
+        #         filters &= Q(availability=True)
+        #         filters &= Q(final_price=obj.min_price)
+        #         unit = \
+        #             obj.product_units.filter(filters).order_by(
+        #                 "final_price")[0]
+        #     return formula_price(obj, unit, user_status)
+        #
+        # else:
+        #     if filters:
+        #         filters &= Q(availability=True)
+        #         min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+        #         filters &= Q(final_price=min_final_price)
+        #         corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
+        #
+        #         return {"final_price": min_final_price, "start_price": corresponding_start_price}
+        #
+        #     else:
+        #         if not obj.actual_price:
+        #             obj.update_price()
+        #         return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
 
         #
 

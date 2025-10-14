@@ -47,17 +47,21 @@ class Command(BaseCommand):
 
 
                 # collab = product.collab
-                collab_score = 0
-                # if collab is not None:
-                #     collab_score = collab.score_product_page
-                #     num += 1
-                # print(total_score_line)
+
 
                 if num > 0:
                     # Рассчитываем среднее значение поля score
-                    average_score_type = round((total_score_line + collab_score) / (num))
+                    average_score_type = round((total_score_line) / (num))
                 else:
                     average_score_type = 0
+
+                collab_score = 0
+                collab = product.collab
+                if collab is not None:
+                    average_score_type += collab.score_product_page
+                # collab_score = collab.score_product_page
+                #     num += 1
+                # print(total_score_line)
 
                 normalize_rel_num = min(100, round(math.log(product.rel_num, 1.16)))
 

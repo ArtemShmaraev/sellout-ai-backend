@@ -1,0 +1,386 @@
+[
+  {
+    "name": "adidas by Stella McCartney",
+    "score": 20
+  },
+  {
+    "name": "adidas x Alexander Wang",
+    "score": 20
+  },
+  {
+    "name": "adidas x Atmos",
+    "score": 10
+  },
+  {
+    "name": "adidas x Bad Bunny",
+    "score": 10
+  },
+  {
+    "name": "adidas x Balenciaga",
+    "score": 10
+  },
+  {
+    "name": "adidas x Bape",
+    "score": 10
+  },
+  {
+    "name": "adidas x Fear of God",
+    "score": 10
+  },
+  {
+    "name": "adidas x Gucci",
+    "score": 10
+  },
+  {
+    "name": "adidas x Human Made",
+    "score": 10
+  },
+  {
+    "name": "adidas x Ivy Park",
+    "score": 10
+  },
+  {
+    "name": "adidas x KITH",
+    "score": 10
+  },
+  {
+    "name": "adidas x Pharrell Williams",
+    "score": 10
+  },
+  {
+    "name": "adidas x Prada",
+    "score": 10
+  },
+  {
+    "name": "adidas x Raf Simons",
+    "score": 10
+  },
+  {
+    "name": "adidas x Sean Wotherspoon",
+    "score": 10
+  },
+  {
+    "name": "adidas x UNDEFEATED",
+    "score": 10
+  },
+  {
+    "name": "adidas Yeezy",
+    "score": 10
+  },
+  {
+    "name": "Asics x Awake NY",
+    "score": 10
+  },
+  {
+    "name": "Asics x Concepts",
+    "score": 10
+  },
+  {
+    "name": "Asics x JJJJound",
+    "score": 10
+  },
+  {
+    "name": "Asics x Kiko Kostadinov",
+    "score": 10
+  },
+  {
+    "name": "Asics x KITH",
+    "score": 10
+  },
+  {
+    "name": "Cactus Jack by Travis Scott x Dior",
+    "score": 20
+  },
+  {
+    "name": "Cactus Jack by Travis Scott x McDonald's",
+    "score": 0
+  },
+  {
+    "name": "Converse x A-Cold-Wall*",
+    "score": 10
+  },
+  {
+    "name": "Converse x Comme des Garçons",
+    "score": 10
+  },
+  {
+    "name": "Converse x GOLF le FLEUR*",
+    "score": 10
+  },
+  {
+    "name": "Converse x JW Anderson",
+    "score": 10
+  },
+  {
+    "name": "Converse x KITH",
+    "score": 10
+  },
+  {
+    "name": "Converse x Off-White",
+    "score": 10
+  },
+  {
+    "name": "Converse x Rick Owens DRKSHDW",
+    "score": 10
+  },
+  {
+    "name": "Converse x Stüssy",
+    "score": 10
+  },
+  {
+    "name": "Crocs x Salehe Bembury",
+    "score": 0
+  },
+  {
+    "name": "Dior x Birkenstock",
+    "score": 0
+  },
+  {
+    "name": "H&M x Mugler",
+    "score": 0
+  },
+  {
+    "name": "Jordan x Dior",
+    "score": 10
+  },
+  {
+    "name": "Jordan x J.Balvin",
+    "score": 10
+  },
+  {
+    "name": "Jordan x Just Don",
+    "score": 10
+  },
+  {
+    "name": "Jordan x OVO",
+    "score": 10
+  },
+  {
+    "name": "Jordan x Trophy Room",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Aimé Leon Dore",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Atmos",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Bodega",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Casablanca",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Concepts",
+    "score": 10
+  },
+  {
+    "name": "New Balance x JJJJound",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Joe Freshgoods",
+    "score": 10
+  },
+  {
+    "name": "New Balance x KITH",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Salehe Bembury",
+    "score": 10
+  },
+  {
+    "name": "New Balance x Stone Island",
+    "score": 10
+  },
+  {
+    "name": "Nike x A-Cold-Wall*",
+    "score": 10
+  },
+  {
+    "name": "Nike x ACRONYM",
+    "score": 20
+  },
+  {
+    "name": "Nike x A Ma Maniére",
+    "score": 10
+  },
+  {
+    "name": "Nike x Ambush",
+    "score": 10
+  },
+  {
+    "name": "Nike x Atmos",
+    "score": 10
+  },
+  {
+    "name": "Nike x Billie Eilish",
+    "score": 10
+  },
+  {
+    "name": "Nike x Bodega",
+    "score": 10
+  },
+  {
+    "name": "Nike x Cactus Plant Flea Market",
+    "score": 10
+  },
+  {
+    "name": "Nike x Clot",
+    "score": 10
+  },
+  {
+    "name": "Nike x Comme des Garçons",
+    "score": 10
+  },
+  {
+    "name": "Nike x Concepts",
+    "score": 10
+  },
+  {
+    "name": "Nike x Drake NOCTA",
+    "score": 20
+  },
+  {
+    "name": "Nike x Fear of God",
+    "score": 20
+  },
+  {
+    "name": "Nike x Fragment Design",
+    "score": 10
+  },
+  {
+    "name": "Nike x Jacquemus",
+    "score": 20
+  },
+  {
+    "name": "Nike x KITH",
+    "score": 10
+  },
+  {
+    "name": "Nike x Louis Vuitton",
+    "score": 10
+  },
+  {
+    "name": "Nike x MMW",
+    "score": 10
+  },
+  {
+    "name": "Nike x Off-White",
+    "score": 10
+  },
+  {
+    "name": "Nike x Parra",
+    "score": 10
+  },
+  {
+    "name": "Nike x Patta",
+    "score": 10
+  },
+  {
+    "name": "Nike x Peaceminusone",
+    "score": 10
+  },
+  {
+    "name": "Nike x Sacai",
+    "score": 20
+  },
+  {
+    "name": "Nike x Sean Wotherspoon",
+    "score": 10
+  },
+  {
+    "name": "Nike x Serena Williams",
+    "score": 10
+  },
+  {
+    "name": "Nike x Stüssy",
+    "score": 10
+  },
+  {
+    "name": "Nike x Supreme",
+    "score": 10
+  },
+  {
+    "name": "Nike x Supreme x CDG",
+    "score": 10
+  },
+  {
+    "name": "Nike x Tom Sachs",
+    "score": 20
+  },
+  {
+    "name": "Nike x Travis Scott",
+    "score": 10
+  },
+  {
+    "name": "Nike x UNDEFEATED",
+    "score": 20
+  },
+  {
+    "name": "Nike x UNDERCOVER",
+    "score": 20
+  },
+  {
+    "name": "Nike x Union",
+    "score": 10
+  },
+  {
+    "name": "Supreme x Burberry",
+    "score": 0
+  },
+  {
+    "name": "Supreme x Comme des Garçons",
+    "score": 0
+  },
+  {
+    "name": "Supreme x Jean Paul Gaultier",
+    "score": 0
+  },
+  {
+    "name": "Supreme x Lacoste",
+    "score": 0
+  },
+  {
+    "name": "Supreme x Levi's",
+    "score": 0
+  },
+  {
+    "name": "Supreme x Stone Island",
+    "score": 0
+  },
+  {
+    "name": "Supreme x The North Face",
+    "score": 0
+  },
+  {
+    "name": "UNIQLO x Kaws",
+    "score": 0
+  },
+  {
+    "name": "Vans x Fear of God",
+    "score": 10
+  },
+  {
+    "name": "Vans x Supreme",
+    "score": 10
+  },
+  {
+    "name": "YEEZY x Gap",
+    "score": 0
+  },
+  {
+    "name": "Все коллаборации",
+    "score": 0
+  },
+  {
+    "name": "Другие коллаборации",
+    "score": 0
+  }
+]

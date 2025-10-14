@@ -28,13 +28,14 @@ class Command(BaseCommand):
                     # Если запись найдена, обновляем поле score
                     model_instance.score_product_page = score
                     model_instance.save()
+                    print(model_instance.name)
                 else:
                     print(model_name)
 
         # update_model_scores(Category, "categories_score.json")
-        # update_model_scores(Collab, "collabs_score.json")
+        update_model_scores(Collab, "collab_score_product_page.json")
         # update_model_scores(Brand, "brands_score.json")
-        update_model_scores(Line, "lines_score_product_page.json")
+        # update_model_scores(Line, "lines_score_product_page.json")
 
         print("Данные о брендах успешно обновлены.")
 

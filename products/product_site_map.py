@@ -1,4 +1,6 @@
 import math
+import datetime
+
 from django.urls import reverse
 from django.contrib.sitemaps import Sitemap
 from .models import Product
@@ -8,8 +10,8 @@ class ProductSitemap(Sitemap):
         return Product.objects.filter(available_flag=True).values("slug", "last_upd", "rel_num")
 
     def lastmod(self, obj):
-        return obj['last_upd'].strftime("%Y-%m-%dT%H:%M:%SZ")
-
+        date = obj['last_upd']
+        return date
     def location(self, obj):
         return reverse('product_detail', args=[obj['slug']])
 

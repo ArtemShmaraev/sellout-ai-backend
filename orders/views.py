@@ -311,6 +311,7 @@ class CheckOutView(APIView):
                 order.evenly_distribute_discount()
                 order.get_invoice_data()
                 # print(order.invoice_data)
+                serializer = OrderSerializer(order).data
 
 
                 if not user.user_status.base:
@@ -324,7 +325,7 @@ class CheckOutView(APIView):
 
                 # order.accrue_bonuses()
 
-                serializer = OrderSerializer(order).data
+
                 # print(serializer)
 
                 # print(serializer)

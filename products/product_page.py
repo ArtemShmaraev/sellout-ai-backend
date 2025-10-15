@@ -335,6 +335,7 @@ def get_product_page(request, context):
         default_ordering = ""
 
     ordering = params.get('ordering', default_ordering)
+    ordering = ordering.replace("rel_num", "score_product_page")
     if ordering in ['exact_date', 'rel_num', '-rel_num', "-exact_date"]:
         queryset = queryset.order_by(ordering)
     elif ordering == "min_price" or ordering == "-min_price":
@@ -354,7 +355,6 @@ def get_product_page(request, context):
                 queryset = queryset.order_by("-min_price_product_unit")
 
         else:
-            ordering = ordering.replace("rel_num", "score_product_page")
             queryset = queryset.order_by(ordering)
 
     # paginator = CustomPagination()

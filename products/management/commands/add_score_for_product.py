@@ -1,10 +1,7 @@
 import math
 import random
 from itertools import count
-from time import time
 
-import requests
-from django.core import signing
 from django.core.management.base import BaseCommand
 import json
 
@@ -12,21 +9,9 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min, Sum
 
-from orders.models import ShoppingCart, Status, OrderUnit, Order
-from orders.serializers import OrderSerializer
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
     HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo
-from django.core.exceptions import ObjectDoesNotExist
-
-from products.serializers import ProductMainPageSerializer
-from promotions.models import PromoCode
-from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus
-from products.tools import get_text
-import matplotlib.pyplot as plt
-from collections import Counter
-
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
@@ -67,6 +52,7 @@ class Command(BaseCommand):
 
                 total_score = min(100, round((average_score_type * 0.5) + (normalize_rel_num * 0.5)))
                 product.score_product_page = total_score
+                print(total_score)
                 product.save()
                 # print(product.score_product_page, normalize_rel_num, average_score_type)
 

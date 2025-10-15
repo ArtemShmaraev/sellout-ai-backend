@@ -17,46 +17,44 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        products = Product.objects.filter(categories__name__in=['Кеды', "Кроссовки"], available_flag=True, score_product_page=0)
+        products = Product.objects.filter(categories__name__in=['Кеды', "Кроссовки"], available_flag=True)
 
-        print(products)
+        # print(products)
         ck = products.count()
         print(ck)
         s = []
         k = 0
         t = time()
-        with open('likes.txt', 'w') as f:
+        for page in range(0, products.count(), 100):
+            page_products = products[page:page + 100]
+            for product in page_products:
+                k += 1
+                if k % 1000 == 0:
+                    print(k, ck, time() - t)
+                # # cat = product.categories.order_by("-id").first()
+                total_score_line = product.lines.all().aggregate(Sum('score_product_page'))['score_product_page__sum']
+                num = product.lines.count()
 
-            for page in range(0, products.count(), 100):
-                page_products = products[page:page + 100]
-                for product in page_products:
-                    k += 1
-                    if k % 1000 == 0:
-                        print(k, ck, time() - t)
-                    # # cat = product.categories.order_by("-id").first()
-                    total_score_line = product.lines.all().aggregate(Sum('score_product_page'))['score_product_page__sum']
-                    num = product.lines.count()
+                if num > 0:
+                    # Рассчитываем среднее значение поля score
+                    average_score_type = round((total_score_line) / (num))
+                else:
+                    average_score_type = 0
 
+                collab = product.collab
+                if collab is not None:
+                    average_score_type += collab.score_product_page
 
+                if product.rel_num > 0:
+                    normalize_rel_num = min(10000, round(math.log(product.rel_num, 1.0016)))
+                else:
+                    normalize_rel_num = 0
+                # print(normalize_rel_num)
 
-                    if num > 0:
-                        # Рассчитываем среднее значение поля score
-                        average_score_type = round((total_score_line) / (num))
-                    else:
-                        average_score_type = 0
+                total_score = min(10000, round((average_score_type * 0.5 * 100) + (normalize_rel_num * 0.5)))
+                product.score_product_page = total_score
+                product.save()
 
-
-                    collab = product.collab
-                    if collab is not None:
-                        average_score_type += collab.score_product_page
-
-                    if product.rel_num > 0:
-                        normalize_rel_num = min(100, round(math.log(product.rel_num, 1.16)))
-                    else:
-                        normalize_rel_num = 0
-
-                    total_score = min(100, round((average_score_type * 0.5) + (normalize_rel_num * 0.5)))
-                    product.score_product_page = total_score
 
 
 
@@ -72,7 +70,7 @@ class Command(BaseCommand):
 
 
                     # print(total_score)
-                    product.save()
+
                     # print(product.score_product_page, normalize_rel_num, average_score_type)
 
 

@@ -33,9 +33,25 @@ class Command(BaseCommand):
         # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
         # json_string = json.dumps(lc, ensure_ascii=False)
         #
-        prs = Product.objects.filter(categories__name="Кроссовки")
-        print(prs.count())
-        print(Product.objects.all().count())
+        brands = Brand.objects.all()
+        cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся').exclude(name__in=['Кроссовки', "Кеды"]).exclude(parent_category__name="Кроссовки")
+        d = []
+        for brand in brands:
+            for cat in cats:
+                d.append({"category": cat.name, "brand": brand.name, "score": 0})
+
+        print()
+
+        json_string = json.dumps(d, ensure_ascii=False)
+
+            # Запись JSON-строки в файл
+        with open("brand_and_category_score.json", "w", encoding="utf-8") as file:
+            file.write(json_string)
+
+
+        # prs = Product.objects.filter(categories__name="Кроссовки")
+        # print(prs.count())
+        # print(Product.objects.all().count())
         #     # Запись JSON-строки в файл
         # with open("lc.json", "w", encoding="utf-8") as file:
         #     file.write(json_string)
@@ -107,11 +123,7 @@ class Command(BaseCommand):
     #     d = []
     #     for brand in brands:
     #         d.append({"name": brand, "score": 0})
-    #     json_string = json.dumps(d, ensure_ascii=False)
-    #
-    #     # Запись JSON-строки в файл
-    #     with open("brands_score.json", "w", encoding="utf-8") as file:
-    #         file.write(json_string)
+
     #
     #     lines = list(Line.objects.all().order_by("name").values_list("name", flat=True))
     #     d = []

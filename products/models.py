@@ -290,6 +290,7 @@ class Product(models.Model):
     level2_category_id = models.IntegerField(default=0)
     formatted_manufacturer_sku = models.CharField(default="", max_length=128)
     score_product_page = models.IntegerField(default=0)
+    likes_month = models.IntegerField(default=0)
 
     objects = ProductManager()
 

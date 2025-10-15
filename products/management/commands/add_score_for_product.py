@@ -50,8 +50,10 @@ class Command(BaseCommand):
                     if collab is not None:
                         average_score_type += collab.score_product_page
 
-
-                    normalize_rel_num = min(100, round(math.log(product.rel_num, 1.16)))
+                    if product.rel_num > 0:
+                        normalize_rel_num = min(100, round(math.log(product.rel_num, 1.16)))
+                    else:
+                        normalize_rel_num = 0
 
                     total_score = min(100, round((average_score_type * 0.5) + (normalize_rel_num * 0.5)))
                     product.score_product_page = total_score

@@ -27,7 +27,7 @@ class Command(BaseCommand):
         t = time()
         with open('likes.txt', 'w') as f:
 
-            for page in range(0, 1000, 100):
+            for page in range(0, products.count(), 100):
                 page_products = products[page:page + 100]
                 for product in page_products:
                     k += 1

@@ -124,6 +124,16 @@ def get_new_products():
     if cached_result:
         return cached_result
 
+    s_category = ['canvas_shoes', 'high_top_sneakers', 'low_top_sneakers', 'basketball_sneakers']
+    s_line = ['yeezy', 'adidas_campus', 'adidas_forum', 'adidas_gazelle', 'adidas_samba', 'adidas_stan_smith', 'adidas_superstar', 'adidas_ultraboost', 'adidas_human_race', 'adidas_nmd', 'adidas_zx', 'adidas_adilette', 'adidas_nizza', 'adidas_eqt', 'adidas_ozweego', 'adidas_4d', 'adidas_harden', 'adidas_trae_young', 'adidas_dame_(damian_lillard)', 'adidas_d_rose', 'asics_gel-lyte', 'asics_gel-flux', 'asics_gel-contend', 'asics_gel-cumulus', 'asics_gel-excite', 'asics_gel-nyc', 'asics_gel-nimbus', 'asics_gel-quantum', 'asics_gel-kayano', 'asics_gel-kahana', 'asics_gel-1090', 'asics_gel-1130', 'asics_magic_speed', 'asics_gt', 'converse_chuck_taylor', 'converse_chuck_taylor_run_star', 'converse_one_star', 'converse_pro_leather', 'converse_all_star_pro_bb', 'jordan', 'new_balance_237', 'new_balance_327', 'new_balance_530', 'new_balance_550', 'new_balance_650', 'new_balance_580', 'new_balance_574', 'new_balance_9060', 'new_balance_997', 'new_balance_990', 'new_balance_991', 'new_balance_992', 'new_balance_993', 'new_balance_1906r', 'new_balance_2002r', 'new_balance_57%2F40', 'nike_dunk', 'nike_air_force_1', 'nike_air_max', 'nike_blazer', 'nike_zoom', 'nike_vapormax', 'nike_cortez', 'nike_air_trainer', 'nike_react', 'nike_kyrie_irving', 'nike_lebron_james', 'nike_kd_(kevin_durant)', 'nike_freak_(giannis_antetokounmpo)', 'nike_kobe_bryant', 'nike_pg_(paul_george)', 'nike_ja_morant', 'nike_air_huarache', 'nike_air_more_uptempo', 'nike_air_presto', 'nike_foamposite', 'vans_old_skool', 'vans_knu', 'vans_sk8', 'vans_ward', 'vans_comfycush', 'vans_era', 'vans_style_36', 'vans_half_cab', 'vans_slip-on', 'vans_authentic', 'puma_mb']
+
+    s_products = Product.objects.filter(Q(available_flag=True) & Q(is_custom=False) &
+                                        (Q(gender__name='M') | Q(gender__name='F')) &
+                                        Q(lines__full_eng_name__in=s_line) &
+                                        Q(categories__eng_name__in=s_category)).values_list("id", flat=True).order_by("-exact_date")[:1800]
+    s_products = Product.objects.filter(id__in=s_products).values_list("id", flat=True).order_by("rel_num")[:1000]
+
+
     current_date = date.today()
 
     # Вычисляем дату, которая находится полгода назад
@@ -132,10 +142,9 @@ def get_new_products():
         Q(exact_date__lte=six_months_ago) &
         (Q(gender__name='M') | Q(gender__name='F')) & Q(categories__name__in=["Обувь", "Одежда"])
     )
-    sort_products = filtered_products.order_by("-exact_date").values_list("id", flat=True)[:600]
-    new_sneakers = filtered_products.filter(categories__name__in=["Кроссовки"]).order_by("-exact_date").values_list("id", flat=True)[:200]
+    sort_products = filtered_products.order_by("-exact_date").values_list("id", flat=True)[:1400]
 
-    result = Product.objects.filter(Q(id__in=sort_products) | Q(id__in=new_sneakers)).values_list("id", flat=True)
+    result = Product.objects.filter(Q(id__in=sort_products) | Q(id__in=s_products)).values_list("id", flat=True)
 
     # Кэшируем результат на 10 минут
     cache.set('new_products_cache', result, CACHE_TIME)
@@ -370,11 +379,11 @@ def get_product_page(request, context):
     # print(queryset[0].id)
     # queryset = queryset.distinct()
     queryset = queryset[start_index:start_index + 60]
-    print(queryset.query)
+    # print(queryset.query)
     queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
 
-    res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
-    res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
+    # res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
+    # res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0
     res['max_price'] = 50_000_000
     t6 = time()

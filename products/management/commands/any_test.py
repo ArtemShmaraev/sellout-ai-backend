@@ -30,23 +30,31 @@ from collections import Counter
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        product = Product.objects.filter(likes_month=0)
+        product.update(likes_month=-1)
+
+        products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=0)
+
+        # print(products)
+        ck = products.count()
+        print(ck)
         # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
         # json_string = json.dumps(lc, ensure_ascii=False)
         #
-        brands = Brand.objects.all()
-        cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся')
-        d = []
-        for brand in brands:
-            for cat in cats:
-                d.append({"category": cat.name, "brand": brand.name, "score": 0})
-
-        print()
-
-        json_string = json.dumps(d, ensure_ascii=False)
-
-            # Запись JSON-строки в файл
-        with open("brand_and_category_score.json", "w", encoding="utf-8") as file:
-            file.write(json_string)
+        # brands = Brand.objects.all()
+        # cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся')
+        # d = []
+        # for brand in brands:
+        #     for cat in cats:
+        #         d.append({"category": cat.name, "brand": brand.name, "score": 0})
+        #
+        # print()
+        #
+        # json_string = json.dumps(d, ensure_ascii=False)
+        #
+        #     # Запись JSON-строки в файл
+        # with open("brand_and_category_score.json", "w", encoding="utf-8") as file:
+        #     file.write(json_string)
 
 
         # prs = Product.objects.filter(categories__name="Кроссовки")

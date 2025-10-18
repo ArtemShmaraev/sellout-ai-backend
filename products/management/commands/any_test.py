@@ -34,7 +34,7 @@ class Command(BaseCommand):
         # json_string = json.dumps(lc, ensure_ascii=False)
         #
         brands = Brand.objects.all()
-        cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся').exclude(name__in=['Кроссовки', "Кеды"]).exclude(parent_category__name="Кроссовки")
+        cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся')
         d = []
         for brand in brands:
             for cat in cats:

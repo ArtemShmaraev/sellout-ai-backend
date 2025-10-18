@@ -268,6 +268,7 @@ class Product(models.Model):
 
     fit = models.IntegerField(default=0)
     rel_num = models.IntegerField(default=0, db_index=True)
+    normalize_rel_num = models.IntegerField(default=0)
     platform_info = models.JSONField(blank=True, null=True, default=dict)
     sizes_prices = models.JSONField(blank=True, null=True, default=list)
 

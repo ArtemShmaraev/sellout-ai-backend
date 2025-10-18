@@ -30,15 +30,18 @@ from collections import Counter
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        product = Product.objects.filter(likes_month=0)
-        product.update(likes_month=-1)
-
-        products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=0)
-
-        # print(products)
-        ck = products.count()
-        print(ck)
-        # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
+        line = Line.objects.get(name="Все Yeezy")
+        line.save()
+        print(line.full_eng_name)
+        # product = Product.objects.filter(likes_month=0)
+        # product.update(likes_month=-1)
+        #
+        # products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=0)
+        #
+        # # print(products)
+        # ck = products.count()
+        # print(ck)
+        # # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
         # json_string = json.dumps(lc, ensure_ascii=False)
         #
         # brands = Brand.objects.all()

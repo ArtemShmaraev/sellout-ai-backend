@@ -87,6 +87,7 @@ CORS_ALLOW_HEADERS = default_headers + (
     'Access-Control-Allow-Origin',
 )
 
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:8080",
@@ -191,8 +192,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=300),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=360),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -250,7 +251,7 @@ SIMPLE_JWT = {
 #
 
 
-
+#
 # HOST = "127.0.0.1"
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"

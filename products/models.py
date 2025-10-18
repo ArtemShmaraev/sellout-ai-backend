@@ -85,7 +85,7 @@ class Line(models.Model):
         #
         #     self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
         #         "Dunk Dunk", "Dunk", 1).split())
-        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все_", "").strip()
+        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все_", "all_").strip()
 
         if "все" in self.name.lower():
             self.is_all = True

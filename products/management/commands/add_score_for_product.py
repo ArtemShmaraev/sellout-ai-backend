@@ -17,7 +17,7 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        products = Product.objects.filter(categories__name__in=['Кеды', "Кроссовки"], available_flag=True)
+        products = Product.objects.filter(available_flag=True, is_custom=False)
 
         # print(products)
         ck = products.count()

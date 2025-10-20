@@ -339,7 +339,7 @@ def get_product_page(request, context):
 
     default_ordering = "-rel_num"
     if new:
-        default_ordering = "-exact_date"
+        default_ordering = "-rel_num"
     if query:
         default_ordering = ""
 

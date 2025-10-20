@@ -33,6 +33,7 @@ class Command(BaseCommand):
 
 
 
+
         products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=-1)
 
         # print(products)

@@ -415,7 +415,7 @@ class MainPageBlocks(APIView):
             gender = [request.user.gender.name]
 
         for page in range(0 if not next else number_page - 1, number_page):
-            s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0]
+            s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
             t1 = time()
             last = "any"
             for i in range(len(s)):

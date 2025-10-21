@@ -259,22 +259,25 @@ def filter_products(request):
             filters &= Q(min_price__lte=price_max)
 
     # Фильтр по размеру
+    # if size:
+    #     filters &= ((Q(product_units__size__in=size) | (
+    #                 Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
+
     if size:
-        filters &= ((Q(product_units__size__in=size) | (
-                    Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
+        size_filter = Q(product_units__size__in=size)
+        filters &= size_filter
 
     # Фильтр по наличию скидки
-    if is_sale:
-        filters &= Q(is_sale=(is_sale == "is_sale"))
-    if is_return:
-        filters &= Q(product_units__is_return=(is_return == "is_return"))
-    if is_fast_ship:
-        filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
+    # if is_sale:
+    #     filters &= Q(is_sale=(is_sale == "is_sale"))
+    # if is_return:
+    #     filters &= Q(product_units__is_return=(is_return == "is_return"))
+    # if is_fast_ship:
+    #     filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
     if filters:
         # filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
-        queryset = queryset.filter(filters)
-
+        queryset = queryset.select_related('product_units').filter(filters)
     if new and not query:
         queryset = queryset.filter(id__in=new_q)
 
@@ -296,10 +299,10 @@ def filter_products(request):
     # unique_product_ids = queryset.values("id")
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
 
-    queryset = queryset.values_list("id", flat=True).distinct()
+    queryset = queryset.values_list("id", flat=True)
     # print(queryset.query)
 
-    # print(queryset.query)
+    print(queryset.query)
     # print(queryset.count())
     return queryset
 

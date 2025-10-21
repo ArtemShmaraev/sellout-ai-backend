@@ -24,6 +24,7 @@ class SizeRowSerializer(serializers.ModelSerializer):
         user = self.context.get('user')
         if user is not None and row.size_tables.first().name not in ["Shoes_Adults", "Clothes_Men" "Clothes_Women"]:
             return user.preferred_shoes_size_row == row or user.preferred_clothes_size_row == row
+
         return row == row.size_tables.first().default_row
 
 
@@ -221,7 +222,8 @@ class ProductSerializer(serializers.ModelSerializer):
         # fields = "__all__"
         exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "lines",
                    "min_price", "min_price_without_sale", "max_bonus", "fit",
-                   "rel_num", "another_configuration", "percentage_sale", "in_sg", "tags",]
+                   "rel_num", "another_configuration", "percentage_sale", "in_sg", "tags", "gender", "materials", "colors", "black_bucket_link", "categories", "recommended_gender", "main_color",
+                   "content_sources", "last_parse_price", "one_update", "available_sizes", "last_upd", "normalize_rel_num", ]
         depth = 2
 
     def get_actual_platform_price(self, obj):

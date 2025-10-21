@@ -300,9 +300,11 @@ def filter_products(request):
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
 
     queryset = queryset.values_list("id", flat=True)
+    queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
+    # print(list(queryset))
     # print(queryset.query)
 
-    print(queryset.query)
+    # print(queryset.query)
     # print(queryset.count())
     return queryset
 

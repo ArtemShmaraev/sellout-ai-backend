@@ -20,7 +20,7 @@ class DeliveryForSizeView(APIView):
         try:
             product = Product.objects.get(id=product_id)
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(name="Amethyst")
-            update_price(product)
+            # update_price(product)
             view_size = json.loads(request.body)['view_size']
             product_units = product.product_units.filter(view_size_platform=view_size, availability=True).order_by("-final_price")
             s = []

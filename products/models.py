@@ -50,6 +50,8 @@ class Category(models.Model):
             self.full_name = f"{self.parent_category.full_name} | {self.name}"
         if "все" in self.name.lower() or "вся" in self.name.lower() or "всё" in self.name.lower():
             self.is_all = True
+            self.parent_category.eng_name = self.parent_category.eng_name + "_"
+            self.parent_category.save()
 
         super().save(*args, **kwargs)
 
@@ -85,10 +87,12 @@ class Line(models.Model):
         #
         #     self.view_name = " ".join(" ".join(st).replace("Jordan Air Jordan", "Air Jordan").replace("Blazer Blazer", "Blazer", 1).replace(
         #         "Dunk Dunk", "Dunk", 1).split())
-        self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все_", "all_").strip()
+        # self.full_eng_name = self.view_name.lower().replace(" ", "_").replace("все_", "all_").strip()
 
         if "все" in self.name.lower():
             self.is_all = True
+            self.parent_line.full_eng_name = self.parent_line.full_eng_name + "_"
+            self.parent_line.save()
         super().save(*args, **kwargs)
 
 

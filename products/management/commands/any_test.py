@@ -30,15 +30,17 @@ from collections import Counter
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        p = Product.objects.get(manufacturer_sku="DR7882-002")
+        print(p.slug)
 
 
 
 
-        products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=-1)
-
-        # print(products)
-        ck = products.count()
-        print(ck)
+        # products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=-1)
+        #
+        # # print(products)
+        # ck = products.count()
+        # print(ck)
         # # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
         # json_string = json.dumps(lc, ensure_ascii=False)
         #

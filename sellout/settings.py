@@ -268,10 +268,16 @@ DATABASES = {
         'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2023',
-        'HOST': '158.160.56.73',
-        'PORT': '5432',
+        'HOST': 'rc1b-s7ch8g545sfxps4j.mdb.yandexcloud.net',
+        'PORT': '6432',
+        'OPTIONS': {
+            'sslmode': 'verify-full',
+            'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt', # или 'C:/Users/artem/.postgresql/root.crt'
+            'target_session_attrs': 'read-write',
+        }
     }
 }
+
 # # # # #
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

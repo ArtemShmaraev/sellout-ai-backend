@@ -21,6 +21,11 @@ RUN pip install --no-cache-dir gunicorn
 # Copy the Django project files
 COPY . /app/
 
+RUN apt-get install -y wget
+RUN mkdir -p /root/.postgresql
+RUN wget "https://storage.yandexcloud.net/cloud-certs/CA.pem" --output-document /root/.postgresql/root.crt
+RUN chmod 0600 /root/.postgresql/root.crt
+
 RUN python manage.py collectstatic --noinput
 
 RUN apt-get update && apt-get install -y nginx

@@ -390,7 +390,7 @@ class MakeRansomRequest(APIView):
 
 
 class GetHeaderPhoto(APIView):
-    @method_decorator(cache_page(CACHE_TIME))
+
     def get(self, request):
         cache_photo_key = f"header_photo"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_photo_key)
@@ -719,7 +719,7 @@ class ProductSlugView(APIView):
                                                              "wishlist": Wishlist.objects.get(user=User(
                                                                  id=request.user.id)) if request.user.id else None})
             t3 = time()
-            print("два ",t3-t2)
+            print("два ", t3-t2)
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -935,6 +935,7 @@ class ListProductView(APIView):
 
     def post(self, request):
         try:
+            t = time()
             s_products = json.loads(request.body)["products"]
             product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
             product_list_hash = hashlib.sha256(product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
@@ -951,6 +952,8 @@ class ListProductView(APIView):
                     models.Case(*[models.When(id=id, then=index) for index, id in enumerate(s_products)])
                 )
                 cache.set(cache_product_key, products, CACHE_TIME)
+
+            print("лист", time()-t)
 
             return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(
                 user=User(id=self.request.user.id)) if request.user.id else None}).data)

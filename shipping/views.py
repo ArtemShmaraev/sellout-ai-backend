@@ -1,3 +1,5 @@
+from time import time
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -51,6 +53,7 @@ class DeliveryForSizeView(APIView):
 class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
+            t = time()
             product = Product.objects.get(id=product_id)
             product_units = product.product_units.filter(availability=True)
             update_price(product)
@@ -161,7 +164,7 @@ class MinPriceForSizeView(APIView):
                     parts.append(size_order.get(current_part.lower(), current_part.lower()))
 
                 return parts
-
+            print("cerf ", time()-t)
             return Response(sorted(s, key=custom_sort_key))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

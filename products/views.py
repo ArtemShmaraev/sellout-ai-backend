@@ -392,7 +392,16 @@ class MakeRansomRequest(APIView):
 class GetHeaderPhoto(APIView):
     @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
-        return Response(get_header_photo())
+        cache_photo_key = f"header_photo"  # Уникальный ключ для каждой URL
+        cached_data = cache.get(cache_photo_key)
+
+        if cached_data is not None:
+            res = cached_data
+        else:
+            res = get_header_photo()
+            cache.set(cache_photo_key, (res), CACHE_TIME)
+
+        return Response(res)
 
 
 class MainPageBlocks(APIView):
@@ -674,7 +683,7 @@ class ProductView(APIView):
 
         t10 = time()
         print("t9", t10 - t8)
-        print("t", t10 - t0)
+        print("t", t10 - t0, request.GET.copy())
 
         return Response(res)
 

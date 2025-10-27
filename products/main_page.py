@@ -39,10 +39,10 @@ def get_random_model(model, type):
 def get_header_photo():
     header = HeaderPhoto.objects.exclude(where='product_page')
     brand = choice(header)
-    shoes = choice(header.filter(categories__eng_name="shoes_category"))
-    clothes = choice(header.filter(categories__eng_name="clothes"))
-    accessories = choice(header.filter(categories__eng_name="accessories"))
-    bags = choice(header.filter(categories__eng_name="bags"))
+    shoes = choice(header.filter(categories__name="Обувь"))
+    clothes = choice(header.filter(categories__name="Одежда"))
+    accessories = choice(header.filter(categories__name="Аксессуары"))
+    bags = choice(header.filter(categories__name="Сумки"))
     res = {"brand": brand.photo,
            "shoes": shoes.photo,
            "clothes": clothes.photo,

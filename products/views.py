@@ -486,6 +486,7 @@ class MainPageBlocks(APIView):
 class ProductSimilarView(APIView):
 
     def get(self, request, product_id):
+        t = time()
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
         res = []
         try:
@@ -502,7 +503,8 @@ class ProductSimilarView(APIView):
                 if another_configuration.count() > 1:
                     res.append({"name": "Другие конфигурации",
                                 "products": ProductMainPageSerializer(another_configuration, many=True,
-                                                                      context=context).data})
+                                                                       context=context).data})
+            print("similar", time() - t)
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -953,7 +955,7 @@ class ListProductView(APIView):
                 )
                 cache.set(cache_product_key, products, CACHE_TIME)
 
-            print("лист", time()-t)
+            print("лист ", time()-t)
 
             return Response(ProductMainPageSerializer(products, many=True, context={"wishlist": Wishlist.objects.get(
                 user=User(id=self.request.user.id)) if request.user.id else None}).data)

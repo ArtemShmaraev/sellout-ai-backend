@@ -28,17 +28,11 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-
-        def explain_query():
-            query = """SELECT "products_product"."id" FROM "products_product" WHERE "products_product"."id" IN (SELECT U0."id" FROM "products_product" U0 WHERE (U0."available_flag" AND NOT U0."is_custom")) ORDER BY "products_product"."score_product_page" DESC"""
-            with connection.cursor() as cursor:
-                cursor.execute(query)
-                explain_result = cursor.fetchall()
-            return explain_result
-
         t = time()
-        explain_result = explain_query()
-        # print(explain_result)
+        product = Product.objects.all()[:200]
+        s = ProductMainPageSerializer(product, many=True).data
+        d = s[:]
+        print(d[1])
         print(time() - t)
 
 # # Обработка результатов запроса

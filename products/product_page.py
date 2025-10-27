@@ -150,7 +150,7 @@ def get_new_products():
     result = Product.objects.filter(Q(id__in=sort_products) | Q(id__in=s_products)).values_list("id", flat=True)
 
     # Кэшируем результат на 10 минут
-    cache.set('new_products_cache', result, CACHE_TIME)
+    cache.set('new_products_cache', list(result), CACHE_TIME)
     return result
 
 

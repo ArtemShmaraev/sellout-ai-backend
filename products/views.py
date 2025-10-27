@@ -491,11 +491,11 @@ class ProductSimilarView(APIView):
         res = []
         try:
             product = Product.objects.get(id=product_id)
-            similar = similar_product(product)
-            if similar[1]:
-                if similar[0].exists():
-                    res.append({"name": "Похожие товары",
-                                "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
+            # similar = similar_product(product)
+            # if similar[1]:
+            #     if similar[0].exists():
+            #         res.append({"name": "Похожие товары",
+            #                     "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
                 another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).exclude(
@@ -504,7 +504,7 @@ class ProductSimilarView(APIView):
                     res.append({"name": "Другие конфигурации",
                                 "products": ProductMainPageSerializer(another_configuration, many=True,
                                                                        context=context).data})
-            print("similar", time() - t)
+            print("similar", time() - t, product.id)
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
@@ -704,7 +704,7 @@ class ProductSlugView(APIView):
             t1 = time()
             product = Product.objects.get(slug=slug)
             t2 = time()
-            print("пятьдесят ", t2 - t1)
+            print("пятьдесят ", t2 - t1, product.id)
 
             # user_agent = request.META.get('HTTP_USER_AGENT', '')
             # print(request.META.get('HTTP_USER_AGENT', ''), "блять")
@@ -721,7 +721,7 @@ class ProductSlugView(APIView):
                                                              "wishlist": Wishlist.objects.get(user=User(
                                                                  id=request.user.id)) if request.user.id else None})
             t3 = time()
-            print("два ", t3-t2)
+            print("два ", t3-t2, product.id)
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

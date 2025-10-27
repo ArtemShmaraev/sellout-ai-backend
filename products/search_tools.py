@@ -1,4 +1,5 @@
 import json
+from time import time
 
 from django.shortcuts import render
 from elasticsearch_dsl.query import Match, MoreLikeThis
@@ -81,6 +82,7 @@ def suggest_search(query):
 
 def similar_product(product):
     try:
+        t = time()
         search = Search(index='product_index')  # Замените на имя вашего индекса
         # print(search.count())
 
@@ -127,7 +129,7 @@ def similar_product(product):
         queryset = queryset.annotate(order=preserved_order).order_by('order')
         return queryset, True
     except:
-        print(",kznm")
+        print(",kznm", time() - t)
         return [], False
 
 

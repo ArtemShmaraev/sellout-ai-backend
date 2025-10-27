@@ -164,7 +164,7 @@ class MinPriceForSizeView(APIView):
                     parts.append(size_order.get(current_part.lower(), current_part.lower()))
 
                 return parts
-            print("cerf ", time()-t)
+            print("cerf ", time()-t, product.id)
             return Response(sorted(s, key=custom_sort_key))
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

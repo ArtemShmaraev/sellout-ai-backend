@@ -141,7 +141,7 @@ def get_new_products():
 
     # Вычисляем дату, которая находится полгода назад
     six_months_ago = current_date + timedelta(days=180)
-    filtered_products = Product.objects.filter(
+    filtered_products = Product.objects.filter(Q(available_flag=True) & Q(is_custom=False) &
         Q(exact_date__lte=six_months_ago) &
         (Q(gender__name='M') | Q(gender__name='F')) & Q(categories__name__in=good_cats) & Q(brands__name__in=good_brands)
     )

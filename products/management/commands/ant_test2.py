@@ -28,32 +28,18 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        product = Product.objects.filter(available_flag=False)
-        print(product.count())
+
         def explain_query():
-            query = """EXPLAIN SELECT DISTINCT "products_product"."id", "products_product"."rel_num" FROM "products_product" INNER JOIN "shipping_productunit" ON ("products_product"."id" = "shipping_productunit"."product_id") INNER JOIN "shipping_productunit_size" ON ("shipping_productunit"."id" = "shipping_productunit_size"."productunit_id") INNER JOIN "products_sizetranslationrows" ON ("shipping_productunit_size"."sizetranslationrows_id" = "products_sizetranslationrows"."id") LEFT OUTER JOIN "shipping_productunit_size_table" ON ("shipping_productunit"."id" = "shipping_productunit_size_table"."productunit_id") WHERE ("products_product"."available_flag" AND NOT "products_product"."is_custom" AND ("shipping_productunit_size"."sizetranslationrows_id" IN (247) OR ("products_sizetranslationrows"."is_one_size" AND "shipping_productunit_size_table"."sizetable_id" IN (10)))) ORDER BY "products_product"."rel_num" DESC LIMIT 60
-"""
+            query = """SELECT "products_product"."id" FROM "products_product" WHERE "products_product"."id" IN (SELECT U0."id" FROM "products_product" U0 WHERE (U0."available_flag" AND NOT U0."is_custom")) ORDER BY "products_product"."score_product_page" DESC"""
             with connection.cursor() as cursor:
                 cursor.execute(query)
                 explain_result = cursor.fetchall()
             return explain_result
 
-        sql_query = """SELECT "products_product"."id" FROM "products_product" INNER JOIN "products_product_gender" ON ("products_product"."id" = "products_product_gender"."product_id") INNER JOIN "products_gender" ON ("products_product_gender"."gender_id" = "products_gender"."id") WHERE ("products_product"."available_flag" AND NOT "products_product"."is_custom" AND "products_gender"."name" IN (M))
-"""
-        # explain_result = explain_query()
-        # for row in explain_result:
-        #     print(row)
-#         sql_query = """SELECT COUNT("products_product"."id")
-# FROM "products_product"
-# INNER JOIN "shipping_productunit" ON ("products_product"."id" = "shipping_productunit"."product_id")
-# WHERE ("products_product"."available_flag" AND NOT "products_product"."is_custom" AND "shipping_productunit"."final_price" <= 10000);"""
-#         t = time()
-#         # Выполняем SQL-запрос
-#         with connection.cursor() as cursor:
-#             cursor.execute(sql_query)
-#             results = cursor.fetchall()
-#         print(results)
-#         print(time() - t)
+        t = time()
+        explain_result = explain_query()
+        # print(explain_result)
+        print(time() - t)
 
 # # Обработка результатов запроса
 # for row in results:

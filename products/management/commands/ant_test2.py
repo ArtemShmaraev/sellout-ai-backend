@@ -28,12 +28,29 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        t = time()
-        product = Product.objects.all()[:200]
-        s = ProductMainPageSerializer(product, many=True).data
-        d = s[:]
-        print(d[1])
-        print(time() - t)
+        try:
+            # Измеряем время выполнения запроса к базе данных
+            t_db = time()
+            products = Product.objects.all()[:200]
+            db_time = time() - t_db
+
+            # Измеряем время выполнения сериализации
+            t_serialization = time()
+            serialized = ProductMainPageSerializer(products, many=True)
+            serialization_time = time() - t_serialization
+
+            new_time = time()
+            serialized_data = serialized.data
+            from django.db import connection
+            print(connection.queries)
+
+
+            # Выводим информацию о времени выполнения каждого процесса
+            self.stdout.write(self.style.SUCCESS(f'Time taken for database query: {db_time:.6f} seconds'))
+            self.stdout.write(self.style.SUCCESS(f'Time taken for serialization: {serialization_time:.6f} seconds'))
+            self.stdout.write(self.style.SUCCESS(f'Time taken for data: {time() - new_time:.6f} seconds'))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Error occurred: {str(e)}'))
 
 # # Обработка результатов запроса
 # for row in results:

@@ -199,7 +199,7 @@ def filter_products(request):
         queryset = queryset.filter(available_flag=True)
         # queryset = queryset.filter(product_units__availability=True)
     if not custom:
-        queryset = queryset.filter(is_custom=False)
+        queryset = queryset.filter(is_custom=True)
 
     if category_id:
         queryset = queryset.filter(category_id__in=category_id)
@@ -354,7 +354,7 @@ def get_product_page(request, context):
 
     ordering = params.get('ordering', default_ordering)
     ordering = ordering.replace("rel_num", "score_product_page")
-    if ordering in ['exact_date', 'score_product_page', '-score_product_page', "-exact_date"]:
+    if ordering in ['exact_date', 'score_product_page', '-score_product_page', "-exact_date", "-normalize_rel_num"]:
         queryset = queryset.order_by(ordering)
     elif ordering == "min_price" or ordering == "-min_price":
         if size:

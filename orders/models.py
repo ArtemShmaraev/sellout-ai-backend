@@ -277,6 +277,7 @@ class ShoppingCart(models.Model):
         # Обновить поле total_amount для текущей корзины
         self.total_amount = total_amount
         self.sale = sale
+        self.first_order_bonus = 0
         if user_status.base:
             orders_count = Order.objects.filter(user=self.user).count()
             if orders_count == 0:

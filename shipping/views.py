@@ -164,6 +164,9 @@ class MinPriceForSizeView(APIView):
                     parts.append(size_order.get(current_part.lower(), current_part.lower()))
 
                 return parts
+
+            from django.db import connection
+            print(connection.queries)
             print("cerf ", time()-t, product.id)
             return Response(sorted(s, key=custom_sort_key))
         except Product.DoesNotExist:

@@ -199,7 +199,7 @@ def filter_products(request):
         queryset = queryset.filter(available_flag=True)
         # queryset = queryset.filter(product_units__availability=True)
     if not custom:
-        queryset = queryset.filter(is_custom=True)
+        queryset = queryset.filter(is_custom=False)
 
     if category_id:
         queryset = queryset.filter(category_id__in=category_id)

@@ -180,10 +180,11 @@ class AddPhotoBlackList(APIView):
         try:
             # Удаляем фото из bucket_link и добавляем в black_bucket_link
             product.bucket_link.remove(photo)
-            if product.bucket_link.all().count() == 0:
-                product.available_flag = False
             product.black_bucket_link.add(photo)
             product.save()
+            if product.bucket_link.all().count() == 0:
+                product.available_flag = False
+                product.save()
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -8,7 +8,7 @@ from products.models import Product  # Замените products.models на в�
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        products = Product.objects.filter(available_flag=True, is_custom=False, categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+        products = Product.objects.filter(available_flag=True, is_custom=False, categories__name__in=["Кеды", "Кроссовки"]).order_by("score_product_page")
 
         ck = products.count()
         print(ck)
@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
 
                 PLV = 0.27 * normalize_rel_num
-                D_PLV = 0.43 * min(100000 * (likes_week / normalize_rel_num), 3000)
+                D_PLV = 0.43 * min(100000 * (likes_week / max(1, normalize_rel_num)), 3000)
                 NEW = 700 * is_new
                 TYPE_SCORE = 0.1 * (score_collab + score_line) * 100
                 MY_SCORE = 0.1 * my_score

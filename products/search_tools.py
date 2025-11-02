@@ -168,33 +168,36 @@ def search_product(query, pod_queryset, page_number=1):
     #         {'match': {'categories': {'query': query, 'boost': 3, 'fuzziness': 'AUTO'}}},
     #         {'match': {'brands': {'query': query, 'boost': 4, 'fuzziness': 'AUTO'}}}
     #     ]
-    # )
-    # fields = ['manufacturer_sku^2', 'model^3', 'lines^2', 'colorway^1',
-    #           "collab^4", "categories^3", 'brands^4'],
+    # # )
+    fields = ['manufacturer_sku^6', 'model^3', 'lines^2', 'colorway^1', "collab^4", "categories^3", 'brands^4']
+    search = search.query(Q("multi_match", query=query, fields=fields))
     search = search.query('bool',
                           must=[
                               Q('multi_match',
                                 query=query,
                                 type="most_fields",
-                                fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
+                                fields=["manufacturer_sku", 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
                                         'collab^4', 'categories^3', 'brands^4'],
                                 fuzziness="AUTO")
                           ],
                           should=[
                               Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
-                              Q('match', colorway={'query': query, 'fuzziness': 'AUTO'})
+                              Q('match', colorway={'query': query, 'fuzziness': 'AUTO'}),
+                              Q('match', manufacturer_sku={"query": query, 'boost': 8, 'fuzziness': 2})
                           ]
                           )
-    search = search.query('function_score',
-                          functions=[
-                              {
-                                  'field_value_factor': {
-                                      'field': 'rel_num',
-                                      'factor': 100000,
-                                      'modifier': 'log1p'
-                                  }
-                              }
-                          ])
+
+
+    # search = search.query('function_score',
+    #                       functions=[
+    #                           {
+    #                               'field_value_factor': {
+    #                                   'field': 'rel_num',
+    #                                   'factor': 100000,
+    #                                   'modifier': 'log1p'
+    #                               }
+    #                           }
+    #                       ])
 
     # search = search.query('bool',
     #                       must=[Q(

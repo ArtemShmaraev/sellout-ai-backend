@@ -14,7 +14,7 @@ russian_morphology = token_filter('russian_morphology', type='morphology', langu
 russian_analyzer = analyzer(
     'russian_analyzer',
     tokenizer='standard',
-    filter=['lowercase', russian_stop, russian_stemmer, russian_morphology])
+    filter=['lowercase', russian_stop, russian_stemmer])
 
 
 class ProductDocument(Document):
@@ -28,8 +28,8 @@ class ProductDocument(Document):
     model = Text(analyzer='standard')
     colorway = Text(analyzer='standard')
     collab = Text(analyzer='standard')
-    gender = Keyword(multi=True, analyzer=russian_analyzer)
-    manufacturer_sku = Text(analyzer='standard')
+    gender = Text(multi=True, analyzer=russian_analyzer)
+    manufacturer_sku = Text(analyzer="standard")
     rel_num = Integer()
     min_price = Integer()
     materials = Text(analyzer=russian_analyzer)

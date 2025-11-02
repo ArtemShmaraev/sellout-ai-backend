@@ -15,102 +15,102 @@ class Command(BaseCommand):
         hosts = [f"{ELASTIC_HOST}:9200"]
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
-        sug_index = SuggestDocument._index
-        if sug_index.exists():
-            self.stdout.write(self.style.SUCCESS('Deleting existing SUG index...'))
-            sug_index.delete()
-
-        self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
-        sug_index.create()
-
-        lines = open("suggest_brand.txt", encoding="utf-8").read().strip().split('\n')
-
-        # Создание словаря
-        dict_brand = {}
-        for line in lines:
-            key, *values = line.split(', ')
-            dict_brand[key.lower()] = list(values)
-
-        lines = Line.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-        for line in lines:
-
-            line_doc = SuggestDocument()
-            line_doc.name = line.name
-            line_doc.type = "Линейка"
-            line_doc.url = f"line={line.full_eng_name}"
-            level = 1
-            current_line = line
-            while current_line.parent_line is not None:
-                current_line = current_line.parent_line
-                level += 1
-            brand = current_line.view_name
-
-            line_name = line.view_name.split()
-            dop = 0
-            match = re.search(r'\d+', " ".join(line_name[:]))
-            if match:
-                dop = int(match.group())
-            for i in range(len(line_name)):
-                slice = " ".join(line_name[i:])
-                length = len(slice)
-
-                if i == 0:
-                    line_doc.suggest = [{
-                        'input': [slice] + dict_brand.get(line.view_name.lower(), []),
-                        'weight': 70000 - level - dop - length
-                    }]
-                else:
-                    line_doc.suggest.append({
-                        'input': [slice],
-                        'weight': max(0, 70000 - level - (i * 10) - dop - length)
-                    })
-            line_doc.save()
-
-        collabs = Collab.objects.all()
-        for collab in collabs:
-            collab_doc = SuggestDocument()
-            collab_doc.name = collab.name
-            collab_doc.url = f"collab={collab.query_name}"
-            collab_doc.type = "Коллаборация"
-            collab_name = collab.name.split()
-            for i in range(len(collab_name)):
-                slice = " ".join(collab_name[i:])
-                length = len(slice)
-                if i == 0:
-                    collab_doc.suggest = [{
-                        'input': [slice, collab.name.replace(" x ", " ")],
-                        'weight': 50000 - length
-                    }]
-                else:
-                    collab_doc.suggest.append({
-                        'input': [slice],
-                        'weight': max(0, 50000 - (i * 10) - length)
-                    })
-            collab_doc.save()
-
-        cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-        for cat in cats:
-            cat_doc = SuggestDocument()
-            cat_doc.name = cat.name
-            cat_doc.type = "Категория"
-            cat_doc.url = f"category={cat.eng_name}"
-            cat_name = cat.name.split()
-            for i in range(len(cat_name)):
-                slice = " ".join(cat_name[i:])
-                length = len(slice)
-                if i == 0:
-                    cat_doc.suggest = [{
-                        'input': [slice, cat.eng_name],
-                        'weight': 50000 - length
-                    }]
-                else:
-                    cat_doc.suggest.append({
-                        'input': [slice],
-                        'weight': max(50000 - (i * 10) - length, 0)
-                    })
-            cat_doc.save()
-
-        self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
+        # sug_index = SuggestDocument._index
+        # if sug_index.exists():
+        #     self.stdout.write(self.style.SUCCESS('Deleting existing SUG index...'))
+        #     sug_index.delete()
+        #
+        # self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
+        # sug_index.create()
+        #
+        # lines = open("suggest_brand.txt", encoding="utf-8").read().strip().split('\n')
+        #
+        # # Создание словаря
+        # dict_brand = {}
+        # for line in lines:
+        #     key, *values = line.split(', ')
+        #     dict_brand[key.lower()] = list(values)
+        #
+        # lines = Line.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+        # for line in lines:
+        #
+        #     line_doc = SuggestDocument()
+        #     line_doc.name = line.name
+        #     line_doc.type = "Линейка"
+        #     line_doc.url = f"line={line.full_eng_name}"
+        #     level = 1
+        #     current_line = line
+        #     while current_line.parent_line is not None:
+        #         current_line = current_line.parent_line
+        #         level += 1
+        #     brand = current_line.view_name
+        #
+        #     line_name = line.view_name.split()
+        #     dop = 0
+        #     match = re.search(r'\d+', " ".join(line_name[:]))
+        #     if match:
+        #         dop = int(match.group())
+        #     for i in range(len(line_name)):
+        #         slice = " ".join(line_name[i:])
+        #         length = len(slice)
+        #
+        #         if i == 0:
+        #             line_doc.suggest = [{
+        #                 'input': [slice] + dict_brand.get(line.view_name.lower(), []),
+        #                 'weight': 70000 - level - dop - length
+        #             }]
+        #         else:
+        #             line_doc.suggest.append({
+        #                 'input': [slice],
+        #                 'weight': max(0, 70000 - level - (i * 10) - dop - length)
+        #             })
+        #     line_doc.save()
+        #
+        # collabs = Collab.objects.all()
+        # for collab in collabs:
+        #     collab_doc = SuggestDocument()
+        #     collab_doc.name = collab.name
+        #     collab_doc.url = f"collab={collab.query_name}"
+        #     collab_doc.type = "Коллаборация"
+        #     collab_name = collab.name.split()
+        #     for i in range(len(collab_name)):
+        #         slice = " ".join(collab_name[i:])
+        #         length = len(slice)
+        #         if i == 0:
+        #             collab_doc.suggest = [{
+        #                 'input': [slice, collab.name.replace(" x ", " ")],
+        #                 'weight': 50000 - length
+        #             }]
+        #         else:
+        #             collab_doc.suggest.append({
+        #                 'input': [slice],
+        #                 'weight': max(0, 50000 - (i * 10) - length)
+        #             })
+        #     collab_doc.save()
+        #
+        # cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+        # for cat in cats:
+        #     cat_doc = SuggestDocument()
+        #     cat_doc.name = cat.name
+        #     cat_doc.type = "Категория"
+        #     cat_doc.url = f"category={cat.eng_name}"
+        #     cat_name = cat.name.split()
+        #     for i in range(len(cat_name)):
+        #         slice = " ".join(cat_name[i:])
+        #         length = len(slice)
+        #         if i == 0:
+        #             cat_doc.suggest = [{
+        #                 'input': [slice, cat.eng_name],
+        #                 'weight': 50000 - length
+        #             }]
+        #         else:
+        #             cat_doc.suggest.append({
+        #                 'input': [slice],
+        #                 'weight': max(50000 - (i * 10) - length, 0)
+        #             })
+        #     cat_doc.save()
+        #
+        # self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
         f = True
         if f:
@@ -122,7 +122,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Creating index...'))
             product_index.create()
 
-            products = Product.objects.filter(available_flag=True)
+            products = Product.objects.filter(available_flag=True, is_custom=False)
             count = products.count()
             print("Товаров", count)
             k = 0
@@ -170,7 +170,7 @@ class Command(BaseCommand):
                     # product_doc.main_color = product.main_color.name if product.main_color else None
                     product_doc.colors = [color.name for color in product.colors.all()] + [color.russian_name for color in product.colors.all()]
                     # product_doc.designer_color = product.designer_color
-                    genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский"}
+                    genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской", "F": "женский", "K": "детский"}
                     product_doc.gender = [genders_rus[gender.name] for gender in product.gender.all()]
                     product_doc.rel_num = product.rel_num
                     product_doc.save()

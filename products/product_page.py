@@ -351,7 +351,7 @@ def get_product_page(request, context):
 
         else:
             queryset = queryset.order_by(ordering)
-    else:
+    elif ordering == "random":
         queryset = queryset.order_by("?")
 
 

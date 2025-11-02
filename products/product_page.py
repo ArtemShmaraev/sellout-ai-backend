@@ -192,7 +192,7 @@ def filter_products(request):
     new = params.get("new")
     if new and not query:
         # new_q = queryset.order_by('-exact_date')[:250]
-        new_q = get_new_products()
+        new_q = queryset.filter(is_new=True)
 
     recommendations = params.get("recommendations")
     if recommendations and not query:
@@ -256,8 +256,6 @@ def filter_products(request):
         filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
         queryset = queryset.filter(id__in=filter_id)
         # queryset = queryset.select_related('product_units').filter(filters)
-    if new and not query:
-        queryset = queryset.filter(id__in=new_q)
 
     if recommendations and not query:
         queryset = queryset.filter(id__in=recommendations_q)
@@ -353,6 +351,9 @@ def get_product_page(request, context):
 
         else:
             queryset = queryset.order_by(ordering)
+    else:
+        queryset = queryset.order_by("?")
+
 
     # paginator = CustomPagination()
     # Применяем пагинацию к списку объектов Product

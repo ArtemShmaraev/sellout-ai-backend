@@ -94,6 +94,7 @@ def add_product_api(data):
         product.approximate_date = data['approximate_date']
     t3 = time()
 
+    product.lines.clear()
     for i in range(len(data['lines'])):
         for line in data['lines'][i]:
             line_db = Line.objects.get(name=line)
@@ -102,6 +103,7 @@ def add_product_api(data):
                 line_db = Line.objects.get(name=f"Все {line}")
                 product.lines.add(line_db)
 
+    product.brands.clear()
     for brand in data['brands']:
         brand_db, create = Brand.objects.get_or_create(name=brand)
         product.brands.add(brand_db)
@@ -137,8 +139,8 @@ def add_product_api(data):
     product.parameters = data['parameters_to_show_in_product']
     product.platform_info = data['platform_info']
     rel_num = int(data['platform_info']["poizon"]["poizon_likes_count"]) if str(data['platform_info']["poizon"]["poizon_likes_count"]).isdigit() else 0
-    if not product.categories.filter(name__in=["Обувь", "Одежда"]).exists():
-        rel_num = int(rel_num * 0.3)
+    # if not product.categories.filter(name__in=["Обувь", "Одежда"]).exists():
+    #     rel_num = int(rel_num * 0.3)
     product.rel_num = rel_num
     product.similar_product = data['platform_info']["poizon"].get("similar_products", [])
     product.another_configuration = data['platform_info']["poizon"].get("another_configuration", [])

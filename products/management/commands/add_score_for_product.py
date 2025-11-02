@@ -9,6 +9,7 @@ from products.models import Product  # Замените products.models на в�
 class Command(BaseCommand):
     def handle(self, *args, **options):
         products = Product.objects.filter(available_flag=True, is_custom=False, categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+
         ck = products.count()
         print(ck)
         k = 0
@@ -64,4 +65,5 @@ class Command(BaseCommand):
                 total_score = round(PLV + D_PLV + NEW + TYPE_SCORE + MY_SCORE)
                 product.score_product_page = total_score
                 product.save()
+                print(product.score_product_page)
 

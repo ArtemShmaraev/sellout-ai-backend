@@ -297,7 +297,7 @@ class Product(models.Model):
     score_product_page = models.IntegerField(default=0)
     likes_month = models.IntegerField(default=0)
     likes_week = models.IntegerField(default=0)
-    is_new = models.BooleanField(default=False)
+    is_new = models.BooleanField(default=False, db_index=True)
     extra_score = models.IntegerField(default=0)
 
     objects = ProductManager()

@@ -277,7 +277,9 @@ def filter_products(request):
     if filters:
         # filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
-        queryset = queryset.select_related('product_units').filter(filters)
+        filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+        queryset = queryset.filter(id__in=filter_id)
+        # queryset = queryset.select_related('product_units').filter(filters)
     if new and not query:
         queryset = queryset.filter(id__in=new_q)
 
@@ -300,8 +302,7 @@ def filter_products(request):
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
 
     queryset = queryset.values_list("id", flat=True)
-    # print(queryset.query)
-    queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
+    # queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
     # print(list(queryset))
     # print(queryset.query)
 

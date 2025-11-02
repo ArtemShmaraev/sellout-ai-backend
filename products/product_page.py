@@ -353,7 +353,9 @@ def get_product_page(request, context):
         default_ordering = ""
 
     ordering = params.get('ordering', default_ordering)
-    ordering = ordering.replace("rel_num", "score_product_page")
+    if ordering in ["rel_num", "-rel_num"]:
+        ordering = ordering.replace("rel_num", "score_product_page")
+
     if ordering in ['exact_date', 'score_product_page', '-score_product_page', "-exact_date", "-normalize_rel_num"]:
         queryset = queryset.order_by(ordering)
     elif ordering == "min_price" or ordering == "-min_price":

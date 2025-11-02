@@ -149,17 +149,15 @@ def add_product_api(data):
     # Получить список URL-ов из ваших данных, которых нет в черном списке
     new_urls = [img["url"] for img in data["images"] if img["url"] not in blacklisted_urls]
     # Найти фотографии, которые уже существуют среди новых URL-ов
-    existing_photos = Photo.objects.filter(url__in=new_urls)
-    # Создать новые фотографии для отсутствующих URL-ов
     new_photos = []
     for url in new_urls:
-        if url not in existing_photos.values_list("url", flat=True):
-            new_photo = Photo(url=url)
-            new_photos.append(new_photo)
+        new_photo = Photo(url=url)
+        new_photos.append(new_photo)
     # Сохранить новые фотографии в базе данных
     Photo.objects.bulk_create(new_photos)
     # Получить все фотографии (включая новые и существующие)
-    all_photos = existing_photos | Photo.objects.filter(url__in=new_urls)
+    all_photos = new_photos
+    product.bucket_link.clear()
     # Добавить все фотографии в bucket_link продукта
     product.bucket_link.add(*all_photos)
 

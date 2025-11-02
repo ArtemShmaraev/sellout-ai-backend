@@ -296,6 +296,9 @@ class Product(models.Model):
     formatted_manufacturer_sku = models.CharField(default="", max_length=128)
     score_product_page = models.IntegerField(default=0)
     likes_month = models.IntegerField(default=0)
+    likes_week = models.IntegerField(default=0)
+    is_new = models.BooleanField(default=False)
+    extra_score = models.IntegerField(default=0)
 
     objects = ProductManager()
 

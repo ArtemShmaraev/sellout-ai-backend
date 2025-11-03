@@ -181,7 +181,7 @@ def search_product(query, pod_queryset, page_number=1):
                                 fuzziness="AUTO")
                           ],
                           should=[
-                              Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
+                              # Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
                               Q('match', colorway={'query': query, 'fuzziness': 'AUTO'}),
                               Q('match', manufacturer_sku={"query": query, 'boost': 8, 'fuzziness': 2})
                           ]
@@ -226,6 +226,10 @@ def search_product(query, pod_queryset, page_number=1):
     search = search[:192]
 
     response = search.execute()
+    with open('results.json', 'w', encoding='utf-8') as json_file:
+        # Преобразовать результаты в JSON и записать их в файл
+        json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
+
     # for hit in response['hits']['hits'][:10]:
     #     print(hit['_score'], hit['_source']['rel_num'])
     #

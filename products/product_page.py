@@ -275,7 +275,7 @@ def filter_products(request):
     # unique_product_ids = queryset.values("id")
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
 
-    queryset = queryset.values_list("id", flat=True)
+    queryset = queryset.values_list("id", flat=True).distinct()
     # queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
     # print(list(queryset))
     # print(queryset.query)

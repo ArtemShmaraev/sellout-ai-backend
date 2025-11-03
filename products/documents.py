@@ -9,7 +9,7 @@ connections.create_connection(hosts=[f"{ELASTIC_HOST}:9200"])
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
 russian_stemmer = token_filter('russian_stemmer', type='stemmer', language='russian')
-russian_morphology = token_filter('russian_morphology', type='morphology', language='russian')
+# russian_morphology = token_filter('russian_morphology', type='morphology', language='russian')
 
 russian_analyzer = analyzer(
     'russian_analyzer',

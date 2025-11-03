@@ -71,11 +71,11 @@ class Command(BaseCommand):
 
 
         print()
-        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("id")
+        products = Product.objects.filter(available_flag=True, is_custom=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("id")
         k = 1
         ck = products.count()
         print(ck)
-        # products = products[(ck // 4) * 3 + 1:]
+        products = products[(ck//4) * 3 + 1:]
         k = 0
         t = time()
         with open('edit_brand+category_score.json', 'r', encoding='utf-8') as json_file:

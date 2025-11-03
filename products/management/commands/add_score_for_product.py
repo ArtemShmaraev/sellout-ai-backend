@@ -75,7 +75,7 @@ class Command(BaseCommand):
         k = 1
         ck = products.count()
         print(ck)
-        products = products[(ck//4) * 3 + 1:]
+        # products = products[(ck//4) * 3 + 1:]
         k = 0
         t = time()
         with open('edit_brand+category_score.json', 'r', encoding='utf-8') as json_file:

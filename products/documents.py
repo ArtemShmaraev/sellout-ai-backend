@@ -42,7 +42,7 @@ class ProductDocument(Document):
     # russian_name = Text()
 
     class Index:
-        name = 'product_index'
+        name = 'product_index_2'
 
 
 # Определение анализаторов для n-грамм с разной длиной

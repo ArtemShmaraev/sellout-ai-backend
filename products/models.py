@@ -41,7 +41,6 @@ class Category(models.Model):
     full_name = models.CharField(max_length=255, default="")  # полный путь
     score = models.IntegerField(default=0)
     score_product_page = models.IntegerField(default=0)
-    up_score = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_name
@@ -300,6 +299,7 @@ class Product(models.Model):
     likes_week = models.IntegerField(default=0)
     is_new = models.BooleanField(default=False, db_index=True)
     extra_score = models.IntegerField(default=0)
+    up_score = models.BooleanField(default=False)
 
     objects = ProductManager()
 
@@ -416,7 +416,7 @@ class Product(models.Model):
     #     ]
 
     def get_full_name(self):
-        return f"{self.brands.first().name if not self.is_collab else self.collab.name} {self.model} {self.colorway}"
+        return f"{self.brands.first().name if self.collab is None else self.collab.name} {self.model} {self.colorway}"
 
     def update_min_price(self):
         if self.product_units.exists():

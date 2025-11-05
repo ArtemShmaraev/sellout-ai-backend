@@ -157,6 +157,7 @@ def add_filter_search(query):
 
 def search_product(query, pod_queryset, page_number=1):
     search = Search(index='product_index')
+
     # search = search.query(
     #     'bool',
     #     should=[
@@ -176,8 +177,7 @@ def search_product(query, pod_queryset, page_number=1):
                               Q('multi_match',
                                 query=query,
                                 type="most_fields",
-                                fields=["manufacturer_sku", 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
-                                        'collab^4', 'categories^3', 'brands^4'],
+                                fields=['model^3', 'lines^2', 'colorway^1', 'categories^3', 'brands^4'],
                                 fuzziness="AUTO")
                           ],
                           should=[
@@ -212,7 +212,7 @@ def search_product(query, pod_queryset, page_number=1):
     #                       )
     search = search.sort(
         {'_score': {'order': 'desc'}},
-        {'rel_num': {'order': 'asc'}}
+        {'rel_num': {'order': 'desc'}}
     )
     # search = search.query(
     #     'multi_match',

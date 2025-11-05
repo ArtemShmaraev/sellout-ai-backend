@@ -113,6 +113,7 @@ class Command(BaseCommand):
         # self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
         f = True
+        all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             product_index = ProductDocument._index
             if product_index.exists():
@@ -135,19 +136,22 @@ class Command(BaseCommand):
                     if kk * 100 / count > k:
                         self.stdout.write(self.style.SUCCESS(f"{k} %"))
                         k += 1
+                    full_name = f"{product.get_full_name()} "
                     product_doc = ProductDocument(meta={'id': product.id})
 
-                    lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-                    if lines:
+                    lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(parent_line=None)
+                    if lines.count() > 1:
                         main_line = lines.order_by('-id').first()
                         product_doc.main_line = main_line.name
+                        full_name += f"{main_line.name} "
 
                     categories = product.categories.exclude(name__icontains='Все').exclude(
                         name__contains='Другие')
-                    if categories:
+                    if categories.count() > 1:
                         main_category = categories.order_by("-id").first()
                         product_doc.main_category = main_category.name
                         product_doc.main_category_eng = main_category.eng_name
+                        full_name += f"{main_category.name} {main_category.eng_name.replace('_', ' ').strip()} "
 
                     product_doc.brands = [brand.name for brand in product.brands.all()]
                     product_doc.materials = [material.name for material in product.materials.all()]
@@ -160,7 +164,8 @@ class Command(BaseCommand):
 
                     product_doc.lines = [line.name for line in
                                          product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
-                    product_doc.model = product.model
+
+                    product_doc.model = product.model if product.model not in all_cat_name else None
                     product_doc.colorway = product.colorway
                     # product_doc.russian_name = product.russian_name
                     product_doc.manufacturer_sku = product.manufacturer_sku
@@ -173,6 +178,7 @@ class Command(BaseCommand):
                     genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской", "F": "женский", "K": "детский"}
                     product_doc.gender = [genders_rus[gender.name] for gender in product.gender.all()]
                     product_doc.rel_num = product.rel_num
+                    product_doc.full_name = full_name
                     product_doc.save()
             self.stdout.write(self.style.SUCCESS(f"{k} %"))
 

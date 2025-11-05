@@ -156,7 +156,7 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    search = Search(index='product_index')
+    search = Search(index='product_index_2')
 
     # search = search.query(
     #     'bool',

@@ -71,14 +71,14 @@ class Command(BaseCommand):
 
 
         print()
-        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("id")
+        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
         dk = 1
         ck = products.count()
         print(ck)
         # products = products[:ck//4]
-        # products = products[ck // 4 + 1: ck//2]
-        # products = products[ck // 2 + 1: (ck // 4) * 3]
-        products = products[(ck // 4) * 3 + 1:]
+        # products = products[ck // 6 + 1: ck//2]
+        # # products = products[ck // 2 + 1: (ck // 4) * 3]
+        # products = products[(ck // 4) * 3 + 1:]
         #products = Product.objects.filter(id__in=products.values_list("id", flat=True))
         # products.update(up_score=True)
 
@@ -93,6 +93,7 @@ class Command(BaseCommand):
             k += 100
             print(k, ck, time() - t)
             for product in page_products:
+                old = product.score_product_page
                 try:
                     brand = product.brands.first().name
                     category = product.categories.all().order_by("-id").first().name
@@ -125,7 +126,7 @@ class Command(BaseCommand):
                 my_score = product.extra_score
 
                 PLV = 0.2 * normalize_rel_num
-                D_PLV = 0.3 * (10 * min(max(round(math.log(likes_week, 1.047), 1), 10), 100)) if likes_week > 0 else 0
+                D_PLV = 0.3 * (10 * min(max(round(math.log(likes_week, 1.047), 2), 10), 100)) if likes_week > 0 else 0
                 # NEW = 700 * is_new
                 TYPE_SCORE = 0.4 * brand_and_category_score
                 MY_SCORE = 0.1 * my_score
@@ -133,5 +134,5 @@ class Command(BaseCommand):
                 product.score_product_page = total_score
                 product.up_score = True
                 product.save()
-                # print(product.score_product_page, PLV, D_PLV, TYPE_SCORE)
+                print(product.score_product_page, old, PLV, D_PLV, TYPE_SCORE)
 

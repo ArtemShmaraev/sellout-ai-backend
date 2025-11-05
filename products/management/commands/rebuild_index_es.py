@@ -6,12 +6,22 @@ from products.documents import ProductDocument, LineDocument, CategoryDocument, 
     SuggestDocument  # Замените на путь к вашему документу
 from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
 from sellout.settings import ELASTIC_HOST
-
+from collections import OrderedDict
 
 class Command(BaseCommand):
     help = 'Index products in Elasticsearch'
 
     def handle(self, *args, **options):
+
+
+
+        def unique_words(input_string):
+            words = input_string.split()
+            unique_words = list(OrderedDict.fromkeys(words))
+            output_string = " ".join(unique_words)
+            return output_string
+
+
         hosts = [f"{ELASTIC_HOST}:9200"]
         connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
@@ -136,14 +146,13 @@ class Command(BaseCommand):
                     if kk * 100 / count > k:
                         self.stdout.write(self.style.SUCCESS(f"{k} %"))
                         k += 1
-                    full_name = f"{product.get_full_name()} "
                     product_doc = ProductDocument(meta={'id': product.id})
 
                     lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(parent_line=None)
+                    main_line = ""
                     if lines.count() > 1:
-                        main_line = lines.order_by('-id').first()
-                        product_doc.main_line = main_line.name
-                        full_name += f"{main_line.name} "
+                        main_line = lines.order_by('-id').first().name
+                        product_doc.main_line = main_line
 
                     categories = product.categories.exclude(name__icontains='Все').exclude(
                         name__contains='Другие')
@@ -151,32 +160,41 @@ class Command(BaseCommand):
                         main_category = categories.order_by("-id").first()
                         product_doc.main_category = main_category.name
                         product_doc.main_category_eng = main_category.eng_name
-                        full_name += f"{main_category.name} {main_category.eng_name.replace('_', ' ').strip()} "
 
-                    product_doc.brands = [brand.name for brand in product.brands.all()]
-                    product_doc.materials = [material.name for material in product.materials.all()]
-                    product_doc.categories = [category.name for category in
-                                              product.categories.exclude(name__icontains='Все').exclude(
-                                                  name__contains='Другие')]
-                    product_doc.categories_eng = [category.eng_name for category in
-                                                  product.categories.exclude(name__icontains='Все').exclude(
-                                                      name__contains='Другие').exclude(name__icontains='Вся')]
+                    brands = [brand.name for brand in product.brands.all()]
+                    materials = [material.name for material in product.materials.all().exclude(name="Другой")]
+                    categories = [category.name for category in
+                                  product.categories.exclude(name__icontains='Все').exclude(
+                                      name__contains='Другие').exclude(name__icontains='Вся')]
+                    categories_eng = [category.eng_name for category in
+                                      product.categories.exclude(name__icontains='Все').exclude(
+                                          name__contains='Другие').exclude(name__icontains='Вся')]
+                    lines = [line.name for line in
+                             product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+                    colors = [color.name for color in product.colors.all()] + [color.russian_name for color in product.colors.all()]
 
-                    product_doc.lines = [line.name for line in
-                                         product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
+                    genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
+                                   "F": "женский", "K": "детский"}
+                    gender = [genders_rus[gender.name] for gender in product.gender.all()]
 
+                    full_name = f'{" ".join(brands)} {product.collab.name if product.collab is not None else ""} {main_line} {product.model if product.model not in all_cat_name else ""} ' \
+                                 f'{product.colorway} {" ".join(categories)} {" ".join(categories_eng)} {" ".join(colors)} {" ".join(materials)} {" ".join(gender)}'.lower().replace("_", "").replace("/", "")
+                    full_name = unique_words(full_name)
+
+                    product_doc.brands = brands
+                    product_doc.materials = materials
+                    product_doc.categories = categories
+                    product_doc.categories_eng = categories_eng
+                    product_doc.lines = lines
                     product_doc.model = product.model if product.model not in all_cat_name else None
                     product_doc.colorway = product.colorway
-                    # product_doc.russian_name = product.russian_name
                     product_doc.manufacturer_sku = product.manufacturer_sku
                     product_doc.min_price = product.min_price
-                    # product_doc.description = product.description
                     product_doc.collab = product.collab.name if (product.is_collab and product.collab is not None) else None
-                    # product_doc.main_color = product.main_color.name if product.main_color else None
-                    product_doc.colors = [color.name for color in product.colors.all()] + [color.russian_name for color in product.colors.all()]
-                    # product_doc.designer_color = product.designer_color
-                    genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской", "F": "женский", "K": "детский"}
-                    product_doc.gender = [genders_rus[gender.name] for gender in product.gender.all()]
+                    product_doc.colors = colors
+
+
+                    product_doc.gender = gender
                     product_doc.rel_num = product.rel_num
                     product_doc.full_name = full_name
                     product_doc.save()

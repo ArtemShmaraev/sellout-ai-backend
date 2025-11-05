@@ -11,7 +11,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView
+    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -40,8 +40,8 @@ router_color.register("colors", ColorViewSet, basename="colors")
 router_collection = routers.DefaultRouter()
 router_collection.register("collections", CollectionViewSet, basename="collections")
 
-router_material = routers.DefaultRouter()
-router_material.register("materials", MaterialViewSet, basename="materials")
+# router_material = routers.DefaultRouter()
+# router_material.register("materials", MaterialViewSet, basename="materials")
 
 sitemaps = {
     'products': ProductSitemap
@@ -50,7 +50,7 @@ sitemaps = {
 urlpatterns = [
     path("products/", ProductView.as_view(), name="home"),
     path("", include(router_collection.urls)),
-    path("", include(router_material.urls)),
+    path("materials/", MaterialView.as_view()),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),

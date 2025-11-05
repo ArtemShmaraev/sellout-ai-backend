@@ -26,7 +26,7 @@ from .add_product_api import add_product_api, add_products_spu_id_api
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand, Photo
+    RansomRequest, SGInfo, Brand, Photo, Material
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header, count_queryset
@@ -34,7 +34,7 @@ from .product_site_map import ProductSitemap
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
-    ProductSlugAndPhotoSerializer, ProductAdminSerializer
+    ProductSlugAndPhotoSerializer, ProductAdminSerializer, MaterialSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price
 
@@ -52,6 +52,22 @@ from collections import OrderedDict
 from sellout.settings import HOST
 from django.contrib.sitemaps import views as sitemaps_views
 from django.shortcuts import render, redirect
+
+
+
+class MaterialView(APIView):
+    def get(self, request):
+        cache_material = f"materials"  # Уникальный ключ для каждой URL
+        cached_data = cache.get(cache_material)
+
+        if cached_data is not None:
+            res = cached_data
+        else:
+            queryset = Material.objects.all()
+            res = MaterialSerializer(queryset, many=True).data
+            cache.set(cache_material, (res), CACHE_TIME)
+
+        return Response(res)
 
 
 def sitemap_view(request):

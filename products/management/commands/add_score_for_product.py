@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
 
         print()
-        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+        products = Product.objects.filter(available_flag=True, is_custom=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
         dk = 1
         ck = products.count()
         print(ck)
@@ -107,7 +107,16 @@ class Command(BaseCommand):
 
                 product.normalize_rel_num = normalize_rel_num
 
-                if product.likes_month == -1:
+                rel_num = product.rel_num
+                likes_month = product.likes_month
+
+                if likes_month > rel_num:
+                    new = rel_num + likes_month
+                    old = rel_num // 0.3
+                    product.rel_num = old
+                    product.likes_month = new - old
+
+                if likes_month == -1:
                     try:
                         old_likes = product.rel_num
                         new_likes = \

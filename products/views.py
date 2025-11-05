@@ -2,6 +2,7 @@ import asyncio
 import copy
 import hashlib
 import math
+import pickle
 import random
 import threading
 from urllib.parse import urlencode
@@ -508,11 +509,11 @@ class ProductSimilarView(APIView):
         res = []
         try:
             product = Product.objects.get(id=product_id)
-            # similar = similar_product(product)
-            # if similar[1]:
-            #     if similar[0].exists():
-            #         res.append({"name": "Похожие товары",
-            #                     "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
+            similar = similar_product(product)
+            if similar[1]:
+                if similar[0].exists():
+                    res.append({"name": "Похожие товары",
+                                "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
 
             if Product.objects.filter(Q(spu_id=product.spu_id)).exists():
                 another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).exclude(
@@ -893,35 +894,40 @@ class ProductUpdateView(APIView):
 
 
 class SizeTableForFilter(APIView):
-
     def get(self, request):
         try:
             context = {}
             if request.user.id:
                 user = User.objects.get(id=request.user.id)
                 context = {"user": user}
-            gender = self.request.query_params.getlist("gender")
-            categories = self.request.query_params.getlist("category")
 
-            cache_key = f'size_table_2{"".join(sorted(gender))}{"".join(sorted(categories))}'
+            # Соберите данные size_tables из базы данных или другого источника
+            size_tables = SizeTable.objects.filter(standard=True)
 
-            # Попробуйте сначала получить результат из кэша
-            size_tables = cache.get(cache_key)
+            # Фильтр по цене
+            gender = request.query_params.get('gender')
+            categories = request.query_params.getlist('categories')
 
-            if size_tables is None:
-                size_tables = SizeTable.objects.filter(standard=True)
+            if gender:
+                size_tables = size_tables.filter(gender__name__in=[gender])
+            if categories:
+                size_tables = size_tables.filter(category__eng_name__in=categories)
 
-                # Фильтр по цене
-                if gender:
-                    size_tables = size_tables.filter(gender__name__in=gender)
-                if categories:
-                    size_tables = size_tables.filter(category__eng_name__in=categories)
+            # Создайте уникальный ключ кэша на основе данных size_tables
+            cache_key = hashlib.sha256(pickle.dumps(size_tables)).hexdigest()
 
-                size_tables = SizeTableSerializer(size_tables, many=True, context=context).data
+            # Попробуйте получить закэшированные данные из кэша
+            cached_data = cache.get(cache_key)
 
-                cache.set(cache_key, size_tables, CACHE_TIME)
-            return Response(size_tables
-                            )
+            if cached_data is None:
+                # Если данные не найдены в кэше, выполните сериализацию и закэшируйте результаты
+                size_tables_data = SizeTableSerializer(size_tables, many=True, context=context).data
+                cache.set(cache_key, size_tables_data, CACHE_TIME)
+            else:
+                # Если данные найдены в кэше, используйте закэшированные данные
+                size_tables_data = cached_data
+
+            return Response(size_tables_data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

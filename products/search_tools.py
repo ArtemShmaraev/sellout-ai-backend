@@ -83,7 +83,7 @@ def suggest_search(query):
 def similar_product(product):
     try:
         t = time()
-        search = Search(index='product_index')  # Замените на имя вашего индекса
+        search = Search(index='product_index_3')  # Замените на имя вашего индекса
         # print(search.count())
 
         search = search.query(
@@ -156,72 +156,43 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    search = Search(index='product_index_2')
+    search = Search(index='product_index_3')
+
+
+    # fields = ['manufacturer_sku^6', 'model^3', 'lines^2', 'colorway^1', "collab^4", "categories^3", 'brands^4']
+    # search = search.query(Q("multi_match", query=query, fields=fields))
+    # search = search.query('bool',
+    #                       must=[
+    #                           Q('multi_match',
+    #                             query=query,
+    #                             type="most_fields",
+    #                             fields=['model^3', 'lines^2', 'colorway^1', 'categories^3', 'brands^4'],
+    #                             fuzziness="AUTO")
+    #                       ],
+    #                       should=[
+    #                           # Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
+    #                           Q('match', colorway={'query': query, 'fuzziness': 'AUTO'}),
+    #                           Q('match', manufacturer_sku={"query": query, 'boost': 8, 'fuzziness': 2})
+    #                       ]
+    #                       )
+
+
+
+
 
     # search = search.query(
-    #     'bool',
-    #     should=[
-    #         {'match': {'manufacturer_sku': {'query': query, 'boost': 1, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'model': {'query': query, 'boost': 3, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'lines': {'query': query, 'boost': 2, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'colorway': {'query': query, 'boost': 1, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'collab': {'query': query, 'boost': 4, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'categories': {'query': query, 'boost': 3, 'fuzziness': 'AUTO'}}},
-    #         {'match': {'brands': {'query': query, 'boost': 4, 'fuzziness': 'AUTO'}}}
-    #     ]
-    # # )
-    fields = ['manufacturer_sku^6', 'model^3', 'lines^2', 'colorway^1', "collab^4", "categories^3", 'brands^4']
-    search = search.query(Q("multi_match", query=query, fields=fields))
-    search = search.query('bool',
-                          must=[
-                              Q('multi_match',
-                                query=query,
-                                type="most_fields",
-                                fields=['model^3', 'lines^2', 'colorway^1', 'categories^3', 'brands^4'],
-                                fuzziness="AUTO")
-                          ],
-                          should=[
-                              # Q('match', main_line={'query': query, 'boost': 2, 'fuzziness': 'AUTO'}),
-                              Q('match', colorway={'query': query, 'fuzziness': 'AUTO'}),
-                              Q('match', manufacturer_sku={"query": query, 'boost': 8, 'fuzziness': 2})
-                          ]
-                          )
+    #     'multi_match',
+    #     query=query,
+    #     fields=['manufacturer_sku', "full_name"],
+    #     # Установите вес для каждого поля
+    #     fuzziness='AUTO'
+    # )
+    search = search.query('match', full_name={'query': query, 'fuzziness': 'AUTO'})
 
-
-    # search = search.query('function_score',
-    #                       functions=[
-    #                           {
-    #                               'field_value_factor': {
-    #                                   'field': 'rel_num',
-    #                                   'factor': 100000,
-    #                                   'modifier': 'log1p'
-    #                               }
-    #                           }
-    #                       ])
-
-    # search = search.query('bool',
-    #                       must=[Q(
-    #                           'multi_match',
-    #                           query=query,
-    #                           type="most_fields",
-    #                           fields=['manufacturer_sku^2', 'model^3', 'lines^2', 'main_line^3', 'colorway^1',
-    #                                   "collab^4", "categories^3", 'brands^4'],
-    #                           # Установите вес для каждого поля
-    #                           fuzziness="AUTO")],
-    #                       # filter=Q('ids', values=list(queryset.values_list('id', flat=True)))
-    #                       )
     search = search.sort(
         {'_score': {'order': 'desc'}},
         {'rel_num': {'order': 'desc'}}
     )
-    # search = search.query(
-    #     'multi_match',
-    #     query=query,
-    #     fields=['manufacturer_sku^1', 'model^5', 'lines^3', 'russian_name^1', 'colorway^2', 'brands^5'],
-    #     # Установите вес для каждого поля
-    #     fuzziness='AUTO',
-    #     filter=queryset.query
-    # )
 
     search = search[:192]
 

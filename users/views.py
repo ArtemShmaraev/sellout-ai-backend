@@ -564,6 +564,22 @@ class UserLastSeenView(APIView):
                     if len(user.last_viewed_products) > 20:
                         user.last_viewed_products = user.last_viewed_products[:20]
                     user.save()
+
+                    s_products = user.last_viewed_products
+                    product_list_string = json.dumps(s_products, sort_keys=True)  # Преобразуем список в строку
+                    product_list_hash = hashlib.sha256(
+                        product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
+                    # Используем хеш-сумму в качестве ключа кэша
+                    cache_product_key = f"last_{product_list_hash}"
+                    cached_data = cache.get(cache_product_key)
+
+                    if cached_data is None:
+                        products = Product.objects.filter(id__in=user.last_viewed_products).order_by(
+                            models.Case(
+                                *[models.When(id=id, then=index) for index, id in enumerate(user.last_viewed_products)])
+                        )
+                        cache.set(cache_product_key, products, CACHE_TIME)
+
                     return Response("Продукт успешно добавлен в список последних просмотров")
                 except User.DoesNotExist:
                     return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)

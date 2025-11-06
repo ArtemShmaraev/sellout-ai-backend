@@ -18,7 +18,7 @@ russian_analyzer = analyzer(
 
 
 class ProductDocument(Document):
-    brands = Text(multi=True, analyzer='keyword')
+    brands = Text(multi=True, analyzer='standard')
     categories = Text(multi=True, analyzer=russian_analyzer)
     categories_eng = Text(multi=True, analyzer='standard')
     main_category = Text(analyzer=russian_analyzer)
@@ -28,11 +28,12 @@ class ProductDocument(Document):
     model = Text(analyzer='standard')
     colorway = Text(analyzer='standard')
     collab = Text(analyzer='standard')
-    gender = Text(multi=True, analyzer=russian_analyzer)
+    gender = Keyword(multi=True)
+    colors = Keyword(multi=True)
     manufacturer_sku = Text(analyzer="standard")
     rel_num = Integer()
     min_price = Integer()
-    materials = Text(analyzer=russian_analyzer)
+    materials = Keyword()
     full_name = Text(analyzer='standard')
     suggest = Completion()
 

@@ -1,4 +1,5 @@
 import re
+import time
 
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
@@ -130,7 +131,9 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
                 product_index.delete()
 
+
             self.stdout.write(self.style.SUCCESS('Creating index...'))
+
             product_index.create()
 
             products = Product.objects.filter(available_flag=True, is_custom=False)

@@ -9,7 +9,8 @@ from products.models import Product  # Замените products.models на в�
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        # products = Product.objects.filter(available_flag=True, is_custom=False, categories__name__in=["Кеды", "Кроссовки"]).order_by("score_product_page")
+        # products = Product.objects.filter(available_flag=True, is_custom=False, categories__name__in=["Кеды", "Кроссовки"])
+
         #
         # ck = products.count()
         # print(ck)
@@ -75,12 +76,6 @@ class Command(BaseCommand):
         dk = 1
         ck = products.count()
         print(ck)
-        # products = products[:ck//4]
-        # products = products[ck // 6 + 1: ck//2]
-        # # products = products[ck // 2 + 1: (ck // 4) * 3]
-        # products = products[(ck // 4) * 3 + 1:]
-        #products = Product.objects.filter(id__in=products.values_list("id", flat=True))
-        # products.update(up_score=True)
 
         k = 0
         t = time()

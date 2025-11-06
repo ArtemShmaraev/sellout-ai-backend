@@ -13,7 +13,7 @@ class ProductSitemap(Sitemap):
         date = obj['last_upd']
         return date
     def location(self, obj):
-        return obj['slug']
+        return f"/products/{obj['slug']}"
 
     def calculate_priority(self, obj):
         rel_num = obj['rel_num']

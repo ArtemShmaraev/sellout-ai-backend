@@ -31,6 +31,7 @@ class ProductSitemap(Sitemap):
 
     def get_urls(self, page=1, site=None, protocol="https"):
         self.limit = self.limit()  # вызываем метод limit() и присваиваем его результат переменной limit
+        # print(protocol)
         # site = None
         # protocol = "https"
-        return super().get_urls(page=page, site=site, protocol=protocol)
+        return super().get_urls(page=page, site=site, protocol="https")

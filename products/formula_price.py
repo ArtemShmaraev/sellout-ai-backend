@@ -270,6 +270,9 @@ def formula_price(product, unit, user_status):
     total_profit += total_round_markup
 
     bonus, max_bonus_for_product = get_bonus(total_profit, product.max_profit, status_name)
+    price_without_sale = round_total_price
+    if unit.is_sale:
+        price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
 
-    return {"final_price": round_total_price, "start_price": round_total_price, "total_profit": round(total_profit),
+    return {"final_price": round_total_price, "start_price": price_without_sale, "total_profit": round(total_profit),
             "bonus": bonus, "max_bonus":  max_bonus_for_product}

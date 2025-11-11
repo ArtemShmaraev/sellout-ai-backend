@@ -123,7 +123,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = False
+        f = True
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             product_index = ProductDocument._index

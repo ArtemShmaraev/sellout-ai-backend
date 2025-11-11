@@ -197,7 +197,6 @@ def add_product_api(data):
 
     t7 = time()
     for unit in data['units']:
-        product.available_flag = True
         sizes = []
         tables = []
         if "size_table_info" in unit:

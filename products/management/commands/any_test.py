@@ -26,25 +26,113 @@ from users.models import User, EmailConfirmation, UserStatus
 from products.tools import get_text
 import matplotlib.pyplot as plt
 from collections import Counter
-
+from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
 
+        # p = Product.objects.get(slug="nike-dunk-low-chicago-split-262086")
+        # p.is_sale = True
+        # pu = p.product_units.all()
+        # for u in pu:
+        #     u.is_sale = True
+        #     u.start_price = (math.ceil((u.final_price * 1.33) / 100) * 100) - 10
+        #     u.save()
+        #     print(u.original_price)
+        # pum = pu.order_by("final_price").first()
+        # p.min_price_without_sale = pum.start_price
+        # p.save()
+
+
+        # lines = Line.objects.all()
+        # for line in lines:
+        #     if "&" in line.full_eng_name:
+        #         line.full_eng_name = line.full_eng_name.replace("&", "and")
+        #         print(line.full_eng_name)
+        #         line.save()
+
+        # lines = Product.objects.get(id=455655).lines.all().exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(parent_line=None).values_list("name", flat=True)
+        # print(list(lines))
+
+
+        es = Elasticsearch(['http://130.193.53.215:9200'])
+
+        # Имя индекса, для которого вы хотите узнать количество документов
+        index_name = 'product_index_3'
+
+        # Отправка запроса для получения количества документов в индексе
+        response = es.count(index=index_name)
+
+        # Получение количества документов из ответа
+        document_count = response['count']
+        print(f'Количество документов в индексе {index_name}: {document_count}')
+
+
+        # p = Product.objects.get(slug="nike-zoom-court-vapor-cage-4-rafa-161294")
+        # print(p.categories.all())
+        # pr = Product.objects.get(id=245490)
+        # print(pr.slug)
+        # prs = Product.objects.filter(available_flag=True, min_price=0)
+        # prs.update(available_flag=False)
+
+        #
+        # line = Line.objects.get(name="adidas Yeezy")
+        # line2 = Line.objects.get(name="Все adidas Yeezy")
+        # products = Product.objects.filter(lines=line)
+        # k = 0
+        # for p in products:
+        #     k += 1
+        #     p.lines.add(line2)
+        #     p.save()
+        #     print(k)
 
 
 
-        products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=-1)
 
-        # print(products)
-        ck = products.count()
-        print(ck)
-        # # lc = list(Product.objects.filter(available_flag=True).values_list("rel_num", flat=True))
+
+        # products = Product.objects.filter(available_flag=True, is_custom=False, likes_month=-1)
+        #
+        # # print(products)
+        # ck = products.count()
+        # print(ck)
+        
+        # prs = Product.objects.filter(likes_month=303333, rel_num=129654).values_list("slug", flat=True)
+        # print(prs)
+
+        # products = Product.objects.exclude(categories__name__in=["Обувь", "Одежда"]).filter(available_flag=True, is_custom=False)
+        # products = Product.objects.filter(spu_id=1011766)
+        # ck = products.count()
+        # for page in range(0, ck, 100):
+        #     products_p = products[page:page+100]
+        #     print(page)
+        #     for product in products_p:
+        #         likes_month = product.likes_month
+        #         rel_num = product.rel_num
+        #         if likes_month > rel_num:
+        #             new = rel_num + likes_month
+        #             old = rel_num // 0.3
+        #             product.rel_num = old
+        #             product.likes_month = new - old
+        #             product.save()
+        # # lc = list(Product.objects.filter(available_flag=True).exclude(likes_month=-1).values_list("likes_month", "rel_num"))
         # json_string = json.dumps(lc, ensure_ascii=False)
+        # 
+        # with open("dynamic_likes.json", "w", encoding="utf-8") as file:
+        #     file.write(json_string)
         #
         # brands = Brand.objects.all()
-        # cats = Category.objects.all().order_by("id").exclude(name__icontains='Все').exclude(name__icontains='Вся')
+
+
+        # cats = Category.objects.filter(Q(name__icontains='Все') | Q(name__icontains='Вся'))
+        # for cat in cats:
+        #     cat.save()
+        #
+        # lines = Category.objects.filter(Q(name__icontains='Все') | Q(name__icontains="Вся"))
+        # for line in lines:
+        #     line.save()
+
+
         # d = []
         # for brand in brands:
         #     for cat in cats:
@@ -249,15 +337,15 @@ class Command(BaseCommand):
         #     h.save()
         #     print(h)
 
-        def recursive_subcategories(sz, category):
-            print(category)
-            subcategories = category.subcat.all()
-
-            for subcategory in subcategories:
-                # print(subcategory.name)  # Вы можете выполнить нужные действия с каждой подкатегорией здесь
-                sz.category.add(subcategory)
-                # print(sz.name, subcategory)
-                recursive_subcategories(sz, subcategory)
+        # def recursive_subcategories(sz, category):
+        #     print(category)
+        #     subcategories = category.subcat.all()
+        #
+        #     for subcategory in subcategories:
+        #         # print(subcategory.name)  # Вы можете выполнить нужные действия с каждой подкатегорией здесь
+        #         sz.category.add(subcategory)
+        #         # print(sz.name, subcategory)
+        #         recursive_subcategories(sz, subcategory)
 
 
         # szs = SizeTable.objects.filter(standard=True)
@@ -272,7 +360,7 @@ class Command(BaseCommand):
             #     while cur_cat.parent_category:
             #         sz.category.add(cur_cat.parent_category)
             #         cur_cat = cur_cat.parent_category
-            sz.save()
+            # sz.save()
         # user_s = UserStatus.objects.all()
         # print(user_s.values_list("name", flat=True).order_by("id"))
         # row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()

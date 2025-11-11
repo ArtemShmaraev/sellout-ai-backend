@@ -19,7 +19,6 @@ CACHE_TIME = 1500
 #
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -68,7 +67,6 @@ INSTALLED_APPS = [
 GOOGLE_OAUTH2_KEY = '853829711600-mok5b6g0aur5ls1hmllelc8spqninqkk.apps.googleusercontent.com'
 GOOGLE_OAUTH2_SECRET = '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'
 
-
 # Set the AUTH_USER_MODEL setting to point to your custom user model
 AUTH_USER_MODEL = 'users.User'
 
@@ -86,7 +84,6 @@ MIDDLEWARE = [
 CORS_ALLOW_HEADERS = default_headers + (
     'Access-Control-Allow-Origin',
 )
-
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
@@ -256,7 +253,7 @@ SIMPLE_JWT = {
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
 
-ELASTIC_HOST = "158.160.56.73"
+ELASTIC_HOST = "130.193.53.215"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
@@ -268,20 +265,15 @@ DATABASES = {
         'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2023',
-        # 'HOST': 'rc1b-s7ch8g545sfxps4j.mdb.yandexcloud.net',
-        # 'PORT': '6432',
-        # 'OPTIONS': {
-        #     'sslmode': 'verify-full',
-        #     'sslrootcert': '/root/.postgresql/root.crt',
-        #     'target_session_attrs': 'read-write',
-        # }
-        'HOST': '158.160.56.73',
-        'PORT': '5432',
-        # 'OPTIONS': {
-        #     'sslmode': 'verify-full',
-        #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt', # или 'C:/Users/artem/.postgresql/root.crt'
-        #     'target_session_attrs': 'read-write',
-        # }
+        'HOST': 'rc1b-s7ch8g545sfxps4j.mdb.yandexcloud.net',
+        'PORT': '6432',
+        'OPTIONS': {
+            'sslmode': 'verify-full',
+            'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+            'target_session_attrs': 'read-write',
+        }
+        # 'HOST': '158.160.56.73',
+        # 'PORT': '5432',
     }
 }
 

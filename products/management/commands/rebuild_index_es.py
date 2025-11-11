@@ -181,7 +181,7 @@ class Command(BaseCommand):
                     gender = [genders_rus[gender.name] for gender in product.gender.all()]
 
                     full_name = f'{" ".join(brands)} {product.collab.name if product.collab is not None else ""} {main_line} {product.model if product.model not in all_cat_name else ""} ' \
-                                f'{product.colorway} {" ".join(categories)} {" ".join(categories_eng)} {" ".join(colors)} {" ".join(materials)} {" ".join(gender)} {product.manufacturer_sku}'.lower().replace("_", " ").replace("/", "").replace("-", "")
+                                f'{product.colorway} {" ".join(categories)} {" ".join(categories_eng)} {" ".join(colors)} {" ".join(materials)} {" ".join(gender)} {product.manufacturer_sku}'.lower().replace("_", " ").replace("/", "")
                     full_name = unique_words(full_name)
 
                     product_doc.brands = brands

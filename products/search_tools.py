@@ -187,7 +187,12 @@ def search_product(query, pod_queryset, page_number=1):
     #     # Установите вес для каждого поля
     #     fuzziness='AUTO'
     # )
-    search = search.query('match', full_name={'query': query, 'fuzziness': 'AUTO'})
+    search = search.query('bool', must=[
+        {'match': {'full_name': {'query': query, 'fuzziness': 'AUTO'}}}])
+    # , should=[
+    #     {'match': {'manufacturer_sku': {'query': query, 'fuzziness': 'AUTO', 'boost': 1}}}
+    # ])
+
 
     search = search.sort(
         {'_score': {'order': 'desc'}},

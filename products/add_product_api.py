@@ -341,6 +341,7 @@ def add_product_api(data):
     product.one_update = True
     product.last_upd = timezone.now()
     product.save()
+    print(product.available_flag)
 
     # print(product.slug)
     t13 = time()

@@ -295,7 +295,7 @@ SECURE_HSTS_PRELOAD = True
 CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '51.250.74.115:11211',  # Замените на адрес вашего Memcached сервера
+        'LOCATION': '130.193.53.215:11211',  # Замените на адрес вашего Memcached сервера
         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
     }
 }

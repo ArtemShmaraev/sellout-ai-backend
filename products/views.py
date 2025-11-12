@@ -199,7 +199,7 @@ class AddPhotoBlackList(APIView):
             product.bucket_link.remove(photo)
             product.black_bucket_link.add(photo)
             product.save()
-            if product.bucket_link.all().count() == 0:
+            if not product.bucket_link.exists():
                 product.available_flag = False
                 product.save()
         except Exception as e:

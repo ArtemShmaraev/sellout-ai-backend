@@ -30,6 +30,10 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        # order = Order.objects.filter(fact_of_payment=True).order_by("-id").first()
+        # ou = order.order_units.all()
+        # for o in ou:
+        #     print(f"Товар: {o.product.get_full_name()} {o.product.manufacturer_sku} Цена: {o.final_price}Р {o.original_price}Y Размер: {o.view_size_platform} {o.size_platform}")
         ps = Product.objects.filter(available_flag=True, bucket_link=None)
         ps.update(available_flag=False)
 

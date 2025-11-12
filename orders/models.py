@@ -203,7 +203,7 @@ class Order(models.Model):
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
             weight=product_unit.weight,
-            # size_table_platform=product_unit.size_table_platform,
+            size_platform=product_unit.size_platform,
             start_price=price['start_price'],
             final_price=price['final_price'],
             delivery_type=product_unit.delivery_type,
@@ -330,7 +330,7 @@ class OrderUnit(models.Model):
                                 null=False, blank=False)
     view_size_platform = models.CharField(max_length=255, null=True, blank=True,
                                           default="")  # обработанный размер с платформы
-    size_table_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
+    size_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="order_units",
                              null=True, blank=True)
     weight = models.IntegerField(default=1)

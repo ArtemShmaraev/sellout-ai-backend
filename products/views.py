@@ -987,11 +987,11 @@ class SizeTableForFilter(APIView):
             size_tables = SizeTable.objects.filter(standard=True)
 
             # Фильтр по цене
-            gender = request.query_params.get('gender')
+            gender = request.query_params.getlist('gender')
             categories = request.query_params.getlist('categories')
 
             if gender:
-                size_tables = size_tables.filter(gender__name__in=[gender])
+                size_tables = size_tables.filter(gender__name__in=gender)
             if categories:
                 size_tables = size_tables.filter(category__eng_name__in=categories)
 

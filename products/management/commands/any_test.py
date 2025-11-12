@@ -32,6 +32,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
 
+
         # p = Product.objects.get(slug="nike-dunk-low-chicago-split-262086")
         # p.is_sale = True
         # pu = p.product_units.all()
@@ -56,17 +57,17 @@ class Command(BaseCommand):
         # print(list(lines))
 
 
-        es = Elasticsearch(['http://130.193.53.215:9200'])
-
-        # Имя индекса, для которого вы хотите узнать количество документов
-        index_name = 'product_index_3'
-
-        # Отправка запроса для получения количества документов в индексе
-        response = es.count(index=index_name)
-
-        # Получение количества документов из ответа
-        document_count = response['count']
-        print(f'Количество документов в индексе {index_name}: {document_count}')
+        # es = Elasticsearch(['http://130.193.53.215:9200'])
+        #
+        # # Имя индекса, для которого вы хотите узнать количество документов
+        # index_name = 'product_index_3'
+        #
+        # # Отправка запроса для получения количества документов в индексе
+        # response = es.count(index=index_name)
+        #
+        # # Получение количества документов из ответа
+        # document_count = response['count']
+        # print(f'Количество документов в индексе {index_name}: {document_count}')
 
 
         # p = Product.objects.get(slug="nike-zoom-court-vapor-cage-4-rafa-161294")

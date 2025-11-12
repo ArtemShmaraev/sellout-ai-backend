@@ -217,14 +217,14 @@ class DewuInfoCount(APIView):
 class HideProductView(APIView):
     def get(self, request, spu_id, property_id):
         product = Product.objects.filter(spu_id=spu_id, property_id=property_id)
-        product.update(available_flag=True)
+        product.update(available_flag=False)
         return Response("Готово")
 
 
 class HideProductSpiIdView(APIView):
     def get(self, request, spu_id, ):
         product = Product.objects.filter(spu_id=spu_id)
-        product.update(available_flag=True)
+        product.update(available_flag=False)
         return Response("Готово")
 
 

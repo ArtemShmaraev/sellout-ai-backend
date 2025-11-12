@@ -288,6 +288,7 @@ class Product(models.Model):
     actual_price = models.BooleanField(default=False)
     one_update = models.BooleanField(default=False)
     last_parse_price = models.DateTimeField(default=timezone.now)
+
     content_sources = models.JSONField(blank=True, null=True, default=dict)
     category_id = models.IntegerField(default=0)
     category_name = models.CharField(max_length=128, default="")

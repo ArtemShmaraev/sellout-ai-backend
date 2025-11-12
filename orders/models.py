@@ -240,7 +240,6 @@ class ShoppingCart(models.Model):
     final_amount = models.IntegerField(default=0)
 
 
-
     def clear(self):
         self.product_units.clear()
         self.promo_code = None

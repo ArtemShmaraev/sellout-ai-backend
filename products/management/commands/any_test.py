@@ -30,6 +30,8 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        ps = Product.objects.filter(available_flag=True, bucket_link=None)
+        ps.update(available_flag=False)
 
 
 

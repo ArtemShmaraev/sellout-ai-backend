@@ -56,6 +56,35 @@ from django.shortcuts import render, redirect
 
 
 
+class MyScoreForProduct(APIView):
+    def get(self, request, id):
+        try:
+            product = Product.objects.get(id=id)
+            my_score = product.extra_score
+            print(my_score)
+            return Response({"my_score": my_score})
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, id):
+        try:
+            product = Product.objects.get(id=id)
+            data = json.loads(request.body)
+            my_score = data['my_score']
+            last = product.extra_score
+            product.extra_score = my_score
+            product.score_product_page += round((my_score - last) * 0.1)
+            product.save()
+
+            return Response({"my_score": my_score})
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class MaterialView(APIView):
     def get(self, request):
         cache_material = f"materials"  # Уникальный ключ для каждой URL
@@ -440,65 +469,100 @@ class MainPageBlocks(APIView):
         gender = ["M", "F"]
         if request.user.id:
             gender = [request.user.gender.name]
+            for page in range(0 if not next else number_page - 1, number_page):
+                s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+                t1 = time()
+                last = "any"
+                for i in range(len(s)):
+                    type = s[i]
+                    if type == 0:
+                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}"  # Уникальный ключ для каждой URL
+                        cached_data = cache.get(cache_photo_key)
 
-        for page in range(0 if not next else number_page - 1, number_page):
-            s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
-            t1 = time()
-            last = "any"
-            for i in range(len(s)):
-                type = s[i]
-                if type == 0:
-                    cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_photo_key)
+                        if cached_data is not None and not new:
+                            photo, last, list_id = cached_data
+                        else:
+                            photo, last, list_id = get_photo_text(last, gender)
 
-                    if cached_data is not None and not new:
-                        photo, last, list_id = cached_data
-                    else:
-                        photo, last, list_id = get_photo_text(last, gender)
+                            cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
 
-                        cache.set(cache_photo_key, (photo, last, list_id), CACHE_TIME)
+                        queryset = get_queryset_from_list_id(list_id)
+                        if queryset.exists():
+                            res.append(photo)
+                            selection = {"type": "selection", "title": photo['mobile']['title'],
+                                         "url": photo['mobile']['url'],
+                                         'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
+                            res.append(selection)
 
-                    queryset = get_queryset_from_list_id(list_id)
-                    if queryset.exists():
-                        res.append(photo)
-                        selection = {"type": "selection", "title": photo['mobile']['title'],
-                                     "url": photo['mobile']['url'],
-                                     'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
+                    elif type == 1:
+                        cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
+                        cached_data = cache.get(cache_sellection_key)
+
+                        if cached_data is not None and not new:
+                            list_id, selection = cached_data
+                        else:
+
+                            list_id, selection = get_selection(gender)
+
+                            cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
+
+                        queryset = get_queryset_from_list_id(list_id)
+
+                        selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+
                         res.append(selection)
-
-                elif type == 1:
-                    cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_sellection_key)
-
-                    if cached_data is not None and not new:
-                        list_id, selection = cached_data
                     else:
+                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
+                        cached_data = cache.get(cache_photo_key)
+                        if cached_data is not None and not new:
+                            photo, last = cached_data
+                        else:
 
-                        list_id, selection = get_selection(gender)
+                            photo, last = get_sellout_photo_text(last)
+                            cache.set(cache_photo_key, (photo, last), CACHE_TIME)
+                        res.append(photo)
+            response = Response(res)
+            response.set_cookie('number_main_page', str(number_page + 1),
+                                max_age=3600)  # Установка нового значения куки (истечет через 1 час)
+            # print(len(res))
 
-                        cache.set(cache_sellection_key, (list_id, selection), CACHE_TIME)
-
-                    queryset = get_queryset_from_list_id(list_id)
-
-                    selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
-
-                    res.append(selection)
+            return response
+        else:
+            for page in range(0 if not next else number_page - 1, number_page):
+                anon_cache = "main_page_anon"
+                cached_data = cache.get(anon_cache)
+                if cached_data is not None and not new:
+                    res = cached_data
                 else:
-                    cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}"  # Уникальный ключ для каждой URL
-                    cached_data = cache.get(cache_photo_key)
-                    if cached_data is not None and not new:
-                        photo, last = cached_data
-                    else:
+                    s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+                    t1 = time()
+                    last = "any"
+                    for i in range(len(s)):
+                        type = s[i]
+                        if type == 0:
+                            photo, last, list_id = get_photo_text(last, gender)
+                            queryset = get_queryset_from_list_id(list_id)
+                            if queryset.exists():
+                                res.append(photo)
+                                selection = {"type": "selection", "title": photo['mobile']['title'],
+                                             "url": photo['mobile']['url'],
+                                             'products': ProductMainPageSerializer(queryset, many=True,
+                                                                                   context=context).data}
+                                res.append(selection)
 
-                        photo, last = get_sellout_photo_text(last)
-                        cache.set(cache_photo_key, (photo, last), CACHE_TIME)
-                    res.append(photo)
-        response = Response(res)
-        response.set_cookie('number_main_page', str(number_page + 1),
-                            max_age=3600)  # Установка нового значения куки (истечет через 1 час)
-        # print(len(res))
+                        elif type == 1:
 
-        return response
+                            list_id, selection = get_selection(gender)
+                            queryset = get_queryset_from_list_id(list_id)
+                            selection['products'] = ProductMainPageSerializer(queryset, many=True, context=context).data
+                            res.append(selection)
+                        else:
+                            photo, last = get_sellout_photo_text(last)
+                            res.append(photo)
+                cache.set(anon_cache, res, CACHE_TIME)
+            response = Response(res)
+            return response
+
 
 
 class ProductSimilarView(APIView):
@@ -657,38 +721,54 @@ class ProductView(APIView):
         # params = request.GET.copy()
         url = request.build_absolute_uri()
         url_hash = hashlib.md5(url.encode()).hexdigest()
-        # url_hash = urlencode(params)
-
         cache_product_key = f"product_page:{url_hash}_{f'{request.user.id}_{request.user.user_status.id}' if request.user.id else 0}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)
+        # url_hash = urlencode(params)
+        if request.user.id:
+            if cached_data is None or like:
+                queryset, res = get_product_page(request, context)
+                t_new = time()
+                cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+                t_old = time()
+                print(f"no cache: {t_old - t_new}")
 
-        if cached_data is None or like:
-            queryset, res = get_product_page(request, context)
-            t_new = time()
-            cache.set(cache_product_key, (queryset, res), CACHE_TIME)
-            t_old = time()
-            print(f"no cache: {t_old - t_new}")
+            else:
+                t_new = time()
+                queryset, res = cached_data
+                t_old = time()
+                print(f"cache: {t_old - t_new}")
 
+            t6 = time()
+            t7 = time()
+            print("t6", t7 - t6)
+            if adminka:
+                serializer = ProductAdminSerializer(queryset, many=True, context=context).data
+            else:
+                serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
         else:
-            t_new = time()
-            queryset, res = cached_data
-            t_old = time()
-            print(f"cache: {t_old - t_new}")
+            if cached_data is None or like:
+                queryset, res = get_product_page(request, context)
+                t_new = time()
+                if adminka:
+                    queryset = ProductAdminSerializer(queryset, many=True, context=context).data
+                else:
+                    queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
+                cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+                t_old = time()
+                print(f"no cache: {t_old - t_new}")
 
-        # t5 = time()
-        # # queryset = get_queryset_from_list_id(queryset)
-        #
-        t6 = time()
-        # print(f"t06 {t6-t5}")
+            else:
+                t_new = time()
+                queryset, res = cached_data
+                t_old = time()
+                print(f"cache: {t_old - t_new}")
 
-        # Сериализуем объекты и возвращаем ответ с пагинированными данными
-        # serializer = ProductMainPageSerializer(queryset, many=True, context=context)
-        t7 = time()
-        print("t6", t7 - t6)
-        if adminka:
-            serializer = ProductAdminSerializer(queryset, many=True, context=context).data
-        else:
-            serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
+            t6 = time()
+            t7 = time()
+            print("t6", t7 - t6)
+            serializer = queryset
+
+
         res["results"] = serializer
         t8 = time()
         print("t7", t8 - t7)

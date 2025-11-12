@@ -181,22 +181,23 @@ class ProductAdminSerializer(serializers.ModelSerializer):
         s = []
 
         def get_line_parents(line):
-            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name}"}]
+            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name.rstrip('_')}"}]
             current_line = line
             while current_line.parent_line is not None:
                 current_line = current_line.parent_line
-                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name}"})
+                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name.rstrip('_')}"})
             return parents[::-1]
 
         def get_cat_parents(cat, line):
             parents = []
             if "Вс" not in cat.name:
-                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"})
+                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
             current_cat = cat
             while current_cat.parent_category is not None:
                 current_cat = current_cat.parent_category
                 if "Вс" not in current_cat.name:
-                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
+                    print(current_cat.eng_name.rstrip('_'))
+                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
             return parents[::-1]
 
         if list_lines:
@@ -246,35 +247,37 @@ class ProductSerializer(serializers.ModelSerializer):
         else:
             return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
 
-
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
         s = []
 
         def get_line_parents(line):
-            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name}"}]
+            parents = [{"name": line.view_name, "query": f"line={line.full_eng_name.rstrip('_')}"}]
             current_line = line
             while current_line.parent_line is not None:
                 current_line = current_line.parent_line
-                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name}"})
+                parents.append(
+                    {"name": current_line.view_name, "query": f"line={current_line.full_eng_name.rstrip('_')}"})
             return parents[::-1]
 
         def get_cat_parents(cat, line):
             parents = []
             if "Вс" not in cat.name:
-                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={cat.eng_name}"})
+                parents.append({"name": f"{cat.name} {line.view_name}",
+                                "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
             current_cat = cat
             while current_cat.parent_category is not None:
                 current_cat = current_cat.parent_category
                 if "Вс" not in current_cat.name:
-                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name}&category={current_cat.eng_name}"})
+                    parents.append({"name": f"{current_cat.name} {line.view_name}",
+                                    "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
             return parents[::-1]
 
         if list_lines:
             s = []
             if obj.main_line is not None:
                 s = get_line_parents(obj.main_line)
-                if len(s) == 1 and obj.categories.exists():
+                if len(s) == 1:
                     s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
         return s
 

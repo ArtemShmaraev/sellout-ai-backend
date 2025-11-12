@@ -577,7 +577,8 @@ class ProductSimilarView(APIView):
                 another_configuration = Product.objects.filter(spu_id=product.spu_id, available_flag=True).exclude(
                     id=product.id).order_by("min_price")
                 if another_configuration.count() > 0:
-                    res.append({"name": "Другие конфигурации",
+                    name = "Другие конфигурации" if not product.has_many_colors else "Другие цвета"
+                    res.append({"name": name,
                                 "products": ProductMainPageSerializer(another_configuration, many=True,
                                                                        context=context).data})
 
@@ -586,8 +587,6 @@ class ProductSimilarView(APIView):
                 if similar[0].exists():
                     res.append({"name": "Похожие товары",
                                 "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
-
-
             print("similar", time() - t, product.id)
             return Response(res)
         except Product.DoesNotExist:

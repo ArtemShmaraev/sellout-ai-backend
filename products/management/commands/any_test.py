@@ -22,7 +22,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from products.serializers import ProductMainPageSerializer
 from promotions.models import PromoCode
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus
+from users.models import User, EmailConfirmation, UserStatus, Partner, SpamEmail
 from products.tools import get_text
 import matplotlib.pyplot as plt
 from collections import Counter
@@ -30,12 +30,18 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        # cart = ShoppingCart.objects.get(user=User.objects.get(email="Lesnoy.enotik@mail.ru"))
+        # su = cart.product_units.all()
+        # print(cart.final_amount)
+        # for pu in su:
+        # #     print(pu.final_price, pu.original_price, pu.total_profit, pu.product.manufacturer_sku, pu.view_size_platform)
         # order = Order.objects.filter(fact_of_payment=True).order_by("-id").first()
         # ou = order.order_units.all()
+        # print(order.final_amount)
         # for o in ou:
         #     print(f"Товар: {o.product.get_full_name()} {o.product.manufacturer_sku} Цена: {o.final_price}Р {o.original_price}Y Размер: {o.view_size_platform} {o.size_platform}")
-        ps = Product.objects.filter(available_flag=True, bucket_link=None)
-        ps.update(available_flag=False)
+        # # ps = Product.objects.filter(available_flag=True, bucket_link=None)
+        # ps.update(available_flag=False)
 
 
 
@@ -191,8 +197,8 @@ class Command(BaseCommand):
         # duplicates = Product.objects.values('spu_id', 'property_id').annotate(count=Count('id')).filter(count__gt=1)
         # print(duplicates.count())
         # k = 0
-
-        # min_ids = Product.objects.values('spu_id', 'property_id').annotate(min_id=Min('id'))
+        #
+        # # min_ids = Product.objects.values('spu_id', 'property_id').annotate(min_id=Min('id'))
         # print(duplicates)
         # for duplicate in duplicates:
         #     k += 1
@@ -205,7 +211,7 @@ class Command(BaseCommand):
         #     prs_d = Product.objects.filter(id__in=prs2)
         #     prs_d.delete()
         #     print(k, Product.objects.filter(spu_id=duplicate['spu_id'], property_id=duplicate['property_id']).values_list("id", flat=True))
-            # products_to_delete.delete()
+        #     # products_to_delete.delete()
         # Проходимся по дубликатам и удаляем лишние записи
         # for duplicate in duplicates:
         #     products_to_delete = Product.objects.filter(spu_id=duplicate['spu_id'],

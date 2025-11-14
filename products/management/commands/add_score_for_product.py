@@ -72,7 +72,8 @@ class Command(BaseCommand):
 
 
         print()
-        products = Product.objects.filter(available_flag=True, is_custom=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+        # products.update(up_score=False)
         dk = 1
         ck = products.count()
         print(ck)
@@ -92,7 +93,9 @@ class Command(BaseCommand):
                 try:
                     brand = product.brands.first().name
                     category = product.categories.all().order_by("-id").first().name
+
                     brand_and_category_score = data[f"{brand}_{category}"]
+
                 except:
                     brand_and_category_score = 1000
 

@@ -470,7 +470,10 @@ class MainPageBlocks(APIView):
         if request.user.id:
             gender = [request.user.gender.name]
             for page in range(0 if not next else number_page - 1, number_page):
-                s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+                if page == 0:
+                    s = [2, 1, 0, 1, 1, 0, 0]
+                else:
+                    s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
                 t1 = time()
                 last = "any"
                 for i in range(len(s)):
@@ -534,7 +537,10 @@ class MainPageBlocks(APIView):
                 if cached_data is not None and not new:
                     res = cached_data
                 else:
-                    s = [2 if int(page) == 0 else 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+                    if page == 0:
+                        s = [2, 1, 0, 1, 1, 0, 0]
+                    else:
+                        s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
                     t1 = time()
                     last = "any"
                     for i in range(len(s)):

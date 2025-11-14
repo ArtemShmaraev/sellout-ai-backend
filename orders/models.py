@@ -294,6 +294,10 @@ class ShoppingCart(models.Model):
             promo_sale = self.promo_code.check_promo_in_cart(self)
             if promo_sale != 0:
                 self.promo_sale = promo_sale
+                if self.first_order_bonus == 1000:
+                    self.first_order_bonus = 0
+                    sum_bonus -= 1000
+                    sum_bonus += max_bonus
             else:
                 self.promo_code = None
                 self.promo_sale = 0

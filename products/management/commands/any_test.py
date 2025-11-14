@@ -32,11 +32,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ds = DewuInfo.objects.all()
         print(ds.count())
-        # cart = ShoppingCart.objects.get(user=User.objects.get(email="Lesnoy.enotik@mail.ru"))
-        # su = cart.product_units.all()
-        # print(cart.final_amount)
-        # for pu in su:
-        # #     print(pu.final_price, pu.original_price, pu.total_profit, pu.product.manufacturer_sku, pu.view_size_platform)
+        cart = ShoppingCart.objects.get(user=User.objects.get(email="Lesnoy.enotik@mail.ru"))
+        su = cart.product_units.all()
+        print(cart.final_amount)
+        for pu in su:
+            print(f"https://sellout.su/products/{pu.product.slug}")
+            # print("Цена Р:", pu.final_price, "Цена Y:", pu.original_price, pu.url, pu.product.manufacturer_sku, pu.view_size_platform,"Доставка",  pu.delivery_type.days_min, pu.delivery_type.days_max)
         # order = Order.objects.filter(fact_of_payment=True).order_by("-id").first()
         # ou = order.order_units.all()
         # print(order.final_amount)

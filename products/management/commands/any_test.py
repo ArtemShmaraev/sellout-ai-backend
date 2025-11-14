@@ -30,6 +30,8 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        ds = DewuInfo.objects.all()
+        print(ds.count())
         # cart = ShoppingCart.objects.get(user=User.objects.get(email="Lesnoy.enotik@mail.ru"))
         # su = cart.product_units.all()
         # print(cart.final_amount)

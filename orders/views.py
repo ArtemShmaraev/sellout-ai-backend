@@ -310,7 +310,6 @@ class CheckOutView(APIView):
 
                 order.evenly_distribute_discount()
                 order.get_invoice_data()
-                order.final_amount = 30
                 order.save()
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data

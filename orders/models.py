@@ -170,8 +170,7 @@ class Order(models.Model):
             position['price'] = order_unit.start_price
             position['unit'] = "piece"
             position['quantity'] = 1
-            position['sum'] = 30
-            # position['sum'] = order_unit.start_price
+            position['sum'] = order_unit.start_price
             position['vat_mode'] = 'none'
             if order_unit.start_price != order_unit.final_price:
                 position['discount_amount'] = order_unit.start_price - order_unit.final_price

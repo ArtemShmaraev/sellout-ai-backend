@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
 
         print()
-        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("-score_product_page")
+        products = Product.objects.filter(available_flag=True, is_custom=False, up_score=False).exclude(categories__name__in=["Кеды", "Кроссовки"]).order_by("score_product_page")
         # products.update(up_score=False)
         dk = 1
         ck = products.count()

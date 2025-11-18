@@ -221,7 +221,7 @@ def search_product(query, pod_queryset, page_number=1):
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
     product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
-    queryset = Product.objects.filter(id__in=product_ids).filter(id__in=pod_queryset).values_list("id", flat=True)
+    queryset = pod_queryset.filter(id__in=product_ids)
 
     count = queryset.count()
     # Определение порядка объектов в queryset

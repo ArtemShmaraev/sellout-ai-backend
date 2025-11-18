@@ -276,8 +276,8 @@ def filter_products(request):
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
     t31 = time()
     # queryset = set(list(queryset.values_list("id", flat=True)))
-    queryset = queryset.distinct("id")
-    queryset = Product.objects.filter(id__in=queryset)
+    # queryset = queryset.distinct("id")
+    # queryset = Product.objects.filter(id__in=queryset)
     # queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
     t32 = time()
     print("t2.1", t32-t31)
@@ -357,6 +357,8 @@ def get_product_page(request, context):
             queryset = queryset.order_by(ordering)
     elif ordering == "random":
         queryset = queryset.order_by("?")
+    queryset = queryset.values_list("id", flat=True)
+    print(queryset.query)
 
 
     # paginator = CustomPagination()
@@ -377,7 +379,7 @@ def get_product_page(request, context):
     t51 = time()
     print("t5.1", t51-t5)
     # print(queryset.query)
-    queryset = get_queryset_from_list_id(list(queryset.values_list("id", flat=True)))
+    queryset = get_queryset_from_list_id(list(queryset))
 
     # res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     # res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"

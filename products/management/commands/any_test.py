@@ -30,14 +30,29 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        ds = DewuInfo.objects.all()
-        print(ds.count())
+        # pr = Product.objects.all()
+        # pr.update(actual_price=False)
+        # ds = DewuInfo.objects.all()
+        # print(ds.count())
         cart = ShoppingCart.objects.get(user=User.objects.get(email="Lesnoy.enotik@mail.ru"))
+        # p1 = Product.objects.get(id=366656)
+        # for unit in p1.product_units.all():
+        #     print(unit.delivery_type.days_min, unit.delivery_type.days_max, unit.view_size_platform)
+        #     s = input()
+        #     if s == "1":
+        #         cart.product_units.add(unit)
+        # p1 = Product.objects.get(id=279820)
+        # for unit in p1.product_units.all():
+        #     print(unit.delivery_type.days_min, unit.delivery_type.days_max, unit.view_size_platform)
+        #     s = input()
+        #     if s == "1":
+        #         cart.product_units.add(unit)
+
         su = cart.product_units.all()
         print(cart.final_amount)
         for pu in su:
             print(f"https://sellout.su/products/{pu.product.slug}")
-            # print("Цена Р:", pu.final_price, "Цена Y:", pu.original_price, pu.url, pu.product.manufacturer_sku, pu.view_size_platform,"Доставка",  pu.delivery_type.days_min, pu.delivery_type.days_max)
+            print("Цена Р:", pu.final_price, "Цена Y:", pu.original_price, pu.url, pu.product.manufacturer_sku, pu.view_size_platform,"Доставка",  pu.delivery_type.days_min, pu.delivery_type.days_max)
         # order = Order.objects.filter(fact_of_payment=True).order_by("-id").first()
         # ou = order.order_units.all()
         # print(order.final_amount)

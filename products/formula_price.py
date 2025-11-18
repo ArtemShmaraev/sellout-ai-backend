@@ -170,7 +170,7 @@ def get_bonus(total_profit, max_total_profit_for_product, status_name):
 
 def formula_price(product, unit, user_status):
     original_price = unit.original_price
-    weight = unit.weight
+    weight = unit.weight if unit.weight != 0 else 1
     delivery = unit.delivery_type
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
     delivery_decimal_insurance = delivery.decimal_insurance
@@ -216,11 +216,12 @@ def formula_price(product, unit, user_status):
                     "max_bonus": max_bonus_for_product}
         converted_into_rub_price = original_price * CURRENCY_RATE_CNY
         # print()
-        # print(original_price)
+        # print(original_price, unit.delivery_type.days_min, unit.delivery_type.days_max, unit.view_size_platform)
         # print(f"converted {converted_into_rub_price}")
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0, delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
+        # print(delivery_price_per_kg_in_rub, weight, delivery_decimal_insurance, delivery_absolute_insurance)
         # print(f"ship {shipping_cost}")
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         # print(f"cost {cost_without_shipping}")

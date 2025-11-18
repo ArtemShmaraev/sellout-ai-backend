@@ -234,6 +234,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
     def get_price(self, obj):
+        from .tools import update_price
+        update_price(obj)
         wl = self.context.get('wishlist', "")
         if wl and wl.user.user_status.name != "Amethyst":
             if obj.min_price != 0:
@@ -362,8 +364,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         # return {"start_price": obj.score_product_page, "final_price": obj.score_product_page}
 
         size = self.context.get('size')
-        from .tools import update_price
-        update_price(obj)
+        # from .tools import update_price
+        # update_price(obj)
 
         # Проверьте, соответствуют ли значения фильтров product_unit
         filters = Q()
@@ -401,8 +403,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                 return {"final_price": min_final_price, "start_price": corresponding_start_price}
 
             else:
-                if not obj.actual_price:
-                    obj.update_price()
+                # if not obj.actual_price:
+                #     obj.update_price()
                 return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
 
         #

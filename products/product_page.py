@@ -254,7 +254,7 @@ def filter_products(request):
         # filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
         # filter_id = set(list(Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)))
-        queryset = queryset.filter(filters)
+        queryset = queryset.filter(filters).values_list("id", flat=True)
         # queryset = queryset.select_related('product_units').filter(filters)
 
     if recommendations and not query:
@@ -274,10 +274,13 @@ def filter_products(request):
 
     # unique_product_ids = queryset.values("id")
     # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
-
-    queryset = set(list(queryset.values_list("id", flat=True)))
+    t31 = time()
+    # queryset = set(list(queryset.values_list("id", flat=True)))
+    queryset = queryset.distinct("id")
     queryset = Product.objects.filter(id__in=queryset)
     # queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
+    t32 = time()
+    print("t2.1", t32-t31)
     # print(list(queryset))
     # print(queryset.query)
 

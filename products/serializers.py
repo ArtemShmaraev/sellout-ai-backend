@@ -158,23 +158,24 @@ class ProductAdminSerializer(serializers.ModelSerializer):
         exclude = ["available_sizes", "size_table_platform", ]
         depth = 2
 
-
-
-
     def get_price(self, obj):
+        from .tools import update_price
+        update_price(obj)
         wl = self.context.get('wishlist', "")
         if wl and wl.user.user_status.name != "Amethyst":
             if obj.min_price != 0:
-                user_status = wl.user.user_status
-                unit = \
+                try:
+                    user_status = wl.user.user_status
+                    unit = \
                         obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
                             "final_price")[0]
 
-                return formula_price(obj, unit, user_status)
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
-        else:
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
-
+                    return formula_price(obj, unit, user_status)
+                except:
+                    return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale,
+                            "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus,
+                "max_bonus": obj.max_bonus}
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -239,15 +240,17 @@ class ProductSerializer(serializers.ModelSerializer):
         wl = self.context.get('wishlist', "")
         if wl and wl.user.user_status.name != "Amethyst":
             if obj.min_price != 0:
-                user_status = wl.user.user_status
-                unit = \
-                        obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
-                            "final_price")[0]
+                try:
+                    user_status = wl.user.user_status
+                    unit = \
+                            obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
+                                "final_price")[0]
 
-                return formula_price(obj, unit, user_status)
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
-        else:
-            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+                    return formula_price(obj, unit, user_status)
+                except:
+                    return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale,
+                            "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -375,38 +378,41 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
         wl = self.context.get('wishlist')
         if wl and not wl.user.user_status.base:
-            user_status = wl.user.user_status
-            if filters:
-                filters &= Q(availability=True)
-                min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-                filters &= Q(final_price=min_final_price)
-                unit = \
-                obj.product_units.filter(filters).order_by(
-                    "final_price")[0]
-            else:
-                if obj.min_price == 0:
-                    return {"final_price": 0, "start_price": 0}
-                filters &= Q(availability=True)
-                filters &= Q(final_price=obj.min_price)
-                unit = \
-                    obj.product_units.filter(filters).order_by(
-                        "final_price")[0]
+            try:
+                user_status = wl.user.user_status
+                if filters:
+                    filters &= Q(availability=True)
+                    min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+                    filters &= Q(final_price=min_final_price)
+                    unit = obj.product_units.filter(filters).order_by("final_price")[0]
+                else:
+                    if obj.min_price == 0:
+                        return {"final_price": 0, "start_price": 0}
+                    filters &= Q(availability=True)
+                    filters &= Q(final_price=obj.min_price)
+                    unit = obj.product_units.filter(filters).order_by("final_price")[0]
+            except:
+                obj.min_price = 0
+                obj.save()
+                return {"final_price": 0, "start_price": 0}
             return formula_price(obj, unit, user_status)
 
         else:
-            if filters:
-                filters &= Q(availability=True)
-                min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
-                filters &= Q(final_price=min_final_price)
-                corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
+            try:
+                if filters:
+                    filters &= Q(availability=True)
+                    min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
+                    filters &= Q(final_price=min_final_price)
+                    corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
 
-                return {"final_price": min_final_price, "start_price": corresponding_start_price}
+                    return {"final_price": min_final_price, "start_price": corresponding_start_price}
 
-            else:
-                # if not obj.actual_price:
-                #     obj.update_price()
+                else:
+                    # if not obj.actual_price:
+                    #     obj.update_price()
+                    return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
+            except:
                 return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
-
         #
 
 

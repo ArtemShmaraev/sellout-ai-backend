@@ -6,6 +6,7 @@ from datetime import datetime, date
 from time import time
 
 import httpx
+import requests
 from django.core.cache import cache
 from django.db.models import Q, Case, When, Value, IntegerField
 from django.utils import timezone
@@ -21,8 +22,9 @@ from users.models import UserStatus
 def platform_update_price(product, request=False):
     async def send_async_request(spu_id):
         async with httpx.AsyncClient() as client:
-            print(1)
+            print("Денис сукааааа")
             response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+            print("Денис сукааааа дважды")
             # Вы можете добавить обработку ответа, если это необходимо
             return response
     if request:
@@ -43,7 +45,9 @@ def platform_update_price(product, request=False):
                 if not product.last_upd >= time_threshold2:  # если цена не актуальна
                     product.last_parse_price = timezone.now()
                     product.save()
-                    asyncio.run(send_async_request(spu_id))
+                    s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                    # print(s.json())
+                    # asyncio.run(send_async_request(spu_id))
 
     else:
         time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
@@ -53,7 +57,9 @@ def platform_update_price(product, request=False):
             if not product.last_upd >= time_threshold2:  # если цена не актуальна
                 product.last_parse_price = timezone.now()
                 product.save()
-                asyncio.run(send_async_request(spu_id))
+                s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                # print(s.json())
+                # asyncio.run(send_async_request(spu_id))
 
 
 def update_price(product):

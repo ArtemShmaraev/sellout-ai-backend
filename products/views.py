@@ -817,6 +817,7 @@ class ProductSlugView(APIView):
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
             if request.user.id:
+                # print(11111)
                 platform_update_price(product, request=request)
                 product.rel_num += 1
                 product.save()

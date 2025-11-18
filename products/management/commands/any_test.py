@@ -30,6 +30,8 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        p = Product.objects.filter(extra_score__gt=1)
+        print(p.count())
         # pr = Product.objects.all()
         # pr.update(actual_price=False)
         # ds = DewuInfo.objects.all()
@@ -87,17 +89,17 @@ class Command(BaseCommand):
         # print(list(lines))
 
 
-        es = Elasticsearch(['http://130.193.53.215:9200'])
-
-        # Имя индекса, для которого вы хотите узнать количество документов
-        index_name = 'product_index_3'
-
-        # Отправка запроса для получения количества документов в индексе
-        response = es.count(index=index_name)
-
-        # Получение количества документов из ответа
-        document_count = response['count']
-        print(f'Количество документов в индексе {index_name}: {document_count}')
+        # es = Elasticsearch(['http://130.193.53.215:9200'])
+        #
+        # # Имя индекса, для которого вы хотите узнать количество документов
+        # index_name = 'product_index_3'
+        #
+        # # Отправка запроса для получения количества документов в индексе
+        # response = es.count(index=index_name)
+        #
+        # # Получение количества документов из ответа
+        # document_count = response['count']
+        # print(f'Количество документов в индексе {index_name}: {document_count}')
 
 
         # p = Product.objects.get(slug="nike-zoom-court-vapor-cage-4-rafa-161294")

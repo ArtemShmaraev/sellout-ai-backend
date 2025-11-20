@@ -121,7 +121,7 @@ class CollabViewSet(viewsets.ModelViewSet):
 
         if queryset is None:
             # Если результат не найден в кэше, выполните запрос к базе данных
-            queryset = Collab.objects.filter(is_main_collab=True).order_by("id")
+            queryset = Collab.objects.filter(is_main_collab=True).order_by("-id")
             # Затем сохраните результат в кэш
             cache.set('collab_queryset', queryset, CACHE_TIME)
 

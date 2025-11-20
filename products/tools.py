@@ -46,6 +46,7 @@ def platform_update_price(product, request=False):
                     product.last_parse_price = timezone.now()
                     product.save()
                     s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                    ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
                     # print(s.json())
                     # asyncio.run(send_async_request(spu_id))
 
@@ -58,6 +59,7 @@ def platform_update_price(product, request=False):
                 product.last_parse_price = timezone.now()
                 product.save()
                 s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
                 # print(s.json())
                 # asyncio.run(send_async_request(spu_id))
 

@@ -378,6 +378,7 @@ class Product(models.Model):
             # print(self.product_units.all())
             for unit in self.product_units.filter(availability=True):
                 price = formula_price(self, unit, user_status)
+                print(price)
                 # print(price)
                 unit.start_price = price['start_price']
                 unit.final_price = price['final_price']

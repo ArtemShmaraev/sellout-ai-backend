@@ -384,17 +384,24 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                     filters &= Q(availability=True)
                     min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                     filters &= Q(final_price=min_final_price)
-                    unit = obj.product_units.filter(filters).order_by("final_price")[0]
+                    unit = obj.product_units.filter(filters).first()
+                    if unit is None:
+                        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
                 else:
+                    # print(obj.min_price)
                     if obj.min_price == 0:
-                        return {"final_price": 0, "start_price": 0}
+                        obj.actual_price = False
+                        obj.save()
+                        obj.update_price()
+                        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
                     filters &= Q(availability=True)
                     filters &= Q(final_price=obj.min_price)
-                    unit = obj.product_units.filter(filters).order_by("final_price")[0]
+                    unit = obj.product_units.filter(filters).first()
             except:
-                obj.min_price = 0
+                obj.actual_price = False
                 obj.save()
-                return {"final_price": 0, "start_price": 0}
+                obj.update_price()
+                return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
             return formula_price(obj, unit, user_status)
 
         else:

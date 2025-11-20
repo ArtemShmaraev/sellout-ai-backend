@@ -526,7 +526,7 @@ class UserLastSeenView(APIView):
                 product_list_hash = hashlib.sha256(
                     product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
                 # Используем хеш-сумму в качестве ключа кэша
-                cache_product_key = f"last_{product_list_hash}"
+                cache_product_key = f"last_{product_list_hash}_"
 
                 cached_data = cache.get(cache_product_key)
 
@@ -570,7 +570,7 @@ class UserLastSeenView(APIView):
                     product_list_hash = hashlib.sha256(
                         product_list_string.encode('utf-8')).hexdigest()  # Получаем хеш-сумму
                     # Используем хеш-сумму в качестве ключа кэша
-                    cache_product_key = f"last_{product_list_hash}"
+                    cache_product_key = f"last_{product_list_hash}_"
                     cached_data = cache.get(cache_product_key)
 
                     if cached_data is None:

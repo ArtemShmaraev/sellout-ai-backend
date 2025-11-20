@@ -251,7 +251,7 @@ def filter_products(request):
     # if is_fast_ship:
     #     filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
     if filters:
-        # filters &= Q(product_units__availability=True)
+        filters &= Q(product_units__availability=True)
         # Выполняем фильтрацию
         # filter_id = set(list(Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)))
         queryset = queryset.filter(filters).values_list("id", flat=True)
@@ -357,8 +357,8 @@ def get_product_page(request, context):
             queryset = queryset.order_by(ordering)
     elif ordering == "random":
         queryset = queryset.order_by("?")
-    queryset = queryset.values_list("id", flat=True)
-    print(queryset.query)
+    queryset = queryset.values_list("id", flat=True).distinct()
+    # print(queryset.query)
 
 
     # paginator = CustomPagination()
@@ -379,7 +379,7 @@ def get_product_page(request, context):
     t51 = time()
     print("t5.1", t51-t5)
     # print(queryset.query)
-    queryset = get_queryset_from_list_id(list(queryset))
+    queryset = get_queryset_from_list_id((queryset))
 
     # res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
     # res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"

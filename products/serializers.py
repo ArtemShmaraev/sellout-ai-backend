@@ -162,20 +162,20 @@ class ProductAdminSerializer(serializers.ModelSerializer):
         from .tools import update_price
         update_price(obj)
         wl = self.context.get('wishlist', "")
-        if wl and wl.user.user_status.name != "Amethyst":
-            if obj.min_price != 0:
-                try:
+        try:
+            if wl and wl.user.user_status.name != "Amethyst":
+                if obj.min_price != 0:
                     user_status = wl.user.user_status
-                    unit = \
-                        obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
-                            "final_price")[0]
-
+                    unit = obj.product_units.filter(final_price=obj.min_price, availability=True).first()
                     return formula_price(obj, unit, user_status)
-                except:
-                    return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale,
-                            "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
-        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus,
-                "max_bonus": obj.max_bonus}
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus,
+                    "max_bonus": obj.max_bonus}
+        except:
+            obj.actual_price = False
+            obj.save()
+            obj.update_price()
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus,
+                    "max_bonus": obj.max_bonus}
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -238,19 +238,19 @@ class ProductSerializer(serializers.ModelSerializer):
         from .tools import update_price
         update_price(obj)
         wl = self.context.get('wishlist', "")
-        if wl and wl.user.user_status.name != "Amethyst":
-            if obj.min_price != 0:
-                try:
+        try:
+            if wl and wl.user.user_status.name != "Amethyst":
+                if obj.min_price != 0:
                     user_status = wl.user.user_status
-                    unit = \
-                            obj.product_units.filter(final_price=obj.min_price, availability=True).order_by(
-                                "final_price")[0]
-
+                    unit = obj.product_units.filter(final_price=obj.min_price, availability=True).first()
                     return formula_price(obj, unit, user_status)
-                except:
-                    return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale,
-                            "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
-        return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+        except:
+            obj.actual_price = False
+            obj.save()
+            obj.update_price()
+            return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
+
 
     def get_list_lines(self, obj):
         list_lines = self.context.get('list_lines')
@@ -377,8 +377,9 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             filters &= (Q(size__in=size) | Q(size__is_one_size=True))
 
         wl = self.context.get('wishlist')
-        if wl and not wl.user.user_status.base:
-            try:
+        try:
+            if wl and not wl.user.user_status.base:
+
                 user_status = wl.user.user_status
                 if filters:
                     filters &= Q(availability=True)
@@ -397,20 +398,15 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                     filters &= Q(availability=True)
                     filters &= Q(final_price=obj.min_price)
                     unit = obj.product_units.filter(filters).first()
-            except:
-                obj.actual_price = False
-                obj.save()
-                obj.update_price()
-                return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
-            return formula_price(obj, unit, user_status)
+                return formula_price(obj, unit, user_status)
 
-        else:
-            try:
+            else:
                 if filters:
                     filters &= Q(availability=True)
                     min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                     filters &= Q(final_price=min_final_price)
-                    corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))['max_price']
+                    corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))[
+                        'max_price']
 
                     return {"final_price": min_final_price, "start_price": corresponding_start_price}
 
@@ -418,8 +414,12 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
                     # if not obj.actual_price:
                     #     obj.update_price()
                     return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
-            except:
-                return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
+        except:
+            if obj.min_price == 0:
+                obj.actual_price = False
+                obj.save()
+                obj.update_price()
+                return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
         #
 
 

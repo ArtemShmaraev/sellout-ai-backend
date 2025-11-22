@@ -263,16 +263,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
         def get_cat_parents(cat, line):
             parents = []
-            if "Вс" not in cat.name:
-                parents.append({"name": f"{cat.name} {line.view_name}",
-                                "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
-            current_cat = cat
-            while current_cat.parent_category is not None:
-                current_cat = current_cat.parent_category
-                if "Вс" not in current_cat.name:
-                    parents.append({"name": f"{current_cat.name} {line.view_name}",
-                                    "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
-            return parents[::-1]
+            if cat is not None:
+                if "Вс" not in cat.name:
+                    parents.append({"name": f"{cat.name} {line.view_name}",
+                                    "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
+                current_cat = cat
+                while current_cat.parent_category is not None:
+                    current_cat = current_cat.parent_category
+                    if "Вс" not in current_cat.name:
+                        parents.append({"name": f"{current_cat.name} {line.view_name}",
+                                        "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
+                return parents[::-1]
+            return []
 
         if list_lines:
             s = []

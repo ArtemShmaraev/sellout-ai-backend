@@ -320,6 +320,7 @@ class CheckOutView(APIView):
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
                     send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                    send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
 
                     cart.clear()
                 order.get_total_bonus()

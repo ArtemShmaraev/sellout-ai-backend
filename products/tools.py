@@ -37,7 +37,7 @@ def platform_update_price(product, request=False):
         request_count += 1
         # Устанавливаем значение в кэше с истечением через 1 час
         cache.set(cache_key, request_count, 3600)
-        if request_count < 200:
+        if request_count < 2000:
             time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
             if not product.last_parse_price >= time_threshold1:
                 spu_id = product.spu_id
@@ -47,6 +47,7 @@ def platform_update_price(product, request=False):
                     product.save()
                     s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
                     ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                    print(s.status_code)
                     # print(s.json())
                     # asyncio.run(send_async_request(spu_id))
 
@@ -60,6 +61,7 @@ def platform_update_price(product, request=False):
                 product.save()
                 s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
                 ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+                print("123")
                 # print(s.json())
                 # asyncio.run(send_async_request(spu_id))
 

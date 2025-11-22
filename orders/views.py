@@ -319,6 +319,8 @@ class CheckOutView(APIView):
                     order.fact_of_payment = True
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
+                    send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+
                     cart.clear()
                 order.get_total_bonus()
                 order.save()

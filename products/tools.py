@@ -37,7 +37,7 @@ def platform_update_price(product, request=False):
         request_count += 1
         # Устанавливаем значение в кэше с истечением через 1 час
         cache.set(cache_key, request_count, 3600)
-        if request_count < 2000:
+        if request_count < 5000:
             time_threshold1 = timezone.now() - timezone.timedelta(minutes=1)
             if not product.last_parse_price >= time_threshold1:
                 spu_id = product.spu_id

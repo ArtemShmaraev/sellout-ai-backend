@@ -24,7 +24,13 @@ class Command(BaseCommand):
 
 
         hosts = [f"{ELASTIC_HOST}:9200"]
-        connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
+        connections.create_connection(
+            hosts=[ELASTIC_HOST],
+            http_auth=("elastic", "espass2024word"),
+            scheme="http",  # Используйте "https", если ваш сервер настроен для безопасного соединения
+            port=9200,
+            )
+        # connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index
         if sug_index.exists():

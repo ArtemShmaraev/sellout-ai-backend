@@ -60,6 +60,8 @@ def add_product_api(data):
     if not create:
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
         if product.last_upd >= time_threshold:
+            product.available_flag = True
+            product.save()
             return "Товар актуальный))"
         product.clear_all_fields()
         product.product_units.update(availability=False)

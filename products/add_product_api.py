@@ -58,6 +58,9 @@ def add_product_api(data):
     print(product.slug)
     product_slug = ""
     if not create:
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        if product.last_upd >= time_threshold:
+            return "Товар актуальный))"
         product.clear_all_fields()
         product.product_units.update(availability=False)
         product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"

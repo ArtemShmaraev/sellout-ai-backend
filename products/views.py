@@ -801,6 +801,21 @@ class SuggestSearch(APIView):
         return Response(suggest_search(query))
 
 
+class ProductFullSlugView(APIView):
+    # authentication_classes = [JWTAuthentication]
+
+    def get(self, request, slug):
+        try:
+
+            product = Product.objects.get(slug=slug)
+
+            serializer = ProductAdminSerializer(product, context={"list_lines": True,
+                                                             "wishlist": Wishlist.objects.get(user=User(
+                                                                 id=request.user.id)) if request.user.id else None})
+            return Response(serializer.data)
+        except Product.DoesNotExist:
+            return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
 

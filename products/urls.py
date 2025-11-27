@@ -11,7 +11,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView, MyScoreForProduct
+    PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -55,6 +55,7 @@ urlpatterns = [
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
     path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'), path('similar/<int:product_id>', ProductSimilarView.as_view()),
+    path('slug_full/<str:slug>', ProductFullSlugView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
     path("update/<int:product_id>", ProductUpdateView.as_view()), path("size", ProductSizeView.as_view()),

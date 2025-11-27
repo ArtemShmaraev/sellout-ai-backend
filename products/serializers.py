@@ -219,8 +219,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # fields = "__all__"
-        exclude = ["platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "lines",
-                   "min_price", "min_price_without_sale", "max_bonus", "fit",
+        exclude = ["likes_month", "likes_week", "is_new", "extra_score", "up_score", "score_product_page", "platform_info", "sizes_prices", "russian_name", "size_table", "add_date", "lines", "level2_category_id",  "category_id", "category_name", "level1_category_id",
+                   "min_price", "min_price_without_sale", "max_bonus", "fit", "spu_id", "property_id", "is_custom", "max_profit", "similar_product",
                    "rel_num", "another_configuration", "percentage_sale", "in_sg", "tags", "gender", "materials", "colors", "black_bucket_link", "categories", "recommended_gender", "main_color",
                    "content_sources", "last_parse_price", "one_update", "available_sizes", "last_upd", "normalize_rel_num", ]
         depth = 2

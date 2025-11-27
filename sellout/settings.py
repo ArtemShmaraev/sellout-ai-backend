@@ -217,8 +217,8 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(days=50),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=150),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=300),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=350),
 
     # "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
     "TOKEN_OBTAIN_SERIALIZER": "users.serializers.CustomTokenObtainPairSerializer",
@@ -253,7 +253,7 @@ SIMPLE_JWT = {
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
 
-ELASTIC_HOST = "130.193.53.215"
+ELASTIC_HOST = "158.160.14.151"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
@@ -295,7 +295,7 @@ SECURE_HSTS_PRELOAD = True
 CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '130.193.53.215:11211',  # Замените на адрес вашего Memcached сервера
+        'LOCATION': '158.160.14.151:11211',  # Замените на адрес вашего Memcached сервера
         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
     }
 }

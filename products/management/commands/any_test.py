@@ -24,9 +24,6 @@ from promotions.models import PromoCode
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation, UserStatus, Partner, SpamEmail
 from products.tools import get_text
-import matplotlib.pyplot as plt
-from collections import Counter
-from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):

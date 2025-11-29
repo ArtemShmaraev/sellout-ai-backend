@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.conf import settings
 from django.db.models import F
@@ -109,28 +111,37 @@ class Order(models.Model):
                     ref_user.save()
 
     def update_order_status(self):
+        for ou in self.order_units.all():
+            ou.update_status()
         # Получаем все статусы юнитов этого заказа
         unit_statuses = self.order_units.values_list('status__name', flat=True)
+        s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
+             "Передан в службу доставки по России", "Доставлен"]
 
         # Проверяем условия и определяем статус заказа
         if 'Отменён' in unit_statuses:
             self.status = Status.objects.get(name='Отменён')
-        elif all(status == 'Доставлен' for status in unit_statuses):
-            self.status = Status.objects.get(name='Доставлен')
-        elif 'В пути до московского склада' in unit_statuses and 'Доставлен' not in unit_statuses:
+
+        if 'В пути до международного склада' in unit_statuses:
+            self.status = Status.objects.get(name='В пути до международного склада')
+
+        if 'В пути до московского склада' in unit_statuses:
             self.status = Status.objects.get(name='В пути до московского склада')
-        elif 'Прибыл в Москву' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
-            self.status = Status.objects.get(name='Частично прибыл в Москву')
-        # elif 'Готов к самовывозу' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
-        #     self.status = Status.objects.get(name='Частично готов к самовывозу')
-        # elif all(status == 'Готов к самовывозу' or status == 'Получен' for status in unit_statuses):
-        #     self.status = Status.objects.get(name='Готов к самовывозу')
-        elif 'Передан в службу доставки по России' in unit_statuses and ('В пути до международного склада' in unit_statuses or 'В пути до московского склада' in unit_statuses):
-            self.status = Status.objects.get(name='Частично передан в службу доставки по России')
-        elif all(status == 'Передан в службу доставки по России' or status == 'Доставлен' for status in unit_statuses):
-            self.status = Status.objects.get(name='Передан в службу доставки по России')
-        else:
-            self.status = Status.objects.get(name='Заказ принят')
+
+        if "Прибыл в Москву" in unit_statuses:
+            if all(status == 'Прибыл в Москву' for status in unit_statuses):
+                self.status = Status.objects.get(name='Прибыл в Москву')
+            else:
+                self.status = Status.objects.get(name='Частично прибыл в Москву')
+
+        if "Передан в службу доставки по России" in unit_statuses:
+            if all(status == 'Передан в службу доставки по России' for status in unit_statuses):
+                self.status = Status.objects.get(name='Передан в службу доставки по России')
+            else:
+                self.status = Status.objects.get(name='Частично передан в службу доставки по России')
+
+        if all(status == "Доставлен" for status in unit_statuses):
+            self.status = Status.objects.get(name='Доставлен')
 
         self.save()
 
@@ -358,3 +369,40 @@ class OrderUnit(models.Model):
                                related_name="order_units", default=get_default_status())
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
+
+    def update_status(self, cancel=False, next=False):
+        new_status = self.status.name
+        order_date = self.orders.first().date
+
+        # Приводим order_date к типу datetime.date
+        order_date = order_date.date()
+
+        # Получаем текущую дату
+        current_date = datetime.now().date()
+
+        # Вычисляем разницу в днях
+        days_passed = (current_date - order_date).days
+
+        # Вычисляем разницу в днях
+        days_passed = (current_date - order_date).days
+        if days_passed <= self.delivery_type.days_max_to_international_warehouse:
+            new_status = "В пути до международного склада"
+        if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
+            new_status = "В пути до московского склада"
+        if days_passed > self.delivery_type.days_max:
+            new_status = "Прибыл в Москву"
+        self.status = Status.objects.get(name=new_status)
+
+        if cancel:
+            self.status = Status.objects.get(name="Отменён")
+
+        if next:
+            s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву", "Передан в службу доставки по России", "Доставлен"]
+
+            for i in range(len(s)):
+                if self.status.name == s[i]:
+                    new_status = s[min(i + 1, 5)]
+                    break
+            self.status = Status.objects.get(name=new_status)
+        self.save()
+

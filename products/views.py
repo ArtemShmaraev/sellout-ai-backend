@@ -532,7 +532,7 @@ class MainPageBlocks(APIView):
             return response
         else:
             for page in range(0 if not next else number_page - 1, number_page):
-                anon_cache = "main_page_anon"
+                anon_cache = f"main_page_anon_{page}"
                 cached_data = cache.get(anon_cache)
                 if cached_data is not None and not new:
                     res = cached_data
@@ -791,6 +791,7 @@ class ProductView(APIView):
         t10 = time()
         print("t9", t10 - t8)
         print("t", t10 - t0, request.GET.copy())
+        res['time'] = t10 - t0
 
         return Response(res)
 

@@ -100,7 +100,7 @@ def get_product_page_header(request):
 
 def count_queryset(request):
     params = request.GET.copy()
-    queryset = filter_products(request)
+    queryset = filter_products(request).values_list("id", flat=True)
     # print(queryset.query)
     # print(queryset.query)
     # print(queryset.query)
@@ -117,17 +117,6 @@ def count_queryset(request):
     return count_q
 
 
-def get_new_products():
-    cached_result = cache.get('new_products_cache')
-
-    # Если результат найден в кэше, возвращаем его
-    if cached_result:
-        return cached_result
-
-    result = Product.objects.filter(is_new=True, available_flag=True, is_custom=False).values_list("id", flat=True)
-    #
-    cache.set('new_products_cache', result, CACHE_TIME)
-    return result
 
 
 
@@ -196,7 +185,8 @@ def filter_products(request):
 
     recommendations = params.get("recommendations")
     if recommendations and not query:
-        recommendations_q = queryset.order_by('-rel_num')[:250]
+        queryset = queryset.filter(is_recommend=True)
+        print(queryset.count())
     if gender:
         queryset = queryset.filter(gender__name__in=gender)
 
@@ -224,15 +214,17 @@ def filter_products(request):
     if price_min:
         if size:
             filters &= Q(product_units__final_price__gte=price_min)
+            filters &= Q(product_units__availability=True)
         else:
-            filters &= Q(min_price__gte=price_min)
+            queryset = queryset.filter(min_price__gte=price_min)
 
         # Фильтр по максимальной цене
     if price_max:
         if size:
             filters &= Q(product_units__final_price__lte=price_max)
+            filters &= Q(product_units__availability=True)
         else:
-            filters &= Q(min_price__lte=price_max)
+            queryset = queryset.filter(min_price__lte=price_min)
 
     # Фильтр по размеру
     # if size:
@@ -242,6 +234,7 @@ def filter_products(request):
     if size:
         size_filter = Q(product_units__size__in=size)
         filters &= size_filter
+        filters &= Q(product_units__availability=True)
 
     # Фильтр по наличию скидки
     # if is_sale:
@@ -250,15 +243,22 @@ def filter_products(request):
     #     filters &= Q(product_units__is_return=(is_return == "is_return"))
     # if is_fast_ship:
     #     filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
+
     if filters:
-        filters &= Q(product_units__availability=True)
+
         # Выполняем фильтрацию
         # filter_id = set(list(Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)))
-        queryset = queryset.filter(filters).values_list("id", flat=True)
-        # queryset = queryset.select_related('product_units').filter(filters)
-
-    if recommendations and not query:
-        queryset = queryset.filter(id__in=recommendations_q)
+        # queryset = queryset.filter(filters).values_list("id", flat=True)
+        # subquery = Product.objects.filter(filters).distinct().values_list('id', flat=True)
+        # queryset = queryset.filter(id__in=Subquery(subquery))
+        queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+        # print(list(queryset_size))
+        queryset = queryset.values_list("id", flat=True)
+        queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
+        # print(list(queryset))
+        queryset = Product.objects.filter(id__in=queryset)
+        # queryset = queryset.select_related('product_units').filter(filters).values_list("id", flat=True).distinct()
+        # print(list(queryset))
 
     t2 = time()
     print("t1", t2 - t1)
@@ -308,19 +308,6 @@ def get_product_page(request, context):
 
     page_number = int(params.get("page", 1))
 
-    # params = request.GET.copy()
-    # if 'page' in params:
-    #     del params['page']
-    #
-    # cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
-    # cached_count = cache.get(cache_count_key)
-    # if cached_count is not None:
-    #
-    #     count = cached_count
-    # else:
-    #     count = 100
-    #     cache.set(cache_count_key, (count), CACHE_TIME)
-
     res['count'] = 100
     t4 = time()
     print("t3", t4 - t3)
@@ -357,8 +344,8 @@ def get_product_page(request, context):
             queryset = queryset.order_by(ordering)
     elif ordering == "random":
         queryset = queryset.order_by("?")
-    queryset = queryset.values_list("id", flat=True).distinct()
-    # print(queryset.query)
+    queryset = queryset.values_list("id", flat=True)
+    print(queryset.query)
 
 
     # paginator = CustomPagination()
@@ -379,10 +366,8 @@ def get_product_page(request, context):
     t51 = time()
     print("t5.1", t51-t5)
     # print(queryset.query)
-    queryset = get_queryset_from_list_id((queryset))
+    queryset = get_queryset_from_list_id(list(queryset))
 
-    # res['next'] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number + 1}"
-    # res["previous"] = f"http://127.0.0.1:8000/api/v1/product/products/?page={page_number - 1}"
     res['min_price'] = 0
     res['max_price'] = 50_000_000
     t6 = time()

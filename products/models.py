@@ -295,10 +295,11 @@ class Product(models.Model):
     level1_category_id = models.IntegerField(default=0)
     level2_category_id = models.IntegerField(default=0)
     formatted_manufacturer_sku = models.CharField(default="", max_length=128)
-    score_product_page = models.IntegerField(default=0)
+    score_product_page = models.IntegerField(default=0, db_index=True)
     likes_month = models.IntegerField(default=0)
     likes_week = models.IntegerField(default=0)
     is_new = models.BooleanField(default=False, db_index=True)
+    is_recommend = models.BooleanField(default=False, db_index=True)
     extra_score = models.IntegerField(default=0)
     up_score = models.BooleanField(default=False)
 

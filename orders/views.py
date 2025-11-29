@@ -66,6 +66,9 @@ class SignAPIView(APIView):
             order.save()
             cart = ShoppingCart.objects.get(user=order.user)
             send_email_confirmation_order(OrderSerializer(order).data, order.email)
+
+            send_email_confirmation_order(OrderSerializer(order).data, "markenson888inst@gmail.com")
+            send_email_confirmation_order(OrderSerializer(order).data, "shmaraev18@mail.ru")
             cart.clear()
             print("ff2")
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={order_id}")
@@ -310,6 +313,8 @@ class CheckOutView(APIView):
 
                 order.evenly_distribute_discount()
                 order.get_invoice_data()
+
+                print(order.invoice_data)
                 order.save()
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data

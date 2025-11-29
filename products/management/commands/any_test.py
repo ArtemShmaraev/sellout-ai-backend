@@ -27,18 +27,31 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        pus = ProductUnit.objects.filter(update_w=False)
-        count = pus.count()
-        k = 0
-        for page in range(0, count, 100):
-            pus_page = pus[page:page + 100]
-            for pu in pus_page:
-                pu.weight_kg = pu.weight
-                pu.update_w = True
-                pu.save()
-            k += 100
-            if k % 1000 == 0:
-                print(k, count)
+        # ps = Product.objects.filter(bucket_link=None)
+        # ps.update(score_product_page=-10000)
+        # ps.update(available_flag=True)
+        order = Order.objects.get(id=159)
+        order.update_order_status()
+
+        # pus = Product.objects.filter(available_flag=False)
+        # count = pus.count()
+        # print(count)
+        # k = 0
+        # kk = 0
+        # for page in range(0, count, 100):
+        #     pus_page = pus[page:page + 100]
+        #     kk += 100
+        #     for pu in pus_page:
+        #         if not pu.product_units.exists():
+        #             k += 1
+        #         if k % 100 == 0:
+        #             print(k, kk)
+        #         pu.weight_kg = pu.weight
+        #         pu.update_w = True
+        #         pu.save()
+        #     k += 100
+        #     if k % 1000 == 0:
+        #         print(k, count)
         # ProductUnit.objects.update(weight=F('weight') * 1000)
         # ps = Product.objects.filter(is_recommend=True)
         # print(ps.count())
@@ -87,6 +100,9 @@ class Command(BaseCommand):
         # ou = order.order_units.all()
         # print(order.final_amount)
         # for o in ou:
+        #     o.update_status()
+        # order.update_order_status()
+
         #     print(f"{o.product.platform_info['poizon']['title']} Артикул: {o.product.manufacturer_sku} Цена: {o.final_price}Р {o.original_price}Y Размер: {o.view_size_platform} {o.size_platform}")
 
         # ps.update(available_flag=False)

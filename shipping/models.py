@@ -109,6 +109,7 @@ class ProductUnit(models.Model):
     dimensions = models.JSONField(default=dict)
     weight = models.IntegerField(default=1)
     weight_kg = models.FloatField(default=1.0)
+    update_w = models.BooleanField(default=False)
 
     history_price = models.JSONField(default=list)
     platform_info = models.JSONField(default=dict)
@@ -127,8 +128,8 @@ class ProductUnit(models.Model):
         self.history_price.append(self.final_price)
         self.save()
 
-    def save(self, *args, **kwargs):
-        if (not self.product.min_price or self.final_price < self.product.min_price) and self.availability:
-            self.product.min_price = self.final_price
-            self.product.save()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if (not self.product.min_price or self.final_price < self.product.min_price) and self.availability:
+    #         self.product.min_price = self.final_price
+    #         self.product.save()
+    #     super().save(*args, **kwargs)

@@ -170,7 +170,7 @@ def get_bonus(total_profit, max_total_profit_for_product, status_name):
 
 def formula_price(product, unit, user_status):
     original_price = unit.original_price
-    weight = unit.weight_kg if unit.weight_kg != 0 else 1
+    weight = unit.weight_kg if unit.weight_kg != 0 else (unit.weight if unit.weight else 0)
     delivery = unit.delivery_type
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
     delivery_decimal_insurance = delivery.decimal_insurance

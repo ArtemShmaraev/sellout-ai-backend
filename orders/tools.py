@@ -19,7 +19,7 @@ def get_delivery_price(units, target_start, target, zip):
     delivery_price = 0
     for unit in units:
         sum += unit.final_price
-        sum_weight += unit.weight
+        sum_weight += unit.weight_kg
     delivery_info = get_delivery_costs(sum_weight, sum, target_start, target, zip)
     print(delivery_info, sum, sum_weight)
     if "price_base" in delivery_info:

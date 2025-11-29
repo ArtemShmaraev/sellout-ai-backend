@@ -202,7 +202,7 @@ class Order(models.Model):
         order_unit = OrderUnit(
             product=product_unit.product,
             view_size_platform=product_unit.view_size_platform,
-            weight=product_unit.weight,
+            weight=product_unit.weight_kg,
             size_platform=product_unit.size_platform,
             start_price=price['start_price'],
             final_price=price['final_price'],
@@ -337,7 +337,7 @@ class OrderUnit(models.Model):
     size_platform = models.CharField(max_length=255, null=True, blank=True, default="")  # по какой таблице размер
     size = models.ForeignKey("products.SizeTranslationRows", on_delete=models.CASCADE, related_name="order_units",
                              null=True, blank=True)
-    weight_kg = models.FloatField(default=1)
+    weight = models.FloatField(default=1)
 
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False)  # Новая цена

@@ -27,8 +27,22 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        ProductUnit.objects.update(weight=F('weight') * 1000)
-        print("готово")
+        pus = ProductUnit.objects.filter(update_w=False)
+        count = pus.count()
+        k = 0
+        for page in range(0, count, 100):
+            pus_page = pus[page:page + 100]
+            for pu in pus_page:
+                pu.weight_kg = pu.weight
+                pu.update_w = True
+                pu.save()
+            k += 100
+            if k % 1000 == 0:
+                print(k, count)
+        # ProductUnit.objects.update(weight=F('weight') * 1000)
+        # ps = Product.objects.filter(is_recommend=True)
+        # print(ps.count())
+        # print("готово")
         # products = ProductUnit.objects.all()
         # ck = products.count()
         # k = 0
@@ -74,7 +88,7 @@ class Command(BaseCommand):
         # print(order.final_amount)
         # for o in ou:
         #     print(f"{o.product.platform_info['poizon']['title']} Артикул: {o.product.manufacturer_sku} Цена: {o.final_price}Р {o.original_price}Y Размер: {o.view_size_platform} {o.size_platform}")
-        # ps = Product.objects.filter(available_flag=True, bucket_link=None)
+
         # ps.update(available_flag=False)
 
 

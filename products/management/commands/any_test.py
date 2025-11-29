@@ -30,6 +30,17 @@ from elasticsearch import Elasticsearch
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        ProductUnit.objects.update(weight=F('weight') * 1000)
+        print("готово")
+        # products = ProductUnit.objects.all()
+        # ck = products.count()
+        # k = 0
+        # for unit in products:
+        #     k += 1
+        #     if k % 100 == 0:
+        #         print(k, ck)
+        #     w = unit.weight
+        #     unit.weight_kg = w
         # p = Product.objects.get(slug="nike-dunk-low-chicago-split-262086")
         # p.available_flag = True
         # p.save()
@@ -66,8 +77,8 @@ class Command(BaseCommand):
         # print(order.final_amount)
         # for o in ou:
         #     print(f"{o.product.platform_info['poizon']['title']} Артикул: {o.product.manufacturer_sku} Цена: {o.final_price}Р {o.original_price}Y Размер: {o.view_size_platform} {o.size_platform}")
-        ps = Product.objects.filter(available_flag=True, bucket_link=None)
-        ps.update(available_flag=False)
+        # ps = Product.objects.filter(available_flag=True, bucket_link=None)
+        # ps.update(available_flag=False)
 
 
 

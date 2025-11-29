@@ -2,8 +2,10 @@ import json
 from time import time
 
 from django.shortcuts import render
+from elasticsearch import Elasticsearch
 from elasticsearch_dsl.query import Match, MoreLikeThis
 
+from sellout.settings import ELASTIC_HOST
 from .models import Line, Category, Color, Collab, Product
 from .serializers import ProductMainPageSerializer
 from elasticsearch_dsl import Search
@@ -12,11 +14,17 @@ from elasticsearch_dsl.search import Search, Q
 
 from .documents import LineDocument
 
+es = Elasticsearch(
+    [ELASTIC_HOST],
+    http_auth=("elastic", "espass2024word"),
+    scheme="http",  # Используйте "https", если ваш сервер настроен для безопасного соединения
+    port=9200,
+)
 
 def suggest_search(query):
     index_name = 'suggest_index'
 
-    search = Search(index=index_name)
+    search = Search(index=index_name, using=es)
     search = search.suggest(
         'autocomplete',
         query,  # Часть слова, по которой будет выполняться поиск
@@ -83,7 +91,8 @@ def suggest_search(query):
 def similar_product(product):
     try:
         t = time()
-        search = Search(index='product_index_3')  # Замените на имя вашего индекса
+        index_name = "product_index"
+        search = Search(index=index_name, using=es)  # Замените на имя вашего индекса
         # print(search.count())
 
         search = search.query(
@@ -156,8 +165,7 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    search = Search(index='product_index_3')
-
+    search = Search(index="product_index", using=es)
 
     # fields = ['manufacturer_sku^6', 'model^3', 'lines^2', 'colorway^1', "collab^4", "categories^3", 'brands^4']
     # search = search.query(Q("multi_match", query=query, fields=fields))
@@ -248,7 +256,7 @@ def search_product(query, pod_queryset, page_number=1):
 
 
 def search_best_line(query_string):
-    search = Search(index='line_index')
+    search = Search(index="line_index", using=es)
     search = search.query(
         'multi_match',
         query=query_string,
@@ -267,7 +275,7 @@ def search_best_line(query_string):
 
 
 def search_best_category(query_string):
-    search = Search(index='category_index')
+    search = search = Search(index="category_index", using=es)
     search = search.query(
         'multi_match',
         query=query_string,
@@ -285,7 +293,7 @@ def search_best_category(query_string):
 
 
 def search_best_color(query_string):
-    search = Search(index='color_index')
+    search = Search(index="color_index", using=es)
     search = search.query(
         'multi_match',
         query=query_string,
@@ -303,7 +311,7 @@ def search_best_color(query_string):
 
 
 def search_best_collab(query_string):
-    search = Search(index='collab_index')
+    search = Search(index="collab_index", using=es)
     search = search.query(
         'multi_match',
         query=query_string,

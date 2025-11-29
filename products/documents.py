@@ -5,7 +5,12 @@ from elasticsearch_dsl import analyzer, token_filter
 from sellout.settings import ELASTIC_HOST
 
 # connections.create_connection(hosts=['51.250.74.115'])  # Укажите адрес вашего Elasticsearch-сервера
-connections.create_connection(hosts=[f"{ELASTIC_HOST}:9200"])
+connections.create_connection(
+            hosts=[ELASTIC_HOST],
+            http_auth=("elastic", "espass2024word"),
+            scheme="http",  # Используйте "https", если ваш сервер настроен для безопасного соединения
+            port=9200,
+            )
 
 russian_stop = token_filter('russian_stop', type='stop', stopwords='_russian_')
 russian_stemmer = token_filter('russian_stemmer', type='stemmer', language='russian')
@@ -43,7 +48,7 @@ class ProductDocument(Document):
     # russian_name = Text()
 
     class Index:
-        name = 'product_index_3'
+        name = 'product_index'
 
 
 # Определение анализаторов для n-грамм с разной длиной

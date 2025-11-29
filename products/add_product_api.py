@@ -286,7 +286,7 @@ def add_product_api(data):
                     currency=
                     Currency.objects.get_or_create(name=offer["currency"])[0],
                     platform_info=platform_info,
-                    weight=unit['weight'],
+                    weight_kg=unit['weight'],
                     dimensions={"length": unit['length'],
                                 "height": unit['height'],
                                 "width": unit['width']}
@@ -307,7 +307,7 @@ def add_product_api(data):
                     currency=
                     Currency.objects.get_or_create(name=offer["currency"])[0],
                     platform_info=platform_info,
-                    weight=unit['weight'],
+                    weight_kg=unit['weight'],
                     dimensions={"length": unit['length'],
                                 "height": unit['height'],
                                 "width": unit['width']}

@@ -123,8 +123,6 @@ class Order(models.Model):
              "Передан в службу доставки по России", "Доставлен"]
 
         # Проверяем условия и определяем статус заказа
-        if 'Отменён' in unit_statuses:
-            self.status = Status.objects.get(name='Отменён')
 
         if 'В пути до международного склада' in unit_statuses:
             self.status = Status.objects.get(name='В пути до международного склада')
@@ -146,6 +144,9 @@ class Order(models.Model):
 
         if all(status == "Доставлен" for status in unit_statuses):
             self.status = Status.objects.get(name='Доставлен')
+
+        if 'Отменён' in unit_statuses:
+            self.status = Status.objects.get(name='Отменён')
 
         self.save()
 

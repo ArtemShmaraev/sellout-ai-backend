@@ -99,7 +99,7 @@ def similar_product(product):
             MoreLikeThis(
                 like={'_id': product.id},
                 fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2',
-                        'collab', "colors^3", "min_price"],
+                        'collab', "colors^3"],
                 min_term_freq=1,
                 min_doc_freq=1,
                 max_query_terms=50,
@@ -123,7 +123,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
-        print(product_ids)
+        # print(product_ids)
         queryset = Product.objects.filter(id__in=product_ids).filter(
             available_flag=True).filter(is_custom=False)
 

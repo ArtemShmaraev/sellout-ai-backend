@@ -285,6 +285,7 @@ class Product(models.Model):
     in_sg = models.BooleanField(default=False, db_index=True)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
+    sizes = models.ManyToManyField("SizeTranslationRows", related_name='products', blank=True, default=None, db_index=True)
     actual_price = models.BooleanField(default=False)
     one_update = models.BooleanField(default=False)
     last_parse_price = models.DateTimeField(default=timezone.now)
@@ -459,28 +460,6 @@ class Product(models.Model):
             if lines:
                 self.main_line = lines.order_by('-id').first()
 
-            # for line in self.lines.all():
-            #     add_lines_to_product(line)
-            #
-            # for cat in self.categories.all():
-            #     add_categories_to_product(cat)
-
-            # if self.main_color:
-            #     if not self.main_color.is_main_color:
-            #         self.main_color.is_main_color = True
-
-            # for brand in self.brands.all():
-            #     line, _ = Line.objects.get_or_create(name=brand.name)
-            #     line.save()
-            #     self.lines.add(line)
-            #     if Line.objects.filter(name=f"Все {brand.name}").exists():
-            #         self.lines.add(Line.objects.get(name=f"Все {brand.name}"))
-
-            # lines = self.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие')
-            # if lines:
-            #     self.main_line = lines.order_by('-id').first()
-
-        # super(Product, self).save(*args, **kwargs)
         super().save(*args, **kwargs)
 
     def __str__(self):

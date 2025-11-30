@@ -313,6 +313,9 @@ def add_product_api(data):
                                 "width": unit['width']}
                 )
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
+
+            product.sizes.add(*SizeTranslationRows.objects.filter(id__in=sizes))
+
             product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
             product_unit.update_history()
     t9 = time()

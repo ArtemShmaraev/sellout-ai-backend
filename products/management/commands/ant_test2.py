@@ -28,29 +28,24 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        try:
-            # Измеряем время выполнения запроса к базе данных
-            t_db = time()
-            products = Product.objects.all()[:200]
-            db_time = time() - t_db
+        # Измеряем время выполнения запроса к базе данных
+        pus = Product.objects.filter(up_score=False)
+        count = pus.count()
+        print(count)
+        k = 0
+        kk = 0
+        for page in range(0, count, 100):
+            pus_page = pus[page:page + 100]
+            kk += 100
 
-            # Измеряем время выполнения сериализации
-            t_serialization = time()
-            serialized = ProductMainPageSerializer(products, many=True)
-            serialization_time = time() - t_serialization
-
-            new_time = time()
-            serialized_data = serialized.data
-            from django.db import connection
-            print(connection.queries)
-
-
-            # Выводим информацию о времени выполнения каждого процесса
-            self.stdout.write(self.style.SUCCESS(f'Time taken for database query: {db_time:.6f} seconds'))
-            self.stdout.write(self.style.SUCCESS(f'Time taken for serialization: {serialization_time:.6f} seconds'))
-            self.stdout.write(self.style.SUCCESS(f'Time taken for data: {time() - new_time:.6f} seconds'))
-        except Exception as e:
-            self.stdout.write(self.style.ERROR(f'Error occurred: {str(e)}'))
+            for p in pus_page:
+                sizes = [size for pu in p.product_units.all() for size in pu.size.all()]
+                p.sizes.add(*sizes)
+                p.up_score = True
+                p.save()
+            k += 100
+            if k % 1000 == 0:
+                print(k, count)
 
 # # Обработка результатов запроса
 # for row in results:

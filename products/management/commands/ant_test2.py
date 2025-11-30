@@ -28,6 +28,7 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+
         # Измеряем время выполнения запроса к базе данных
         pus = Product.objects.filter(up_score=False)
         count = pus.count()
@@ -39,7 +40,7 @@ class Command(BaseCommand):
             kk += 100
 
             for p in pus_page:
-                sizes = [size for pu in p.product_units.all() for size in pu.size.all()]
+                sizes = [size for pu in p.product_units.filter(availability=True) for size in pu.size.all()]
                 p.sizes.add(*sizes)
                 p.up_score = True
                 p.save()

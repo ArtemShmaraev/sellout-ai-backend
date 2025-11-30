@@ -11,6 +11,7 @@ from products.main_page import get_random
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
     HeaderPhoto, Material, SizeTable, SizeTranslationRows
 from products.serializers import LineSerializer, ProductSerializer
+from products.tools import update_score_sneakers, update_score_clothes
 from shipping.models import DeliveryType, ProductUnit, Platform
 from utils.models import Currency
 
@@ -67,6 +68,7 @@ def add_product_api(data):
         product.product_units.update(availability=False)
         product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     else:
+
         product_slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.slug = product_slug
     product.save()
@@ -350,6 +352,14 @@ def add_product_api(data):
     product.last_upd = timezone.now()
     if product.bucket_link == None:
         product.available_flag = False
+
+    if create:
+        cats = product.categories.values_list("name", flat=True)
+        if "Кеды" in cats or "Кроссовки" in cats:
+            update_score_sneakers(product)
+        else:
+            update_score_clothes(product)
+
     product.save()
     print(product.available_flag)
 

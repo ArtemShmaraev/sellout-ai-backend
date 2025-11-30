@@ -38,6 +38,7 @@ class ProductDocument(Document):
     manufacturer_sku = Text(analyzer="standard")
     rel_num = Integer()
     min_price = Integer()
+    text_price = Text(analyzer="standard")
     materials = Keyword()
     full_name = Text(analyzer='standard')
     suggest = Completion()

@@ -162,7 +162,6 @@ def filter_products(request):
 
     if not available:
         queryset = queryset.filter(available_flag=True)
-        # queryset = queryset.filter(product_units__availability=True)
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
@@ -180,7 +179,6 @@ def filter_products(request):
 
     new = params.get("new")
     if new and not query:
-        # new_q = queryset.order_by('-exact_date')[:250]
         queryset = queryset.filter(is_new=True)
 
     recommendations = params.get("recommendations")
@@ -212,19 +210,19 @@ def filter_products(request):
 
     # Фильтр по цене
     if price_min:
-        if size:
-            filters &= Q(product_units__final_price__gte=price_min)
-            filters &= Q(product_units__availability=True)
-        else:
-            queryset = queryset.filter(min_price__gte=price_min)
+        # if size:
+        #     filters &= Q(product_units__final_price__gte=price_min)
+        #     filters &= Q(product_units__availability=True)
+        # else:
+        queryset = queryset.filter(min_price__gte=price_min)
 
         # Фильтр по максимальной цене
     if price_max:
-        if size:
-            filters &= Q(product_units__final_price__lte=price_max)
-            filters &= Q(product_units__availability=True)
-        else:
-            queryset = queryset.filter(min_price__lte=price_min)
+        # if size:
+        #     filters &= Q(product_units__final_price__lte=price_max)
+        #     filters &= Q(product_units__availability=True)
+        # else:
+        queryset = queryset.filter(min_price__lte=price_min)
 
     # Фильтр по размеру
     # if size:
@@ -232,9 +230,9 @@ def filter_products(request):
     #                 Q(product_units__size__is_one_size=True) & Q(product_units__size_table__in=table))))
 
     if size:
-        size_filter = Q(product_units__size__in=size)
+        queryset = queryset.filter(sizes__in=size)
+        size_filter = Q(sizes__in=size)
         filters &= size_filter
-        filters &= Q(product_units__availability=True)
 
     # Фильтр по наличию скидки
     # if is_sale:
@@ -244,18 +242,18 @@ def filter_products(request):
     # if is_fast_ship:
     #     filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
 
-    if filters:
-
-        # Выполняем фильтрацию
-        filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
-        queryset = queryset.filter(id__in=filter_id)
-        # queryset = queryset.filter(filters).values_list("id", flat=True)
-        # subquery = Product.objects.filter(filters).distinct().values_list('id', flat=True)
-        # queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
-        # queryset = queryset.values_list("id", flat=True)
-        # queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
-        # queryset = Product.objects.filter(id__in=queryset)
-        # queryset = queryset.select_related('product_units').filter(filters).values_list("id", flat=True).distinct()
+    # if filters:
+    #
+    #     # Выполняем фильтрацию
+    #     # filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+    #     queryset = queryset.filter()
+    #     # queryset = queryset.filter(filters).values_list("id", flat=True)
+    #     # subquery = Product.objects.filter(filters).distinct().values_list('id', flat=True)
+    #     # queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+    #     # queryset = queryset.values_list("id", flat=True)
+    #     # queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
+    #     # queryset = Product.objects.filter(id__in=queryset)
+    #     # queryset = queryset.select_related('product_units').filter(filters).values_list("id", flat=True).distinct()
     t2 = time()
     print("t1", t2 - t1)
     if query:
@@ -266,15 +264,8 @@ def filter_products(request):
     t3 = time()
     print("t2", t3 - t2)
 
-    # queryset = queryset.distinct()
-
-    # unique_product_ids = queryset.values("id")
-    # queryset = Product.objects.filter(id__in=Subquery(unique_product_ids)).values_list("id", flat=True)
     t31 = time()
-    # queryset = set(list(queryset.values_list("id", flat=True)))
-    # queryset = queryset.distinct("id")
-    # queryset = Product.objects.filter(id__in=queryset)
-    # queryset = Product.objects.filter(id__in=queryset).values_list("id", flat=True)
+
     t32 = time()
     print("t2.1", t32-t31)
     # print(list(queryset))

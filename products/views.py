@@ -93,7 +93,7 @@ class MaterialView(APIView):
         if cached_data is not None:
             res = cached_data
         else:
-            queryset = Material.objects.all()
+            queryset = Material.objects.all().order_by("id")
             res = MaterialSerializer(queryset, many=True).data
             cache.set(cache_material, (res), CACHE_TIME)
 
@@ -868,7 +868,7 @@ class CategoryTreeView(APIView):
     # authentication_classes = [JWTAuthentication]
     @method_decorator(cache_page(CACHE_TIME))
     def get(self, request):
-        cats = CategorySerializer(Category.objects.all(), many=True).data
+        cats = CategorySerializer(Category.objects.all().order_by("id"), many=True).data
         return Response(build_category_tree(cats))
 
 
@@ -1017,7 +1017,7 @@ class SizeTableForFilter(APIView):
                 size_tables = size_tables.filter(gender__name__in=gender)
             if categories:
                 size_tables = size_tables.filter(category__eng_name__in=categories)
-
+            size_tables = size_tables.order_by("id")
             # Создайте уникальный ключ кэша на основе данных size_tables
             cache_key = hashlib.sha256(pickle.dumps(size_tables)).hexdigest()
 

@@ -823,6 +823,7 @@ class ProductSlugView(APIView):
     def get(self, request, slug):
         try:
             t1 = time()
+            is_update = self.request.query_params.get('is_update')
             product = Product.objects.get(slug=slug)
             t2 = time()
             print("пятьдесят ", t2 - t1, product.id)
@@ -832,7 +833,7 @@ class ProductSlugView(APIView):
             # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
-            if request.user.id:
+            if request.user.id and not is_update:
                 # print(11111)
                 platform_update_price(product, request=request)
                 product.rel_num += 1

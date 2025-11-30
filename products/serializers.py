@@ -183,20 +183,24 @@ class ProductAdminSerializer(serializers.ModelSerializer):
             current_line = line
             while current_line.parent_line is not None:
                 current_line = current_line.parent_line
-                parents.append({"name": current_line.view_name, "query": f"line={current_line.full_eng_name.rstrip('_')}"})
+                parents.append(
+                    {"name": current_line.view_name, "query": f"line={current_line.full_eng_name.rstrip('_')}"})
             return parents[::-1]
 
         def get_cat_parents(cat, line):
             parents = []
-            if "Вс" not in cat.name:
-                parents.append({"name": f"{cat.name} {line.view_name}", "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
-            current_cat = cat
-            while current_cat.parent_category is not None:
-                current_cat = current_cat.parent_category
-                if "Вс" not in current_cat.name:
-                    print(current_cat.eng_name.rstrip('_'))
-                    parents.append({"name": f"{current_cat.name} {line.view_name}", "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
-            return parents[::-1]
+            if cat is not None:
+                if "Вс" not in cat.name:
+                    parents.append({"name": f"{cat.name} {line.view_name}",
+                                    "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"})
+                current_cat = cat
+                while current_cat.parent_category is not None:
+                    current_cat = current_cat.parent_category
+                    if "Вс" not in current_cat.name:
+                        parents.append({"name": f"{current_cat.name} {line.view_name}",
+                                        "query": f"line={line.full_eng_name.rstrip('_')}&category={current_cat.eng_name.rstrip('_')}"})
+                return parents[::-1]
+            return []
 
         if list_lines:
             s = []

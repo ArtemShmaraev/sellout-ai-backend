@@ -114,6 +114,7 @@ def similar_product(product):
 
         # Выполните запрос
         response = search.execute()
+
         # print(response)
         # output_file = 'similar_results.json'
         # with open(output_file, 'w', encoding="utf-8") as f:
@@ -122,6 +123,7 @@ def similar_product(product):
         # threshold = 0.6 * max_score
 
         product_ids = [hit.meta.id for hit in response.hits]
+        print(product_ids)
         queryset = Product.objects.filter(id__in=product_ids).filter(
             available_flag=True).filter(is_custom=False)
 

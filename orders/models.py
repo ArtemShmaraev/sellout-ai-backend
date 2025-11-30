@@ -59,12 +59,17 @@ class Order(models.Model):
     fact_of_payment = models.BooleanField(default=False)
     comment = models.CharField(default="", max_length=4048)
     date = models.DateTimeField(default=timezone.now)
+    date_of_buy_out = models.DateTimeField(default=timezone.now)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
     order_in_progress = models.BooleanField(default=False)
     total_bonus = models.IntegerField(default=0)
     invoice_data = models.JSONField(default=dict)
 
+    def start_order(self):
+        self.date_of_buy_out = timezone.now()
+        self.order_in_progress = True
+        self.save()
 
     def get_total_bonus(self):
         user = self.user
@@ -83,7 +88,6 @@ class Order(models.Model):
                 k += 1
         self.total_bonus = sum_bonus
         self.save()
-
 
 
     def accrue_bonuses(self):
@@ -389,8 +393,8 @@ class OrderUnit(models.Model):
             new_status = "В пути до международного склада"
         if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
             new_status = "В пути до московского склада"
-        if days_passed > self.delivery_type.days_max:
-            new_status = "Прибыл в Москву"
+        # if days_passed > self.delivery_type.days_max:
+        #     new_status = "Прибыл в Москву"
         self.status = Status.objects.get(name=new_status)
 
         if cancel:

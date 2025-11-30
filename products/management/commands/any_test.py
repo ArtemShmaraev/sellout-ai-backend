@@ -30,8 +30,10 @@ class Command(BaseCommand):
         # ps = Product.objects.filter(bucket_link=None)
         # ps.update(score_product_page=-10000)
         # ps.update(available_flag=True)
-        order = Order.objects.get(id=159)
-        order.update_order_status()
+        order = Order.objects.filter(user=User.objects.get(email="markenson888inst@gmail.com"), fact_of_payment=True)
+        for ord in order:
+            print(ord.id)
+            ord.update_order_status()
 
         # pus = Product.objects.filter(available_flag=False)
         # count = pus.count()

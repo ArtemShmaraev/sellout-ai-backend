@@ -247,19 +247,15 @@ def filter_products(request):
     if filters:
 
         # Выполняем фильтрацию
-        # filter_id = set(list(Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)))
+        filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+        queryset = queryset.filter(id__in=filter_id)
         # queryset = queryset.filter(filters).values_list("id", flat=True)
         # subquery = Product.objects.filter(filters).distinct().values_list('id', flat=True)
-        # queryset = queryset.filter(id__in=Subquery(subquery))
-        queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
-        # print(list(queryset_size))
-        queryset = queryset.values_list("id", flat=True)
-        queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
-        # print(list(queryset))
-        queryset = Product.objects.filter(id__in=queryset)
+        # queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
+        # queryset = queryset.values_list("id", flat=True)
+        # queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
+        # queryset = Product.objects.filter(id__in=queryset)
         # queryset = queryset.select_related('product_units').filter(filters).values_list("id", flat=True).distinct()
-        # print(list(queryset))
-
     t2 = time()
     print("t1", t2 - t1)
     if query:
@@ -345,7 +341,7 @@ def get_product_page(request, context):
     elif ordering == "random":
         queryset = queryset.order_by("?")
     queryset = queryset.values_list("id", flat=True)
-    print(queryset.query)
+    # print(queryset.query)
 
 
     # paginator = CustomPagination()

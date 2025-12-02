@@ -1011,7 +1011,7 @@ class SizeTableForFilter(APIView):
 
             # Фильтр по цене
             gender = request.query_params.getlist('gender')
-            categories = request.query_params.getlist('categories')
+            categories = request.query_params.getlist('category')
 
             if gender:
                 size_tables = size_tables.filter(gender__name__in=gender)
@@ -1019,7 +1019,7 @@ class SizeTableForFilter(APIView):
                 size_tables = size_tables.filter(category__eng_name__in=categories)
             size_tables = size_tables.order_by("id")
             # Создайте уникальный ключ кэша на основе данных size_tables
-            cache_key = hashlib.sha256(pickle.dumps(size_tables)).hexdigest()
+            cache_key = "_".join(list(map(str, size_tables.values_list("id", flat=True))))
 
             # Попробуйте получить закэшированные данные из кэша
             cached_data = cache.get(cache_key)

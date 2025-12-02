@@ -26,6 +26,7 @@ def get_default_status():
 
 
 class Order(models.Model):
+    number = models.CharField(max_length=10, default="default")
     user = models.ForeignKey("users.User", related_name="orders", on_delete=models.CASCADE,
                              blank=False)
     order_units = models.ManyToManyField("OrderUnit", blank=True, related_name="orders")

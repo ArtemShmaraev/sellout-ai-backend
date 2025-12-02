@@ -403,7 +403,7 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
 
             else:
                 if filters:
-                    unit = obj.product_units.filter(availability=True).order_by("final_price", "-start_price").first()
+                    unit = obj.product_units.filter(filters).order_by("final_price", "-start_price").first()
                     # min_final_price = obj.product_units.filter(filters).aggregate(min_price=Min('final_price'))['min_price']
                     # filters &= Q(final_price=min_final_price)
                     # corresponding_start_price = obj.product_units.filter(filters).aggregate(max_price=Max('start_price'))[

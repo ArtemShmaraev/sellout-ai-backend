@@ -290,10 +290,9 @@ def get_product_page_photo(params):
 
 def get_product_text(photo, line, collab, category, new, recommendations):
     texts = HeaderText.objects.all()
-    # if photo.lines.exists():
-    #     texts = texts.filter(lines__in=photo.lines.all())
-    # elif photo.collabs.exists():
-    #     texts = texts.filter(collabs__in=photo.collabs.all())
+    type = photo.type
+    print(type)
+
 
     if new:
         texts = texts.filter(title="Новинки")
@@ -326,10 +325,11 @@ def get_product_text(photo, line, collab, category, new, recommendations):
                 return lines[0]
             return None  # Если общей родительской линейки не найдено
 
-        list_line = []
-        oldest_line = False
+
         selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
         oldest_line = find_common_ancestor(selected_lines)
+        print(oldest_line)
+        print(photo.lines.all())
         # if len(selected_lines) > 0:
         #     oldest_line = find_common_ancestor(selected_lines)
         #     list_line.append(oldest_line.full_eng_name)
@@ -370,15 +370,11 @@ def get_product_text(photo, line, collab, category, new, recommendations):
         elif "shoes_category" in list_cat:
             texts = texts.filter(title="Обувь")
         else:
-            texts = texts.filter(title="sellout")
-
-
-
+            texts = texts.filter(title="sellout", type=type)
     elif not line and not collab and not category and not new and not recommendations:
-        texts = texts.filter(title="sellout")
-
+        texts = texts.filter(title="sellout", type=type)
     if not texts.exists():
-        texts = HeaderText.objects.filter(title="sellout")
+        texts = HeaderText.objects.filter(title="sellout", type=type)
     text = random.choice(texts)
 
     return text

@@ -523,6 +523,7 @@ class HeaderText(models.Model):
     collabs = models.ManyToManyField("Collab", related_name='headers_text', blank=True)
     title = models.CharField(max_length=256, default="")
     text = models.CharField(max_length=8096, default="")
+    type = models.CharField(max_length=64, default="")
 
 
 class HeaderPage(models.Model):

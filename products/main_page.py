@@ -272,20 +272,25 @@ def get_sellout_photo_text(last):
 
     random_photo_desk, random_photo_mobile = get_photo()
 
-    texts = HeaderText.objects.filter(title="sellout")
-    count = texts.count()
-    text = texts[randint(0, count - 1)]
+    texts_mobile = HeaderText.objects.filter(title="sellout", type="mobile")
+    texts_desktop = HeaderText.objects.filter(title="sellout", type = "desktop")
+
+    count = texts_mobile.count()
+    text_mobile = texts_mobile[randint(0, count - 1)]
+
+    count = texts_desktop.count()
+    text_desktop = texts_desktop[randint(0, count - 1)]
 
     type = 'right' if last == 'left' else 'left'
     res = {'type': "photo",
            "desktop": {"type": f"{type}_photo", "photo": random_photo_desk.photo,
-                       "title": text.title,
-                       "content": text.text,
+                       "title": text_desktop.title,
+                       "content": text_desktop.text,
                        "url": "",
                        "button": "Все товары"},
            "mobile": {"photo": random_photo_mobile.photo,
-                      "title": text.title,
-                      "content": text.text,
+                      "title": text_mobile.title,
+                      "content": text_mobile.text,
                       "url": "",
                       "button": "Все товары"}}
     return res, type

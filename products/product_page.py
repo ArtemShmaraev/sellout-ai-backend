@@ -55,7 +55,6 @@ def get_product_page_header(request):
     elif line:
         header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
 
-
     elif collab:
         if "all" in collab:
             header_photos = header_photos.filter(~Q(collabs=None))

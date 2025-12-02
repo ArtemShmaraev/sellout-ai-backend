@@ -295,10 +295,62 @@ def get_product_text(photo, line, collab, category, new, recommendations):
     # elif photo.collabs.exists():
     #     texts = texts.filter(collabs__in=photo.collabs.all())
 
+    if new:
+        texts = texts.filter(title="Новинки")
+    elif recommendations:
+        texts = texts.filter(title="Рекомендации")
 
-    if line:
+    elif line and collab:
+        texts = texts.filter(title="sellout")
+
+
+    elif line:
+
+        def find_common_ancestor(lines):
+            current_line = lines[0]
+            parent_lines = set()
+            parent_lines.add(current_line)
+
+            while current_line.parent_line:
+                parent_lines.add(current_line.parent_line)
+                current_line = current_line.parent_line
+
+            # Переберите остальные выбранные линейки и найдите первую общую вершину
+            for line in lines[1:]:
+                current_line = line
+                while current_line:
+                    if current_line in parent_lines:
+                        return current_line
+                    current_line = current_line.parent_line
+            if len(lines) == 1:
+                return lines[0]
+            return None  # Если общей родительской линейки не найдено
+
+        list_line = []
+        oldest_line = False
+        selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
+        oldest_line = find_common_ancestor(selected_lines)
+        # if len(selected_lines) > 0:
+        #     oldest_line = find_common_ancestor(selected_lines)
+        #     list_line.append(oldest_line.full_eng_name)
+        #     while oldest_line.parent_line:
+        #         list_line.append(oldest_line.parent_line.full_eng_name)
+        #         oldest_line = oldest_line.parent_line
+        # lines = []
+        # if oldest_line:
+        #     print(oldest_line.name)
+        #     lines = [oldest_line.full_eng_name]
+        #     # if Line.objects.filter(name=f"Все {oldest_line.name}").exists():
+        #     #     line_db = Line.objects.get(name=f"Все {oldest_line.name}")
+        #     #     lines.append(line_db.full_eng_name)
         texts = texts.filter(lines__in=photo.lines.all())
-        texts = texts.filter(lines__full_eng_name__in=line)
+        texts = texts.filter(lines=oldest_line)
+
+        # print("вот")
+        # print(oldest_line)
+        # print(photo.lines.values_list("name", flat=True))
+        # print("лист", list_line)
+        # print(texts)
 
     elif collab:
         texts = texts.filter(collabs__in=photo.collabs.all())
@@ -321,12 +373,10 @@ def get_product_text(photo, line, collab, category, new, recommendations):
             texts = texts.filter(title="sellout")
 
 
-    elif new:
-        texts = texts.filter(title="Новинки")
-    elif recommendations:
-        texts = texts.filter(title="Рекомендации")
+
     elif not line and not collab and not category and not new and not recommendations:
         texts = texts.filter(title="sellout")
+
     if not texts.exists():
         texts = HeaderText.objects.filter(title="sellout")
     text = random.choice(texts)

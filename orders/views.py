@@ -1,4 +1,5 @@
 import json
+import random
 import re
 
 from django.db.models import F
@@ -312,9 +313,8 @@ class CheckOutView(APIView):
                     order.delivery_view_price = 0
 
                 order.evenly_distribute_discount()
+                order.number = str(order.id * 100 + 4231 + random.randint(1, 10))
                 order.get_invoice_data()
-
-                print(order.invoice_data)
                 order.save()
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data

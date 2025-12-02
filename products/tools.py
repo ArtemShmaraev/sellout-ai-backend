@@ -315,21 +315,23 @@ def get_product_text(photo, line, collab, category, new, recommendations):
                 current_line = current_line.parent_line
 
             # Переберите остальные выбранные линейки и найдите первую общую вершину
+            old_lines = list()
             for line in lines[1:]:
                 current_line = line
                 while current_line:
                     if current_line in parent_lines:
-                        return current_line
+                        old_lines.append(current_line.id)
                     current_line = current_line.parent_line
             if len(lines) == 1:
                 return lines[0]
-            return None  # Если общей родительской линейки не найдено
+            line = Line.objects.filter(id__in=old_lines).order_by("id").first()
+            return line
 
 
         selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
         oldest_line = find_common_ancestor(selected_lines)
-        print(oldest_line)
-        print(photo.lines.all())
+        # print(oldest_line)
+        # print(photo.lines.all())
         # if len(selected_lines) > 0:
         #     oldest_line = find_common_ancestor(selected_lines)
         #     list_line.append(oldest_line.full_eng_name)

@@ -13,7 +13,7 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from products.serializers import LineSerializer, ProductMainPageSerializer
 
 def get_product_for_selecet(queryset):
-    return sample(list(queryset[:100].values_list("id", flat=True)), min(10, queryset.count()))
+    return sample(list(queryset[:100].values_list("id", flat=True)), min(15, queryset.count()))
 
 
 
@@ -70,7 +70,7 @@ def get_line_selection(gender, line=None):
         line = get_random_model(Line, "line")
         products = Product.objects.filter(lines=line)
 
-        products = products.filter(filters).order_by("-rel_num")
+        products = products.filter(filters).order_by("-score_product_page")
         if products.count() < 10:
             return get_line_selection(gender)
         else:
@@ -79,7 +79,7 @@ def get_line_selection(gender, line=None):
     else:
         products = Product.objects.filter(lines=line)
 
-        products = products.filter(filters).order_by("-rel_num")
+        products = products.filter(filters).order_by("-score_product_page")
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
 
@@ -96,7 +96,7 @@ def get_collab_selection(gender, collab=None):
         collab = get_random_model(Collab, "collab")
         products = Product.objects.filter(collab=collab)
 
-        products = products.filter(filters).order_by("-rel_num")
+        products = products.filter(filters).order_by("-score_product_page")
         if products.count() < 10:
             return get_collab_selection(gender)
         else:
@@ -104,7 +104,7 @@ def get_collab_selection(gender, collab=None):
             url = f"collab={collab.query_name}"
     else:
         products = Product.objects.filter(collab=collab)
-        products = products.filter(filters).order_by("-rel_num")
+        products = products.filter(filters).order_by("-score_product_page")
         title = f"{collab.name}"
         url = f"collab={collab.query_name}"
 
@@ -122,7 +122,7 @@ def get_color_and_line_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
     if products.count() < 10:
         return get_color_and_line_selection(gender)
     else:
@@ -141,7 +141,7 @@ def get_color_and_category_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
     if products.count() < 10:
         return get_color_and_category_selection(gender)
     else:
@@ -161,7 +161,7 @@ def get_color_and_brand_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
     if products.count() < 10:
         return get_color_and_brand_selection(gender)
     else:
@@ -180,7 +180,7 @@ def get_brand_and_category_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
 
     if products.count() < 10:
         return get_brand_and_category_selection(gender)
@@ -197,7 +197,7 @@ def get_brand_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
     if products.count() < 10:
         return get_brand_selection(gender)
     else:
@@ -213,7 +213,7 @@ def get_category_selection(gender):
     filters = Q(available_flag=True)
     filters &= Q(is_custom=False)
     filters &= Q(gender__name__in=gender)
-    products = products.filter(filters).order_by("-rel_num")
+    products = products.filter(filters).order_by("-score_product_page")
     if products.count() < 10:
         return get_category_selection(gender)
     else:

@@ -34,18 +34,15 @@ class Command(BaseCommand):
         count = pus.count()
         print(count)
         k = 0
-        kk = 0
-        for page in range(0, count, 100):
-            pus_page = pus[page:page + 100]
-            kk += 100
-
+        for page in range(0, count, 300):
+            pus_page = Product.objects.filter(up_score=False)[page:page + 300]
             for p in pus_page:
                 sizes = [size for pu in p.product_units.filter(availability=True) for size in pu.size.all()]
                 p.sizes.add(*sizes)
                 p.up_score = True
                 p.save()
-            k += 100
-            if k % 1000 == 0:
+            k += 300
+            if k % 900 == 0:
                 print(k, count)
 
 # # Обработка результатов запроса

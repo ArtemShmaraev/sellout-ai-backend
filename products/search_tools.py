@@ -6,7 +6,7 @@ from django.shortcuts import render
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.query import Match, MoreLikeThis
 
-from sellout.settings import ELASTIC_HOST
+from sellout.settings import ELASTIC_HOST, CACHE_TIME
 from .models import Line, Category, Color, Collab, Product
 from .serializers import ProductMainPageSerializer
 from elasticsearch_dsl import Search, SF
@@ -168,7 +168,7 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    cache_key = f"search {query}"
+    cache_key = f"search:{query}"
     cached_data = cache.get(cache_key)
 
     if cached_data is None:
@@ -194,6 +194,7 @@ def search_product(query, pod_queryset, page_number=1):
         # with open('results.json', 'w', encoding='utf-8') as json_file:
         #     json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
         product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
+        cache.set(cache_key, product_ids, CACHE_TIME)
     else:
         product_ids = cached_data
 

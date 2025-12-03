@@ -544,5 +544,5 @@ class RansomRequest(models.Model):
     phone_number = models.CharField(max_length=64, default="")
     email = models.CharField(max_length=128, default="")
     url = models.CharField(max_length=512, default="")
-    photo = models.CharField(max_length=128, default="")
+    photo = models.CharField(max_length=512, default="")
     info = models.CharField(max_length=1024, default="")

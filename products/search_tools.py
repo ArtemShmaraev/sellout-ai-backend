@@ -1,6 +1,7 @@
 import json
 from time import time
 
+from django.core.cache import cache
 from django.shortcuts import render
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.query import Match, MoreLikeThis
@@ -8,7 +9,7 @@ from elasticsearch_dsl.query import Match, MoreLikeThis
 from sellout.settings import ELASTIC_HOST
 from .models import Line, Category, Color, Collab, Product
 from .serializers import ProductMainPageSerializer
-from elasticsearch_dsl import Search
+from elasticsearch_dsl import Search, SF
 from django.db.models import Case, When, Value, IntegerField
 from elasticsearch_dsl.search import Search, Q
 
@@ -167,7 +168,34 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    search = Search(index="product_index", using=es)
+    cache_key = f"search: {query}"
+    cached_data = cache.get(cache_key)
+
+    if cached_data is None:
+        search = Search(index="product_index", using=es)
+        # search = search.query('bool', must=[
+        #     {'match': {'full_name': {'query': query, 'fuzziness': 'AUTO'}}}])
+        search = search.query(
+            'function_score',
+            query=Q('match', full_name={'query': query, 'fuzziness': 'AUTO'}),
+            # Запрос по полю full_name с учетом расплывчатости
+            functions=[
+                SF('field_value_factor', field='rel_num', modifier='log1p')  # Учет поля rel_num в функции ранжирования
+            ]
+        )
+
+        search = search.sort(
+            {'_score': {'order': 'desc'}},
+            {'rel_num': {'order': 'desc'}}
+        )
+
+        search = search[:600]
+        response = search.execute()
+        # with open('results.json', 'w', encoding='utf-8') as json_file:
+        #     json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
+        product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
+    else:
+        product_ids = cached_data
 
     # fields = ['manufacturer_sku^6', 'model^3', 'lines^2', 'colorway^1', "collab^4", "categories^3", 'brands^4']
     # search = search.query(Q("multi_match", query=query, fields=fields))
@@ -197,24 +225,16 @@ def search_product(query, pod_queryset, page_number=1):
     #     # Установите вес для каждого поля
     #     fuzziness='AUTO'
     # )
-    search = search.query('bool', must=[
-        {'match': {'full_name': {'query': query, 'fuzziness': 'AUTO'}}}])
+
     # , should=[
     #     {'match': {'manufacturer_sku': {'query': query, 'fuzziness': 'AUTO', 'boost': 1}}}
     # ])
 
 
-    search = search.sort(
-        {'_score': {'order': 'desc'}},
-        {'rel_num': {'order': 'desc'}}
-    )
 
-    search = search[:192]
 
-    response = search.execute()
-    with open('results.json', 'w', encoding='utf-8') as json_file:
-        # Преобразовать результаты в JSON и записать их в файл
-        json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
+
+
 
     # for hit in response['hits']['hits'][:10]:
     #     print(hit['_score'], hit['_source']['rel_num'])
@@ -230,11 +250,11 @@ def search_product(query, pod_queryset, page_number=1):
     #     json.dump(response.to_dict(), f, indent=4)
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
-    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
-    queryset = pod_queryset.filter(id__in=product_ids)
 
-    count = queryset.count()
-    # Определение порядка объектов в queryset
+
+
+
+    queryset = pod_queryset.filter(id__in=product_ids)
     preserved_order = Case(
         *[
             When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
@@ -242,16 +262,7 @@ def search_product(query, pod_queryset, page_number=1):
         default=Value(len(product_ids)),
         output_field=IntegerField()
     )
-
-    # Применение порядка к queryset
     queryset = queryset.annotate(order=preserved_order).order_by('order')
-
-    # start_index = (page_number - 1) * 60
-    # queryset = response.hits[start_index:start_index + 60]
-    #
-    # product_ids = [hit.meta.id for hit in queryset]
-    # queryset = Product.objects.filter(id__in=product_ids).order_by('id')
-
     res = {"queryset": queryset}
 
     return res

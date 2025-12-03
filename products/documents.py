@@ -36,7 +36,8 @@ class ProductDocument(Document):
     gender = Keyword(multi=True)
     colors = Keyword(multi=True)
     manufacturer_sku = Text(analyzer="standard")
-    rel_num = Integer()
+    score_product_page = Integer()
+    rel_num = Integer(
     min_price = Integer()
     text_price = Text(analyzer="standard")
     materials = Keyword()

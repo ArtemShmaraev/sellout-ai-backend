@@ -251,6 +251,7 @@ class Command(BaseCommand):
                     product_doc.colors = colors
 
                     product_doc.gender = gender
+                    product_doc.score_product_page = product.score_product_page
                     product_doc.rel_num = product.rel_num
                     product_doc.full_name = full_name
                     product_doc.save()

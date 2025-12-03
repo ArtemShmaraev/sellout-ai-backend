@@ -5,8 +5,11 @@ import math
 import pickle
 import random
 import threading
+from datetime import datetime
 from urllib.parse import urlencode
+import boto3
 
+import os
 import httpx
 from django.core.cache import cache
 from django.utils import timezone
@@ -413,14 +416,56 @@ class SGInfoView(APIView):
 
 class MakeRansomRequest(APIView):
     def post(self, request):
-        data = json.loads(request.body)
-        name = data.get('name')
-        tg_name = data.get('tg_name')
-        phone_number = data.get('phone_number')
-        email = data.get('email')
-        url = data.get('url')
-        photo = data.get('photo')
-        info = data.get('info')
+        data = request.data
+        name = data.get('name', "")
+        tg_name = data.get('tg_name', "")
+        phone_number = data.get('phone_number', "")
+        email = data.get('email', "")
+        url = data.get('url', "")
+        info = data.get('info', "")
+
+        file_obj = data['file']
+
+        file_path = 'ransom_photos'  # указываем путь к папке на сервере
+
+        if not os.path.exists(file_path):  # проверяем, существует ли папка
+            os.makedirs(file_path)  # если не существует, создаем ее
+
+        file_name = file_obj.name + datetime.now().strftime('%Y%m%d%H%M%S')  # получаем имя файла
+        full_file_path = os.path.join(file_path, file_name)  # создаем полный путь к файлу
+
+        with open(full_file_path, 'wb+') as destination:  # открываем файл для записи
+            for chunk in file_obj.chunks():  # записываем содержимое файла
+                destination.write(chunk)
+
+
+        access_id = 'YCAJE0F2sIDFNPfcTqknCFtoY'
+        access_key = 'YCNRvyqXPhlTbZ8vdAhDA6wAhxZCZ8KlRKjTPIDV'
+        bucket_name = 'sellout-photos'  # Укажите название бакета
+        s3_client = boto3.client(
+            service_name='s3',
+            endpoint_url='https://storage.yandexcloud.net',
+            aws_access_key_id=access_id,
+            aws_secret_access_key=access_key
+        )
+
+
+        full_cloud_path = os.path.join("ransom_photo", file_name)
+        path = full_cloud_path.replace("\\", "/")
+
+        if file_path.endswith(".png"):
+            content_type = "image/png"
+        else:
+            content_type = "image/jpeg"
+
+        s3_client.upload_file(
+            full_file_path,
+            bucket_name,
+            path,
+            ExtraArgs={'ContentType': content_type}
+        )
+        url_photo = f'https://storage.yandexcloud.net/sellout-photos/{path}'
+
 
         ransom_request = RansomRequest.objects.create(
             name=name,
@@ -428,12 +473,12 @@ class MakeRansomRequest(APIView):
             phone_number=phone_number,
             email=email,
             url=url,
-            photo=photo,
+            photo=url_photo,
             info=info
         )
-        ransom_request.save()
 
-        return Response(status=status.HTTP_201_CREATED)
+
+        return Response(url_photo)
 
 
 class GetHeaderPhoto(APIView):

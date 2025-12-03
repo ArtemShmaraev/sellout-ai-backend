@@ -55,6 +55,7 @@ def get_product_page_header(request):
     elif line:
         header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
 
+
     elif collab:
         if "all" in collab:
             header_photos = header_photos.filter(~Q(collabs=None))
@@ -161,6 +162,7 @@ def filter_products(request):
 
     if not available:
         queryset = queryset.filter(available_flag=True)
+
     if not custom:
         queryset = queryset.filter(is_custom=False)
 

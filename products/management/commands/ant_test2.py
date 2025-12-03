@@ -30,12 +30,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Измеряем время выполнения запроса к базе данных
-        pus = Product.objects.filter(up_score=False)
-        count = pus.count()
+        products = Product.objects.filter(up_score=False).order_by("id")
+        count = products.count()
         print(count)
         k = 0
         for page in range(0, count, 300):
-            pus_page = Product.objects.filter(up_score=False)[page:page + 300]
+            pus_page = Product.objects.filter(up_score=False)[:300]
             for p in pus_page:
                 sizes = [size for pu in p.product_units.filter(availability=True) for size in pu.size.all()]
                 p.sizes.add(*sizes)

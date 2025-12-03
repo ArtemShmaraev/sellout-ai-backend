@@ -168,7 +168,7 @@ def add_filter_search(query):
 
 
 def search_product(query, pod_queryset, page_number=1):
-    cache_key = f"search: {query}"
+    cache_key = f"search {query}"
     cached_data = cache.get(cache_key)
 
     if cached_data is None:

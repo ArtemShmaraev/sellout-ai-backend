@@ -45,7 +45,7 @@ def sklon_days(n):
 def add_product_api(data):
     spu_id = data['platform_info']["poizon"].get("spuId")
     property_id = data['platform_info']["poizon"].get("propertyId")
-    manufacturer_sku = data.get("manufacturer_sku")
+    manufacturer_sku = data.get("manufacturer_sku", "")
 
     t1 = time()
     # prs = Product.objects.filter(spu_id=spu_id, property_id=property_id,
@@ -84,6 +84,7 @@ def add_product_api(data):
     product.is_custom = data['custom']
     if "formatted_manufacturer_sku" in data:
         product.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
+    product.manufacturer_sku = manufacturer_sku
     product.in_sg = data.get("product_on_stadium_goods", False)
 
     product.category_id = data['platform_info']["poizon"].get("categoryId", 0)

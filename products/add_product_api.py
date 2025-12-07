@@ -53,7 +53,7 @@ def add_product_api(data):
     # prs.delete()
     print(spu_id)
     print(property_id)
-    print(manufacturer_sku)
+    # print(manufacturer_sku)
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
     print(product.slug)

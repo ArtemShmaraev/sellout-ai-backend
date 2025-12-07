@@ -67,13 +67,10 @@ Anon)
 5. `[DELETE][Anon] product/update/<product_id>` удаление товара по id
 6. `[POST][Anon] product/list_product` карточки товаров по массиву {"products": [1, 2]}
 7. `[GET][Anon] product/size_table`таблица размеров для фильтра [⬇️](#product_size_table)
-8. `[POST][Anon] product/ransom_request` составить заявку на выкуп в data передать данные {name = data.get('name', "")
-        tg_name, phone_number, email, url, info, file(черех form data)} вернет просто url фотки на яндекс сервере
-
+8. `[POST][Anon] product/ransom_request` составить заявку на выкуп в data передать данные {name, tg_name, phone_number, email, url, info, file(черех form data)} вернет просто url фотки на яндекс сервере
         file_obj = data['file']
 
 ## Category, Line, Color, Brand API
-
 у каждой сущности есть все виды запросов [GET]
 
 1. `[GET][Anon] product/[categories|lines|colors|brands|collections]` вернет все сущности [⬇️](#clcb)

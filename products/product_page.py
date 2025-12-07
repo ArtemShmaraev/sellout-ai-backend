@@ -223,7 +223,7 @@ def filter_products(request):
         #     filters &= Q(product_units__final_price__lte=price_max)
         #     filters &= Q(product_units__availability=True)
         # else:
-        queryset = queryset.filter(min_price__lte=price_min)
+        queryset = queryset.filter(min_price__lte=price_max)
 
     # Фильтр по размеру
     # if size:

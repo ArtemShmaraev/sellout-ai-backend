@@ -60,10 +60,11 @@ def add_product_api(data):
     product_slug = ""
     if not create:
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        if product.last_upd >= time_threshold:
+        if product.last_upd >= time_threshold or product.in_process_update:
             product.available_flag = True
             product.save()
             return "Товар актуальный))"
+
         product.clear_all_fields()
         product.product_units.update(availability=False)
         product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
@@ -360,7 +361,7 @@ def add_product_api(data):
             update_score_sneakers(product)
         else:
             update_score_clothes(product)
-
+    product.in_process_update = False
     product.save()
     print(product.available_flag)
 

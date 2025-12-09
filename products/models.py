@@ -303,6 +303,7 @@ class Product(models.Model):
     is_recommend = models.BooleanField(default=False, db_index=True)
     extra_score = models.IntegerField(default=0)
     up_score = models.BooleanField(default=False)
+    in_process_update = models.BooleanField(default=False)
 
     objects = ProductManager()
 
@@ -317,7 +318,6 @@ class Product(models.Model):
         self.model = ""
         self.colorway = ""
         self.russian_name = ""
-
 
         self.description = ""
         self.bucket_link.clear()
@@ -360,8 +360,9 @@ class Product(models.Model):
         self.is_sale = False
         self.percentage_sale = 0
         self.available_sizes = {}
-        self.actual_price = True
+        self.actual_price = False
         self.content_sources = {}
+        self.in_process_update = True
         self.save()
 
     def update_available_status(self):

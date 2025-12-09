@@ -1,4 +1,5 @@
 from django.contrib.sitemaps.views import sitemap
+from django.views.generic import TemplateView
 from rest_framework import routers
 from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
     CollabViewSet, MaterialViewSet
@@ -11,7 +12,7 @@ from .views import SizeTableForFilter, DewuInfoListView, DewuInfoView, ProductSe
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    RunCommand, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView
+    run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -80,8 +81,7 @@ urlpatterns = [
     path('pict', view_photo_for_rate, name='view_photo'),
     path("my_score_for_product/<int:id>", MyScoreForProduct.as_view()),
     path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()), path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('run_command', RunCommand.as_view())
+    path('sitemap1.xml', TemplateView.as_view(template_name="sitemap1.xml", content_type="application/xml")),
+    path('run_command',  run_command_async)
 ]
-
-
 

@@ -33,5 +33,4 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('email_confirmed/<str:token>', confirm_email),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"))
-
 ]

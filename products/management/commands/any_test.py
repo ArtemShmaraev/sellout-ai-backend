@@ -1,7 +1,7 @@
 import math
 import random
 from itertools import count
-from time import time
+from time import time, sleep
 
 import requests
 from django.core import signing
@@ -16,7 +16,7 @@ from orders.models import ShoppingCart, Status, OrderUnit, Order
 from orders.serializers import OrderSerializer
 
 from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo
+    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo, RansomRequest
 from django.core.exceptions import ObjectDoesNotExist
 
 from products.serializers import ProductMainPageSerializer
@@ -27,23 +27,73 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        pus = ProductUnit.objects.filter(update_w=False)
-        count = pus.count()
-        k = 0
-        for page in range(0, count, 100):
-            pus_page = pus[page:page + 100]
-            for pu in pus_page:
-                pu.weight_kg = pu.weight
-                pu.update_w = True
-                pu.save()
-            k += 100
-            if k % 1000 == 0:
-                print(k, count)
+        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name="M")
+        print(products.count() / 60)
+        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name="F")
+        print(products.count() / 60)
+        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name__in=["K"])
+        print(products.count() / 60)
+        # product = Product.objects.get(slug="nike-dunk-low-sb-michael-lau-gardener-wood-41367")
+        # product.model = "Dunk Low"
+        # sleep(80)
+        # product.save()
+
+        # rr = RansomRequest.objects.all()
+        # for r in rr:
+        #     print(r.photo)
+        #     sleep(20)
+
+        # texts = HeaderText.objects.filter(title='sellout')
+        # texts.update(type='desktop')
+        #
+        # texts = HeaderPhoto.objects.all()
+        # for text in texts:
+        #     s = text.lines.all()
+        #     for curent_line in s:
+        #         if Line.objects.filter(name=f"Все {curent_line.name}").exists():
+        #             line_db = Line.objects.get(name=f"Все {curent_line.name}")
+        #             text.lines.add(line_db)
+        #         text.save()
+        #         print(text.lines.all())
+
+            #     line = s.order_by("-id").first()
+            #     text.lines.clear()
+            #     text.lines.add(line)
+            #     text.save()
+            #     curent_line = s.first()
+
+            #     while curent_line.parent_line is not None:
+            #         curent_line = curent_line.parent_line
+            #         text.lines.add(curent_line)
+            #         if Line.objects.filter(name=f"Все {curent_line.name}").exists():
+            #             line_db = Line.objects.get(name=f"Все {curent_line.name}")
+            #             text.lines.add(line_db)
+            # text.save()
+
+            # if "yeezy" in line_name.lower():
+        # product = Product.objects.get(slug="timberland-field-780538")
+        # pus = product.product_units.all()
+        # for pu in pus:
+        #     if "43" in pu.view_size_platform:
+        #         print(pu.original_price, pu.weight_kg, pu.weight, pu.delivery_type.decimal_insurance)
+
+        # pus = ProductUnit.objects.filter(update_w=False)
+        # count = pus.count()
+        # k = 0
+        # for page in range(0, count, 100):
+        #     pus_page = pus[page:page + 100]
+        #     for pu in pus_page:
+        #         pu.weight_kg = pu.weight
+        #         pu.update_w = True
+        #         pu.save()
+        #     k += 100
+        #     if k % 1000 == 0:
+        #         print(k, count)
 
 
-        # ps = Product.objects.filter(bucket_link=None)
-        # ps.update(score_product_page=-10000)
-        # ps.update(available_flag=True)
+        # ps = Product.objects.filter(min_price=0)
+        # # ps.update(score_product_page=-10000)
+        # ps.update(available_flag=False)
         # order = Order.objects.filter(user=User.objects.get(email="markenson888inst@gmail.com"), fact_of_payment=True)
         # for ord in order:
         #     print(ord.id)

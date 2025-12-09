@@ -15,7 +15,7 @@ class Command(BaseCommand):
             Product.objects
             .values('spu_id')
             .annotate(total_count=Count('spu_id'))
-            .filter(total_count__gt=2)
+            .filter(total_count__gt=1)
         )
 
         # Вывод результатов
@@ -25,8 +25,10 @@ class Command(BaseCommand):
 
             print(f"Товары с SPU_ID {spu_id}: {total_count} шт.")
             # Получение товаров для текущего spu_id
-            products_for_spu_id = Product.objects.filter(spu_id=spu_id, has_many_configurations=True, has_many_colors=False).order_by("min_price").values_list("id", flat=True)[1:]
+            products_for_spu_id = Product.objects.filter(spu_id=spu_id, has_many_colors=False).order_by("min_price").values_list("id", flat=True)
+            # print(products_for_spu_id.values("has_many_colors"))
             products = Product.objects.filter(id__in=products_for_spu_id)
+            # print()
             products.update(score_product_page=-5000)
-            for p in products_for_spu_id:
-                print(p.score_product_page)
+            # for p in products_for_spu_id:
+            #     print(p.score_product_page)

@@ -106,7 +106,7 @@ def count_queryset(request):
     # print(queryset.query)
     if 'page' in params:
         del params['page']
-
+    # print(urlencode(params))
     cache_count_key = f"count:{urlencode(params)}"  # Уникальный ключ для каждой URL
     cached_count = cache.get(cache_count_key)
     if cached_count is not None:
@@ -185,7 +185,6 @@ def filter_products(request):
     recommendations = params.get("recommendations")
     if recommendations and not query:
         queryset = queryset.filter(is_recommend=True)
-        print(queryset.count())
     if gender:
         queryset = queryset.filter(gender__name__in=gender)
 
@@ -269,6 +268,7 @@ def filter_products(request):
 
     t32 = time()
     print("t2.1", t32-t31)
+    queryset = queryset.values_list("id", flat=True).distinct()
     # print(list(queryset))
     # print(queryset.query)
 

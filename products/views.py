@@ -7,7 +7,7 @@ import random
 import subprocess
 import threading
 from datetime import datetime
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 import boto3
 
 import os
@@ -59,26 +59,43 @@ from sellout.settings import HOST
 from django.contrib.sitemaps import views as sitemaps_views
 from django.shortcuts import render, redirect
 
-
-class RunCommand(APIView):
-    def get(self, request):
-        async def run_command_async(command):
-            loop = asyncio.get_event_loop()
-            future = loop.run_in_executor(None, call_command, command)
-            await future
+from rest_framework.response import Response
+from rest_framework.views import APIView
+import asyncio
 
 
-        params = request.query_params
-        pwd = params.get("pwd", "")
-        if pwd == "1qw2":
-            command = params.get('command', '')
-            print(command)
-            asyncio.run(run_command_async(command))
-            # call_command(command)
-            # subprocess.Popen([command], shell=True)
-            return Response("Пошла вода горячая")
-        return Response("Ошибка")
+def run_command(command):
+    result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
+    # здесь вы можете обработать результат, сохранить его или передать куда-то еще
+    print(result)
 
+def run_command_async(request):
+    if request.method == 'GET':
+        command = request.GET.get('command', '')
+        # Запускаем команду в отдельном потоке
+        threading.Thread(target=run_command, args=(command,)).start()
+        # Немедленный ответ клиенту
+        return JsonResponse({'message': 'Command is running in the background.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+# class RunCommand(APIView):
+#     def get(self, request):
+#         params = request.query_params
+#         pwd = params.get("pwd", "")
+#
+#         if pwd == "1qw2":
+#             command = params.get('command', '')
+#             loop = asyncio.get_event_loop()
+#
+#             # Запуск команды асинхронно
+#             result = await loop.run_in_executor(None, lambda: subprocess.check_output(command, shell=True,
+#                                                                                       stderr=subprocess.STDOUT,
+#                                                                                       text=True))
+#
+#             # subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, start_new_session=True)
+#             return Response({'message': 'Команда успешно запущена в фоновом режиме'})
+#
+#         return Response({'error': 'Ошибка'})
 
 
 

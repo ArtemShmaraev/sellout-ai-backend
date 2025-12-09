@@ -18,6 +18,7 @@ from utils.models import Currency
 
 
 def add_products_spu_id_api(data):
+    print("321")
     property_ids = []
     spu_id = 0
     for product in data:
@@ -53,17 +54,18 @@ def add_product_api(data):
     # prs.delete()
     print(spu_id)
     print(property_id)
-    # print(manufacturer_sku)
+    print(manufacturer_sku)
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
     print(product.slug)
     product_slug = ""
     if not create:
-        time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        if product.last_upd >= time_threshold or product.in_process_update:
-            product.available_flag = True
-            product.save()
-            return "Товар актуальный))"
+        print("go")
+        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        # if product.last_upd >= time_threshold or product.in_process_update:
+        #     product.available_flag = True
+        #     product.save()
+        #     return "Товар актуальный))"
 
         product.clear_all_fields()
         product.product_units.update(availability=False)
@@ -83,8 +85,7 @@ def add_product_api(data):
     product.model = data['model']
     product.colorway = data['colorway']
     product.is_custom = data['custom']
-    if "formatted_manufacturer_sku" in data:
-        product.formatted_manufacturer_sku = data["formatted_manufacturer_sku"]
+    product.formatted_manufacturer_sku = data.get("formatted_manufacturer_sku", "")
     product.manufacturer_sku = manufacturer_sku
     product.in_sg = data.get("product_on_stadium_goods", False)
 
@@ -364,6 +365,7 @@ def add_product_api(data):
     product.in_process_update = False
     product.save()
     print(product.available_flag)
+    print(product.manufacturer_sku)
 
     # print(product.slug)
     t13 = time()

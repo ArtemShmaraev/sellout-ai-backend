@@ -68,7 +68,8 @@ import asyncio
 class NewSale(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        product = Product.objects.get(slug=data['slug'])
+        slug = data['slug'].replace("https://sellout.su/products/", "")
+        product = Product.objects.get(slug=slug)
         product.add_sale(data['sale_absolute'], data['sale_percentage'])
         return Response("Готово")
 
@@ -76,7 +77,8 @@ class NewSale(APIView):
 class DelSale(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        product = Product.objects.get(slug=data['slug'])
+        slug = data['slug'].replace("https://sellout.su/products/", "")
+        product = Product.objects.get(slug=slug)
         product.del_sale()
         return Response("Готово")
 

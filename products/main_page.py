@@ -127,7 +127,7 @@ def get_color_and_line_selection(gender):
         return get_color_and_line_selection(gender)
     else:
         title = f"{line.name}"
-        url = f"line={line.full_eng_name}&color={random_color.name}"
+        url = f"line={line.full_eng_name}"
     list_id = get_product_for_selecet(products)
     return title, list_id, url
 
@@ -146,7 +146,7 @@ def get_color_and_category_selection(gender):
         return get_color_and_category_selection(gender)
     else:
         title = f"{random_category.name}"
-        url = f"category={random_category.eng_name}&color={random_color.name}"
+        url = f"category={random_category.eng_name}"
     list_id = get_product_for_selecet(products)
     return title, list_id, url
 
@@ -166,7 +166,7 @@ def get_color_and_brand_selection(gender):
         return get_color_and_brand_selection(gender)
     else:
         title = f"{random_brand.name}"
-        url = f"line={random_brand.query_name}&color={random_color.name}"
+        url = f"line={random_brand.query_name}"
     list_id = get_product_for_selecet(products)
     return title, list_id, url
 

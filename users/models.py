@@ -95,6 +95,7 @@ class User(AbstractUser):
 
     wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True, related_name="wait_list_users")
     user_status = models.ForeignKey("UserStatus", on_delete=models.SET_NULL, null=True, blank=True)
+    is_referral_partner = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username

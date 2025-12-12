@@ -81,7 +81,7 @@ urlpatterns = [
     path('pict', view_photo_for_rate, name='view_photo'),
     path("my_score_for_product/<int:id>", MyScoreForProduct.as_view()),
     path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()), path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('sitemap1.xml', TemplateView.as_view(template_name="sitemap1.xml", content_type="application/xml")),
+    path('sitemap_line.xml', TemplateView.as_view(template_name="sitemap_line.xml", content_type="application/xml")),
     path('run_command',  run_command_async)
 ]
 

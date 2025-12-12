@@ -1,5 +1,5 @@
 User-agent: *
-
+Sitemap: https://sellout.su/api/v1/product/sitemap_line.xml
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=1
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=2
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=3

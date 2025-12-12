@@ -7,7 +7,7 @@ from .models import Product
 
 class ProductSitemap(Sitemap):
     def items(self):
-        return Product.objects.filter(available_flag=True).order_by("-score_product_page").values("slug", "last_upd", "rel_num")
+        return Product.objects.filter(available_flag=True).order_by("-score_product_page").values("slug", "last_upd", "score_product_page")
 
     def lastmod(self, obj):
         date = obj['last_upd']
@@ -16,9 +16,8 @@ class ProductSitemap(Sitemap):
         return f"/products/{obj['slug']}"
 
     def calculate_priority(self, obj):
-        rel_num = obj['rel_num']
-        priority = math.log2(rel_num + 1) / 25
-        return round(priority, 2)
+        rel_num = obj['score_product_page'] / 10000
+        return round(rel_num, 2)
 
     def priority(self, obj):
         return self.calculate_priority(obj)

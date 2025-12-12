@@ -3,8 +3,8 @@
     {% for url in urlset %}
     <url>
         <loc>{{ url.location }}</loc>
-        <changefreq>{{ url.changefreq }}</changefreq>
-        <priority>{{ url.priority }}</priority>
+{#        <changefreq>{{ url.changefreq }}</changefreq>#}
+{#        <priority>{{ url.priority }}</priority>#}
     </url>
     {% endfor %}
 </urlset>

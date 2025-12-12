@@ -13,6 +13,7 @@ import boto3
 import os
 import httpx
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import call_command
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -63,13 +64,25 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
+class SlugForSpuId(APIView):
+    def get(self, request, spu_id):
+        try:
+            products = list(map(lambda x: f"https://sellout.su/products/{x}", Product.objects.filter(spu_id=spu_id).values_list("slug", flat=True)))
+            return Response(products)
+        except ObjectDoesNotExist:
+            # Обработка случая, когда не найден объект Product с указанным spu_id
+            return Response({"detail": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            # Обработка других исключений, например, базового Exception
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-def run_command(command):
-    result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
-    # здесь вы можете обработать результат, сохранить его или передать куда-то еще
-    print(result)
+
 
 def run_command_async(request):
+    def run_command(command):
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
+        # здесь вы можете обработать результат, сохранить его или передать куда-то еще
+        print(result)
     if request.method == 'GET':
         command = request.GET.get('command', '')
         # Запускаем команду в отдельном потоке

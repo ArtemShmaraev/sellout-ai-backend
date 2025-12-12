@@ -1,3 +1,4 @@
+import math
 import random
 
 from django.db import models
@@ -282,6 +283,12 @@ class Product(models.Model):
     size_row_name = models.CharField(max_length=255, null=True, blank=True, default="")
     extra_name = models.CharField(max_length=255, null=True, blank=True, default="")
     is_sale = models.BooleanField(default=False, db_index=True)
+
+
+    sale_absolute = models.IntegerField(default=0)
+    sale_percentage = models.IntegerField(default=0)
+
+
     in_sg = models.BooleanField(default=False, db_index=True)
     percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
@@ -357,7 +364,6 @@ class Product(models.Model):
         self.another_configuration = []
         self.size_row_name = ""
         self.extra_name = ""
-        self.is_sale = False
         self.percentage_sale = 0
         self.available_sizes = {}
         self.actual_price = False
@@ -365,11 +371,38 @@ class Product(models.Model):
         self.in_process_update = True
         self.save()
 
+    def add_sale(self, absolute, percentage):
+        def round_by_step(value, step=50):
+            return math.ceil(value / step) * step
+        self.is_sale = True
+        self.sale_absolute = absolute
+        self.sale_percentage = percentage
+        pus = self.product_units.all()
+        for pu in pus:
+            pu.is_sale = True
+            if self.sale_percentage != 0:
+                percentage = round(((100 - self.sale_percentage) / 100), 2)
+                pu.start_price = round_by_step((pu.final_price / percentage) + 10, step=100) - 10
+            else:
+                pu.start_price = pu.final_price + self.sale_absolute
+            pu.save()
+        self.save()
+        self.update_min_price()
+
+    def del_sale(self):
+        self.is_sale = False
+        pus = self.product_units.all()
+        for pu in pus:
+            pu.is_sale = False
+            pu.start_price = pu.final_price
+            pu.save()
+        self.save()
+        self.update_min_price()
+
     def update_available_status(self):
         if not self.product_units.filter(availability=True).exists():
             self.available_flag = False
             self.save()
-
 
     def update_price(self):
         if not self.actual_price:

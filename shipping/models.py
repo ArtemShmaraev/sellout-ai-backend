@@ -1,3 +1,5 @@
+import math
+
 from django.db import models
 
 # from products.models import SizeTable
@@ -90,6 +92,7 @@ class ProductUnit(models.Model):
     original_price = models.IntegerField(null=False, blank=False, default=0)
     start_price = models.IntegerField(null=False, blank=False)  # Старая цена
     final_price = models.IntegerField(null=False, blank=False, db_index=True)  # Новая цена
+
     total_profit = models.IntegerField(null=False, blank=False, default=0)
     bonus = models.IntegerField(null=False, blank=False, default=0)
     approximate_price_with_delivery_in_rub = models.IntegerField(null=False, blank=False, default=0)
@@ -105,6 +108,7 @@ class ProductUnit(models.Model):
     is_return = models.BooleanField(default=False)
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
+
 
     dimensions = models.JSONField(default=dict)
     weight = models.IntegerField(default=1)
@@ -127,6 +131,20 @@ class ProductUnit(models.Model):
     def update_history(self):
         self.history_price.append(self.final_price)
         self.save()
+
+
+    def check_sale(self):
+        def round_by_step(value, step=50):
+            return math.ceil(value / step) * step
+
+        if self.product.is_sale:
+            self.is_sale = True
+            if self.product.sale_absolute:
+                percentage = round(((100 - self.product.sale_percentage) / 100), 2)
+                self.start_price = round_by_step((self.final_price / percentage) + 10, step=100) - 10
+            else:
+                self.start_price = self.final_price + self.product.sale_absolute
+            self.save()
 
     # def save(self, *args, **kwargs):
     #     if (not self.product.min_price or self.final_price < self.product.min_price) and self.availability:

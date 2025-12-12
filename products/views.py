@@ -64,6 +64,24 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
+
+class NewSale(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        product = Product.objects.get(slug=data['slug'])
+        product.add_sale(data['sale_absolute'], data['sale_percentage'])
+        return Response("Готово")
+
+
+class DelSale(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        product = Product.objects.get(slug=data['slug'])
+        product.del_sale()
+        return Response("Готово")
+
+
+
 class SlugForSpuId(APIView):
     def get(self, request, spu_id):
         try:

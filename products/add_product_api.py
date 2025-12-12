@@ -61,11 +61,11 @@ def add_product_api(data):
     product_slug = ""
     if not create:
         print("go")
-        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        # if product.last_upd >= time_threshold or product.in_process_update:
-        #     product.available_flag = True
-        #     product.save()
-        #     return "Товар актуальный))"
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        if product.last_upd >= time_threshold or product.in_process_update:
+            product.available_flag = True
+            product.save()
+            return "Товар актуальный))"
 
         product.clear_all_fields()
         product.product_units.update(availability=False)
@@ -75,7 +75,6 @@ def add_product_api(data):
         product_slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
     product.slug = product_slug
     product.save()
-    t2 = time()
 
     product.is_collab = data["is_collab"]
     if data["is_collab"] and len(data['collab_names']) > 0:
@@ -102,7 +101,6 @@ def add_product_api(data):
 
     if data['approximate_date']:
         product.approximate_date = data['approximate_date']
-    t3 = time()
 
     product.lines.clear()
     for i in range(len(data['lines'])):
@@ -123,7 +121,6 @@ def add_product_api(data):
         if Line.objects.filter(name=f"Все {brand}").exists():
             product.lines.add(Line.objects.get(name=f"Все {brand}"))
 
-    t4 = time()
 
     for cat in data['categories']:
         category = Category.objects.get(name=cat)
@@ -149,28 +146,20 @@ def add_product_api(data):
     product.parameters = data['parameters_to_show_in_product']
     product.platform_info = data['platform_info']
     rel_num = int(data['platform_info']["poizon"]["poizon_likes_count"]) if str(data['platform_info']["poizon"]["poizon_likes_count"]).isdigit() else 0
-    # if not product.categories.filter(name__in=["Обувь", "Одежда"]).exists():
-    #     rel_num = int(rel_num * 0.3)
     product.rel_num = rel_num
     product.similar_product = data['platform_info']["poizon"].get("similar_products", [])
     product.another_configuration = data['platform_info']["poizon"].get("another_configuration", [])
     product.actual_price = False
 
-    t5 = time()
     blacklisted_urls = product.black_bucket_link.values_list("url", flat=True)
-    # Получить список URL-ов из ваших данных, которых нет в черном списке
     new_urls = [img["url"] for img in data["images"] if img["url"] not in blacklisted_urls]
-    # Найти фотографии, которые уже существуют среди новых URL-ов
     new_photos = []
     for url in new_urls:
         new_photo = Photo(url=url)
         new_photos.append(new_photo)
-    # Сохранить новые фотографии в базе данных
     Photo.objects.bulk_create(new_photos)
-    # Получить все фотографии (включая новые и существующие)
     all_photos = new_photos
     product.bucket_link.clear()
-    # Добавить все фотографии в bucket_link продукта
     product.bucket_link.add(*all_photos)
 
 
@@ -191,8 +180,6 @@ def add_product_api(data):
         material = Material.objects.get(eng_name="other_material")
         product.materials.add(material)
 
-    t6 = time()
-
     product.size_table_platform = data['size_tables']
     product.size_row_name = data.get('size_row_name', "")
     product.extra_name = data.get('extra_name', "")
@@ -204,8 +191,6 @@ def add_product_api(data):
     product.has_many_configurations = data.get("many_configurations")
 
     product.save(product_slug=product_slug)
-
-    t7 = time()
     for unit in data['units']:
         sizes = []
         tables = []
@@ -241,9 +226,7 @@ def add_product_api(data):
         if not create:
             units = product.product_units.filter(platform_info__poizon__header=header).order_by(
                 "delivery_type__days_max")
-
             ids = list(units.values_list("id", flat=True))
-            # print(ids)
 
             for del_unit in units[:len(sort_offers)]:
                 del_unit.delete()
@@ -271,10 +254,8 @@ def add_product_api(data):
             )
 
             platform_info['poizon'].update(offer["platform_info"])
-            # 670870
-            # print(100)
+
             if not create and i < len(ids):
-                # print(ids[i])
                 product_unit = ProductUnit.objects.create(
                     id=ids[i],
                     product=product,
@@ -284,12 +265,10 @@ def add_product_api(data):
                     start_price=offer['price'],
                     final_price=offer['price'],
                     delivery_type=dilivery,
-                    platform=Platform.objects.get_or_create(platform='poizon',
-                                                            site="poizon")[0],
+                    platform=Platform.objects.get_or_create(platform='poizon', site="poizon")[0],
                     url=data['platform_info']["poizon"]['url'],
                     availability=True,
-                    currency=
-                    Currency.objects.get_or_create(name=offer["currency"])[0],
+                    currency=Currency.objects.get_or_create(name=offer["currency"])[0],
                     platform_info=platform_info,
                     weight_kg=unit['weight'],
                     dimensions={"length": unit['length'],
@@ -318,10 +297,9 @@ def add_product_api(data):
                                 "width": unit['width']}
                 )
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
-
             product.sizes.add(*SizeTranslationRows.objects.filter(id__in=sizes))
-
             product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
+            product_unit.check_sale()
             product_unit.update_history()
     t9 = time()
 
@@ -336,12 +314,9 @@ def add_product_api(data):
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.filter(availability=True):
-        # print(unit.size.all())
         for s in unit.size.all():
             row = s.table.default_row
-            # print(row.filter_name)
             if row.filter_name != "Один размер":
-                # print("сука")
                 if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
                     sizes_info['filter_logo'] = row.filter_logo
                 if s.id not in sizes_id:
@@ -381,7 +356,6 @@ def add_product_api(data):
     # print(t11-t10)
     # print(t12-t11)
     # print(t13-t12)
-    # print(product.slug)
     return product
 
     # self.stdout.write(self.style.SUCCESS(product))

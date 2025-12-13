@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case, Count
 
 from sellout.settings import CACHE_TIME
-from .tools import get_queryset_from_list_id
+from .tools import get_queryset_from_list_id, get_title_for_products_page
 from time import time
 from django.http import JsonResponse, FileResponse
 
@@ -82,6 +82,14 @@ def get_product_page_header(request):
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text}
     res['desktop']['photo'] = photo_desktop.photo
 
+    if text_desktop.title == "sellout":
+        title_desktop = get_title_for_products_page(category, line, collab)
+        if title_desktop != "":
+            res['desktop']['title'] = title_desktop
+            res['desktop']['content'] = ""
+            res['desktop']['photo'] = ""
+
+
     if not header_photos_mobile.exists():
         header_photos_mobile = header_photos.filter(type="mobile")
         if not header_photos_mobile.exists():
@@ -95,6 +103,14 @@ def get_product_page_header(request):
 
     res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text}
     res['mobile']['photo'] = photo_mobile.photo
+
+    if text_mobile.title == "sellout":
+        title_mobile = get_title_for_products_page(category, line, collab)
+        if title_mobile != "":
+            res['mobile']['title'] = title_mobile
+            res['mobile']['content'] = ""
+            res['mobile']['photo'] = ""
+
     return res
 
 

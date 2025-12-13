@@ -20,6 +20,21 @@ from products.models import Product, Category, Line, Gender, Brand, Tag, Collect
 from users.models import UserStatus
 
 
+def get_title_for_products_page(categories, lines, collabs):
+    title = ""
+    if len(categories) == 1:
+        title += Category.objects.get(eng_name=categories[0]).name + " "
+
+    if len(lines) == 1:
+        print(lines)
+        print(lines[0])
+        title += Line.objects.get(full_eng_name=lines[0]).view_name
+    elif len(collabs) == 1:
+        title += Collab.objects.get(query_name=collabs[0]).name
+
+    return title.strip()
+
+
 def update_score_sneakers(product):
     total_score_line = product.lines.all().aggregate(Sum('score_product_page'))['score_product_page__sum']
     num = product.lines.count()

@@ -903,8 +903,13 @@ class ProductView(APIView):
         else:
             photos = get_product_page_header(request)
             cache.set(cache_header_key, (photos), CACHE_TIME)
+
         res["mobile"] = photos['mobile']
         res["desktop"] = photos['desktop']
+
+
+
+
 
         t10 = time()
         print("t9", t10 - t8)

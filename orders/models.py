@@ -412,3 +412,10 @@ class OrderUnit(models.Model):
             self.status = Status.objects.get(name=new_status)
         self.save()
 
+
+    def add_track_number(self, number):
+        self.track_number = number
+        self.orders.first().track_numbers.append(number)
+        self.save()
+        self.orders.first().save()
+

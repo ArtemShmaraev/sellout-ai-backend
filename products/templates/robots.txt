@@ -55,8 +55,6 @@ Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=52
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=53
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=54
 Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=55
-Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=56
-Sitemap: https://sellout.su/api/v1/product/sitemap.xml?p=57
 
 
 Disallow: /api

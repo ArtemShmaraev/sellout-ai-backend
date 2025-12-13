@@ -234,6 +234,7 @@ class UserChangePassword(generics.GenericAPIView):
             return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            print(token)
             if default_token_generator.check_token(user, token):
                 data = json.loads(request.body)
                 user.set_password(data.get('password', '').strip())
@@ -243,7 +244,7 @@ class UserChangePassword(generics.GenericAPIView):
                 serializer.is_valid(raise_exception=True)
                 return Response(serializer.validated_data, status=status.HTTP_200_OK)
             else:
-                print("cerf")
+                print("cerf yt ghjikj")
                 return Response("Ошибка", status=status.HTTP_400_BAD_REQUEST)
 
         except User.DoesNotExist:
@@ -312,7 +313,7 @@ class GoogleAuth(generics.GenericAPIView):
                 data = {}
                 data['first_name'] = payload.get('given_name')
                 data['last_name'] = payload.get('family_name')
-                data['username'] = payload.get('email')
+                data['username'] = payload.get('email').strip().lower()
                 data['is_mailing_list'] = False
 
                 data['password'] = secret_password(payload.get('email'))
@@ -429,7 +430,7 @@ class UserInfoView(APIView):
                 user.username = data.get('username', user.username)
                 user.first_name = data.get('first_name', user.first_name)
                 user.last_name = data.get('last_name', user.last_name)
-                user.email = data.get('email', user.email)
+                user.email = data.get('email', user.email).strip().lower()
                 user.phone_number = data.get("phone", user.phone_number)
                 if "gender" in data:
                     user.gender_id = genders[data['gender']]
@@ -488,11 +489,11 @@ class UserRegister(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
-            if User.objects.filter(username=data['username']).exists():
+            if User.objects.filter(username=data['username'].strip().lower()).exists():
                 return Response("Пользователь уже существует", status=status.HTTP_400_BAD_REQUEST)
             register_user(data)
 
-            log_data = {'username': data["username"].strip(), 'password': data['password'].strip()}
+            log_data = {'username': data["username"].strip().lower(), 'password': data['password'].strip()}
             serializer = self.get_serializer(data=log_data)
             serializer.is_valid(raise_exception=True)
 

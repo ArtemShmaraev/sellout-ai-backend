@@ -231,8 +231,8 @@ def filter_products(request):
 
     if size:
         queryset = queryset.filter(sizes__in=size)
-        size_filter = Q(sizes__in=size)
-        filters &= size_filter
+        # size_filter = Q(sizes__in=size)
+        # filters &= size_filter
 
     # Фильтр по наличию скидки
     # if is_sale:

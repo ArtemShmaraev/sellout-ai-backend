@@ -401,6 +401,7 @@ class ListProductUnitOrderView(APIView):
                 s_product_unit = json.loads(request.body)["product_unit_list"]
                 s_id = [s.strip() for s in s_product_unit if s.strip()]
                 product_units = ProductUnit.objects.filter(id__in=s_id)
+                print(user_id)
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 for product_unit in product_units:
                     cart.is_update = True

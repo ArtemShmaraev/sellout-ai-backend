@@ -7,7 +7,7 @@ import requests
 from django.core import signing
 from django.core.management.base import BaseCommand
 import json
-
+import xml.etree.ElementTree as ET
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min
@@ -27,12 +27,38 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name="M")
-        print(products.count() / 60)
-        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name="F")
-        print(products.count() / 60)
-        products = Product.objects.filter(available_flag=True, is_custom=False, gender__name__in=["K"])
-        print(products.count() / 60)
+        s = RansomRequest.objects.order_by("-id").first()
+        print(s.photo)
+        # with open('lines_temp.json', 'r') as file:
+        #     data = json.load(file)
+        #
+        # # Вывод словаря
+        # s = []
+        # for line in data:
+        #     if line['id'] < 490 and "другие" not in line["view_name"].lower() and line["full_eng_name"][-1] != "_":
+        #         s.append(line["full_eng_name"])
+        # print(s)
+        #
+        #
+        # root = ET.Element('urlset')
+        #
+        # # Проход по списку URL и добавление элементов <url> с элементами <loc>
+        # for url in s:
+        #     url_element = ET.SubElement(root, 'url')
+        #     loc_element = ET.SubElement(url_element, 'loc')
+        #     loc_element.text = f"https://sellout.su/products?line={url}"
+        #
+        # # Создание объекта ElementTree
+        # tree = ET.ElementTree(root)
+        #
+        # # Запись XML в файл
+        # tree.write('sitemap_line.xml', encoding='utf-8', xml_declaration=True)
+        # print("cerf")
+
+
+
+        # prs = Product.objects.all()
+        # prs.update(actual_price=False)
         # product = Product.objects.get(slug="nike-dunk-low-sb-michael-lau-gardener-wood-41367")
         # product.model = "Dunk Low"
         # sleep(80)
@@ -94,7 +120,9 @@ class Command(BaseCommand):
         # ps = Product.objects.filter(min_price=0)
         # # ps.update(score_product_page=-10000)
         # ps.update(available_flag=False)
-        # order = Order.objects.filter(user=User.objects.get(email="markenson888inst@gmail.com"), fact_of_payment=True)
+        # order = Order.objects.filter(user=User.objects.get(email="dolgirev_lev2003@mail.ru"), fact_of_payment=True).order_by("-id").first()
+        # order.update_order_status()
+
         # for ord in order:
         #     print(ord.id)
         #     ord.update_order_status()

@@ -397,11 +397,11 @@ class ListProductUnitOrderView(APIView):
 
     def post(self, request, user_id):
         if request.user.id == user_id or request.user.is_staff:
-            # try:
+            try:
                 s_product_unit = json.loads(request.body)["product_unit_list"]
                 s_id = [s.strip() for s in s_product_unit if s.strip()]
                 product_units = ProductUnit.objects.filter(id__in=s_id)
-                print(user_id)
+                # print(user_id)
                 cart = ShoppingCart.objects.get(user_id=user_id)
                 for product_unit in product_units:
                     cart.is_update = True
@@ -411,11 +411,11 @@ class ListProductUnitOrderView(APIView):
 
                 cart.total()
                 return Response(cart.product_units.values_list('id', flat=True))
-            # except json.JSONDecodeError:
-            #     return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
-            # except ProductUnit.DoesNotExist:
-            #     return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
-            # except Exception as e:
-            #     return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except json.JSONDecodeError:
+                return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+            except ProductUnit.DoesNotExist:
+                return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)

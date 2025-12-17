@@ -285,7 +285,7 @@ class CheckOutView(APIView):
                               email=data['email'], phone=data['phone'], phone_int=phone_int,
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
-                              promo_sale=cart.promo_sale,
+                              promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus,
                               bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
@@ -299,7 +299,7 @@ class CheckOutView(APIView):
                 if user.phone_number == "":
                     user.phone_number = data['phone']
                 user.save()
-                print(user.patronymic)
+
 
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit, user.user_status)

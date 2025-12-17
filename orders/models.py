@@ -53,6 +53,7 @@ class Order(models.Model):
     sale = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
+    promo_bonus = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="orders", default=get_default_status())
@@ -94,7 +95,7 @@ class Order(models.Model):
     def accrue_bonuses(self):
         user = self.user
         if user.user_status.base:
-            sum_bonus = self.total_bonus
+            sum_bonus = self.total_bonus + self.promo_bonus
             accrual_bonus = AccrualBonus(amount=sum_bonus)
             accrual_bonus.save()
             user.bonuses.accrual.add(accrual_bonus)
@@ -107,9 +108,15 @@ class Order(models.Model):
 
                 if self.promo_code.ref_promo:
                     ref_user = self.promo_code.owner
-                    ref_accrual_bonus = AccrualBonus(amount=self.promo_sale, type="Приглашение")
+                    ref_data = ref_user.referral_data
+                    ref_plus = 0
+                    for i in range(len(ref_data['order_amounts'])):
+                        if self.final_amount_without_shipping > ref_data['order_amounts'][i]:
+                            ref_plus = ref_data['partner_bonus_amounts'][i]
+
+                    ref_accrual_bonus = AccrualBonus(amount=ref_plus, type="Приглашение")
                     ref_accrual_bonus.save()
-                    ref_user.total_ref_bonus += self.promo_sale
+                    ref_user.total_ref_bonus += ref_plus
                     ref_user.bonuses.accrual.add(ref_accrual_bonus)
                     user.ref_user = ref_user
                     user.save()
@@ -251,6 +258,7 @@ class ShoppingCart(models.Model):
     bonus_sale = models.IntegerField(default=0)
     first_order_bonus = models.IntegerField(default=0)
     promo_sale = models.IntegerField(default=0)
+    promo_bonus = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     bonus = models.IntegerField(default=0)
     is_update = models.BooleanField(default=False)
@@ -308,9 +316,10 @@ class ShoppingCart(models.Model):
         #     self.promo_code = None
         self.final_amount = self.total_amount - self.sale
         if self.promo_code:
-            promo_sale = self.promo_code.check_promo_in_cart(self)
-            if promo_sale != 0:
+            promo_sale, promo_bonus = self.promo_code.check_promo_in_cart(self)
+            if promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo:
                 self.promo_sale = promo_sale
+                self.promo_bonus = promo_bonus
                 if self.first_order_bonus == 1000:
                     self.first_order_bonus = 0
                     sum_bonus -= 1000
@@ -318,6 +327,8 @@ class ShoppingCart(models.Model):
             else:
                 self.promo_code = None
                 self.promo_sale = 0
+                self.promo_bonus = 0
+
         else:
             self.promo_sale = 0
 

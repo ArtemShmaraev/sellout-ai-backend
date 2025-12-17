@@ -110,7 +110,6 @@ def get_product_page_header(request):
             res['mobile']['title'] = title_mobile
             res['mobile']['content'] = ""
             res['mobile']['photo'] = ""
-
     return res
 
 

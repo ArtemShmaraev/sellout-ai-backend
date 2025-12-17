@@ -33,6 +33,17 @@ def get_default_status():
     return default_object.pk
 
 
+
+def default_referral_data():
+    return {
+        "order_amounts": ["От 3000₽", "От 35000₽"],
+        "partner_bonus_amounts": ["500₽", "1000₽"],
+        "client_sale_amounts": None,
+        "client_bonus_amounts": None,
+        "promo_text": None
+    }
+
+
 class User(AbstractUser):
     # Your custom fields and methods here
 
@@ -96,6 +107,7 @@ class User(AbstractUser):
     wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True, related_name="wait_list_users")
     user_status = models.ForeignKey("UserStatus", on_delete=models.SET_NULL, null=True, blank=True)
     is_referral_partner = models.BooleanField(default=False)
+    referral_data = models.JSONField(default=default_referral_data)
 
     def __str__(self):
         return self.username

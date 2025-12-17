@@ -3,7 +3,7 @@ from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, FavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
     UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView, GoogleAuth, \
-    initiate_google_auth, UserForSpamEmail, confirm_email, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo, AddMailingList,  AddPartnerList
+    initiate_google_auth, UserForSpamEmail, confirm_email, ReferralProgram, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo, AddMailingList,  AddPartnerList
 
 router = routers.DefaultRouter()
 router.register("", UserViewSet, 'user')
@@ -26,6 +26,7 @@ urlpatterns.append(path('favorite_brand/<int:user_id>', FavoriteBrands.as_view()
 urlpatterns.append(path('size_info', UserSizeInfo.as_view()))
 urlpatterns.append(path('get_size_table', SizeTableInLK.as_view()))
 urlpatterns.append(path('loyalty_program', LoyaltyProgram.as_view()))
+urlpatterns.append(path('referral_program', ReferralProgram.as_view()))
 
 
 urlpatterns.append(path('auth/complete/google/', GoogleAuth.as_view(), name='google-auth-callback'))

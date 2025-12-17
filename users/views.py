@@ -42,6 +42,7 @@ from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
+
 class AddPartnerList(APIView):
     def post(self, request):
         data = json.loads(request.body)
@@ -57,6 +58,19 @@ class AddMailingList(APIView):
         spam = SpamEmail(email=email)
         spam.save()
         return Response("ok")
+
+
+class ReferralProgram(APIView):
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        # user.is_referral_partner = True
+        # user.save()
+        if user.is_referral_partner:
+            return Response(user.referral_data)
+        else:
+            return Response("Вы не учавствуете в реферальной программе", status=status.HTTP_403_FORBIDDEN)
+
+
 
 class LoyaltyProgram(APIView):
     def get(self, request):

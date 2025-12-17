@@ -36,8 +36,8 @@ def get_default_status():
 
 def default_referral_data():
     return {
-        "order_amounts": ["От 3000₽", "От 35000₽"],
-        "partner_bonus_amounts": ["500₽", "1000₽"],
+        "order_amounts": [3000, 35000],
+        "partner_bonus_amounts": [500, 1000],
         "client_sale_amounts": None,
         "client_bonus_amounts": None,
         "promo_text": None

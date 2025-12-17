@@ -6,7 +6,7 @@ def round_by_step(value, step=50):
     return math.ceil(value / step) * step
 
 
-CURRENCY_RATE_CNY = 13.5
+CURRENCY_RATE_CNY = 13.8
 COMMISSION_FEE_ABSOLUTE = 500
 COMMISSION_FEE_RELATIVE_DECIMAL = 1
 REGULAR_SHIPPING_KG_COST = 900

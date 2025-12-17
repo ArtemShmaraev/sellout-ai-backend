@@ -27,8 +27,16 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        s = RansomRequest.objects.order_by("-id").first()
-        print(s.photo)
+        # last_ous = OrderUnit.objects.order_by("-id").first()
+        # last_ous.add_track_number("123")
+        p = Product.objects.order_by("-id").first()
+        print(p.slug)
+        # order = Order.objects.order_by("-id").first()
+        # order.fact_of_payment = True
+        # order.accrue_bonuses()
+        # order.save()
+        # s = RansomRequest.objects.order_by("-id").first()
+        # print(s.photo)
         # with open('lines_temp.json', 'r') as file:
         #     data = json.load(file)
         #

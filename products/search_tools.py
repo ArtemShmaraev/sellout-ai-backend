@@ -172,9 +172,11 @@ def search_product(query, pod_queryset, page_number=1):
     cached_data = cache.get(cache_key)
 
     if cached_data is None:
-        search = Search(index="product_index", using=es)
         # search = search.query('bool', must=[
         #     {'match': {'full_name': {'query': query, 'fuzziness': 'AUTO'}}}])
+
+
+        search = Search(index="product_index", using=es)
         search = search.query(
             'function_score',
             query=Q('match', full_name={'query': query, 'fuzziness': 'AUTO'}),

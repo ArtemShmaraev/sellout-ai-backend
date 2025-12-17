@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import User, Gender
+from .models import User, Gender, UserStatus
+
+
 # Register your models here.
 
 class UserAdmin(admin.ModelAdmin):
@@ -11,6 +13,8 @@ class UserAdmin(admin.ModelAdmin):
         return -1
 
 
+class UserStatusAdmin(admin.ModelAdmin):
+    list_display = ("name", )
 
 class GenderAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -18,3 +22,4 @@ class GenderAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Gender, GenderAdmin)
+admin.site.register(UserStatus, UserStatusAdmin)

@@ -62,10 +62,14 @@ class AddMailingList(APIView):
 
 class ReferralProgram(APIView):
     def get(self, request):
+        print(request.user.id)
         user = User.objects.get(id=request.user.id)
+
         # user.is_referral_partner = True
         # user.save()
-        if user.is_referral_partner:
+        f = True
+        if user.is_referral_partner or f:
+            print(user.referral_data)
             return Response(user.referral_data)
         else:
             return Response("Вы не учавствуете в реферальной программе", status=status.HTTP_403_FORBIDDEN)

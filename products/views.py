@@ -65,10 +65,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
-class ProductFid(APIView):
-    def get(self, request, slug):
-        product = Product.objects.get(slug=slug)
-        fid = get_fid_product(product)
+class ProductsFid(APIView):
+    def get(self, request, page):
+        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+        size_page = 10_0
+        # count = products.count()
+        products_page = products[(page - 1) * size_page:page * size_page]
+        fid = get_fid_product(products_page)
         # response = HttpResponse(fid, content_type="application/xml")
         # response["Content-Disposition"] = 'attachment; filename="product_fid.xml"'
 

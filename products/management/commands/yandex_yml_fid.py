@@ -45,6 +45,11 @@ class Command(BaseCommand):
 
         fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
         products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+        size_page = 10_000
+        count = products.count()
+        # for page in range(0, count, size_page):
+        #     products_page = products[page:page + size_page]
+        #     fid =
 
         def get_fid_product(product):
             yml_catalog = {"key": {

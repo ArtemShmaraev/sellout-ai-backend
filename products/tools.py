@@ -112,12 +112,12 @@ def get_fid_product(products):
 
     # Создаем XML-документ
     # tree = ET.ElementTree(yml_catalog)
-    xml_str = ET.tostring(yml_catalog, encoding='utf8', method='xml')
+    xml_str = ET.tostring(yml_catalog, encoding='utf8')
 
     # Преобразуем байтовую строку в строку unicode
-    xml = xml_str.decode('utf-8')
+    # xml = xml_str.decode('utf-8')
 
-    return xml
+    return xml_str
 
 
 def get_title_for_products_page(categories, lines, collabs):

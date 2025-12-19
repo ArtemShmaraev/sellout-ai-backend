@@ -10,7 +10,7 @@ import json
 import xml.etree.ElementTree as ET
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min
+from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min, Sum
 
 from orders.models import ShoppingCart, Status, OrderUnit, Order
 from orders.serializers import OrderSerializer
@@ -27,26 +27,39 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        order = Order.objects.order_by("-id").first()
-        order.fact_of_payment = True
-        order.save()
-        order.start_order()
-        order.accrue_bonuses()
+        # order = Order.objects.filter(user=User.objects.get(email="dolgirev_lev2003@mail.ru")).order_by("-id").first()
+        # order.fact_of_payment = True
+        # order.save()
+        # order.finish_order()
+        # # order.accrue_bonuses()
+        # order.save()
+        # print(order.id)
+        # total_min_price_sum = Product.objects.aggregate(total_sum=Sum('min_price'))['total_sum']
+        #
+        # # Вывод результата
+        # print(f"Сумма min_price для всех продуктов: {total_min_price_sum}")
+        # product = Product.objects.order_by("-min_price")
+        # sm =
+        # for p in product:
+        #     pu = p.product_units.all()
+        #     for u in pu:
+        #         print(f"{u.original_price} {u.size_platform}")
+        #     print(p.slug)
 
-        # def default_referral_data(id):
-        #     return {
-        #         "order_amounts": [3000, 35000],
-        #         "partner_bonus_amounts": [500, 1000],
-        #         "client_sale_amounts": None,
-        #         "client_bonus_amounts": None,
-        #         "promo_text": None,
-        #         "promo_link": f"https://sellout.su?referral_id={id}",
-        #     }
-        # users = User.objects.all()
-        # for u in users:
-        #     u.referral_data = default_referral_data(u.id)
-        #     print(u.referral_data)
-        #     u.save()
+        def default_referral_data(id):
+            return {
+                "order_amounts": [3000, 35000],
+                "partner_bonus_amounts": [500, 1000],
+                "client_sale_amounts": None,
+                "client_bonus_amounts": None,
+                "promo_text": None,
+                "promo_link": f"https://sellout.su?referral_id={id}",
+            }
+        users = User.objects.all()
+        for u in users:
+            u.referral_data = default_referral_data(u.id)
+            print(u.referral_data)
+            u.save()
         # cart = ShoppingCart.objects.get(user=User.objects.get(email="felta2506@inbox.ru"))
         # product = cart.product_units.all()
         # for p in product:

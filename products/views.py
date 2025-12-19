@@ -68,12 +68,10 @@ import asyncio
 class ProductsFid(APIView):
     def get(self, request, page):
         products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
-        size_page = 10_0
+        size_page = 10_000
         # count = products.count()
         products_page = products[(page - 1) * size_page:page * size_page]
         fid = get_fid_product(products_page)
-        # response = HttpResponse(fid, content_type="application/xml")
-        # response["Content-Disposition"] = 'attachment; filename="product_fid.xml"'
 
         return Response(fid, content_type="application/xml")
 
@@ -1063,7 +1061,7 @@ class CollabView(APIView):
 
         if collabs is None:
             # Если результат не найден в кэше, выполните запрос к базе данных и сериализуйте его
-            queryset = Collab.objects.all()
+            queryset = Collab.objects.order_by("id")
             collabs = CollabSerializer(queryset, many=True).data
             if q:
                 for i in range(len(collabs)):

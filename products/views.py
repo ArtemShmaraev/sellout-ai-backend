@@ -43,7 +43,8 @@ from .serializers import SizeTableSerializer, ProductMainPageSerializer, Categor
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
     ProductSlugAndPhotoSerializer, ProductAdminSerializer, MaterialSerializer
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
-    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price
+    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price, \
+    get_fid_product
 
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -64,6 +65,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
+class ProductFid(APIView):
+    def get(self, request, slug):
+        product = Product.objects.get(slug=slug)
+        fid = get_fid_product(product)
+        # response = HttpResponse(fid, content_type="application/xml")
+        # response["Content-Disposition"] = 'attachment; filename="product_fid.xml"'
+
+        return Response(fid, content_type="application/xml")
 
 class NewSale(APIView):
     def post(self, request):

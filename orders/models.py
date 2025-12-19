@@ -67,11 +67,20 @@ class Order(models.Model):
     order_in_progress = models.BooleanField(default=False)
     total_bonus = models.IntegerField(default=0)
     invoice_data = models.JSONField(default=dict)
+    is_finish = models.BooleanField(default=False)
 
     def start_order(self):
         self.date_of_buy_out = timezone.now()
         self.order_in_progress = True
+        self.user.is_made_order = True
         self.save()
+
+    def finish_order(self):
+        self.is_finish = True
+        self.order_in_progress = False
+        self.update_order_status(finish=True)
+        self.save()
+
 
     def get_total_bonus(self):
         user = self.user
@@ -101,30 +110,30 @@ class Order(models.Model):
             user.bonuses.accrual.add(accrual_bonus)
             user.bonuses.update_total_amount()
             user.update_user_status()
-
             if self.promo_code is not None:
                 self.promo_code.activation_count += 1
                 self.promo_code.save()
-
                 if self.promo_code.ref_promo:
                     ref_user = self.promo_code.owner
-                    ref_data = ref_user.referral_data
-                    ref_plus = 0
-                    for i in range(len(ref_data['order_amounts'])):
-                        if self.final_amount_without_shipping > ref_data['order_amounts'][i]:
-                            ref_plus = ref_data['partner_bonus_amounts'][i]
-
-                    ref_accrual_bonus = AccrualBonus(amount=ref_plus, type="Приглашение")
-                    ref_accrual_bonus.save()
-                    ref_user.total_ref_bonus += ref_plus
-                    ref_user.bonuses.accrual.add(ref_accrual_bonus)
                     user.ref_user = ref_user
                     user.save()
-                    ref_user.save()
 
-    def update_order_status(self):
+                    if ref_user is not None:
+                        ref_data = ref_user.referral_data
+                        ref_plus = 0
+                        for i in range(len(ref_data['order_amounts'])):
+                            if self.final_amount_without_shipping > ref_data['order_amounts'][i]:
+                                ref_plus = ref_data['partner_bonus_amounts'][i]
+
+                        ref_accrual_bonus = AccrualBonus(amount=ref_plus, type="Приглашение")
+                        ref_accrual_bonus.save()
+                        ref_user.total_ref_bonus += ref_plus
+                        ref_user.bonuses.accrual.add(ref_accrual_bonus)
+                        ref_user.save()
+
+    def update_order_status(self, finish=False):
         for ou in self.order_units.all():
-            ou.update_status()
+            ou.update_status(finish=finish)
         # Получаем все статусы юнитов этого заказа
         unit_statuses = self.order_units.values_list('status__name', flat=True)
         s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
@@ -279,7 +288,6 @@ class ShoppingCart(models.Model):
 
 
     def total(self):
-
         # Пересчитать total_amount на основе product_units и их цен
         total_amount = 0
         sale = 0
@@ -387,40 +395,42 @@ class OrderUnit(models.Model):
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
-    def update_status(self, cancel=False, next=False):
+    def update_status(self, cancel=False, finish=False):
         new_status = self.status.name
-        order_date = self.orders.first().date
+        if not finish:
+            order_date = self.orders.first().date
 
-        # Приводим order_date к типу datetime.date
-        order_date = order_date.date()
+            # Приводим order_date к типу datetime.date
+            order_date = order_date.date()
 
-        # Получаем текущую дату
-        current_date = datetime.now().date()
+            # Получаем текущую дату
+            current_date = datetime.now().date()
 
-        # Вычисляем разницу в днях
-        days_passed = (current_date - order_date).days
+            # Вычисляем разницу в днях
+            days_passed = (current_date - order_date).days
+            if days_passed <= self.delivery_type.days_max_to_international_warehouse:
+                new_status = "В пути до международного склада"
+            if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
+                new_status = "В пути до московского склада"
+            # if days_passed > self.delivery_type.days_max:
+            #     new_status = "Прибыл в Москву"
+            self.status = Status.objects.get(name=new_status)
 
-        # Вычисляем разницу в днях
-        days_passed = (current_date - order_date).days
-        if days_passed <= self.delivery_type.days_max_to_international_warehouse:
-            new_status = "В пути до международного склада"
-        if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
-            new_status = "В пути до московского склада"
-        # if days_passed > self.delivery_type.days_max:
-        #     new_status = "Прибыл в Москву"
-        self.status = Status.objects.get(name=new_status)
 
+
+            # if next:
+            #     s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву", "Передан в службу доставки по России", "Доставлен"]
+            #
+            #     for i in range(len(s)):
+            #         if self.status.name == s[i]:
+            #             new_status = s[min(i + 1, 5)]
+            #             break
+            #     self.status = Status.objects.get(name=new_status)
+        else:
+            new_status = Status.objects.get(name="Доставлен")
+            self.status = new_status
         if cancel:
             self.status = Status.objects.get(name="Отменён")
-
-        if next:
-            s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву", "Передан в службу доставки по России", "Доставлен"]
-
-            for i in range(len(s)):
-                if self.status.name == s[i]:
-                    new_status = s[min(i + 1, 5)]
-                    break
-            self.status = Status.objects.get(name=new_status)
         self.save()
 
 

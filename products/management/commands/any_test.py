@@ -27,10 +27,28 @@ from products.tools import get_text
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        def default_referral_data(id):
+            return {
+                "order_amounts": [3000, 35000],
+                "partner_bonus_amounts": [500, 1000],
+                "client_sale_amounts": None,
+                "client_bonus_amounts": None,
+                "promo_text": None,
+                "promo_link": f"https://sellout.su?referral_id={id}",
+            }
+        users = User.objects.all()
+        for u in users:
+            u.referral_data = default_referral_data(u.id)
+            print(u.referral_data)
+            u.save()
+        # cart = ShoppingCart.objects.get(user=User.objects.get(email="felta2506@inbox.ru"))
+        # product = cart.product_units.all()
+        # for p in product:
+        #     print(f"https://sellout.su/products/{p.product.slug}")
         # last_ous = OrderUnit.objects.order_by("-id").first()
         # last_ous.add_track_number("123")
-        p = Product.objects.order_by("-id").first()
-        print(p.slug)
+        # p = Product.objects.order_by("-id").first()
+        # print(p.slug)
         # order = Order.objects.order_by("-id").first()
         # order.fact_of_payment = True
         # order.accrue_bonuses()

@@ -40,7 +40,8 @@ def default_referral_data():
         "partner_bonus_amounts": [500, 1000],
         "client_sale_amounts": None,
         "client_bonus_amounts": None,
-        "promo_text": None
+        "promo_text": None,
+        "promo_link": None,
     }
 
 
@@ -108,6 +109,7 @@ class User(AbstractUser):
     user_status = models.ForeignKey("UserStatus", on_delete=models.SET_NULL, null=True, blank=True)
     is_referral_partner = models.BooleanField(default=False)
     referral_data = models.JSONField(default=default_referral_data)
+    is_made_order = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username

@@ -804,7 +804,7 @@ class UserReferalPromo(APIView):
         if user.referral_promo is not None:
             promo = PromoCodeSerializer(user.referral_promo).data
             promo["total_bonus"] = user.total_ref_bonus
-            promo['user_count'] = User.objects.filter(ref_user = user).count()
+            promo['user_count'] = User.objects.filter(ref_user=user, is_made_order=True).count()
             return Response(promo)
         else:
             return Response("none")

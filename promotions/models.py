@@ -135,9 +135,6 @@ class PromoCode(models.Model):
                     if ref_data['client_bonus_amounts'] is not None:
                         ref_bonus = ref_data['client_bonus_amounts'][i]
 
-
-
-
             # if 3000 <= final_amount < 5000:
             #     ref_sale = 500
             # elif 5000 <= final_amount < 15000:

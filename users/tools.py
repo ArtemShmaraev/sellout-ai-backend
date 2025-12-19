@@ -1,6 +1,7 @@
 import hashlib
 
 from dadata import Dadata
+from django.core.exceptions import ObjectDoesNotExist
 
 from orders.models import ShoppingCart
 from promotions.models import Bonuses, PromoCode
@@ -39,10 +40,14 @@ def secret_password(email):
 
 
 def register_user(data):
+    print(data)
 
     new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
                     last_name=data['last_name'],
                     is_mailing_list=data['is_mailing_list'], email=data['username'])
+
+
+
     genders = {'male': 1, "female": 2}
     if 'gender' in data:
         new_user.gender_id = genders[data['gender']]
@@ -55,6 +60,26 @@ def register_user(data):
     # Создайте корзину покупок, связанную с пользователем
     cart = ShoppingCart(user=new_user)
     cart.save()
+
+    try:
+        if "referral_id" in data:
+            ref_user = User.objects.get(id=data['referral_id'])
+            # new_user.ref_user = ref_user
+            promo = PromoCode.objects.filter(owner=ref_user, ref_promo=True).first()
+            cart.promo_code = promo
+            cart.save()
+
+    except ObjectDoesNotExist:
+        # Обработка исключения, когда пользователя не существует
+        print("Что то не найдено")
+
+    except ValueError:
+        # Обработка исключения, когда значение не может быть преобразовано в целое число
+        print("Некорректное значение referral_id")
+
+    except Exception as e:
+        # Обработка других исключений
+        print(f"Произошло исключение: {e}")
 
     # Создайте список желаний, связанный с пользователем
     wl = Wishlist(user=new_user)
@@ -78,7 +103,7 @@ def register_user(data):
     email_confirmation = EmailConfirmation(user=new_user)
     email_confirmation.token = signing.dumps(new_user.email)
     email_confirmation.save()
-    print(f"http://127.0.0.1:8000/api/v1/user")
+    # print(f"http://127.0.0.1:8000/api/v1/user")
 
 
 

@@ -49,3 +49,4 @@ python-memcached==1.59
 pymemcache==4.0.0
 httpx==0.25.0
 boto3
+json2xml

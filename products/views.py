@@ -68,7 +68,7 @@ import asyncio
 class ProductsFid(APIView):
     def get(self, request, page):
         products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
-        size_page = 10_000
+        size_page = 1000
         # count = products.count()
         products_page = products[(page - 1) * size_page:page * size_page]
         fid = get_fid_product(products_page)

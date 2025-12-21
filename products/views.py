@@ -67,12 +67,22 @@ import asyncio
 
 class ProductsFid(APIView):
     def get(self, request, page):
+        params = request.query_params
         products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
-        size_page = 500
+        size_page = int(params.get("size", 1000))
         # count = products.count()
         products_page = products[(page - 1) * size_page:page * size_page]
         fid = get_fid_product(products_page)
-        return Response(fid, content_type="application/xml")
+        name = f'fids/size{size_page}page{page}.xml'
+        with open(name, 'wb') as f:
+            f.write(fid)
+
+        # Возвращение файла XML в ответе
+        with open(name, 'rb') as f:
+            response = HttpResponse(f, content_type='application/xml')
+            response['Content-Disposition'] = f'attachment; filename="{name}"'
+            return response
+        # return HttpResponse(fid, content_type="application/xml")
 
 class NewSale(APIView):
     def post(self, request):

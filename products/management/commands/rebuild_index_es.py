@@ -74,7 +74,7 @@ class Command(BaseCommand):
             line_doc = SuggestDocument()
             line_doc.name = line.name
             line_doc.type = "Линейка"
-            line_doc.url = f"line={line.full_eng_name}"
+            line_doc.url = f"line={line.full_eng_name.rstrip('_')}"
             level = 1
             current_line = line
             while current_line.parent_line is not None:
@@ -139,7 +139,7 @@ class Command(BaseCommand):
             cat_doc = SuggestDocument()
             cat_doc.name = cat.name
             cat_doc.type = "Категория"
-            cat_doc.url = f"category={cat.eng_name}"
+            cat_doc.url = f"category={cat.eng_name.rstrip('_')}"
             cat_name = cat.name.split()
             for i in range(len(cat_name)):
                 slice = " ".join(cat_name[i:])

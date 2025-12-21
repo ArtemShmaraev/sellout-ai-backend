@@ -1069,8 +1069,9 @@ class CollabView(APIView):
         collabs = cache.get(cache_key)
 
         if collabs is None:
+            print(1)
             # Если результат не найден в кэше, выполните запрос к базе данных и сериализуйте его
-            queryset = Collab.objects.order_by("id")
+            queryset = Collab.objects.order_by("order")
             collabs = CollabSerializer(queryset, many=True).data
             if q:
                 for i in range(len(collabs)):

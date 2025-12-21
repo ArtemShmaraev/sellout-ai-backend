@@ -142,6 +142,7 @@ class Collab(models.Model):
     is_all = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
     score_product_page = models.IntegerField(default=0)
+    order = models.IntegerField(default=1000)
 
     def __str__(self):
         return self.name

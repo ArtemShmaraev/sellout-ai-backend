@@ -68,6 +68,7 @@ class Order(models.Model):
     total_bonus = models.IntegerField(default=0)
     invoice_data = models.JSONField(default=dict)
     is_finish = models.BooleanField(default=False)
+    is_accrue_bonuses = models.BooleanField(default=False)
 
     def start_order(self):
         self.date_of_buy_out = timezone.now()
@@ -87,23 +88,28 @@ class Order(models.Model):
         sum_bonus = 0
         if user.user_status.base:
             orders_count = Order.objects.filter(user=user).count()
+
             units = self.order_units.order_by("-bonus")
             k = 0
             sum_bonus = 0
             for unit in units:
+                sum_bonus += unit.bonus
                 if orders_count == 1 and k == 0:
-                    sum_bonus += 1000
-
-                else:
-                    sum_bonus += unit.bonus
+                    if self.promo_code is not None:
+                        if not self.promo_code.ref_promo:
+                            sum_bonus += 1000
+                            sum_bonus -= unit.bonus
                 k += 1
+
         self.total_bonus = sum_bonus
         self.save()
 
 
     def accrue_bonuses(self):
         user = self.user
-        if user.user_status.base:
+        if user.user_status.base and not self.is_accrue_bonuses:
+            self.is_accrue_bonuses = True
+            self.save()
             sum_bonus = self.total_bonus + self.promo_bonus
             accrual_bonus = AccrualBonus(amount=sum_bonus)
             accrual_bonus.save()
@@ -325,6 +331,7 @@ class ShoppingCart(models.Model):
         self.final_amount = self.total_amount - self.sale
         if self.promo_code:
             promo_sale, promo_bonus = self.promo_code.check_promo_in_cart(self)
+            print(promo_sale, promo_bonus)
             if promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo:
                 self.promo_sale = promo_sale
                 self.promo_bonus = promo_bonus
@@ -348,6 +355,7 @@ class ShoppingCart(models.Model):
 
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
+        print(self.promo_bonus)
 
         self.save()
 

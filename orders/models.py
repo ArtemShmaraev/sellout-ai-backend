@@ -331,7 +331,6 @@ class ShoppingCart(models.Model):
         self.final_amount = self.total_amount - self.sale
         if self.promo_code:
             promo_sale, promo_bonus = self.promo_code.check_promo_in_cart(self)
-            print(promo_sale, promo_bonus)
             if promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo:
                 self.promo_sale = promo_sale
                 self.promo_bonus = promo_bonus
@@ -347,11 +346,13 @@ class ShoppingCart(models.Model):
         else:
             self.promo_sale = 0
 
-
-        if not user_status.base:
-            self.bonus = 0
-        else:
+        if user_status.base:
             self.bonus = sum_bonus
+        else:
+            self.bonus = 0
+            self.promo_code = None
+            self.promo_sale = 0
+            self.promo_bonus = 0
 
         self.final_amount -= self.bonus_sale
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale

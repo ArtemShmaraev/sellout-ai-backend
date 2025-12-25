@@ -10,6 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from products.tools import platform_update_price
 from sellout.settings import FRONTEND_HOST
+from wishlist.models import Wishlist
 from .models import ShoppingCart, Order, OrderUnit, Status
 # Create your views here.
 from django.shortcuts import get_object_or_404
@@ -182,7 +183,8 @@ class ShoppingCartUser(APIView):
                     platform_update_price(unit.product)
                 shopping_cart.product_units.set(units)
                 shopping_cart.total()
-                serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id}).data
+                wl = Wishlist.objects
+                serializer = ShoppingCartSerializer(shopping_cart, context={"user_id": user_id, "wishlist": Wishlist.objects.get(user=User(id=self.request.user.id))}).data
                 if shopping_cart.is_update:
                     shopping_cart.is_update = False
                     shopping_cart.save()

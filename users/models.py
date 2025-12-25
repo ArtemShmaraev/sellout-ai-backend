@@ -114,6 +114,21 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
+    def update_referral_promo_in_referral_data(self):
+        def default_referral_data(promo):
+            return {
+                "order_amounts": [3000, 35000],
+                "partner_bonus_amounts": [500, 1000],
+                "client_sale_amounts": None,
+                "client_bonus_amounts": [100, 1000],
+                "promo_text": None,
+                "promo_link": f"https://sellout.su?referral_id={promo}",
+            }
+        promo = self.referral_promo.string_representation
+        self.referral_data['promo_link'] = f"https://sellout.su?referral_id={promo}"
+        self.save()
+
     def update_user_status(self):
         statuses = UserStatus.objects.filter(base=True).order_by("-total_orders_amount")
         user_total = self.total_amount_order()

@@ -610,7 +610,9 @@ class MainPageBlocks(APIView):
                 if page == 0:
                     s = [2, 1, 0, 1, 1, 0, 0]
                 else:
-                    s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+                    s = [0, 1, 0, 1, 1, 0, 0]
+                    # s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
+
                 t1 = time()
                 last = "any"
                 for i in range(len(s)):

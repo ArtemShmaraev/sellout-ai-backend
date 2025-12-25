@@ -301,6 +301,8 @@ class ProductSerializer(serializers.ModelSerializer):
         wishlist = self.context.get('wishlist')
         if wishlist:
             return product in wishlist.products.all()
+
+
         return False
 
 

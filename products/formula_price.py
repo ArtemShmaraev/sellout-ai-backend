@@ -232,6 +232,12 @@ def formula_price(product, unit, user_status):
 
     bonus, max_bonus_for_product = get_bonus(total_profit, product.max_profit, status_name)
     price_without_sale = round_total_price
+    if product.sale_percentage != 0:
+        percentage = round(((100 - product.sale_percentage) / 100), 2)
+        price_without_sale = round_by_step((unit.final_price / percentage) + 10, step=100) - 10
+    elif product.sale_absolute:
+        price_without_sale = unit.final_price + product.sale_absolute
+
     # if unit.is_sale:
     #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
 

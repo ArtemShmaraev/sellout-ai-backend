@@ -84,7 +84,6 @@ def get_line_selection(gender, line=None):
         url = f"line={line.full_eng_name}"
 
     list_id = get_product_for_selecet(products)
-
     return title, list_id, url
 
 
@@ -128,6 +127,7 @@ def get_color_and_line_selection(gender):
     else:
         title = f"{line.name}"
         url = f"line={line.full_eng_name}"
+
     list_id = get_product_for_selecet(products)
     return title, list_id, url
 
@@ -147,6 +147,7 @@ def get_color_and_category_selection(gender):
     else:
         title = f"{random_category.name}"
         url = f"category={random_category.eng_name}"
+
     list_id = get_product_for_selecet(products)
     return title, list_id, url
 
@@ -240,6 +241,8 @@ def get_selection(gender):
         title, queryset, url = get_color_and_line_selection(gender)
     else:
         title, queryset, url = get_line_selection(gender)
+    if len(gender) == 1:
+        url += f"&gender={gender[0]}"
     res = {"type": "selection", "title": title, "url": url}
 
     return queryset, res

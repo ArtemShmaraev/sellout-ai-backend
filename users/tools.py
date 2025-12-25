@@ -63,7 +63,9 @@ def register_user(data):
 
     try:
         if "referral_id" in data:
-            ref_user = User.objects.get(id=data['referral_id'])
+            referral_promo = PromoCode.objects.get(string_representation=data['referral_id'].upper())
+
+            ref_user = referral_promo.owner
             # new_user.ref_user = ref_user
             promo = PromoCode.objects.filter(owner=ref_user, ref_promo=True).first()
             cart.promo_code = promo

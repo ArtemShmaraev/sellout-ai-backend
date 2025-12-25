@@ -181,6 +181,9 @@ def filter_products(request):
     if not custom:
         queryset = queryset.filter(is_custom=False)
 
+    if is_sale:
+        queryset = queryset.filter(is_sale=True)
+
     if category_id:
         queryset = queryset.filter(category_id__in=category_id)
     if category_name:
@@ -208,6 +211,7 @@ def filter_products(request):
             queryset = queryset.filter(is_collab=True)
         else:
             queryset = queryset.filter(collab__query_name__in=collab)
+            
     if material:
         queryset = queryset.filter(materials__eng_name__in=material)
     if brand:
@@ -250,8 +254,7 @@ def filter_products(request):
         # filters &= size_filter
 
     # Фильтр по наличию скидки
-    # if is_sale:
-    #     filters &= Q(is_sale=(is_sale == "is_sale"))
+
     # if is_return:
     #     filters &= Q(product_units__is_return=(is_return == "is_return"))
     # if is_fast_ship:

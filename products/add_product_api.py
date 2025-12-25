@@ -299,7 +299,7 @@ def add_product_api(data):
             product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
             product.sizes.add(*SizeTranslationRows.objects.filter(id__in=sizes))
             product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
-            product_unit.check_sale()
+            # product_unit.check_sale()
             product_unit.update_history()
     t9 = time()
 
@@ -338,6 +338,8 @@ def add_product_api(data):
         else:
             update_score_clothes(product)
     product.in_process_update = False
+    if product.is_sale:
+        product.add_sale(product.sale_absolute, product.sale_percentage)
     product.save()
     print(product.available_flag)
     print(product.manufacturer_sku)

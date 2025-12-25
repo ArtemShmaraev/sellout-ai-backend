@@ -88,14 +88,14 @@ class Order(models.Model):
         user = self.user
         sum_bonus = 0
         if user.user_status.base:
-            # orders_count = Order.objects.filter(user=user, fact_of_payment=True).count()
-            user_is_made_order = user.is_made_order
+            orders_count = Order.objects.filter(user=user, fact_of_payment=True).count()
+            # user_is_made_order = user.is_made_order
             units = self.order_units.order_by("-bonus")
             k = 0
             sum_bonus = 0
             for unit in units:
                 sum_bonus += unit.bonus
-                if not user_is_made_order and k == 0:
+                if orders_count == 0 and k == 0:
                     if self.promo_code is not None:
                         if not self.promo_code.ref_promo:
                             sum_bonus += 1000

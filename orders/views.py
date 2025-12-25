@@ -320,6 +320,7 @@ class CheckOutView(APIView):
                 order.save()
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data
+                order.get_total_bonus()
 
 
                 if not user.user_status.base:
@@ -328,9 +329,8 @@ class CheckOutView(APIView):
                     send_email_confirmation_order(serializer, order.email)
                     send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                     send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
-
                     cart.clear()
-                order.get_total_bonus()
+
                 order.save()
 
 

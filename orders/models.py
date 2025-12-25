@@ -69,6 +69,7 @@ class Order(models.Model):
     invoice_data = models.JSONField(default=dict)
     is_finish = models.BooleanField(default=False)
     is_accrue_bonuses = models.BooleanField(default=False)
+    total_bonus_and_promo_bonus = models.IntegerField(default=0)
 
     def start_order(self):
         self.date_of_buy_out = timezone.now()
@@ -87,21 +88,25 @@ class Order(models.Model):
         user = self.user
         sum_bonus = 0
         if user.user_status.base:
-            orders_count = Order.objects.filter(user=user).count()
-
+            # orders_count = Order.objects.filter(user=user, fact_of_payment=True).count()
+            user_is_made_order = user.is_made_order
             units = self.order_units.order_by("-bonus")
             k = 0
             sum_bonus = 0
             for unit in units:
                 sum_bonus += unit.bonus
-                if orders_count == 1 and k == 0:
+                if not user_is_made_order and k == 0:
                     if self.promo_code is not None:
                         if not self.promo_code.ref_promo:
                             sum_bonus += 1000
                             sum_bonus -= unit.bonus
+                    else:
+                        sum_bonus += 1000
+                        sum_bonus -= unit.bonus
                 k += 1
 
         self.total_bonus = sum_bonus
+        self.total_bonus_and_promo_bonus = sum_bonus + self.promo_bonus
         self.save()
 
 
@@ -110,8 +115,7 @@ class Order(models.Model):
         if user.user_status.base and not self.is_accrue_bonuses:
             self.is_accrue_bonuses = True
             self.save()
-            sum_bonus = self.total_bonus + self.promo_bonus
-            accrual_bonus = AccrualBonus(amount=sum_bonus)
+            accrual_bonus = AccrualBonus(amount=self.total_bonus_and_promo_bonus)
             accrual_bonus.save()
             user.bonuses.accrual.add(accrual_bonus)
             user.bonuses.update_total_amount()

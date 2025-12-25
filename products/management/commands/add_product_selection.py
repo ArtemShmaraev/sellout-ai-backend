@@ -49,3 +49,12 @@ class Command(BaseCommand):
                 else:
                     product.del_sale()
 
+                if page:
+                    products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+                    try:
+                        first = products.first().score_product_page
+                        last = products[page * 60].score_product_page
+                    except:
+                        continue
+
+

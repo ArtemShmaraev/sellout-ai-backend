@@ -63,6 +63,16 @@ def send_email_confirmation_order(order, email):
     return requests.status_codes
 
 
+def send_email_start_order(order, email):
+    url = "https://sellout.su/mail/send_order_on_way"
+    params = {
+        "recipient_email": email,
+        "order": order
+    }
+    requests.post(url, json=params)
+    return requests.status_codes
+
+
 
 
 def get_delivery(order, data, cart):

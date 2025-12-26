@@ -42,9 +42,12 @@ def get_fid_product(products):
     shop.append(shop_categories)
 
     # Проходимся по категориям и добавляем их в shop
-    categories = Category.objects.all()
+
+
+    categories = Category.objects.order_by("id")
     for category in categories:
-        category_elem = ET.Element('category', attrib={"id": str(category.id), "name": category.name})
+        category_elem = ET.Element('category', attrib={"id": str(category.id)})
+        category_elem.text = category.name
         if category.parent_category is not None:
             category_elem.set("parentId", str(category.parent_category.id))
         shop_categories.append(category_elem)

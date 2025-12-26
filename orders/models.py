@@ -9,7 +9,8 @@ from django.utils import timezone
 
 from promotions.models import AccrualBonus
 from shipping.models import AddressInfo, ProductUnit
-from .tools import get_delivery_costs, get_delivery_price, round_to_nearest
+
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_start_order
 from products.formula_price import formula_price
 
 
@@ -75,6 +76,12 @@ class Order(models.Model):
         self.date_of_buy_out = timezone.now()
         self.order_in_progress = True
         self.user.is_made_order = True
+        from .serializers import OrderSerializer
+        serializer = OrderSerializer(self).data
+
+        # send_email_confirmation_order(serializer, order.email)
+        send_email_start_order(serializer, "markenson888inst@gmail.com")
+        send_email_start_order(serializer, "shmaraev18@mail.ru")
         self.save()
 
     def finish_order(self):
@@ -95,7 +102,7 @@ class Order(models.Model):
             sum_bonus = 0
             for unit in units:
                 sum_bonus += unit.bonus
-                if orders_count == 0 and k == 0:
+                if orders_count == 1 and k == 0:
                     if self.promo_code is not None:
                         if not self.promo_code.ref_promo:
                             sum_bonus += 1000

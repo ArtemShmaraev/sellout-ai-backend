@@ -291,7 +291,7 @@ class Product(models.Model):
 
 
     in_sg = models.BooleanField(default=False, db_index=True)
-    percentage_sale = models.IntegerField(default=0)
+    # percentage_sale = models.IntegerField(default=0)
     available_sizes = models.JSONField(blank=True, null=True, default=dict)
     sizes = models.ManyToManyField("SizeTranslationRows", related_name='products', blank=True, default=None, db_index=True)
     actual_price = models.BooleanField(default=False)

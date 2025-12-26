@@ -101,7 +101,7 @@ def similar_product(product):
             MoreLikeThis(
                 like={'_id': product.id},
                 fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2',
-                        'collab', "colors^3"],
+                        'collab', "colors^3", "text_price^3"],
                 min_term_freq=1,
                 min_doc_freq=1,
                 max_query_terms=50,

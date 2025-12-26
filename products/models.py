@@ -365,7 +365,7 @@ class Product(models.Model):
         self.another_configuration = []
         self.size_row_name = ""
         self.extra_name = ""
-        self.percentage_sale = 0
+        # self.percentage_sale = 0
         self.available_sizes = {}
         self.actual_price = False
         self.content_sources = {}

@@ -43,7 +43,9 @@ class Command(BaseCommand):
         print(host_id)
         print(user_id)
 
-        fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
+        # fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
+        fid = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/list", headers=headers)
+        print(fid)
         products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
         size_page = 10_000
         count = products.count()

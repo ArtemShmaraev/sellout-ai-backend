@@ -327,7 +327,7 @@ class Product(models.Model):
         self.colorway = ""
         self.russian_name = ""
 
-        self.description = ""
+        # self.description = ""
         self.bucket_link.clear()
 
         self.is_custom = False

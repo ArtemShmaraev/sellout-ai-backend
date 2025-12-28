@@ -41,6 +41,15 @@ def get_fid_product(products):
     shop.append(shop_url)
     shop.append(shop_categories)
 
+    delivery_tag = ET.Element('delivery')
+    shop.append(delivery_tag)
+
+    deliveries = [(5, 500)]
+    for delivery in deliveries:
+        delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]),
+                                                      "cost": str(delivery[1])})
+        delivery_tag.append(delivery_elem)
+
     # Проходимся по категориям и добавляем их в shop
 
 
@@ -53,12 +62,22 @@ def get_fid_product(products):
         shop_categories.append(category_elem)
 
 
+
+
     shop_offers = ET.Element('offers')
     for product in products:
 
     # Создаем элемент offer
         offer = ET.Element('offer', attrib={"id": str(product.id)})
         offer_name = ET.Element('name')
+
+        delivery_tag = ET.Element('delivery')
+        offer.append(delivery_tag)
+
+        deliveries = [(5, 500)]
+        for delivery in deliveries:
+            delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]), "cost": str(delivery[1] if product.min_price < 35000 else 0)})
+            delivery_tag.append(delivery_elem)
 
         offer_name.text = product.get_full_name()
         offer_vendor = ET.Element('vendor')
@@ -93,6 +112,7 @@ def get_fid_product(products):
         offer.append(offer_picture)
         offer.append(offer_categoryId)
         offer.append(offer_category)
+
 
 
         product_colors = product.colors.all()

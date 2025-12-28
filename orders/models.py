@@ -79,9 +79,9 @@ class Order(models.Model):
         from .serializers import OrderSerializer
         serializer = OrderSerializer(self).data
 
-        # send_email_confirmation_order(serializer, order.email)
-        send_email_start_order(serializer, "markenson888inst@gmail.com")
-        send_email_start_order(serializer, "shmaraev18@mail.ru")
+        send_email_start_order(serializer, self.user.email)
+        # send_email_start_order(serializer, "markenson888inst@gmail.com")
+        # send_email_start_order(serializer, "shmaraev18@mail.ru")
         self.save()
 
     def finish_order(self):

@@ -84,10 +84,10 @@ def get_product_page_header(request):
 
     if text_desktop.title == "sellout":
         title_desktop = get_title_for_products_page(category, line, collab)
-        if title_desktop != "":
-            res['desktop']['title'] = title_desktop
-            res['desktop']['content'] = ""
-            res['desktop']['photo'] = ""
+        # if title_desktop != "":
+        res['desktop']['title'] = title_desktop
+        res['desktop']['content'] = ""
+        res['desktop']['photo'] = ""
 
 
     if not header_photos_mobile.exists():
@@ -106,10 +106,9 @@ def get_product_page_header(request):
 
     if text_mobile.title == "sellout":
         title_mobile = get_title_for_products_page(category, line, collab)
-        if title_mobile != "":
-            res['mobile']['title'] = title_mobile
-            res['mobile']['content'] = ""
-            res['mobile']['photo'] = ""
+        res['mobile']['title'] = title_mobile
+        res['mobile']['content'] = ""
+        res['mobile']['photo'] = ""
     return res
 
 

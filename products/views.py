@@ -928,10 +928,6 @@ class ProductView(APIView):
         res["mobile"] = photos['mobile']
         res["desktop"] = photos['desktop']
 
-
-
-
-
         t10 = time()
         print("t9", t10 - t8)
         print("t", t10 - t0, request.GET.copy())

@@ -41,7 +41,7 @@ def get_fid_product(products):
     shop.append(shop_url)
     shop.append(shop_categories)
 
-    delivery_tag = ET.Element('delivery')
+    delivery_tag = ET.Element('delivery-options')
     shop.append(delivery_tag)
 
     deliveries = [(5, 500)]
@@ -71,7 +71,7 @@ def get_fid_product(products):
         offer = ET.Element('offer', attrib={"id": str(product.id)})
         offer_name = ET.Element('name')
 
-        delivery_tag = ET.Element('delivery')
+        delivery_tag = ET.Element('delivery-options')
         offer.append(delivery_tag)
 
         deliveries = [(20, 500)]

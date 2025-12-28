@@ -74,7 +74,7 @@ def get_fid_product(products):
         delivery_tag = ET.Element('delivery')
         offer.append(delivery_tag)
 
-        deliveries = [(5, 500)]
+        deliveries = [(20, 500)]
         for delivery in deliveries:
             delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]), "cost": str(delivery[1] if product.min_price < 35000 else 0)})
             delivery_tag.append(delivery_elem)

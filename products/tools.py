@@ -67,7 +67,7 @@ def get_fid_product(products):
     shop_offers = ET.Element('offers')
     for product in products:
 
-    # Создаем элемент offer
+        # Создаем элемент offer
         offer = ET.Element('offer', attrib={"id": str(product.id)})
         offer_name = ET.Element('name')
 
@@ -88,6 +88,11 @@ def get_fid_product(products):
         offer_url.text = f"https://sellout.su/products/{product.slug}"
         offer_price = ET.Element('price')
         offer_price.text = str(product.min_price)
+
+        if product.min_price != product.min_price_without_sale:
+            offer_old_price = ET.Element('oldprice')
+            offer_old_price.text = str(product.min_price_without_sale)
+
         offer_currencyId = ET.Element('currencyId')
         offer_currencyId.text = "RUR"
         offer_picture = ET.Element('picture')

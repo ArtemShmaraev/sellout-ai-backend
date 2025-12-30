@@ -14,7 +14,7 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
-    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS
+    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -58,6 +58,7 @@ urlpatterns = [
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
     path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'), path('similar/<int:product_id>', ProductSimilarView.as_view()),
+    path('spu_id_info/<int:spu_id>', ProducrSpuIdView.as_view()),
     path('slug_full/<str:slug>', ProductFullSlugView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),

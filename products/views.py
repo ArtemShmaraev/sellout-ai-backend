@@ -66,6 +66,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
+
+
+class ProducrSpuIdView(APIView):
+    def get(self, request, spu_id):
+        product = Product.objects.filter(spu_id=spu_id).first()
+        return Response(ProductAdminSerializer(product).data)
+
 class ProductsFid(APIView):
     def get(self, request, page):
         params = request.query_params

@@ -46,7 +46,7 @@ def get_fid_product(products):
 
     deliveries = [(5, 500)]
     for delivery in deliveries:
-        delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]),
+        delivery_elem = ET.Element('option', attrib={"days": str(delivery[0]),
                                                       "cost": str(delivery[1])})
         delivery_tag.append(delivery_elem)
 

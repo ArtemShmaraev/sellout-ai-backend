@@ -38,8 +38,8 @@ def default_referral_data():
     return {
         "order_amounts": [3000, 35000],
         "partner_bonus_amounts": [500, 1000],
-        "client_sale_amounts": None,
-        "client_bonus_amounts": None,
+        "client_sale_amounts": [0, 0],
+        "client_bonus_amounts": [0, 0],
         "promo_text": None,
         "promo_link": None,
     }

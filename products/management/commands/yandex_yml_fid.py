@@ -1,3 +1,52 @@
+# {"requestId":"504514a0-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"505a9870-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"50757370-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"508d6840-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"50ab5080-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"50c54120-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"50df31c0-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"50fb4540-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"5115d220-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"512d9fe0-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"514371d0-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"515af170-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"51799d00-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"5194ed30-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"51ace200-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"51c795f0-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"51e1fbc0-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"51ff47c0-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"521ba960-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"5231f080-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"524be120-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"5269a250-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"528ba940-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"52a572d0-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"52bccb60-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"52d0efa0-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"52e70fb0-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"52fe6840-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"531b1800-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"5333d020-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"534b28b0-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"53656770-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"537b3960-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"5391f5b0-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"53abbf40-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"53c7abb0-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"53e03cc0-b079-11ee-a826-cf891f5fc84f"}
+# {"requestId":"53fc7750-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"541619d0-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"54342920-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"544d7d80-b079-11ee-b2c7-bd0e42e02359"}
+# {"requestId":"546b8cd0-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"5483a8b0-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"549a16e0-b079-11ee-90ba-ebc17f8e26ef"}
+# {"requestId":"54b7b100-b079-11ee-95b5-2b5dc98ce3ba"}
+# {"requestId":"54cdf820-b079-11ee-b2c7-bd0e42e02359"}
+
+
+
 import math
 import random
 from itertools import count
@@ -42,157 +91,30 @@ class Command(BaseCommand):
 
         print(host_id)
         print(user_id)
+        for i in range(50):
+            fid = {
+                "feed": {
+                    "url": f"https://sellout.su/api/v1/product/yml_fid/{i + 1}.xml?size=1000",
+                    "type": "GOODS",
+                    "regionIds": [
+                        225
+                    ]
+                }
+            }
+            post = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/start", headers=headers, json=fid)
+            print(post.text)
 
-        # fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
-        fid = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/list", headers=headers)
-        print(fid)
-        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
-        size_page = 10_000
-        count = products.count()
-        # for page in range(0, count, size_page):
-        #     products_page = products[page:page + size_page]
-        #     fid =
-
-        def get_fid_product(product):
-            yml_catalog = {"key": {
-                "@name": "@date",
-                "#text": product.last_upd
-            }, "shop": {}}
-            fid = {}
-            fid['shop'] = {}
-            fid['shop']['name'] = "Sellout"
-            fid['shop']['company'] = "Sellout"
-            fid['shop']['url'] = "https://sellout.su"
-            fid['shop']['categories'] = []
-            categories = product.categories.all()
-            for category in categories:
-                if category.parent_category is not None:
-                    fid['shop']['categories'].append({"category": {"id": category.id, 'name': category.name,
-                                                                   "parentId": category.parent_category.id}})
-                else:
-                    fid['shop']['categories'].append({"category": {"id": category.id, 'name': category.name}})
-
-            offer = {}
-            offer['id'] = product.id
-            offer['name'] = product.get_full_name()
-            offer['vendor'] = product.brands.first().name if product.collab is None else product.collab.name
-            offer['vendorCode'] = product.manufacturer_sku
-            offer['url'] = f"https://sellout.su/products/{product.slug}"
-            offer['price'] = product.min_price
-            offer['currencyId'] = "RUR"
-            offer['picture'] = product.bucket_link.order_by("id").first().url
-            offer['categoryId'] = product.categories.order_by("-id").first().id
-            offer['category'] = product.categories.order_by("-id").first().name
-            offer['delivery'] = True
-            offer['description'] = f"""<description>
-                                <![CDATA[     
-                                <h3>{product.get_full_name()}</h3>
-                                <p>Оригинал {product.get_full_name()} можно заказать прямо сейчас. Выгодные цены и бонусы ждут вас. Сделайте свой шаг в мир моды.</p>
-                                ]]>"""
-            fid['shop']['offers'] = []
-            fid['shop']['offers'].append({"offer": offer})
-            yml_catalog = fid
-            xml = json2xml.Json2xml(yml_catalog, wrapper="yml_catalog")
-            xml.attr_type = False
-            xml = xml.to_xml()
-            root = ET.fromstring(xml)
-            # print(xml)
-            currencies = ET.Element('currencies')
-
-            # Создание нового элемента currency
-            new_currency = ET.Element('currency')
-            new_currency.set('id', 'RUR')
-            new_currency.set('rate', '1')
-
-            # Добавление элемента currency в currencies
-            currencies.append(new_currency)
-
-            # Добавление currencies в корневой элемент
-            shop = root.find('shop')
-            shop.append(currencies)
-            xml = ET.tostring(root, encoding='utf-8').decode('utf-8')
-
-            yml_catalog = ET.Element('yml_catalog', attrib={"date": str(product.last_upd)})
-            # Создаем элемент shop и добавляем его в корневой элемент
-            shop = ET.Element('shop')
-            yml_catalog.append(shop)
-
-            # Создаем элементы внутри shop
-            shop_name = ET.Element('name')
-            shop_name.text = "Sellout"
-            shop_company = ET.Element('company')
-            shop_company.text = "Sellout"
-            shop_url = ET.Element('url')
-            shop_url.text = "https://sellout.su"
-            shop_categories = ET.Element('categories')
-            shop.append(shop_name)
-            shop.append(shop_company)
-            shop.append(shop_url)
-            shop.append(shop_categories)
-
-            # Проходимся по категориям и добавляем их в shop
-            categories = product.categories.all()
-            for category in categories:
-                category_elem = ET.Element('category', attrib={"id": str(category.id), "name": category.name})
-                if category.parent_category is not None:
-                    category_elem.set("parentId", str(category.parent_category.id))
-                shop_categories.append(category_elem)
-
-            # Создаем элемент offer
-            offer = ET.Element('offer', attrib={"id": str(product.id)})
-            offer_name = ET.Element('name')
-            offer_name.text = product.get_full_name()
-            offer_vendor = ET.Element('vendor')
-            offer_vendor.text = product.brands.first().name if product.collab is None else product.collab.name
-            offer_vendorCode = ET.Element('vendorCode')
-            offer_vendorCode.text = product.manufacturer_sku
-            offer_url = ET.Element('url')
-            offer_url.text = f"https://sellout.su/products/{product.slug}"
-            offer_price = ET.Element('price')
-            offer_price.text = str(product.min_price)
-            offer_currencyId = ET.Element('currencyId')
-            offer_currencyId.text = "RUR"
-            offer_picture = ET.Element('picture')
-            offer_picture.text = product.bucket_link.order_by("id").first().url
-            offer_categoryId = ET.Element('categoryId')
-            offer_categoryId.text = str(product.categories.order_by("-id").first().id)
-            offer_category = ET.Element('category')
-            offer_category.text = product.categories.order_by("-id").first().name
-            offer_delivery = ET.Element('delivery')
-            offer_delivery.text = "True"
-            offer_description = ET.Element('description')
-            offer_description.text = f"""
-                <![CDATA[     
-                <h3>{product.get_full_name()}</h3>
-                <p>Оригинал {product.get_full_name()} можно заказать прямо сейчас. Выгодные цены и бонусы ждут вас. Сделайте свой шаг в мир моды.</p>
-                ]]>
-            """.format(product=product)
-
-            # Добавляем элементы offer в offer и добавляем его в shop
-            offer.append(offer_name)
-            offer.append(offer_vendor)
-            offer.append(offer_vendorCode)
-            offer.append(offer_url)
-            offer.append(offer_price)
-            offer.append(offer_currencyId)
-            offer.append(offer_picture)
-            offer.append(offer_categoryId)
-            offer.append(offer_category)
-            offer.append(offer_delivery)
-            offer.append(offer_description)
-            shop_offers = ET.Element('offers')
-            shop_offers.append(offer)
-            shop.append(shop_offers)
-
-            # Создаем XML-документ
-            tree = ET.ElementTree(yml_catalog)
-            xml_str = ET.tostring(yml_catalog, encoding='utf8', method='xml')
-
-            # Преобразуем байтовую строку в строку unicode
-            xml = xml_str.decode('utf-8')
+        # # fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
+        # fid = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/list", headers=headers)
+        # print(fid)
+        # products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+        # size_page = 10_000
+        # count = products.count()
+        # # for page in range(0, count, size_page):
+        # #     products_page = products[page:page + size_page]
+        # #     fid =
 
 
-            return xml
 
         print(get_fid_product(products[0]))
 

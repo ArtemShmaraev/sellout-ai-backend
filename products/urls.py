@@ -5,14 +5,16 @@ from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, Br
     CollabViewSet, MaterialViewSet
 from django.urls import include, path
 from .product_site_map import ProductSitemap
-from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoListView, DewuInfoView, ProductSearchView, ProductSlugView, \
+from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoListView, DewuInfoView, \
+    ProductSearchView, ProductSlugView, \
     ProductIdView, CategoryTreeView, \
     LineTreeView, ProductUpdateView, LineNoChildView, \
-    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView,     ProductsFid,  \
+    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, ProductsFid, \
     DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView
+    run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
+    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -83,6 +85,7 @@ urlpatterns = [
     path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()), path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('sitemap_line.xml', TemplateView.as_view(template_name="sitemap_line.xml", content_type="application/xml")),
     path('run_command',  run_command_async), path('slug_for_spu_id/<int:spu_id>',  SlugForSpuId.as_view()), path("new_sale", NewSale.as_view()), path("del_sale", DelSale.as_view()),
-    path("yml_fid/<int:page>.xml", ProductsFid.as_view())
+    path("yml_fid/<int:page>.xml", ProductsFid.as_view()),
+    path("update_price_ps", ProductUpdatePricePS.as_view())
 ]
 

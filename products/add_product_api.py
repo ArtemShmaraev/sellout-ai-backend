@@ -17,6 +17,68 @@ from utils.models import Currency
 
 
 
+def add_product_ps_api(data):
+    # print(spu_id)
+    #     data = {"spuId": 1,
+    #             "skus": [{"skuId": 542, "cnyPrice": 0}, {"skuId": 544, "cnyPrice": 0}, {"skuId": 557, "cnyPrice": 0},
+    #                      {"skuId": 560, "cnyPrice": 0}, {"skuId": 561, "cnyPrice": 6559}, {"skuId": 565, "cnyPrice": 7199},
+    #                      {"skuId": 589, "cnyPrice": 6989}, {"skuId": 592, "cnyPrice": 0}, {"skuId": 607, "cnyPrice": 6989},
+    #                      {"skuId": 612, "cnyPrice": 7599}, {"skuId": 613, "cnyPrice": 6999},
+    #                      {"skuId": 618, "cnyPrice": 7999}, {"skuId": 626, "cnyPrice": 0}, {"skuId": 627, "cnyPrice": 0},
+    #                      {"skuId": 631, "cnyPrice": 9009}, {"skuId": 641, "cnyPrice": 0}, {"skuId": 642, "cnyPrice": 6999},
+    #                      {"skuId": 644, "cnyPrice": 0}, {"skuId": 648, "cnyPrice": 0}, {"skuId": 652, "cnyPrice": 0}]}
+    spu_id = data['spuId']
+    products = Product.objects.filter(spu_id=spu_id)
+    products.update(actual_price=False)
+    products.update(in_process_update=True)
+
+    # time_threshold = timezone.now() - timezone.timedelta(hours=1)
+    # if products.exists():
+    #     product = products.first()
+    #     if product.last_upd >= time_threshold or product.in_process_update:
+    #         return "Товар актуальный))"
+
+    product_units = ProductUnit.objects.filter(product__spu_id=spu_id)
+    product_units.update(availability=False)
+    skus = data.get("skus")
+
+    f = False
+    for sku in skus:
+        if sku['cnyPrice'] != 0:
+            product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
+            product_unit.update(original_price = sku['cnyPrice'])
+            product_unit.update(availability=True)
+            print(sku['cnyPrice'])
+            # product_unit.save()
+            f = True
+    if not f:
+        products.update(available_flag=f)
+    for product in products:
+        sizes_info = {"sizes": [], "filter_logo": ""}
+        sizes_id = set()
+        for unit in product.product_units.filter(availability=True):
+            for s in unit.size.all():
+                row = s.table.default_row
+                if row.filter_name != "Один размер":
+                    if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
+                        sizes_info['filter_logo'] = row.filter_logo
+                    if s.id not in sizes_id:
+                        sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
+                        sizes_id.add(s.id)
+        sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
+        print(sizes_info)
+        product.available_sizes = sizes_info
+        product.one_update = True
+        product.last_upd = timezone.now()
+        if product.bucket_link == None:
+            product.available_flag = False
+        product.in_process_update = False
+        if product.is_sale:
+            product.add_sale(product.sale_absolute, product.sale_percentage)
+        product.save()
+        product.update_price()
+
+
 def add_products_spu_id_api(data):
     print("321")
     property_ids = []
@@ -30,8 +92,6 @@ def add_products_spu_id_api(data):
     products.update(available_flag=False)
     for product in data:
         add_product_api(product)
-
-
 
 
 def sklon_days(n):
@@ -121,7 +181,6 @@ def add_product_api(data):
         if Line.objects.filter(name=f"Все {brand}").exists():
             product.lines.add(Line.objects.get(name=f"Все {brand}"))
 
-
     for cat in data['categories']:
         category = Category.objects.get(name=cat)
         product.categories.add(category)
@@ -145,7 +204,8 @@ def add_product_api(data):
 
     product.parameters = data['parameters_to_show_in_product']
     product.platform_info = data['platform_info']
-    rel_num = int(data['platform_info']["poizon"]["poizon_likes_count"]) if str(data['platform_info']["poizon"]["poizon_likes_count"]).isdigit() else 0
+    rel_num = int(data['platform_info']["poizon"]["poizon_likes_count"]) if str(
+        data['platform_info']["poizon"]["poizon_likes_count"]).isdigit() else 0
     product.rel_num = rel_num
     product.similar_product = data['platform_info']["poizon"].get("similar_products", [])
     product.another_configuration = data['platform_info']["poizon"].get("another_configuration", [])
@@ -161,7 +221,6 @@ def add_product_api(data):
     all_photos = new_photos
     product.bucket_link.clear()
     product.bucket_link.add(*all_photos)
-
 
     if "colors" in data["parameters_to_use_in_filters"]:
         for color in data["parameters_to_use_in_filters"]['colors']:
@@ -361,9 +420,6 @@ def add_product_api(data):
     return product
 
     # self.stdout.write(self.style.SUCCESS(product))
-
-
-
 
 # def update_product_api(data):
 #     spu_id = data.get("spuId")

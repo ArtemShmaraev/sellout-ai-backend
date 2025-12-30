@@ -100,6 +100,17 @@ def register_user(data):
     promo = PromoCode(string_representation=promo_string, ref_promo=True, unlimited=True, owner=new_user)
     promo.save()
     new_user.referral_promo = promo
+
+    def default_referral_data(promo):
+        return {
+            "order_amounts": [3000, 35000],
+            "partner_bonus_amounts": [500, 1000],
+            "client_sale_amounts": [0, 0],
+            "client_bonus_amounts": [0, 0],
+            "promo_text": None,
+            "promo_link": f"https://sellout.su?referral_id={promo}",
+        }
+    new_user.referral_data = default_referral_data(promo_string)
     new_user.save()
 
     email_confirmation = EmailConfirmation(user=new_user)

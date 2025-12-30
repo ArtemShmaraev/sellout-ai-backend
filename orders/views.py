@@ -327,10 +327,11 @@ class CheckOutView(APIView):
                     order.fact_of_payment = True
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
-                    send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
-                    send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
+                    # send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                    # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                     cart.clear()
-
+                send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                 order.save()
 
 

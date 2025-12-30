@@ -12,6 +12,7 @@ import boto3
 
 import os
 import httpx
+from asgiref.sync import async_to_sync
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import call_command
@@ -29,7 +30,7 @@ from django.views.decorators.cache import cache_page
 import json
 from time import time
 from django.http import JsonResponse, FileResponse, HttpResponse
-from .add_product_api import add_product_api, add_products_spu_id_api
+from .add_product_api import add_product_api, add_products_spu_id_api, add_product_ps_api
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
@@ -957,6 +958,14 @@ class ProductFullSlugView(APIView):
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 
+
+class ProductUpdatePricePS(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        add_product_ps_api(data)
+        return Response("Ok")
+
+
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -975,9 +984,11 @@ class ProductSlugView(APIView):
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
             if request.user.id and not is_update:
                 # print(11111)
-                platform_update_price(product, request=request)
+                # platform_update_price(product, request=request)
+
                 product.rel_num += 1
                 product.save()
+            # add_product_ps_api(product.spu_id)
             # print(product.min_price)
             # print(Wishlist.objects.get(user=User(id=request.user.id)))
             serializer = ProductSerializer(product, context={"list_lines": True,

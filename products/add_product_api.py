@@ -41,7 +41,7 @@ def add_product_ps_api(data):
     #         return "Товар актуальный))"
 
     product_units = ProductUnit.objects.filter(product__spu_id=spu_id)
-    product_units.update(availability=False)
+    # product_units.update(availability=False)
     skus = data.get("skus")
 
     f = False
@@ -53,6 +53,12 @@ def add_product_ps_api(data):
             print(sku['cnyPrice'])
             # product_unit.save()
             f = True
+        else:
+            product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
+            # product_unit.update(original_price=sku['cnyPrice'])
+            product_unit.update(availability=False)
+
+
     if not f:
         products.update(available_flag=f)
     for product in products:

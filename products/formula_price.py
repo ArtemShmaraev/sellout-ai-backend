@@ -240,6 +240,11 @@ def formula_price(product, unit, user_status):
 
     # if unit.is_sale:
     #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
-
+    if unit.final_price > round_total_price:
+        # print("Цена дешевле")
+        price_without_sale = unit.final_price
+        unit.is_sale = True
+        unit.save()
+        product.is_sale = True
     return {"final_price": round_total_price, "start_price": price_without_sale, "total_profit": round(total_profit),
             "bonus": bonus, "max_bonus": max_bonus_for_product}

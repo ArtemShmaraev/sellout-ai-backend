@@ -946,7 +946,7 @@ class ProductView(APIView):
 class SuggestSearch(APIView):
     def get(self, request):
         query = self.request.query_params.get('q')
-        return Response(suggest_search(query))
+        return Response(suggest_search(request))
 
 
 class ProductFullSlugView(APIView):

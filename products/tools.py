@@ -62,8 +62,6 @@ def get_fid_product(products):
         shop_categories.append(category_elem)
 
 
-
-
     shop_offers = ET.Element('offers')
     for product in products:
 

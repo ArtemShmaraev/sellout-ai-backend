@@ -23,7 +23,11 @@ es = Elasticsearch(
     port=9200,
 )
 
-def suggest_search(query):
+def suggest_search(request):
+    query = request.query_params.get('q')
+
+
+
     index_name = 'suggest_index'
 
     search = Search(index=index_name, using=es)
@@ -56,10 +60,19 @@ def suggest_search(query):
     suggestions = response.suggest.autocomplete[0].options
 
     # Обработка полученных подсказок
-    sp = []
-    for suggestion in suggestions:
-        sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
-        #
+    gender = False
+
+    if request.user.id:
+        gender = request.user.gender.name
+        sp = []
+        for suggestion in suggestions:
+            sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": f"{suggestion._source.url}&gender={gender}"})
+            #
+    else:
+        sp = []
+        for suggestion in suggestions:
+            sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
+
     return sp
 
     # # Создайте объект Search и настройте подсказки

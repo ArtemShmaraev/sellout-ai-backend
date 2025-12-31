@@ -1,50 +1,35 @@
-# {"requestId":"504514a0-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"505a9870-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"50757370-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"508d6840-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"50ab5080-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"50c54120-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"50df31c0-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"50fb4540-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"5115d220-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"512d9fe0-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"514371d0-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"515af170-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"51799d00-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"5194ed30-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"51ace200-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"51c795f0-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"51e1fbc0-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"51ff47c0-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"521ba960-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"5231f080-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"524be120-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"5269a250-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"528ba940-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"52a572d0-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"52bccb60-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"52d0efa0-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"52e70fb0-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"52fe6840-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"531b1800-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"5333d020-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"534b28b0-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"53656770-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"537b3960-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"5391f5b0-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"53abbf40-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"53c7abb0-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"53e03cc0-b079-11ee-a826-cf891f5fc84f"}
-# {"requestId":"53fc7750-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"541619d0-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"54342920-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"544d7d80-b079-11ee-b2c7-bd0e42e02359"}
-# {"requestId":"546b8cd0-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"5483a8b0-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"549a16e0-b079-11ee-90ba-ebc17f8e26ef"}
-# {"requestId":"54b7b100-b079-11ee-95b5-2b5dc98ce3ba"}
-# {"requestId":"54cdf820-b079-11ee-b2c7-bd0e42e02359"}
-
+# {"requestId":"86c89fe0-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"86d8cc80-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"86f10f70-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"870a63d0-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"871c1710-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"873173d0-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"87491a80-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"8763ce70-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"877cada0-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"87947b60-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"87ac4920-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"87c2b750-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"87d86230-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"87f3b260-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"880da300-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8820dce0-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8859c730-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"886deb70-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"89f10900-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8a083a80-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"8a21b5f0-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"8a37d600-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"8a4c9680-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8a648b50-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"8a78fdb0-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8a91dce0-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"8aa82400-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"8abb84f0-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8acfa930-b481-11ee-b3bf-bd0e42e02359"}
+# {"requestId":"8aecce20-b481-11ee-bcfc-a16e0e850f4a"}
+# {"requestId":"8b053820-b481-11ee-a0c0-2b5dc98ce3ba"}
+# {"requestId":"8b1823e0-b481-11ee-b3bf-bd0e42e02359"}
 
 
 import math
@@ -76,6 +61,7 @@ from products.tools import get_text
 from json2xml import json2xml
 import xml.etree.ElementTree as ET
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
@@ -91,18 +77,22 @@ class Command(BaseCommand):
 
         print(host_id)
         print(user_id)
-        for i in range(50):
-            fid = {
-                "feed": {
-                    "url": f"https://sellout.su/api/v1/product/yml_fid/{i + 1}.xml?size=1000",
-                    "type": "GOODS",
-                    "regionIds": [
-                        225
-                    ]
-                }
-            }
-            post = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/start", headers=headers, json=fid)
-            print(post.text)
+        s = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/info", json={
+            "requestId": "8b1823e0-b481-11ee-b3bf-bd0e42e02359"
+        }, headers=headers)
+        print(s.text)
+        # for i in range(50):
+        #     fid = {
+        #         "feed": {
+        #             "url": f"https://sellout.su/api/v1/product/yml_fid/{i + 1}.xml?size=1000",
+        #             "type": "GOODS",
+        #             "regionIds": [
+        #                 225
+        #             ]
+        #         }
+        #     }
+        #     post = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/start", headers=headers, json=fid)
+        #     print(post.text)
 
         # # fid = requests.post(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/batch/add")
         # fid = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/list", headers=headers)
@@ -114,9 +104,7 @@ class Command(BaseCommand):
         # #     products_page = products[page:page + size_page]
         # #     fid =
 
-
-
-        print(get_fid_product(products[0]))
+        # print(get_fid_product(products[0]))
 
 
 s = """

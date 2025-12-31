@@ -99,7 +99,7 @@ class Order(models.Model):
             sum_bonus = 0
             for unit in units:
                 sum_bonus += unit.bonus
-                if orders_count == 1 and k == 0:
+                if orders_count == 0 and k == 0:
                     if self.promo_code is not None:
                         if not self.promo_code.ref_promo:
                             sum_bonus += 1000
@@ -325,7 +325,7 @@ class ShoppingCart(models.Model):
         self.sale = sale
         self.first_order_bonus = 0
         if user_status.base:
-            orders_count = Order.objects.filter(user=self.user).count()
+            orders_count = Order.objects.filter(user=self.user, fact_of_payment=True).count()
             if orders_count == 0:
                 sum_bonus += max(0, 1000 - max_bonus)
                 self.first_order_bonus = 1000

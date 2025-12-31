@@ -60,6 +60,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
         sug_index.create()
 
+
+
         lines = open("suggest_brand.txt", encoding="utf-8").read().strip().split('\n')
 
         # Создание словаря
@@ -134,7 +136,7 @@ class Command(BaseCommand):
             dict_cat[key.lower()] = list(values)
 
 
-        cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
+        cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(name__icontains='Вся')
         for cat in cats:
             cat_doc = SuggestDocument()
             cat_doc.name = cat.name
@@ -158,7 +160,27 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('SUG indexing complete.'))
 
-        f = True
+        s1 = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие').count()
+        s2 = Line.objects.filter(parent_line=None).count()
+        print(s1 * s2)
+        kkk = 0
+        for category in Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие'):
+            for line in Line.objects.filter(parent_line=None):
+                kkk += 1
+                print(kkk)
+                if Product.objects.filter(categories=category, lines=line).count() > 20:
+                    cat_doc = SuggestDocument()
+                    cat_doc.name = f"{category.name} {line.view_name}"
+                    cat_doc.type = "Категория"
+                    cat_doc.url = f"category={category.eng_name.rstrip('_')}&line={line.full_eng_name}"
+
+                    cat_doc.suggest = [{
+                        'input': [f"{category.name} {line.view_name}", f"{line.view_name} {category.name}"],
+                        'weight': 40000 - len(f"{category.name} {line.view_name}")
+                    }]
+                    cat_doc.save()
+
+        f = False
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             # product_index = ProductDocument._index

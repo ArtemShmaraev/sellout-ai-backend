@@ -274,6 +274,9 @@ def filter_products(request):
     t2 = time()
     print("t1", t2 - t1)
     if query:
+        if request.user.id:
+            gender = [request.user.gender.name]
+            queryset = queryset.filter(gender__name__in=gender)
         query = query.replace("_", " ")
         search = search_product(query, queryset)
         queryset = search['queryset']

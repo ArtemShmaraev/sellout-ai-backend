@@ -440,8 +440,7 @@ class AvailableSize(APIView):
 
 class AddFilterSearch(APIView):
     def get(self, request):
-        search_query = request.query_params.get('q', '')
-        return Response(add_filter_search(search_query))
+        return Response(add_filter_search(request))
 
 
 class BrandSearchView(APIView):
@@ -991,7 +990,7 @@ class ProductSlugView(APIView):
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
             if request.user.id and not is_update:
                 # print(11111)
-                # platform_update_price(product, request=request)
+                platform_update_price(product, request=request)
 
                 product.rel_num += 1
                 product.save()

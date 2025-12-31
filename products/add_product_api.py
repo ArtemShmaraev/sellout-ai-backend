@@ -18,6 +18,8 @@ from utils.models import Currency
 
 
 def add_product_ps_api(data):
+    print("Обновление цен")
+
     # print(spu_id)
     #     data = {"spuId": 1,
     #             "skus": [{"skuId": 542, "cnyPrice": 0}, {"skuId": 544, "cnyPrice": 0}, {"skuId": 557, "cnyPrice": 0},

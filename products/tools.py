@@ -289,9 +289,8 @@ def platform_update_price(product, request=False):
                 if not product.last_upd >= time_threshold2:  # если цена не актуальна
                     product.last_parse_price = timezone.now()
                     product.save()
-                    s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-                    ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-                    print("1231111111")
+                    s = requests.get(f"https://sellout.su/parser_new/update_prices?spu_id={spu_id}")
+                    print("Идет обновление1")
                     # print(s.json())
                     # asyncio.run(send_async_request(spu_id))
 
@@ -303,9 +302,8 @@ def platform_update_price(product, request=False):
             if not product.last_upd >= time_threshold2:  # если цена не актуальна
                 product.last_parse_price = timezone.now()
                 product.save()
-                s = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-                ss = requests.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-                print("1231111111")
+                s = requests.get(f"https://sellout.su/parser_new/update_prices?spu_id={spu_id}")
+                print("Идет обновление2")
                 # print(s.json())
                 # asyncio.run(send_async_request(spu_id))
 

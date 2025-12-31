@@ -145,11 +145,19 @@ def similar_product(product):
         return [], False
 
 
-def add_filter_search(query):
+def add_filter_search(request):
+    query = request.query_params.get('q', '')
+
     res = {"collab": "",
            "category": "",
            "line": "",
-           "color": ""}
+           "color": "",
+           'gender': ""}
+    if request.user.id:
+        gender = request.user.gender.name
+        res['gender'] = gender
+
+    print(res)
     return res
     search_line = search_best_line(query)
     search_category = search_best_category(query)

@@ -988,7 +988,7 @@ class ProductSlugView(APIView):
             # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
             # is_search_bot = any(
             #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
-            if request.user.id and not is_update and product.categories.filter(name="Обувь").exists():
+            if request.user.id and not is_update: # and product.categories.filter(name="Обувь").exists()
                 # print(11111)
                 platform_update_price(product, request=request)
 

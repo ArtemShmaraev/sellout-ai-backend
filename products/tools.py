@@ -427,19 +427,21 @@ def get_product_page_photo(params):
     return res
 
 
-def get_product_text(photo, line, collab, category, new, recommendations):
+def get_product_text(photo, line, collab, category, new, recommendations, sale):
     texts = HeaderText.objects.all()
     type = photo.type
-    print(type)
 
 
     if new:
         texts = texts.filter(title="Новинки")
     elif recommendations:
         texts = texts.filter(title="Рекомендации")
+    elif sale:
+        texts = texts.filter(title="Скидки — еще больше выгоды")
 
     elif line and collab:
         texts = texts.filter(title="sellout")
+
 
 
     elif line:

@@ -430,6 +430,10 @@ class Product(models.Model):
                     max_profit = unit.total_profit
             self.max_profit = max_profit
             self.max_bonus = max_bonus
+            # if self.min_price < min_price:
+            #     self.is_sale = False
+            #     self.product_units.update(is_sale=False)
+
             self.min_price = min_price
             self.min_price_without_sale = min_price_without_sale
             self.actual_price = True

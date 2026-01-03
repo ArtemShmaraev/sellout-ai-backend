@@ -267,16 +267,16 @@ DATABASES = {
         'PASSWORD': 'apppassword2023',
         'HOST': 'rc1a-vgw0z5eblo4pnaqb.mdb.yandexcloud.net',
         'PORT': '6432',
-        # 'OPTIONS': {
-        #     'sslmode': 'verify-full',
-        #     'sslrootcert': '/root/.postgresql/root.crt',
-        #     'target_session_attrs': 'read-write',
-        # }
         'OPTIONS': {
             'sslmode': 'verify-full',
-            'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+            'sslrootcert': '/root/.postgresql/root.crt',
             'target_session_attrs': 'read-write',
         }
+        # 'OPTIONS': {
+        #     'sslmode': 'verify-full',
+        #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+        #     'target_session_attrs': 'read-write',
+        # }
         # 'HOST': '158.160.56.73',
         # 'PORT': '5432',
     }

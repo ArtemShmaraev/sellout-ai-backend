@@ -249,15 +249,15 @@ SIMPLE_JWT = {
 
 
 #
-# HOST = "127.0.0.1"
-# BACKEND_HOST = "127.0.0.1:8000"
-# FRONTEND_HOST = "127.0.0.1:3000"
+HOST = "127.0.0.1"
+BACKEND_HOST = "127.0.0.1:8000"
+FRONTEND_HOST = "127.0.0.1:3000"
 
-ELASTIC_HOST = "158.160.105.163"
+ELASTIC_HOST = "62.84.117.234"
 # #
-HOST = "sellout.su"
-BACKEND_HOST = "sellout.su"
-FRONTEND_HOST = "sellout.su"
+# HOST = "sellout.su"
+# BACKEND_HOST = "sellout.su"
+# FRONTEND_HOST = "sellout.su"
 
 DATABASES = {
     'default': {
@@ -267,16 +267,16 @@ DATABASES = {
         'PASSWORD': 'apppassword2023',
         'HOST': 'rc1a-vgw0z5eblo4pnaqb.mdb.yandexcloud.net',
         'PORT': '6432',
-        'OPTIONS': {
-            'sslmode': 'verify-full',
-            'sslrootcert': '/root/.postgresql/root.crt',
-            'target_session_attrs': 'read-write',
-        }
         # 'OPTIONS': {
         #     'sslmode': 'verify-full',
-        #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+        #     'sslrootcert': '/root/.postgresql/root.crt',
         #     'target_session_attrs': 'read-write',
         # }
+        'OPTIONS': {
+            'sslmode': 'verify-full',
+            'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+            'target_session_attrs': 'read-write',
+        }
         # 'HOST': '158.160.56.73',
         # 'PORT': '5432',
     }
@@ -300,7 +300,7 @@ SECURE_HSTS_PRELOAD = True
 CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '158.160.105.163:11211',  # Замените на адрес вашего Memcached сервера
+        'LOCATION': f'{ELASTIC_HOST}:11211',  # Замените на адрес вашего Memcached сервера
         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
     }
 }

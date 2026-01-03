@@ -321,7 +321,7 @@ class Product(models.Model):
         self.lines.clear()
         self.main_line = None
         # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
-        self.tags.clear()
+        # self.tags.clear()
 
         self.model = ""
         self.colorway = ""
@@ -333,15 +333,15 @@ class Product(models.Model):
         self.is_custom = False
         self.is_collab = False
         self.collab = None
-        self.main_color = None
-        self.colors.clear()
-        self.designer_color = ""
-        self.materials.clear()
+        # self.main_color = None
+        # self.colors.clear()
+        # self.designer_color = ""
+        # self.materials.clear()
 
-        self.gender.clear()
-        self.recommended_gender = None
-        self.size_table = None
-        self.size_table_platform = {}
+        # self.gender.clear()
+        # self.recommended_gender = None
+        # self.size_table = None
+        # self.size_table_platform = {}
 
         self.min_price = 0
         self.max_bonus = 0
@@ -352,19 +352,19 @@ class Product(models.Model):
 
         self.available_flag = False
 
-        self.has_many_sizes = False
-        self.has_many_colors = False
-        self.has_many_configurations = False
+        # self.has_many_sizes = False
+        # self.has_many_colors = False
+        # self.has_many_configurations = False
 
-        self.rel_num = 0
-        self.platform_info = {}
+        # self.rel_num = 0
+        # self.platform_info = {}
         self.sizes_prices = []
 
-        self.parameters = {}
-        self.similar_product = []
-        self.another_configuration = []
-        self.size_row_name = ""
-        self.extra_name = ""
+        # self.parameters = {}
+        # self.similar_product = []
+        # self.another_configuration = []
+        # self.size_row_name = ""
+        # self.extra_name = ""
         # self.percentage_sale = 0
         self.available_sizes = {}
         self.actual_price = False
@@ -462,13 +462,16 @@ class Product(models.Model):
         return f"{self.brands.first().name if self.collab is None else self.collab.name} {self.model} {self.colorway}"
 
     def update_min_price(self):
+        self.min_price = 0
+        # min_price = 0
         if self.product_units.exists():
-            self.min_price = 0
             product_units = self.product_units.filter(availability=True)
             for product_unit in product_units:
                 if (product_unit.final_price <= self.min_price or self.min_price == 0) and product_unit.availability:
+                    # print(product_unit.start_price)
                     self.min_price = product_unit.final_price
                     self.min_price_without_sale = product_unit.start_price
+
         self.actual_price = True
 
         self.save()
@@ -482,6 +485,7 @@ class Product(models.Model):
             if f"{self.spu_id}_{self.property_id}" in product_slug:
                 self.slug = slugify(
                     f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
+                print("новый слаг")
             else:
                 self.slug = product_slug
 

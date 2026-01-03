@@ -214,7 +214,7 @@ class Order(models.Model):
             position = {}
             position["code"] = str(order_unit.product.id)
             position['name'] = order_unit.product.get_full_name()
-            position['price'] = order_unit.start_price
+            position['price'] = order_unit.final_price
             position['unit'] = "piece"
             position['quantity'] = 1
             position['sum'] = order_unit.final_price

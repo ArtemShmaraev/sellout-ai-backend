@@ -253,7 +253,7 @@ SIMPLE_JWT = {
 # BACKEND_HOST = "127.0.0.1:8000"
 # FRONTEND_HOST = "127.0.0.1:3000"
 
-ELASTIC_HOST = "62.84.126.2"
+ELASTIC_HOST = "158.160.105.163"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"
@@ -300,7 +300,7 @@ SECURE_HSTS_PRELOAD = True
 CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
-        'LOCATION': '62.84.126.2:11211',  # Замените на адрес вашего Memcached сервера
+        'LOCATION': '158.160.105.163:11211',  # Замените на адрес вашего Memcached сервера
         'TIMEOUT': CACHE_TIME,  # Время жизни кэша (в секундах)
     }
 }

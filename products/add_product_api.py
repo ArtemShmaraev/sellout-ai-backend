@@ -53,10 +53,10 @@ def add_product_ps_api(data):
             print(sku['cnyPrice'])
             # product_unit.save()
             f = True
-        else:
-            product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
-            # product_unit.update(original_price=sku['cnyPrice'])
-            product_unit.update(availability=False)
+        # else:
+        #     product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
+        #     # product_unit.update(original_price=sku['cnyPrice'])
+        #     product_unit.update(availability=False)
 
 
     if not f:

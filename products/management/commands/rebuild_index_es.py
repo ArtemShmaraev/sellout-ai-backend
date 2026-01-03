@@ -180,7 +180,7 @@ class Command(BaseCommand):
                     }]
                     cat_doc.save()
 
-        f = False
+        f = True
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             # product_index = ProductDocument._index

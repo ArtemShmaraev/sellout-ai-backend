@@ -262,7 +262,7 @@ ELASTIC_HOST = "62.84.117.234"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-new',
+        'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2024',
         'HOST': 'rc1a-yl890hwdfu0rdo19.mdb.yandexcloud.net',

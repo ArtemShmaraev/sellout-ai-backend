@@ -2,7 +2,7 @@ from django.utils import timezone
 
 from wishlist.models import Wishlist
 from products.models import Product, Category, Line, Brand, Color, Collection, DewuInfo, SizeTable, SizeRow, \
-    SizeTranslationRows, Collab, SGInfo, Material
+    SizeTranslationRows, Collab, SGInfo, Material, Photo
 from rest_framework import serializers
 from shipping.models import ProductUnit
 from django.db.models import Min, Q, Max, Count
@@ -211,6 +211,11 @@ class ProductAdminSerializer(serializers.ModelSerializer):
         return s
 
 
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = "__all__"
+
 
 class ProductSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
@@ -219,6 +224,7 @@ class ProductSerializer(serializers.ModelSerializer):
     list_lines = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     actual_platform_price = serializers.SerializerMethodField()
+    bucket_link = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -228,6 +234,14 @@ class ProductSerializer(serializers.ModelSerializer):
                    "rel_num", "another_configuration", "in_sg", "tags", "gender", "materials", "colors", "black_bucket_link", "categories", "recommended_gender", "main_color",
                    "content_sources", "last_parse_price", "one_update", "available_sizes", "last_upd", "normalize_rel_num", ]
         depth = 2
+
+    def get_bucket_link(self, obj):
+        # Получаем отсортированный по id queryset связанных фотографий
+        photos = obj.bucket_link.order_by('id')
+
+        # Сериализуем отсортированный список фотографий
+        photo_serializer = PhotoSerializer(photos, many=True, context=self.context)
+        return photo_serializer.data
 
     def get_actual_platform_price(self, obj):
         time_threshold = timezone.now() - timezone.timedelta(hours=1)
@@ -249,6 +263,8 @@ class ProductSerializer(serializers.ModelSerializer):
             obj.actual_price = False
             obj.save()
             obj.update_price()
+        print("-", obj.min_price)
+        print("-", obj.min_price_without_sale)
         return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale, "bonus": obj.max_bonus, "max_bonus": obj.max_bonus}
 
 
@@ -352,6 +368,7 @@ class ProductSlugAndPhotoSerializer(serializers.ModelSerializer):
 class ProductMainPageSerializer(serializers.ModelSerializer):
     in_wishlist = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
+    bucket_link = serializers.SerializerMethodField()
 
     # is_sale = serializers.SerializerMethodField()
     # is_fast_shipping = serializers.SerializerMethodField()
@@ -366,6 +383,14 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         #            "spu_id", "has_many_sizes", "has_many_colors", "has_many_configurations", "is_custom",
         #            "recommended_gender", "designer_color", "available_flag", "tags", "id", "min_price"]
         depth = 2
+
+    def get_bucket_link(self, obj):
+        # Получаем отсортированный по id queryset связанных фотографий
+        photos = obj.bucket_link.order_by('id')
+
+        # Сериализуем отсортированный список фотографий
+        photo_serializer = PhotoSerializer(photos, many=True, context=self.context)
+        return photo_serializer.data
 
     def get_price(self, obj):
         # return {"start_price": obj.score_product_page, "final_price": obj.score_product_page}

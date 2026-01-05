@@ -603,6 +603,7 @@ class MainPageBlocks(APIView):
         print(number_page)
         next = request.query_params.get("next", False)
         new = request.query_params.get("new", False)
+        selected_gender = request.query_params.get('selected_gender', False)
         # print(self.request.COOKIES)
         # print(number_page)
         context = {"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}
@@ -610,9 +611,10 @@ class MainPageBlocks(APIView):
         # 1 подборка
         # 0 фото
 
-        gender = ["M", "F"]
+        gender = [selected_gender]
+        # gender = ["M", "F"]
         if request.user.id:
-            gender = [request.user.gender.name]
+            # gender = [request.user.gender.name]
             for page in range(0 if not next else number_page - 1, number_page):
                 if page == 0:
                     s = [2, 1, 0, 1, 1, 0]
@@ -678,7 +680,7 @@ class MainPageBlocks(APIView):
             return response
         else:
             for page in range(0 if not next else number_page - 1, number_page):
-                anon_cache = f"main_page_anon_{page}"
+                anon_cache = f"main_page_anon_{page}_{gender}"
                 cached_data = cache.get(anon_cache)
                 if cached_data is not None and not new:
                     res = cached_data

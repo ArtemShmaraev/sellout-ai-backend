@@ -32,6 +32,42 @@ import hashlib
 
 import base64
 import hmac
+class FactOfPaymentView(APIView):
+    def get(self, request):
+        # Получение данных из POST-запроса
+        id = self.request.query_params.get('id')
+
+        result = self.request.query_params.get('result', "")
+
+        # Получение секретного ключа
+        # print(data_string)
+        # print("111")
+
+        # Вычисление хеша и сравнение с полученным параметром 'check'
+
+
+        # Проверка хеша
+        if result == "success":
+            order = Order.objects.get(id=id)
+            order.fact_of_payment = True
+            order.save()
+            cart = ShoppingCart.objects.get(user=order.user)
+            send_email_confirmation_order(OrderSerializer(order).data, order.email)
+
+            send_email_confirmation_order(OrderSerializer(order).data, "markenson888inst@gmail.com")
+            send_email_confirmation_order(OrderSerializer(order).data, "shmaraev18@mail.ru")
+            cart.clear()
+            print("ff2")
+            return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
+        else:
+            order = Order.objects.get(id=id)
+            cart = ShoppingCart.objects.get(user=order.user)
+            cart.clear()
+            return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
+            # return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 class SignAPIView(APIView):
 
@@ -302,9 +338,20 @@ class CheckOutView(APIView):
                     user.phone_number = data['phone']
                 user.save()
 
-
+                orders_count = Order.objects.filter(user=order.user, fact_of_payment=True).count()
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit, user.user_status)
+                max_bonus = 0
+                max_bonus_unit = 0
+                if orders_count == 0:
+                    for unit in order.order_units.all():
+                        if unit.bonus > max_bonus:
+                            max_bonus = unit.bonus
+                            max_bonus_unit = unit
+                    if max_bonus_unit != 0:
+                        max_bonus_unit.bonus = 1000
+                        max_bonus_unit.save()
+
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)
                 get_delivery(order, data, cart)

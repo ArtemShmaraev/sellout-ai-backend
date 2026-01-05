@@ -264,8 +264,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres-new',
         'USER': 'app',
-        'PASSWORD': 'apppassword2023',
-        'HOST': 'rc1a-vgw0z5eblo4pnaqb.mdb.yandexcloud.net',
+        'PASSWORD': 'apppassword2024',
+        'HOST': 'rc1a-yl890hwdfu0rdo19.mdb.yandexcloud.net',
         'PORT': '6432',
         'OPTIONS': {
             'sslmode': 'verify-full',

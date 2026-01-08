@@ -127,11 +127,11 @@ def add_product_v2(data):
     product_slug = ""
     if not create:
         print("go")
-        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        # if product.last_upd >= time_threshold or product.in_process_update:
-        #     product.available_flag = True
-        #     product.save()
-        #     return "Товар актуальный))"
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        if product.last_upd >= time_threshold or product.in_process_update:
+            product.available_flag = True
+            product.save()
+            return "Товар актуальный))"
         # product.delete()
         # return 1
         product.clear_all_fields()

@@ -42,9 +42,9 @@ def secret_password(email):
 def register_user(data):
     print(data)
 
-    new_user = User(username=data['username'], password=data['password'], first_name=data['first_name'],
+    new_user = User(username=data['username'].strip().lower(), password=data['password'], first_name=data['first_name'],
                     last_name=data['last_name'],
-                    is_mailing_list=data['is_mailing_list'], email=data['username'])
+                    is_mailing_list=data['is_mailing_list'], email=data['username'].strip().lower())
 
 
 
@@ -67,9 +67,10 @@ def register_user(data):
 
             ref_user = referral_promo.owner
             # new_user.ref_user = ref_user
-            promo = PromoCode.objects.filter(owner=ref_user, ref_promo=True).first()
-            cart.promo_code = promo
-            cart.save()
+            if PromoCode.objects.filter(owner=ref_user, ref_promo=True).exists():
+                promo = PromoCode.objects.filter(owner=ref_user, ref_promo=True).first()
+                cart.promo_code = promo
+                cart.save()
 
     except ObjectDoesNotExist:
         # Обработка исключения, когда пользователя не существует

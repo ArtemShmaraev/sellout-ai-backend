@@ -112,6 +112,14 @@ def get_ps_delivery_offers(sku, data):
 
 
 def add_product_v2(data):
+    f = False
+    for sku in data['skus']:
+        price = sku["cnyPrice"]
+        f = price > 0
+        if f:
+            break
+    if not f:
+        return "Нет цен"
 
 
     spu_id = data['spuId']

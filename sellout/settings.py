@@ -249,23 +249,23 @@ SIMPLE_JWT = {
 
 
 #
-HOST = "127.0.0.1"
-BACKEND_HOST = "127.0.0.1:8000"
-FRONTEND_HOST = "127.0.0.1:3000"
+# HOST = "127.0.0.1"
+# BACKEND_HOST = "127.0.0.1:8000"
+# FRONTEND_HOST = "localhost:3000"
 
 ELASTIC_HOST = "62.84.117.234"
 # #
-# HOST = "sellout.su"
-# BACKEND_HOST = "sellout.su"
-# FRONTEND_HOST = "sellout.su"
+HOST = "sellout.su"
+BACKEND_HOST = "sellout.su"
+FRONTEND_HOST = "sellout.su"
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres-new',
+        'NAME': 'sellout_db',
         'USER': 'app',
-        'PASSWORD': 'apppassword2023',
-        'HOST': 'rc1d-q9mmkiysic476yx0.mdb.yandexcloud.net',
+        'PASSWORD': 'apppassword2024',
+        'HOST': 'rc1a-yl890hwdfu0rdo19.mdb.yandexcloud.net',
         'PORT': '6432',
         'OPTIONS': {
             'sslmode': 'verify-full',

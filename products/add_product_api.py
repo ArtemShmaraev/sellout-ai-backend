@@ -16,6 +16,389 @@ from shipping.models import DeliveryType, ProductUnit, Platform
 from utils.models import Currency
 
 
+def get_ps_delivery_offers(sku, data):
+    units = []
+    price = sku["cnyPrice"]
+
+    standard = {  # саня дефолт
+        "name": "standard",
+        "days_min": 10,
+        "days_max": 15,
+        "delivery_price": 800,
+        "delivery_currency": "rub",
+        "decimal_insurance": 1,
+        "absolute_insurance": 0,
+        "maximum_price": 0,
+        "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
+        "commission_currency": "rub",
+        "country_ship": "China",
+        "price_currency": "cny",
+        "currency_rate": "other",
+        "available_statuses": ['Amethyst', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Privileged',
+                               'Friends & Family']
+    }
+    our_delivery = {  # dobropost
+        "name": "our_delivery",
+        "days_min": 9,
+        "days_max": 13,
+        "delivery_price": 750,
+        "delivery_currency": "rub",
+        "decimal_insurance": 1,
+        "absolute_insurance": 0,
+        "maximum_price": 1000,
+        "maximum_price_currency": "eur",
+        "country_ship": "China",
+        "price_currency": "cny",
+        "currency_rate": "our",
+        "available_statuses": ['Privileged', 'Friends & Family']
+    }
+
+    standard_delivery = {
+        "name": "standard_delivery",
+        "days_min": 10,
+        "days_max": 15,
+        "delivery_price": 800,
+        "delivery_currency": "rub",
+        "decimal_insurance": 1,
+        "absolute_insurance": 0,
+        "maximum_price": 0,
+        "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
+        "commission_currency": "rub",
+        "country_ship": "China",
+        "price_currency": "cny",
+        "currency_rate": "other",
+        "available_statuses": ['Amethyst', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Privileged',
+                               'Friends & Family']}
+    if price <= 1500:
+        express_delivery = {
+            "name": "express_delivery",
+            "days_min": 1,
+            "days_max": 3,
+            "delivery_price": 2500,
+            "delivery_currency": "rub",
+            "decimal_insurance": 1,
+            "absolute_insurance": 0,
+            "maximum_price": 0,
+            "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
+            "commission_currency": "rub",
+            "country_ship": "China",
+            "price_currency": "cny",
+            "currency_rate": "other",
+            "available_statuses": ['Amethyst', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Privileged',
+                                   'Friends & Family']
+        }
+    else:
+        express_delivery = {
+            "name": "express_delivery",
+            "days_min": 1,
+            "days_max": 3,
+            "delivery_price": 2000,
+            "delivery_currency": "rub",
+            "decimal_insurance": 1,
+            "absolute_insurance": 0,
+            "maximum_price": 1500,
+            "price_currency": "cny",
+            "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
+            "commission_currency": "rub",
+            "country_ship": "China",
+            "currency_rate": "other",
+            "available_statuses": ['Amethyst', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Privileged',
+                                   'Friends & Family']
+        }
+
+    units.append(standard_delivery)
+    units.append(express_delivery)
+    return units
+
+
+def add_product_v2(data):
+
+
+    spu_id = data['spuId']
+    property_id = data["propertyId"]
+    manufacturer_sku = data.get("formatted_manufacturer_sku", "")
+
+    print(spu_id)
+    print(property_id)
+    print(manufacturer_sku)
+
+    product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
+    print(product.slug)
+    product_slug = ""
+    if not create:
+        print("go")
+        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        # if product.last_upd >= time_threshold or product.in_process_update:
+        #     product.available_flag = True
+        #     product.save()
+        #     return "Товар актуальный))"
+        # product.delete()
+        # return 1
+        product.clear_all_fields()
+        product.product_units.update(availability=False)
+        product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
+    else:
+
+        product_slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+    product.slug = product_slug
+    product.save()
+
+    product.is_collab = data["is_collab"]
+    if data["is_collab"] and len(data['collab_names']) > 0:
+        collab, create = Collab.objects.get_or_create(name=data['collab_names'][0])
+        product.collab = collab
+
+    product.model = data['model']
+    product.colorway = data['colorway']
+    product.is_custom = data['custom']
+    product.formatted_manufacturer_sku = data.get("formatted_manufacturer_sku", "")
+    product.manufacturer_sku = data.get("manufacturer_sku", "")
+
+    # product.in_sg = data.get("product_on_stadium_goods", False)
+    # product.category_id = data['platform_info']["poizon"].get("categoryId", 0)
+    # product.category_name = data['platform_info']["poizon"].get("categoryName", "")
+    # product.level1_category_id = data['platform_info']["poizon"].get("level1CategoryId", 0)
+    # product.level2_category_id = data['platform_info']["poizon"].get("level2CategoryId", 0)
+
+    genders = data.get('gender', [])
+    product.gender.set(Gender.objects.filter(name__in=genders))
+
+    if data['date']:
+        product.exact_date = datetime.strptime(data['date'], "%d.%m.%Y").date()
+
+    if data['approximate_date']:
+        product.approximate_date = data['approximate_date']
+
+    product.lines.clear()
+    for i in range(len(data['lines'])):
+        for line in data['lines'][i]:
+            line_db = Line.objects.get(name=line)
+            product.lines.add(line_db)
+            if Line.objects.filter(name=f"Все {line}").exists():
+                line_db = Line.objects.get(name=f"Все {line}")
+                product.lines.add(line_db)
+
+    product.brands.clear()
+    for brand in data['brands']:
+        brand_db, create = Brand.objects.get_or_create(name=brand)
+        product.brands.add(brand_db)
+
+        line, create = Line.objects.get_or_create(name=brand)
+        product.lines.add(line)
+        if Line.objects.filter(name=f"Все {brand}").exists():
+            product.lines.add(Line.objects.get(name=f"Все {brand}"))
+
+    for cat in data['categories'][0]:
+        category = Category.objects.get(name=cat)
+        product.categories.add(category)
+        if Category.objects.filter(name=f"Все {category.name.lower()}").exists():
+            category_is_all = Category.objects.get(name=f"Все {category.name.lower()}")
+            product.categories.add(category_is_all)
+        elif Category.objects.filter(name=f"Вся {category.name.lower()}").exists():
+            category_is_all = Category.objects.get(name=f"Вся {category.name.lower()}")
+            product.categories.add(category_is_all)
+
+        while category.parent_category is not None:
+            category = category.parent_category
+            product.categories.add(category)
+
+            if Category.objects.filter(name=f"Все {category.name.lower()}").exists():
+                category_is_all = Category.objects.get(name=f"Все {category.name.lower()}")
+                product.categories.add(category_is_all)
+            elif Category.objects.filter(name=f"Вся {category.name.lower()}").exists():
+                category_is_all = Category.objects.get(name=f"Вся {category.name.lower()}")
+                product.categories.add(category_is_all)
+
+    # product.parameters = data['parameters_to_show_in_product']
+    # product.platform_info = data['platform_info']
+    rel_num = int(data['poizon_likes_count']) if str(data['poizon_likes_count']).isdigit() else 0
+    product.rel_num = rel_num
+
+    product.similar_product = data['similar_products']
+    # product.another_configuration = data['platform_info']["poizon"].get("another_configuration", [])
+    product.actual_price = False
+
+    blacklisted_urls = product.black_bucket_link.values_list("url", flat=True)
+    new_urls = [img for img in data["images"] if img not in blacklisted_urls]
+    new_photos = []
+    for url in new_urls:
+        new_photo = Photo(url=url)
+        new_photos.append(new_photo)
+    Photo.objects.bulk_create(new_photos)
+    all_photos = new_photos
+    product.bucket_link.clear()
+    product.bucket_link.add(*all_photos)
+
+    # if "colors" in data["parameters_to_use_in_filters"]:
+    #     for color in data["parameters_to_use_in_filters"]['colors']:
+    #         color_db, create = Color.objects.get_or_create(name=color)
+    #         product.colors.add(color_db)
+    # else:
+    #     color = Color.objects.get(name="multicolour")
+    #     product.colors.add(color)
+
+    # if "material" in data["parameters_to_use_in_filters"]:
+    #     for material in data["parameters_to_use_in_filters"]['material']:
+    #         if Material.objects.filter(eng_name=material).exists():
+    #             material_db = Material.objects.get(eng_name=material)
+    #             product.materials.add(material_db)
+    # else:
+    #     material = Material.objects.get(eng_name="other_material")
+    #     product.materials.add(material)
+
+    product.size_table_platform = data['size_tables']
+    # product.size_table_platform = {'tables': {'default_table': {}, 'main_regular_table': {}, 'tables_recommendations': {}, 'main_measurements_table': {}}, 'size_fit': 0, 'main_sizes': [], 'main_size_table_row': 'undefined', 'size_fit_recommendation': 'Данная модель соответствует своему размеру. Мы рекомендуем выбирать <b>Ваш обычный размер</b>'}
+
+
+    # product.size_row_name = data.get('size_row_name', "")
+    # product.extra_name = data.get('extra_name', "")
+    # product.description = data.get('description', "")
+    # product.content_sources = data.get("content_sources")
+
+    # product.has_many_sizes = data.get("many_sizes")
+    # product.has_many_colors = data.get("many_colors")
+    # product.has_many_configurations = data.get("many_configurations")
+
+    product.save(product_slug=product_slug)
+    product.product_units.update(availability=False)
+    for sku in data['skus']:
+        delivery_offers = get_ps_delivery_offers(sku, data)
+        sizes = []
+        tables = []
+
+        if "table_name" in sku and 'filter_sizes' in sku:
+
+            for size in sku["filter_sizes"]:
+                if sku['table_name'] == "undefined":
+                    row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
+                    sizes.append(row.id)
+                else:
+                    table = SizeTable.objects.get(name=sku["table_name"])
+                    tables.append(table.id)
+                    if size == 'undefined' or sku['row_name'] == "undefined":
+                        row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
+                        sizes.append(row.id)
+                    else:
+                        rows = table.rows.all()
+                        for size_row in rows:
+                            if size_row.row[sku["row_name"]] == size:
+                                sizes.append(size_row.id)
+                                break
+        else:
+            row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
+            sizes.append(row.id)
+        # platform_info = unit['platform_info']
+        # poizon_info = platform_info['poizon']
+        # del poizon_info['offers']
+        # platform_info['poizon'] = poizon_info
+
+        # header = poizon_info['header']
+
+        for delivery_offer in delivery_offers:
+            days_min = delivery_offer['days_min'] + sku['delivery_info']['min_platform_delivery']
+            days_max = delivery_offer['days_max'] + sku['delivery_info']['max_platform_delivery']
+
+            view_name = f'{days_min}-{days_max} {sklon_days(int(days_max))}'
+            if days_min == days_max:
+                view_name = f'{days_max} {sklon_days(int(days_max))}'
+
+            delivery = DeliveryType.objects.create(
+                name=delivery_offer['name'],
+                view_name=view_name,
+                days_min=days_min,
+                days_max=days_max,
+                days_max_to_international_warehouse=sku['delivery_info']['max_platform_delivery'],
+                days_min_to_international_warehouse=sku['delivery_info']['min_platform_delivery'],
+                days_min_to_russian_warehouse=delivery_offer['days_min'],
+                days_max_to_russian_warehouse=delivery_offer['days_max'],
+                absolute_insurance=delivery_offer.get('absolute_insurance', 0),
+                decimal_insurance=delivery_offer.get('decimal_insurance', 0),
+                delivery_price_per_kg_in_rub=delivery_offer['delivery_price'],
+
+                # extra_charge=offer['extra_charge'] if offer['extra_charge'] else 0,
+                # poizon_abroad=offer["platform_info"].get('poizon_abroad', False),
+                # commision = delivery_offer.get('comission', 0),
+                delivery_type=delivery_offer['name'])
+
+            if product.product_units.filter(view_size_platform=sku['view_name'],
+                                            delivery_type__delivery_type=delivery_offer['name']).exists():
+                product_unit = product.product_units.get(view_size_platform=sku['view_name'],
+                                                         delivery_type__delivery_type=delivery_offer['name'])
+                product_unit.delivery_type.delete()
+                product_unit.delivery_type = delivery
+                product_unit.original_price = sku['cnyPrice']
+
+
+            else:
+                product_unit = ProductUnit.objects.create(
+                    product=product,
+                    size_platform=sku['size'],
+                    view_size_platform=sku['view_name'],
+                    original_price=sku['cnyPrice'],
+                    start_price=sku['cnyPrice'],
+                    final_price=sku['cnyPrice'],
+                    delivery_type=delivery,
+                    platform=Platform.objects.get_or_create(platform='poizon',
+                                                            site="poizon")[0],
+                    # url=data['platform_info']["poizon"]['url'],
+                    availability=True,
+                    currency=
+                    Currency.objects.get_or_create(name="CNY")[0],
+                    # platform_info=platform_info,
+                    weight_kg=sku['weight'],
+                    # dimensions={"length": unit['length'],
+                    #             "height": unit['height'],
+                    #             "width": unit['width']}
+                    # commission=delivery_offer['commission']
+
+                )
+            product_unit.availability = sku['cnyPrice'] != 0
+            if 'poizon' not in product_unit.platform_info:
+                product_unit.platform_info['poizon'] = {}
+            product_unit.platform_info['poizon']['sku'] = sku['skuId']
+            product_unit.update_history()
+
+            product_unit.size.set(SizeTranslationRows.objects.filter(id__in=sizes))
+            product.sizes.add(*SizeTranslationRows.objects.filter(id__in=sizes))
+            product_unit.size_table.set(SizeTable.objects.filter(id__in=tables))
+
+            product_unit.check_sale()
+
+    product.update_price()
+    t11 = time()
+    sizes_info = {"sizes": [], "filter_logo": ""}
+    sizes_id = set()
+    # for unit in product.product_units.filter(availability=True):
+    #     for s in unit.size.all():
+    #         row = s.table.default_row
+    #         if row.filter_name != "Один размер":
+    #             if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
+    #                 sizes_info['filter_logo'] = row.filter_logo
+    #             if s.id not in sizes_id:
+    #                 sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
+    #                 sizes_id.add(s.id)
+    t12 = time()
+
+    sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))
+    product.available_sizes = sizes_info
+    product.one_update = True
+    product.last_upd = timezone.now()
+    if product.bucket_link is None:
+        product.available_flag = False
+
+    if create:
+        cats = product.categories.values_list("name", flat=True)
+        if "Кеды" in cats or "Кроссовки" in cats:
+            update_score_sneakers(product)
+        else:
+            update_score_clothes(product)
+    product.in_process_update = False
+    if product.is_sale:
+        product.add_sale(product.sale_absolute, product.sale_percentage)
+    product.save()
+    return product
+
+
 
 def add_product_ps_api(data):
     print("Обновление цен")
@@ -48,7 +431,7 @@ def add_product_ps_api(data):
     for sku in skus:
         if sku['cnyPrice'] != 0:
             product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
-            product_unit.update(original_price = sku['cnyPrice'])
+            product_unit.update(original_price=sku['cnyPrice'])
             product_unit.update(availability=True)
             print(sku['cnyPrice'])
             # product_unit.save()
@@ -57,7 +440,6 @@ def add_product_ps_api(data):
         #     product_unit = product_units.filter(platform_info__poizon__sku=sku['skuId'])
         #     # product_unit.update(original_price=sku['cnyPrice'])
         #     product_unit.update(availability=False)
-
 
     if not f:
         products.update(available_flag=f)
@@ -89,17 +471,17 @@ def add_product_ps_api(data):
 
 def add_products_spu_id_api(data):
     print("321")
-    property_ids = []
-    spu_id = 0
-    for product in data:
-        property_ids.append(product['platform_info']['poizon']["propertyId"])
-        spu_id = product['platform_info']['poizon']["spuId"]
-    # print(spu_id)
-    products = Product.objects.filter(spu_id=spu_id)
+    # property_ids = []
+    # spu_id = 0
+    # for product in data:
+    #     property_ids.append(product['platform_info']['poizon']["propertyId"])
+    #     spu_id = product['platform_info']['poizon']["spuId"]
+    # # print(spu_id)
+    # products = Product.objects.filter(spu_id=spu_id)
     # print(list(products.values_list("slug", flat=True)))
-    products.update(available_flag=False)
+    # products.update(available_flag=False)
     for product in data:
-        add_product_api(product)
+        add_product_v2(product)
 
 
 def sklon_days(n):

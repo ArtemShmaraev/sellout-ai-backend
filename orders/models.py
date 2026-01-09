@@ -215,20 +215,20 @@ class Order(models.Model):
     def get_invoice_data(self):
         invoice_data = {}
         items = []
-        for order_unit in self.order_units.all():
-            position = {}
-            # position["code"] = str(order_unit.product.id)
-            position['name'] = order_unit.product.get_full_name()
-            position['price'] = order_unit.final_price
-            # position['unit'] = "piece"
-            position['quantity'] = 1
-            position['sum'] = order_unit.final_price
-            position['tax'] = 'none'
-            # position['tax'] = ''
-            # if order_unit.start_price != order_unit.final_price:
-            #     position['discount_amount'] = order_unit.start_price - order_unit.final_price
-            # position['payment_object'] = "service"
-            items.append(position)
+        # for order_unit in self.order_units.all():
+        #     position = {}
+        #     # position["code"] = str(order_unit.product.id)
+        #     position['name'] = order_unit.product.get_full_name()
+        #     position['price'] = order_unit.final_price
+        #     # position['unit'] = "piece"
+        #     position['quantity'] = 1
+        #     position['sum'] = order_unit.final_price
+        #     position['tax'] = 'none'
+        #     # position['tax'] = ''
+        #     # if order_unit.start_price != order_unit.final_price:
+        #     #     position['discount_amount'] = order_unit.start_price - order_unit.final_price
+        #     # position['payment_object'] = "service"
+        #     items.append(position)
 
         if self.delivery_view_price != 0:
             position = {}

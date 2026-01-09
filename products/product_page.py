@@ -35,6 +35,7 @@ def get_product_page_header(request):
 
     line = request.query_params.getlist('line')
     category = request.query_params.getlist("category")
+    gender = request.query_params.getlist("gender")
     collab = request.query_params.getlist("collab")
     new = request.query_params.get("new")
     sale = request.query_params.get("is_sale")
@@ -89,6 +90,9 @@ def get_product_page_header(request):
         res['desktop']['title'] = title_desktop
         res['desktop']['content'] = ""
         res['desktop']['photo'] = ""
+    # if text_desktop.title == "":
+    #
+    # else:
 
 
     if not header_photos_mobile.exists():

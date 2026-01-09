@@ -363,6 +363,8 @@ class CheckOutView(APIView):
 
                 order.evenly_distribute_discount()
                 order.number = str(order.id * 100 + 4231 + random.randint(1, 10))
+                order.delivery_view_price = 10
+                order.final_amount = 10
                 order.get_invoice_data()
                 order.save()
                 # print(order.invoice_data)

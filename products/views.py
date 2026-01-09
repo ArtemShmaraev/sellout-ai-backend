@@ -34,7 +34,7 @@ from .add_product_api import add_product_api, add_products_spu_id_api, add_produ
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand, Photo, Material
+    RansomRequest, SGInfo, Brand, Photo, Material, Gender
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header, count_queryset
@@ -230,27 +230,29 @@ class SearchBySkuView(APIView):
 
 def view_photo_for_rate(request):
     # Получаем случайное фото из базы данных
-    photo_id = int(request.GET.get('id'))
-    t = -1
+    photo_id = int(request.GET.get('id', 1))
+    t = 1
     next = request.GET.get('next', False)
     if next:
         t = 1
     # last_id = HeaderPhoto.objects.order_by("-id").first().id
     last_id = 17290
-    # first_id = HeaderPhoto.objects.order_by("id").first().id
+    # first_id = HeaderPhoto.objects.xorder_by("id").first().id
     first_id = 15434
+    print(123121)
     # print(last_id, first_id)
-    photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=4).exists()
+    photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=5).exists()
     while not photo:
         photo_id += t
         if photo_id <= first_id:
-            photo = HeaderPhoto.objects.filter(id=first_id, where="product_page", rating=4).exists()
+            photo = HeaderPhoto.objects.filter(id=first_id, where="product_page", rating=5).exists()
             photo_id = first_id
         elif photo_id >= last_id:
-            photo = HeaderPhoto.objects.filter(id=last_id, where="product_page", rating=4).exists()
+            photo = HeaderPhoto.objects.filter(id=last_id, where="product_page", rating=5).exists()
             photo_id = last_id
         else:
-            photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=4).exists()
+            photo = HeaderPhoto.objects.filter(id=photo_id, where="product_page", rating=5).exists()
+        print(photo, photo_id)
     photo = HeaderPhoto.objects.get(id=photo_id)
 
     return render(request, 'view_photo.html', {'photo': photo, "next_photo": photo.id + 1, "last_photo": photo.id - 1})
@@ -260,15 +262,18 @@ def rate_photo(request):
     if request.method == 'POST':
         photo_id = int(request.POST['photo_id'])
         photo = HeaderPhoto.objects.get(id=photo_id)
-        rating = int(request.POST['rating'])
-        photo.rating = rating
+        rating = request.POST['gender']
+        if rating == "М" or rating == "У":
+            photo.genders.add(Gender.objects.get(name="M"))
+        if rating == "Ж" or rating == "У":
+            photo.genders.add(Gender.objects.get(name="F"))
         photo.save()
         # print(photo.rating)
         # Сохраняем оценку в базе данных
         # Здесь должен быть ваш код для сохранения оценки в модели Photo
         if HOST == "sellout.su":
             return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id + 1}")
-        return redirect(f"http://127.0.0.1:8000/api/v1/product/pict?id={photo_id + 1}")
+        return redirect(f"https://{HOST}/api/v1/product/pict?id={photo_id + 1}")
 
 
 class ProductSlugAndPhoto(APIView):

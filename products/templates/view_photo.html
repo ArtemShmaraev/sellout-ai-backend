@@ -61,16 +61,13 @@
 </head>
 <body>
 <img src="{{ photo.photo }}" alt="Фото">
-<p><h2>Оценка: {{ photo.rating }}</h2></p>
 <form method="post" action="{% url 'rate_photo' %}">
     {% csrf_token %}
     <input type="hidden" name="photo_id" value="{{ photo.id }}">
 
-    <button type="submit" name="rating" value="1" style="background-color: #fd5b5b;"><h3>1</h3></button>
-    <button type="submit" name="rating" value="2" style="background-color: #ff924b;"><h3>2</h3></button>
-    <button type="submit" name="rating" value="3" style="background-color: #ffda5c;"><h3>3</h3></button>
-    <button type="submit" name="rating" value="4" style="background-color: #a6f55b;"><h3>4</h3></button>
-    <button type="submit" name="rating" value="5" style="background-color: #4bff4b;"><h3>5</h3></button>
+    <button type="submit" name="gender" value="М" style="background-color: #fd5b5b;"><h3>М</h3></button>
+    <button type="submit" name="gender" value="У" style="background-color: #ff924b;"><h3>У</h3></button>
+    <button type="submit" name="gender" value="Ж" style="background-color: #ffda5c;"><h3>Ж</h3></button>
 
 </form>
 

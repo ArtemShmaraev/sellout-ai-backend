@@ -225,6 +225,7 @@ def get_category_selection(gender):
 
 def get_selection(gender):
     type = randint(1, 100)
+    print(gender)
     if 1 <= type < 15:
         title, queryset, url = get_brand_and_category_selection(gender)
     elif 15 <= type < 25:

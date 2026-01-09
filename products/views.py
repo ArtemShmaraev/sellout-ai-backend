@@ -610,9 +610,11 @@ class MainPageBlocks(APIView):
         res = []
         # 1 подборка
         # 0 фото
+        print(selected_gender)
+        gender = ["M", "F"]
+        if selected_gender in ['M', 'F', 'K']:
+            gender = [selected_gender]
 
-        gender = [selected_gender]
-        print(gender)
         # gender = ["M", "F"]
         if request.user.id:
             # gender = [request.user.gender.name]
@@ -628,7 +630,7 @@ class MainPageBlocks(APIView):
                 for i in range(len(s)):
                     type = s[i]
                     if type == 0:
-                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}_{gender}"  # Уникальный ключ для каждой URL
+                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else ''}_{''.join(gender)}"  # Уникальный ключ для каждой URL
                         cached_data = cache.get(cache_photo_key)
 
                         if cached_data is not None and not new:
@@ -647,7 +649,7 @@ class MainPageBlocks(APIView):
                             res.append(selection)
 
                     elif type == 1:
-                        cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}_{gender}"  # Уникальный ключ для каждой URL
+                        cache_sellection_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}_{''.join(gender)}"  # Уникальный ключ для каждой URL
                         cached_data = cache.get(cache_sellection_key)
 
                         if cached_data is not None and not new:
@@ -664,7 +666,7 @@ class MainPageBlocks(APIView):
 
                         res.append(selection)
                     else:
-                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}_{gender}"  # Уникальный ключ для каждой URL
+                        cache_photo_key = f"main_page:{i}_{page}_{request.user.id if request.user.id else None}_{''.join(gender)}"  # Уникальный ключ для каждой URL
                         cached_data = cache.get(cache_photo_key)
                         if cached_data is not None and not new:
                             photo, last = cached_data
@@ -681,7 +683,7 @@ class MainPageBlocks(APIView):
             return response
         else:
             for page in range(0 if not next else number_page - 1, number_page):
-                anon_cache = f"main_page_anon_{page}_{gender}"
+                anon_cache = f"main_page_anon_{page}_{''.join(gender)}"
                 cached_data = cache.get(anon_cache)
                 if cached_data is not None and not new:
                     res = cached_data

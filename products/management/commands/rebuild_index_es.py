@@ -50,7 +50,7 @@ class Command(BaseCommand):
             scheme="http",  # Используйте "https", если ваш сервер настроен для безопасного соединения
             port=9200,
         )
-        # connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
+        connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index
         if sug_index.exists():
@@ -59,9 +59,9 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS('Creating SUG index...'))
         sug_index.create()
-
-
-
+        #
+        #
+        #
         lines = open("suggest_brand.txt", encoding="utf-8").read().strip().split('\n')
 
         # Создание словаря
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         for line in lines:
             key, *values = line.split(', ')
             dict_brand[key.lower()] = list(values)
-
+        #
         lines = Line.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие')
         for line in lines:
 
@@ -96,12 +96,12 @@ class Command(BaseCommand):
                 if i == 0:
                     line_doc.suggest = [{
                         'input': [slice] + dict_brand.get(line.view_name.lower(), []),
-                        'weight': 70000 - level - dop - length
+                        'weight': 70000 - level - dop - length + Product.objects.filter(line=line).count()
                     }]
                 else:
                     line_doc.suggest.append({
                         'input': [slice],
-                        'weight': max(0, 70000 - level - (i * 10) - dop - length)
+                        'weight': max(0, 70000 - level - (i * 10) - dop - length) + Product.objects.filter(line=line).count()
                     })
             line_doc.save()
 
@@ -118,24 +118,24 @@ class Command(BaseCommand):
                 if i == 0:
                     collab_doc.suggest = [{
                         'input': [slice, collab.name.replace(" x ", " ")],
-                        'weight': 50000 - length
+                        'weight': 50000 - length + Product.objects.filter(collab=collab).count()
                     }]
                 else:
                     collab_doc.suggest.append({
                         'input': [slice],
-                        'weight': max(0, 50000 - (i * 10) - length)
+                        'weight': max(0, 50000 - (i * 10) - length) + Product.objects.filter(collab=collab).count()
                     })
             collab_doc.save()
-
+        #
         cats = open("suggest_category.txt", encoding="utf-8").read().strip().split('\n')
-
-        # Создание словаря
+        #
+        # # Создание словаря
         dict_cat = {}
         for cat in cats:
             key, *values = cat.split(', ')
             dict_cat[key.lower()] = list(values)
-
-
+        #
+        #
         cats = Category.objects.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(name__icontains='Вся')
         for cat in cats:
             cat_doc = SuggestDocument()
@@ -149,12 +149,12 @@ class Command(BaseCommand):
                 if i == 0:
                     cat_doc.suggest = [{
                         'input': [slice, cat.eng_name] + dict_cat.get(cat.name.lower(), []),
-                        'weight': 50000 - length
+                        'weight': 50000 - length + Product.objects.filter(categories=cat).count()
                     }]
                 else:
                     cat_doc.suggest.append({
                         'input': [slice],
-                        'weight': max(50000 - (i * 10) - length, 0)
+                        'weight': max(50000 - (i * 10) - length, 0) + Product.objects.filter(categories=cat).count()
                     })
             cat_doc.save()
 
@@ -176,11 +176,11 @@ class Command(BaseCommand):
 
                     cat_doc.suggest = [{
                         'input': [f"{category.name} {line.view_name}", f"{line.view_name} {category.name}"],
-                        'weight': 40000 - len(f"{category.name} {line.view_name}")
+                        'weight': 40000 - len(f"{category.name} {line.view_name}") + Product.objects.filter(categories=category, line=line).count()
                     }]
                     cat_doc.save()
 
-        f = True
+        f = False
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             # product_index = ProductDocument._index

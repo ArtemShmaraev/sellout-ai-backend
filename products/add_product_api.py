@@ -376,15 +376,15 @@ def add_product_v2(data):
     t11 = time()
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
-    # for unit in product.product_units.filter(availability=True):
-    #     for s in unit.size.all():
-    #         row = s.table.default_row
-    #         if row.filter_name != "Один размер":
-    #             if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
-    #                 sizes_info['filter_logo'] = row.filter_logo
-    #             if s.id not in sizes_id:
-    #                 sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
-    #                 sizes_id.add(s.id)
+    for unit in product.product_units.filter(availability=True):
+        for s in unit.size.all():
+            row = s.table.default_row
+            if row.filter_name != "Один размер":
+                if sizes_info['filter_logo'] == "" and row.filter_logo not in ['SIZE', "INT"]:
+                    sizes_info['filter_logo'] = row.filter_logo
+                if s.id not in sizes_id:
+                    sizes_info['sizes'].append([s.id, f"{s.row[row.filter_name]}"])
+                    sizes_id.add(s.id)
     t12 = time()
 
     sizes_info['sizes'] = list(map(lambda x: x[1], sorted(sizes_info['sizes'])))

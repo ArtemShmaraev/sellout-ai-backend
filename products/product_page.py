@@ -96,6 +96,7 @@ def  get_product_page_header(request):
     if text_desktop.title == "sellout":
         title_desktop = get_title_for_products_page(category, line, collab)
         res['desktop']['title'] = title_desktop
+
         if title_desktop != "":
             if gender == ['M']:
                 title_desktop += " для мужчин"

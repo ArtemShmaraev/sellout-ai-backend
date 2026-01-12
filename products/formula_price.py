@@ -7,6 +7,7 @@ def round_by_step(value, step=50):
 
 
 CURRENCY_RATE_CNY = 13.8
+
 COMMISSION_FEE_ABSOLUTE = 500
 COMMISSION_FEE_RELATIVE_DECIMAL = 1
 REGULAR_SHIPPING_KG_COST = 900
@@ -137,10 +138,14 @@ def formula_price(product, unit, user_status):
     original_price = unit.original_price
     weight = unit.weight if unit.weight != 0 else 1
     delivery = unit.delivery_type
+
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
     delivery_decimal_insurance = delivery.decimal_insurance
     delivery_absolute_insurance = delivery.absolute_insurance
     delivery_extra_charge = delivery.extra_charge
+    delivery_comission = delivery.comission
+
+
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
     categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
     poizon_abroad = unit.delivery_type.poizon_abroad
@@ -151,7 +156,7 @@ def formula_price(product, unit, user_status):
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
                                                                                        delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
+                + delivery_absolute_insurance) + delivery_comission
         cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
                                  * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL + COMMISSION_FEE_ABSOLUTE)
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
@@ -165,7 +170,7 @@ def formula_price(product, unit, user_status):
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
                                                                                        delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
+                + delivery_absolute_insurance) + delivery_comission
 
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
@@ -186,7 +191,7 @@ def formula_price(product, unit, user_status):
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
                                                                                        delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
+                + delivery_absolute_insurance) + delivery_comission
 
         cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + COMMISSION_FEE_ABSOLUTE
 
@@ -237,14 +242,23 @@ def formula_price(product, unit, user_status):
         price_without_sale = round_by_step((unit.final_price / percentage) + 10, step=100) - 10
     elif product.sale_absolute:
         price_without_sale = unit.final_price + product.sale_absolute
+    elif unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
+        if unit.start_price > (round_total_price * 1.05):
+            price_without_sale = unit.start_price
+            unit.is_sale = True
+            unit.save()
+            product.is_sale = True
 
     # if unit.is_sale:
     #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
-    if unit.final_price > round_total_price:
+    elif unit.final_price > (round_total_price * 1.05) and status_name not in ["Friends & Family", 'Privileged']:
         # print("Цена дешевле")
         price_without_sale = unit.final_price
         unit.is_sale = True
         unit.save()
         product.is_sale = True
+
+    if status_name in ["Friends & Family", 'Privileged']:
+        price_without_sale = unit.start_price
     return {"final_price": round_total_price, "start_price": price_without_sale, "total_profit": round(total_profit),
             "bonus": bonus, "max_bonus": max_bonus_for_product}

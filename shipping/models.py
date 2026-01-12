@@ -29,7 +29,7 @@ class DeliveryType(models.Model):
     extra_charge = models.IntegerField(default=0)
     poizon_abroad = models.BooleanField(default=False)
     delivery_type = models.CharField(max_length=64, default="standard")
-    # commission = models.IntegerField(default=0)
+    commission = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name

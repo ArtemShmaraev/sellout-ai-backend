@@ -325,7 +325,7 @@ def add_product_v2(data):
 
                 # extra_charge=offer['extra_charge'] if offer['extra_charge'] else 0,
                 # poizon_abroad=offer["platform_info"].get('poizon_abroad', False),
-                # commision = delivery_offer.get('comission', 0),
+                commision = delivery_offer.get('comission', 0),
                 delivery_type=delivery_offer['name'])
 
             if product.product_units.filter(view_size_platform=sku['view_name'],

@@ -222,6 +222,7 @@ def filter_products(request):
     collab = params.getlist("collab")
     available = params.get("available")
     custom = params.get("custom")
+    collection = params.getlist('collection')
 
     category_id = request.query_params.getlist('category_id')
     category_name = request.query_params.getlist('category_name')
@@ -268,6 +269,8 @@ def filter_products(request):
             
     if material:
         queryset = queryset.filter(materials__eng_name__in=material)
+    if collection:
+        queryset = queryset.filter(collection__query_naem__in=collection)
     if brand:
         for brand_name in brand:
             queryset = queryset.filter(brands__query_name=brand_name)

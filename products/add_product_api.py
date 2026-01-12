@@ -126,12 +126,12 @@ def add_product_v2(data):
     property_id = data["propertyId"]
     manufacturer_sku = data.get("formatted_manufacturer_sku", "")
 
-    print(spu_id)
-    print(property_id)
-    print(manufacturer_sku)
+    # print(spu_id)
+    # print(property_id)
+    # print(manufacturer_sku)
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
-    print(product.slug)
+    # print(product.slug)
     product_slug = ""
     if not create:
         print("go")
@@ -374,6 +374,10 @@ def add_product_v2(data):
 
     product.update_price()
     t11 = time()
+    product.check_sale()
+    if product.is_sale:
+        product.add_sale(product.sale_absolute, product.sale_percentage)
+
     sizes_info = {"sizes": [], "filter_logo": ""}
     sizes_id = set()
     for unit in product.product_units.filter(availability=True):
@@ -401,8 +405,8 @@ def add_product_v2(data):
         else:
             update_score_clothes(product)
     product.in_process_update = False
-    if product.is_sale:
-        product.add_sale(product.sale_absolute, product.sale_percentage)
+
+
     product.save()
     return product
 

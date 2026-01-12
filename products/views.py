@@ -625,7 +625,13 @@ class MainPageBlocks(APIView):
             # gender = [request.user.gender.name]
             for page in range(0 if not next else number_page - 1, number_page):
                 if page == 0:
-                    s = [2, 1, 0, 1, 1, 0]
+                    if "M" in gender:
+                        file_path = 'temp_main_men_withproducts.json'
+                    else:
+                        file_path = 'temp_main_women_withproducts.json'
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        json_data = json.load(file)
+                        return Response(json_data)
                 else:
                     s = [0, 1, 0, 1, 1, 0]
                     # s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
@@ -750,7 +756,7 @@ class ProductSimilarView(APIView):
                 if similar[0].exists():
                     res.append({"name": "Похожие товары",
                                 "products": ProductMainPageSerializer(similar[0], many=True, context=context).data})
-            print("similar", time() - t, product.id)
+            # print("similar", time() - t, product.id)
             return Response(res)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

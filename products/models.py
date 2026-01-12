@@ -121,7 +121,7 @@ class Tag(models.Model):
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
-    is_collab = models.BooleanField(default=False)
+    # is_collab = models.BooleanField(default=False)
     in_filter = models.BooleanField(default=False)
     query_name = models.CharField(max_length=255, default="")
 
@@ -225,6 +225,7 @@ class Product(models.Model):
     # collections = models.ManyToManyField("Collection", related_name='products', blank=True)
     tags = models.ManyToManyField("Tag", related_name='products',
                                   blank=True)
+    collections = models.ManyToManyField("Collection", related_name='products', blank=True)
 
     model = models.CharField(max_length=255, null=False, blank=True)
     colorway = models.CharField(max_length=255, null=False, blank=True)
@@ -457,6 +458,34 @@ class Product(models.Model):
     #
     #         # Добавьте индексы для остальных полей с db_index=True
     #     ]
+
+    def check_sale(self):
+        def round_by_step(value, step=50):
+            return math.ceil(value / step) * step
+        min_price = 0
+        min_price_unit = ""
+        is_sale = False
+        max_procent = 0
+        for product_unit in self.product_units.filter(availability=True):
+            if product_unit.start_price > product_unit.final_price:
+                max_procent = max(max_procent, round((1 - (product_unit.final_price/product_unit.start_price)) * 100))
+        if max_procent != 0:
+            self.is_sale = True
+            for product_unit in self.product_units.filter(availability=True):
+                if product_unit.start_price == product_unit.final_price:
+                    percentage = round(((100 - max_procent) / 100), 2)
+                    price_without_sale = round_by_step((product_unit.final_price / percentage) + 10, step=100) - 10
+                    product_unit.start_price = price_without_sale
+                    product_unit.is_sale = True
+        else:
+            pu = self.product_units.filter(availability=True)
+            pu.update(is_sale=False)
+            self.is_sale = 0
+            self.sale_absolute = 0
+            self.sale_percentage = 0
+
+
+
 
     def get_full_name(self):
         return f"{self.brands.first().name if self.collab is None else self.collab.name} {self.model} {self.colorway}"

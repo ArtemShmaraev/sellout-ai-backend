@@ -143,7 +143,7 @@ def formula_price(product, unit, user_status):
     delivery_decimal_insurance = delivery.decimal_insurance
     delivery_absolute_insurance = delivery.absolute_insurance
     delivery_extra_charge = delivery.extra_charge
-    delivery_comission = delivery.comission
+    delivery_comission = delivery.commission
 
 
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]

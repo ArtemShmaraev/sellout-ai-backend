@@ -696,13 +696,21 @@ class MainPageBlocks(APIView):
             return response
         else:
             for page in range(0 if not next else number_page - 1, number_page):
-                anon_cache = f"main_page_anon_{page}_{''.join(gender)}"
+                anon_cache = f"main_page_anon_{page}_{''.join(gender)}_"
                 cached_data = cache.get(anon_cache)
                 if cached_data is not None and not new:
                     res = cached_data
                 else:
                     if page == 0:
-                        s = [2, 1, 0, 1, 1, 0, 0]
+                        if "M" in gender:
+                            file_path = 'temp_main_men_withproducts.json'
+                        else:
+                            file_path = 'temp_main_women_withproducts.json'
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            json_data = json.load(file)
+                            res.extend(json_data)
+                        s = []
+
                     else:
                         s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
                     t1 = time()
@@ -730,7 +738,7 @@ class MainPageBlocks(APIView):
                             photo, last = get_sellout_photo_text(last)
                             res.append(photo)
                 cache.set(anon_cache, res, CACHE_TIME)
-            print(res)
+            # print(res)
             response = Response(res)
             return response
 

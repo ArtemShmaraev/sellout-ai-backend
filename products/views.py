@@ -631,7 +631,8 @@ class MainPageBlocks(APIView):
                         file_path = 'temp_main_women_withproducts.json'
                     with open(file_path, 'r', encoding='utf-8') as file:
                         json_data = json.load(file)
-                        return Response(json_data)
+                        res.extend(json_data)
+
                 else:
                     s = [0, 1, 0, 1, 1, 0]
                     # s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]

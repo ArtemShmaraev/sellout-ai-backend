@@ -120,8 +120,6 @@ def add_product_v2(data):
             break
     if not f:
         return "Нет цен"
-
-
     spu_id = data['spuId']
     property_id = data["propertyId"]
     manufacturer_sku = data.get("formatted_manufacturer_sku", "")
@@ -135,11 +133,11 @@ def add_product_v2(data):
     product_slug = ""
     if not create:
         print("go")
-        time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        if product.last_upd >= time_threshold or product.in_process_update:
-            product.available_flag = True
-            product.save()
-            return "Товар актуальный))"
+        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        # if product.last_upd >= time_threshold or product.in_process_update:
+        #     product.available_flag = True
+        #     product.save()
+        #     return "Товар актуальный))"
         # product.delete()
         # return 1
         product.clear_all_fields()
@@ -325,7 +323,7 @@ def add_product_v2(data):
 
                 # extra_charge=offer['extra_charge'] if offer['extra_charge'] else 0,
                 # poizon_abroad=offer["platform_info"].get('poizon_abroad', False),
-                commision = delivery_offer.get('comission', 0),
+                commission = delivery_offer.get('comission', 0),
                 delivery_type=delivery_offer['name'])
 
             if product.product_units.filter(view_size_platform=sku['view_name'],

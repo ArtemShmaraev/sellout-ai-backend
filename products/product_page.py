@@ -270,7 +270,7 @@ def filter_products(request):
     if material:
         queryset = queryset.filter(materials__eng_name__in=material)
     if collection:
-        queryset = queryset.filter(collections__query_naem__in=collection)
+        queryset = queryset.filter(collections__query_name__in=collection)
     if brand:
         for brand_name in brand:
             queryset = queryset.filter(brands__query_name=brand_name)

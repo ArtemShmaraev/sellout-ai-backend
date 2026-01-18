@@ -13,22 +13,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Asics/Asics Gel-Lyte/Group 378.png",
       "title": "sellout",
       "content": "У нас собран огромный ассортимент брендовой одежды, обуви и аксессуаров — от звездных коллабораций, таких как\n<a href='/products?line=yeezy'>adidas Yeezy</a>,\n<a href='/products?collab=nike_x_off-white'>Nike x Off-White</a>,\n<a href='/products?collab=nike_x_union'>Nike x Union</a>, до классических моделей, включая\n<a href='/products?line=air_jordan_1'>Air Jordan 1</a>,\n<a href='/products?line=nike_air_force_1'>Air Force 1</a>,\n<a href='/products?line=nike_dunk'>Nike Dunk</a> и\n<a href='/products?line=yeezy'>adidas Yeezy</a>. Мы предлагаем разнообразие стилей: как премиум бренды, так и стильные изделия по более доступным ценам. Откройте для себя новые имена, коллекции и вдохновение. У нас есть всё: от труднодоступных релизов\n<a href='/products?line=nike'>Nike</a>,\n<a href='/products?line=jordan'>Air Jordan</a> и\n<a href='/products?line=adidas'>adidas</a> и люксовых товаров от\n<a href='/products?line=louis_vuitton'>Louis Vuitton</a> и\n<a href='/products?line=ferragamo'>Ferragamo</a> до повседневных кроссовок от\n<a href='/products?line=asics'>Asics</a> и\n<a href='/products?line=puma'>Puma</a>, а также многое другое.",
-      "url": "",
+      "url": "&gender=M",
       "button": "Все товары"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Asics/Asics Gel-Lyte/Group 147.png",
       "title": "sellout",
       "content": "Мы предлагаем разнообразие стилей: как премиум бренды, так и стильные изделия по более доступным ценам. Откройте для себя новые имена, коллекции и вдохновение. У нас есть всё: от труднодоступных релизов\n<a href='/products?line=nike'>Nike</a>,\n<a href='/products?line=jordan'>Air Jordan</a> и\n<a href='/products?line=adidas'>adidas</a> и люксовых товаров от\n<a href='/products?line=louis_vuitton'>Louis Vuitton</a> и\n<a href='/products?line=ferragamo'>Ferragamo</a> до повседневных кроссовок от\n<a href='/products?line=asics'>Asics</a> и\n<a href='/products?line=puma'>Puma</a>, а также многое другое.",
-      "url": "",
+      "url": "&gender=M",
       "button": "Все товары"
     }
   },
   {
     "type": "selection",
     "title": "Новинки",
-    "url": "new=true",
-    "productsAmount": 2040,
+    "url": "new=true&gender=M",
+    "productsAmount": 1320,
     "products": [
       {
         "id": 454044,
@@ -1183,7 +1183,7 @@
     "fullWidthImage": {
       "desktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/saleDesk.png",
       "mobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/saleMob.png",
-      "url": "/products?is_sale=is_sale"
+      "url": "/products?is_sale=is_sale&gender=M"
     },
     "imagesInRowAmount": 0,
     "imagesInRow": [],
@@ -1195,8 +1195,8 @@
   {
     "type": "selection",
     "title": "Скидки",
-    "url": "is_sale=is_sale",
-    "productsAmount": 1260,
+    "url": "is_sale=is_sale&gender=M",
+    "productsAmount": 360,
     "products": [
       {
         "id": 172260,
@@ -2287,8 +2287,8 @@
   {
     "type": "selection",
     "title": "Рекомендации",
-    "url": "recommendations=true",
-    "productsAmount": 1800,
+    "url": "recommendations=true&gender=M",
+    "productsAmount": 1020,
     "products": [
       {
         "id": 400980,
@@ -4166,21 +4166,21 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Jordan/Air Jordan 1/Air Jordan 1 High/Group 454.png",
       "title": "Air Jordan 1",
       "content": "Air Jordan 1 - это знаменитость среди кроссовок, воплощение стиля и спортивного наследия. Дебютировав в 1985 году, они стали символом инноваций и баскетбольной культуры. Air Jordan 1 отличается узнаваемым дизайном, включая характерные элементы бренда Jordan, и призван переписать правила обуви. Эти кроссовки также предоставляют множество вариантов цветов, позволяя выразить индивидуальный стиль. Air Jordan 1 - это не только обувь, но и икона, которая отражает дерзость, смелость и бесконечное вдохновение в мире моды и спорта.",
-      "url": "line=air_jordan_1",
+      "url": "line=air_jordan_1&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Jordan/Air Jordan 1/Air Jordan 1 High/Group 254.png",
       "title": "Air Jordan 1",
       "content": "Air Jordan 1 - это знаменитость среди кроссовок, воплощение стиля и спортивного наследия. Дебютировав в 1985 году, они стали символом инноваций и баскетбольной культуры. Air Jordan 1 отличается узнаваемым дизайном, включая характерные элементы бренда Jordan, и призван переписать правила обуви. Эти кроссовки также предоставляют множество вариантов цветов, позволяя выразить индивидуальный стиль. Air Jordan 1 - это не только обувь, но и икона, которая отражает дерзость, смелость и бесконечное вдохновение в мире моды и спорта.",
-      "url": "line=air_jordan_1",
+      "url": "line=air_jordan_1&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Air Jordan 1",
-    "url": "line=nike_vapormax",
+    "url": "line=nike_vapormax&gender=M",
     "productsAmount": 420,
     "products": [
       {
@@ -5613,7 +5613,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20291.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20291.png",
-        "url": "/products?category=outerwear&line=palm_angels",
+        "url": "/products?category=outerwear&line=palm_angels&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Palm Angels"
@@ -5621,7 +5621,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20289.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20289.png",
-        "url": "/products?category=outerwear&line=stone_island",
+        "url": "/products?category=outerwear&line=stone_island&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Stone Island"
@@ -5629,7 +5629,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20288.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20288.png",
-        "url": "/products?category=outerwear&line=stüssy",
+        "url": "/products?category=outerwear&line=stüssy&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Stüssy"
@@ -5637,7 +5637,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20290.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20290.png",
-        "url": "/products?category=outerwear&line=the_north_face",
+        "url": "/products?category=outerwear&line=the_north_face&gender=M",
         "title": "",
         "subTitle": "",
         "text": "The North Face"
@@ -5690,22 +5690,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров коллаборации/Nike x Travis Scott/Group 1006.png",
       "title": "Nike x Travis Scott",
       "content": "Nike x Travis Scott - это символ симбиоза музыки и моды. Уникальное сотрудничество рэпера Трэвиса Скотта и бренда Nike привело к созданию коллекций, в которых звездный стиль соединился с креативностью спортивных трендов. Знаковые модели, такие как Air Jordan 1 и Nike SB Dunk, обрели новое измерение благодаря дизайну, вдохновленному музыкальными корнями Скотта и его индивидуальностью. Лимитированные выпуски сразу становятся объектами желания и коллекционными сокровищами, что делает каждую коллаборацию несравненной и запоминающейся.",
-      "url": "collab=nike_x_travis_scott",
+      "url": "collab=nike_x_travis_scott&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров коллаборации/Nike x Travis Scott/Group 780.png",
       "title": "Nike x Travis Scott",
       "content": "Nike x Travis Scott - это символ симбиоза музыки и моды. Уникальное сотрудничество рэпера Трэвиса Скотта и бренда Nike привело к созданию коллекций, в которых звездный стиль соединился с креативностью спортивных трендов. Знаковые модели, такие как Air Jordan 1 и Nike SB Dunk, обрели новое измерение благодаря дизайну, вдохновленному музыкальными корнями Скотта и его индивидуальностью. Лимитированные выпуски сразу становятся объектами желания и коллекционными сокровищами, что делает каждую коллаборацию несравненной и запоминающейся.",
-      "url": "collab=nike_x_travis_scott",
+      "url": "collab=nike_x_travis_scott&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike x Travis Scott",
-    "url": "collab=nike_x_travis_scott",
-    "productsAmount": 120,
+    "url": "collab=nike_x_travis_scott&gender=M",
+    "productsAmount": 60,
     "products": [
       {
         "id": 799584,
@@ -6723,8 +6723,8 @@
   {
     "type": "selection",
     "title": "Nocta, Travis, FOG, Stüssy",
-    "url": "collection=nocta,_travis,_fog,_stüssy",
-    "productsAmount": 60,
+    "url": "collection=nocta,_travis,_fog,_stüssy&gender=M",
+    "productsAmount": 3600,
     "products": [
       {
         "id": 85691,
@@ -8418,22 +8418,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/adidas/adidas Yeezy/adidas Yeezy 350/Group 285.png",
       "title": "adidas Yeezy",
       "content": "adidas Yeezy - линейка, созданная в сотрудничестве между брендом adidas и американским рэпером и дизайнером Канье Уэстом. Эта коллаборация стала настоящим феноменом в мире моды.\nЛинейка adidas Yeezy представляет собой стильные и современные кроссовки, которые сочетают уличный стиль с невероятным комфортом и функциональностью.\nКоллаборации adidas Yeezy с Канье Уэстом привлекли огромное внимание модной индустрии и поклонников обуви. Каждая новая модель становится сенсацией и быстро разлетается в продаже.",
-      "url": "collab=adidas_yeezy",
+      "url": "collab=adidas_yeezy&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/adidas/adidas Yeezy/adidas Yeezy 350/Group 52.png",
       "title": "adidas Yeezy",
       "content": "adidas Yeezy - линейка, созданная в сотрудничестве между брендом adidas и американским рэпером и дизайнером Канье Уэстом. Эта коллаборация стала настоящим феноменом в мире моды.\nЛинейка adidas Yeezy представляет собой стильные и современные кроссовки, которые сочетают уличный стиль с невероятным комфортом и функциональностью.\nКоллаборации adidas Yeezy с Канье Уэстом привлекли огромное внимание модной индустрии и поклонников обуви. Каждая новая модель становится сенсацией и быстро разлетается в продаже.",
-      "url": "collab=adidas_yeezy",
+      "url": "collab=adidas_yeezy&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "adidas Yeezy",
-    "url": "collab=adidas_yeezy",
-    "productsAmount": 360,
+    "url": "collab=adidas_yeezy&gender=M",
+    "productsAmount": 180,
     "products": [
       {
         "id": 83896,
@@ -10084,7 +10084,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20388.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20388.png",
-        "url": "/products?line=off-white",
+        "url": "/products?line=off-white&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Off-White"
@@ -10092,7 +10092,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20389.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20389.png",
-        "url": "/products?line=dior",
+        "url": "/products?line=dior&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Dior"
@@ -10100,7 +10100,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20386.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20386.png",
-        "url": "/products?line=louis_vuitton",
+        "url": "/products?line=louis_vuitton&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Louis Vuitton"
@@ -10108,7 +10108,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2043.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2043.png",
-        "url": "/products?line=prada",
+        "url": "/products?line=prada&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Prada"
@@ -10122,8 +10122,8 @@
   {
     "type": "selection",
     "title": "Haute couture",
-    "url": "line=alexander_mcqueen&line=ami_paris&line=balenciaga&line=balmain&line=bottega_veneta&line=brioni&line=brunello_cucinelli&line=burberry&line=celine&line=chanel&line=dior&line=ermenegildo_zegna&line=etro&line=fendi&line=ferragamo&line=gucci&line=hermes&line=louis_vuitton&line=maison_margiela&line=maison_kitsune&line=marni&line=missoni&line=miu_miu&line=moncler&line=moschino&line=off-white&line=palm_angels&line=prada&line=raf_simons&line=rick_owens&line=saint_laurent&line=tom_ford&line=tod%27s",
-    "productsAmount": 93540,
+    "url": "line=alexander_mcqueen&line=ami_paris&line=balenciaga&line=balmain&line=bottega_veneta&line=brioni&line=brunello_cucinelli&line=burberry&line=celine&line=chanel&line=dior&line=ermenegildo_zegna&line=etro&line=fendi&line=ferragamo&line=gucci&line=hermes&line=louis_vuitton&line=maison_margiela&line=maison_kitsune&line=marni&line=missoni&line=miu_miu&line=moncler&line=moschino&line=off-white&line=palm_angels&line=prada&line=raf_simons&line=rick_owens&line=saint_laurent&line=tom_ford&line=tod%27s&gender=M",
+    "productsAmount": 40020,
     "products": [
       {
         "id": 726892,
@@ -11486,22 +11486,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров коллаборации/Nike x Off-White/Group 919.png",
       "title": "Nike x Off-White",
       "content": "Сотрудничество между Nike и Off-White - это сочетание спортивной элегантности и авангардного дизайна. Вирджил Абло, основатель модного бренда Off-White, вдохновлен деконструкцией и переосмыслением классических моделей Nike. Изысканный внешний вид и высокое качество объединяются в таких иконических моделях, как Air Jordan 1, Air Presto и Air Force 1, обретая уникальные детали. Встреча моды и уличного стиля достигает своего апогея в этой коллаборации, которая восхищает поклонников моды и коллекционеров, оставаясь объектом желания и источником вдохновения. Каждая позиция из коллаборации является лимитированной и труднодоступной, что делает Ваш образ уникальным.",
-      "url": "collab=nike_x_off-white",
+      "url": "collab=nike_x_off-white&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров коллаборации/Nike x Off-White/Group 640.png",
       "title": "Nike x Off-White",
       "content": "Сотрудничество между Nike и Off-White - это сочетание спортивной элегантности и авангардного дизайна. Вирджил Абло, основатель модного бренда Off-White, вдохновлен деконструкцией и переосмыслением классических моделей Nike. Изысканный внешний вид и высокое качество объединяются в таких иконических моделях, как Air Jordan 1, Air Presto и Air Force 1, обретая уникальные детали. Встреча моды и уличного стиля достигает своего апогея в этой коллаборации, которая восхищает поклонников моды и коллекционеров, оставаясь объектом желания и источником вдохновения. Каждая позиция из коллаборации является лимитированной и труднодоступной, что делает Ваш образ уникальным.",
-      "url": "collab=nike_x_off-white",
+      "url": "collab=nike_x_off-white&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike x Off-White",
-    "url": "collab=nike_x_off-white",
-    "productsAmount": 180,
+    "url": "collab=nike_x_off-white&gender=M",
+    "productsAmount": 120,
     "products": [
       {
         "id": 58516,
@@ -13061,7 +13061,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2080.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2080.png",
-        "url": "/products?line=nike_kobe_bryant",
+        "url": "/products?line=nike_kobe_bryant&gender=M",
         "title": "Nike Kobe Bryant",
         "subTitle": "500 моделей",
         "text": "От 16'000₽"
@@ -13069,7 +13069,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2079.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2079.png",
-        "url": "/products?line=nike_kd_(kevin_durant)",
+        "url": "/products?line=nike_kd_(kevin_durant)&gender=M",
         "title": "Nike Kevin Durant",
         "subTitle": "500 моделей",
         "text": "От 8'000₽"
@@ -13077,7 +13077,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2078.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2078.png",
-        "url": "/products?line=nike_kyrie_irving",
+        "url": "/products?line=nike_kyrie_irving&gender=M",
         "title": "Nike Kyrie Irving",
         "subTitle": "500 моделей",
         "text": "От 8'000₽"
@@ -13085,7 +13085,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2077.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/Group%2077.png",
-        "url": "/products?line=nike_lebron_james",
+        "url": "/products?line=nike_lebron_james&gender=M",
         "title": "Nike LeBron James",
         "subTitle": "800 моделей",
         "text": "От 7'000₽"
@@ -13099,8 +13099,8 @@
   {
     "type": "selection",
     "title": "Баскетбольные кроссовки",
-    "url": "category=basketball_sneakers",
-    "productsAmount": 9840,
+    "url": "category=basketball_sneakers&gender=M",
+    "productsAmount": 7740,
     "products": [
       {
         "id": 532049,
@@ -14668,7 +14668,7 @@
   {
     "type": "selection",
     "title": "Supreme",
-    "url": "line=supreme",
+    "url": "line=supreme&gender=M",
     "productsAmount": 5520,
     "products": [
       {
@@ -15609,22 +15609,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Jordan/Air Jordan 4/Group 843.png",
       "title": "Air Jordan 4",
       "content": "Air Jordan 4 - это воплощение стиля и инноваций в мире кроссовок, представленное в 1989 году. Они стали символом эффективности и универсальности на баскетбольных площадках и за их пределами. Air Jordan 4 отличаются уникальным дизайном с характерными деталями, такими как сетчатая панель и замшевые накладки. Эти кроссовки также предоставляют множество вариантов цветов, позволяя выразить собственный стиль. Air Jordan 4 - это не только обувь, но и символ инноваций и выдающейся производительности, который сочетает в себе страсть к спорту и любовь к моде.",
-      "url": "line=air_jordan_4",
+      "url": "line=air_jordan_4&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Jordan/Air Jordan 4/Group 498.png",
       "title": "Air Jordan 4",
       "content": "Air Jordan 4 - это воплощение стиля и инноваций в мире кроссовок, представленное в 1989 году. Они стали символом эффективности и универсальности на баскетбольных площадках и за их пределами. Air Jordan 4 отличаются уникальным дизайном с характерными деталями, такими как сетчатая панель и замшевые накладки. Эти кроссовки также предоставляют множество вариантов цветов, позволяя выразить собственный стиль. Air Jordan 4 - это не только обувь, но и символ инноваций и выдающейся производительности, который сочетает в себе страсть к спорту и любовь к моде.",
-      "url": "line=air_jordan_4",
+      "url": "line=air_jordan_4&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Air Jordan 4",
-    "url": "line=air_jordan_4",
-    "productsAmount": 180,
+    "url": "line=air_jordan_4&gender=M",
+    "productsAmount": 120,
     "products": [
       {
         "id": 805553,
@@ -16642,21 +16642,21 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/New Balance/New Balance 1906R/Group 332.png",
       "title": "New Balance 1906R",
       "content": "New Balance 1906R - это воплощение классики и современных тенденций в мире кроссовок. Эта модель отличается уникальным дизайном и функциональностью, подчеркивающими стиль и производительность. Кроссовки New Balance 1906R сочетают в себе высокое качество и элегантность, делая их идеальным выбором для разнообразных повседневных образов.",
-      "url": "line=new_balance_1906r",
+      "url": "line=new_balance_1906r&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/New Balance/New Balance 1906R/Group 104.png",
       "title": "New Balance 1906R",
       "content": "New Balance 1906R - это воплощение классики и современных тенденций в мире кроссовок. Эта модель отличается уникальным дизайном и функциональностью, подчеркивающими стиль и производительность. Кроссовки New Balance 1906R сочетают в себе высокое качество и элегантность, делая их идеальным выбором для разнообразных повседневных образов.",
-      "url": "line=new_balance_1906r",
+      "url": "line=new_balance_1906r&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "New Balance 1906R",
-    "url": "line=new_balance_1906r",
+    "url": "line=new_balance_1906r&gender=M",
     "productsAmount": 60,
     "products": [
       {
@@ -17854,7 +17854,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20873.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20873.png",
-        "url": "/products?line=nike&category=boots&category=winter_sneakers_and_shoes",
+        "url": "/products?line=nike&category=boots&category=winter_sneakers_and_shoes&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Nike"
@@ -17862,7 +17862,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20308.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20308.png",
-        "url": "/products?line=yeezy&line=adidas_yeezy&category=boots&category=winter_sneakers_and_shoes",
+        "url": "/products?line=yeezy&line=adidas_yeezy&category=boots&category=winter_sneakers_and_shoes&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Yeezy"
@@ -17870,7 +17870,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20307.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20307.png",
-        "url": "/products?line=timberland&category=boots&category=winter_sneakers_and_shoes",
+        "url": "/products?line=timberland&category=boots&category=winter_sneakers_and_shoes&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Timberland"
@@ -17878,7 +17878,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20301.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20301.png",
-        "url": "/products?line=dr.martens&category=boots&category=winter_sneakers_and_shoes",
+        "url": "/products?line=dr.martens&category=boots&category=winter_sneakers_and_shoes&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Dr. Martens"
@@ -17925,21 +17925,21 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров коллаборации/Nike x A Ma Maniére/Group 1026.png",
       "title": "Nike x A Ma Maniére",
       "content": "Nike x A Ma Maniére - роскошь и утонченность в спортивной моде. Сотрудничество с бутиком A Ma Maniére приносит высококлассный стиль в мир Nike. Коллекции, такие как Nike x A Ma Maniére Air Force 1, сочетают минимализм и утонченность, создавая идеальный баланс между модой и спортом. Эта коллаборация призвана подчеркнуть элегантность и изысканность в уличной культуре, делая каждую модель предметом желания.",
-      "url": "collab=nike_x_a_ma_maniére",
+      "url": "collab=nike_x_a_ma_maniére&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров коллаборации/Nike x A Ma Maniére/Group 794.png",
       "title": "Nike x A Ma Maniére",
       "content": "Nike x A Ma Maniére - роскошь и утонченность в спортивной моде. Сотрудничество с бутиком A Ma Maniére приносит высококлассный стиль в мир Nike. Коллекции, такие как Nike x A Ma Maniére Air Force 1, сочетают минимализм и утонченность, создавая идеальный баланс между модой и спортом. Эта коллаборация призвана подчеркнуть элегантность и изысканность в уличной культуре, делая каждую модель предметом желания.",
-      "url": "collab=nike_x_a_ma_maniére",
+      "url": "collab=nike_x_a_ma_maniére&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike x A Ma Maniére",
-    "url": "collab=nike_x_a_ma_maniére",
+    "url": "collab=nike_x_a_ma_maniére&gender=M",
     "productsAmount": 60,
     "products": [
       {
@@ -19234,22 +19234,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Nike/Nike Dunk/Nike Dunk High/Group 848.png",
       "title": "Nike Dunk",
       "content": "Nike Dunk - икона стиля и бескомпромиссности в мире кроссовок. Эта модель представляет классический силуэт, который стал символом городской культуры и уличной моды. Nike Dunk сочетает в себе современные материалы и уникальный дизайн, позволяя выразить свой стиль и индивидуальность.",
-      "url": "line=nike_dunk",
+      "url": "line=nike_dunk&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Nike/Nike Dunk/Nike Dunk High/Group 561.png",
       "title": "Nike Dunk",
       "content": "Nike Dunk - икона стиля и бескомпромиссности в мире кроссовок. Эта модель представляет классический силуэт, который стал символом городской культуры и уличной моды. Nike Dunk сочетает в себе современные материалы и уникальный дизайн, позволяя выразить свой стиль и индивидуальность.",
-      "url": "line=nike_dunk",
+      "url": "line=nike_dunk&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike Dunk",
-    "url": "line=nike_dunk",
-    "productsAmount": 1320,
+    "url": "line=nike_dunk&gender=M",
+    "productsAmount": 1080,
     "products": [
       {
         "id": 262086,
@@ -20418,7 +20418,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20315.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20315.png",
-        "url": "/products?line=adidas_yeezy_slide",
+        "url": "/products?line=adidas_yeezy_slide&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Yeezy Slide"
@@ -20426,7 +20426,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20314.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20314.png",
-        "url": "/products?line=adidas_yeezy_foam_runner",
+        "url": "/products?line=adidas_yeezy_foam_runner&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Yeezy Foam Runner"
@@ -20434,7 +20434,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20312.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20312.png",
-        "url": "/products?q=birkenstock+stussy",
+        "url": "/products?q=birkenstock+stussy&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Birkenstock x Stüssy"
@@ -20442,7 +20442,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20313.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20313.png",
-        "url": "/products?collab=crocs_x_salehe_bembury",
+        "url": "/products?collab=crocs_x_salehe_bembury&gender=M",
         "title": "",
         "subTitle": "",
         "text": "Crocs x Salehe Bembury"
@@ -20456,8 +20456,8 @@
   {
     "type": "selection",
     "title": "Шлепки",
-    "url": "collection=шлепки",
-    "productsAmount": 60,
+    "url": "collection=шлепки&gender=M",
+    "productsAmount": 3600,
     "products": [
       {
         "id": 630581,
@@ -21660,22 +21660,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Nike/Nike Air Force 1/Nike Air Force 1 High/Group 861.png",
       "title": "Nike Air Force 1",
       "content": "Nike Air Force 1 - это легендарная модель, символизирующая силу и стиль в мире кроссовок. Эта модель представляет собой икону моды и культуры, которая продолжает вдохновлять поколения. Nike Air Force 1 сочетает в себе высокое качество и уникальный дизайн, позволяя выразить свой стиль и страсть к моде.",
-      "url": "line=nike_air_force_1",
+      "url": "line=nike_air_force_1&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Nike/Nike Air Force 1/Nike Air Force 1 High/Group 569.png",
       "title": "Nike Air Force 1",
       "content": "Nike Air Force 1 - это легендарная модель, символизирующая силу и стиль в мире кроссовок. Эта модель представляет собой икону моды и культуры, которая продолжает вдохновлять поколения. Nike Air Force 1 сочетает в себе высокое качество и уникальный дизайн, позволяя выразить свой стиль и страсть к моде.",
-      "url": "line=nike_air_force_1",
+      "url": "line=nike_air_force_1&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike Air Force 1",
-    "url": "line=nike_air_force_1",
-    "productsAmount": 2400,
+    "url": "line=nike_air_force_1&gender=M",
+    "productsAmount": 1980,
     "products": [
       {
         "id": 454044,
@@ -23180,22 +23180,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров коллаборации/Nike x Union/Group 1039.png",
       "title": "Nike x Union",
       "content": "Nike x Union - искусство сочетания старого и нового. Это сотрудничество с магазином Union LA порождает коллекции, которые вдохновлены ретро-стилем и современной модой. Они воскрешают дух 90-х, придавая новое звучание классическим моделям Nike. Коллекции, такие как Nike x Union Air Jordan 1, представляют собой аутентичный баланс между прошлым и настоящим, подчеркивая современную элегантность. Это встреча двух эпох, объединяющая фанатов моды разных поколений.",
-      "url": "collab=nike_x_union",
+      "url": "collab=nike_x_union&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров коллаборации/Nike x Union/Group 774.png",
       "title": "Nike x Union",
       "content": "Nike x Union - искусство сочетания старого и нового. Это сотрудничество с магазином Union LA порождает коллекции, которые вдохновлены ретро-стилем и современной модой. Они воскрешают дух 90-х, придавая новое звучание классическим моделям Nike. Коллекции, такие как Nike x Union Air Jordan 1, представляют собой аутентичный баланс между прошлым и настоящим, подчеркивая современную элегантность. Это встреча двух эпох, объединяющая фанатов моды разных поколений.",
-      "url": "collab=nike_x_union",
+      "url": "collab=nike_x_union&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike x Union",
-    "url": "collab=nike_x_union",
-    "productsAmount": 120,
+    "url": "collab=nike_x_union&gender=M",
+    "productsAmount": 60,
     "products": [
       {
         "id": 269997,
@@ -25081,7 +25081,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203281.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20324.png",
-        "url": "/products?line=adidas&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=adidas&category=sneakers&category=canvas_shoes&gender=M",
         "title": "adidas",
         "subTitle": "15’000 моделей",
         "text": "От 5’000 ₽"
@@ -25089,7 +25089,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203271.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20323.png",
-        "url": "/products?line=asics&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=asics&category=sneakers&category=canvas_shoes&gender=M",
         "title": "Asics",
         "subTitle": "2’500 моделей",
         "text": "От 7’000 ₽"
@@ -25097,7 +25097,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203251.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20321.png",
-        "url": "/products?line=puma&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=puma&category=sneakers&category=canvas_shoes&gender=M",
         "title": "PUMA",
         "subTitle": "4’000 моделей",
         "text": "От 5’000 ₽"
@@ -25105,7 +25105,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203261.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20322.png",
-        "url": "/products?line=converse&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=converse&category=sneakers&category=canvas_shoes&gender=M",
         "title": "Converse",
         "subTitle": "3’000 моделей",
         "text": "От 4'000 ₽"
@@ -25119,8 +25119,8 @@
   {
     "type": "selection",
     "title": "adidas, Asics, Converse, PUMA",
-    "url": "line=puma&line=converse&line=asics&line=adidas",
-    "productsAmount": 61800,
+    "url": "line=puma&line=converse&line=asics&line=adidas&gender=M",
+    "productsAmount": 40620,
     "products": [
       {
         "id": 394403,
@@ -26870,21 +26870,21 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Nike/Nike Air Max/Nike Air Max 1/Group 877.png",
       "title": "Nike Air Max 1",
       "content": "Nike Air Max 1 - это первая модель в серии Nike Air Max, символизирующая стиль и инновации. Эта модель предлагает узнаваемый силуэт и комфортную подошву с видимой воздушной подушкой, отражая дух авангарда и производительности. Nike Air Max 1 отличается уникальными деталями и возможностью выразить свой индивидуальный стиль.",
-      "url": "line=nike_air_max_1",
+      "url": "line=nike_air_max_1&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Nike/Nike Air Max/Nike Air Max 1/Group 576.png",
       "title": "Nike Air Max 1",
       "content": "Nike Air Max 1 - это первая модель в серии Nike Air Max, символизирующая стиль и инновации. Эта модель предлагает узнаваемый силуэт и комфортную подошву с видимой воздушной подушкой, отражая дух авангарда и производительности. Nike Air Max 1 отличается уникальными деталями и возможностью выразить свой индивидуальный стиль.",
-      "url": "line=nike_air_max_1",
+      "url": "line=nike_air_max_1&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike Air Max 1",
-    "url": "line=nike_air_max_1",
+    "url": "line=nike_air_max_1&gender=M",
     "productsAmount": 240,
     "products": [
       {
@@ -28880,21 +28880,21 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров линейки/Vans/Vans Knu/Group 353.png",
       "title": "Vans Knu",
       "content": "Vans Knu - это модель, которая представляет современное понимание классических кроссовок Vans. Она обладает прочной подошвой и стильными деталями, позволяя создать элегантные и удобные образы. Vans Knu отличается универсальностью и возможностью выразить свой стиль.",
-      "url": "line=vans_knu",
+      "url": "line=vans_knu&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров линейки/Vans/Vans Knu/Group 125.png",
       "title": "Vans Knu",
       "content": "Vans Knu - это модель, которая представляет современное понимание классических кроссовок Vans. Она обладает прочной подошвой и стильными деталями, позволяя создать элегантные и удобные образы. Vans Knu отличается универсальностью и возможностью выразить свой стиль.",
-      "url": "line=vans_knu",
+      "url": "line=vans_knu&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Vans Knu",
-    "url": "line=vans_knu",
+    "url": "line=vans_knu&gender=M",
     "productsAmount": 60,
     "products": [
       {
@@ -29679,7 +29679,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203291.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20325.png",
-        "url": "/products?line=new_balance&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=new_balance&category=sneakers&category=canvas_shoes&gender=M",
         "title": "New Balance",
         "subTitle": "30’000 моделей",
         "text": "От 6’000 ₽"
@@ -29687,7 +29687,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203321.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20328.png",
-        "url": "/products?line=nike&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=nike&category=sneakers&category=canvas_shoes&gender=M",
         "title": "Nike",
         "subTitle": "4’000 моделей",
         "text": "От 6’000 ₽"
@@ -29695,7 +29695,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203301.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20326.png",
-        "url": "/products?line=reebok&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=reebok&category=sneakers&category=canvas_shoes&gender=M",
         "title": "Reebok",
         "subTitle": "2’000 моделей",
         "text": "От 5’000 ₽"
@@ -29703,7 +29703,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%203311.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20327.png",
-        "url": "/products?line=vans&category=sneakers&category=canvas_shoes",
+        "url": "/products?line=vans&category=sneakers&category=canvas_shoes&gender=M",
         "title": "Vans",
         "subTitle": "5’500 моделей",
         "text": "От 6'000 ₽"
@@ -29717,8 +29717,8 @@
   {
     "type": "selection",
     "title": "New Balance, Nike, Reebok, Vans",
-    "url": "line=new_balance&line=reebok&line=nike&line=vans",
-    "productsAmount": 56340,
+    "url": "line=new_balance&line=reebok&line=nike&line=vans&gender=M",
+    "productsAmount": 43980,
     "products": [
       {
         "id": 180283,
@@ -32692,22 +32692,22 @@
       "photo": "https://storage.yandexcloud.net/sellout-photos/Desktop/Страница товаров коллаборации/Nike x Sacai/Group 1032.png",
       "title": "Nike x Sacai",
       "content": "Nike x Sacai - встреча искусства и инноваций. Дизайнер Чито Ватанабе создает коллекции, которые объединяют двойные элементы и изысканную структуру. Эта коллаборация нарушает стандарты дизайна, добавляя новые измерения к культовым моделям Nike. Множественные слои, игра текстур и геометрические формы преобразуют спортивные кроссовки в искусство. Это инновационное сотрудничество с Sacai подчеркивает новый путь в моде и эстетике.",
-      "url": "collab=nike_x_sacai",
+      "url": "collab=nike_x_sacai&gender=M",
       "button": "Посмотреть все"
     },
     "mobile": {
       "photo": "https://storage.yandexcloud.net/sellout-photos/Mobile/Страница товаров коллаборации/Nike x Sacai/Group 761.png",
       "title": "Nike x Sacai",
       "content": "Nike x Sacai - встреча искусства и инноваций. Дизайнер Чито Ватанабе создает коллекции, которые объединяют двойные элементы и изысканную структуру. Эта коллаборация нарушает стандарты дизайна, добавляя новые измерения к культовым моделям Nike. Множественные слои, игра текстур и геометрические формы преобразуют спортивные кроссовки в искусство. Это инновационное сотрудничество с Sacai подчеркивает новый путь в моде и эстетике.",
-      "url": "collab=nike_x_sacai",
+      "url": "collab=nike_x_sacai&gender=M",
       "button": "Посмотреть все"
     }
   },
   {
     "type": "selection",
     "title": "Nike x Sacai",
-    "url": "collab=nike_x_sacai",
-    "productsAmount": 120,
+    "url": "collab=nike_x_sacai&gender=M",
+    "productsAmount": 60,
     "products": [
       {
         "id": 368571,
@@ -33814,7 +33814,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20282.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20282.png",
-        "url": "/products?category=football_boots",
+        "url": "/products?category=football_boots&gender=M",
         "title": "Футбольные бутсы",
         "subTitle": "2’500 моделей",
         "text": "От 5’000 ₽"
@@ -33822,7 +33822,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20281.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20281.png",
-        "url": "/products?category=basketballs&category=footballs&category=volleyballs",
+        "url": "/products?category=basketballs&category=footballs&category=volleyballs&gender=M",
         "title": "Мячи",
         "subTitle": "5’000 моделей",
         "text": "От 3’000 ₽"
@@ -33830,7 +33830,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20283.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20283.png",
-        "url": "/products?category=sports_equipment&category=sports_gloves&category=other_sport_goods&category=sport_bags",
+        "url": "/products?category=sports_equipment&category=sports_gloves&category=other_sport_goods&category=sport_bags&gender=M",
         "title": "Экипировка",
         "subTitle": "10’000 моделей",
         "text": "От 4’000 ₽"
@@ -33838,7 +33838,7 @@
       {
         "imageMobile": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20284.png",
         "imageDesktop": "https://storage.yandexcloud.net/sellout-photos/MainPage/image%20284.png",
-        "url": "/products?category=sport_bags&category=sport_goods&category=sport_clothes&category=basketball_sneakers&category=football_boots&category=other_sport_shoes",
+        "url": "/products?category=sport_bags&category=sport_goods&category=sport_clothes&category=basketball_sneakers&category=football_boots&category=other_sport_shoes&gender=M",
         "title": "Спортивные товары",
         "subTitle": "35’000 моделей",
         "text": "От 3'000 ₽"

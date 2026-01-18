@@ -439,10 +439,7 @@ def get_product_text(photo, line, collab, category, new, recommendations, sale):
     elif line and collab:
         texts = texts.filter(title="sellout")
 
-
-
     elif line:
-
         def find_common_ancestor(lines):
             current_line = lines[0]
             parent_lines = set()
@@ -464,7 +461,6 @@ def get_product_text(photo, line, collab, category, new, recommendations, sale):
                 return lines[0]
             line = Line.objects.filter(id__in=old_lines).order_by("id").first()
             return line
-
 
         selected_lines = Line.objects.filter(full_eng_name__in=line)  # Ваши выбранные линейки
         oldest_line = find_common_ancestor(selected_lines)
@@ -492,7 +488,7 @@ def get_product_text(photo, line, collab, category, new, recommendations, sale):
         # print("лист", list_line)
         # print(texts)
 
-    elif collab:
+    elif collab and len(collab) == 1:
         texts = texts.filter(collabs__in=photo.collabs.all())
         texts = texts.filter(collabs__query_name__in=collab)
 

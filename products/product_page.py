@@ -30,7 +30,7 @@ from django.views.decorators.cache import cache_page
 # Используйте декоратор с заданным временем жизни (в секундах)
 
 
-def  get_product_page_header(request):
+def get_product_page_header(request):
     res = {}
 
     line = request.query_params.getlist('line')
@@ -45,24 +45,12 @@ def  get_product_page_header(request):
     # if category:
     #     header_photos = header_photos.filter(categories__eng_name__in=category)
 
-    if line and collab:
-        if "all" in collab:
-            header_photos = header_photos.filter(
-                Q(lines__full_eng_name__in=line) | ~Q(collabs=None)
-            )
-        else:
-            header_photos = header_photos.filter(
-                Q(lines__full_eng_name__in=line) | Q(collabs__query_name__in=collab)
-            )
-    elif line:
+    if len(line) == 1 and len(collab) == 0:
         header_photos = header_photos.filter(Q(lines__full_eng_name__in=line))
 
+    elif len(collab) == 1 and len(line) == 0:
+        header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
 
-    elif collab:
-        if "all" in collab:
-            header_photos = header_photos.filter(~Q(collabs=None))
-        else:
-            header_photos = header_photos.filter(Q(collabs__query_name__in=collab))
 
     if not header_photos.exists():
         header_photos = HeaderPhoto.objects.all()

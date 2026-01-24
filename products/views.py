@@ -548,7 +548,7 @@ class MakeRansomRequest(APIView):
         bucket_name = 'sellout-photos'  # Укажите название бакета
         s3_client = boto3.client(
             service_name='s3',
-            endpoint_url='https://storage.yandexcloud.net',
+            endpoint_url='https://sellout.su',
             aws_access_key_id=access_id,
             aws_secret_access_key=access_key
         )
@@ -568,7 +568,7 @@ class MakeRansomRequest(APIView):
             path,
             ExtraArgs={'ContentType': content_type}
         )
-        url_photo = f'https://storage.yandexcloud.net/sellout-photos/{path}'
+        url_photo = f'https://sellout.su/sellout-photos/{path}'
 
 
         ransom_request = RansomRequest.objects.create(
@@ -630,9 +630,19 @@ class MainPageBlocks(APIView):
                     else:
                         file_path = 'temp_main_women_withproducts.json'
                     with open(file_path, 'r', encoding='utf-8') as file:
-                        json_data = json.load(file)
+                        json_data = json.load(file)[:15]
                         res.extend(json_data)
                     s = []
+                elif page == 1:
+                    if "M" in gender:
+                        file_path = 'temp_main_men_withproducts.json'
+                    else:
+                        file_path = 'temp_main_women_withproducts.json'
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        json_data = json.load(file)[15:]
+                        res.extend(json_data)
+                    s = []
+
 
                 else:
                     s = [0, 1, 0, 1, 1, 0]
@@ -707,9 +717,20 @@ class MainPageBlocks(APIView):
                         else:
                             file_path = 'temp_main_women_withproducts.json'
                         with open(file_path, 'r', encoding='utf-8') as file:
-                            json_data = json.load(file)
+                            json_data = json.load(file)[:15]
                             res.extend(json_data)
                         s = []
+                    elif page == 1:
+                        if "M" in gender:
+                            file_path = 'temp_main_men_withproducts.json'
+                        else:
+                            file_path = 'temp_main_women_withproducts.json'
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            json_data = json.load(file)[15:]
+                            res.extend(json_data)
+                        s = []
+
+
 
                     else:
                         s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]

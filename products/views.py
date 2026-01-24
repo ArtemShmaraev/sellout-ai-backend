@@ -627,11 +627,14 @@ class MainPageBlocks(APIView):
                 if page == 0:
                     if "M" in gender:
                         file_path = 'temp_main_men_withproducts.json'
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            json_data = json.load(file)[:15]
+                            res.extend(json_data)
                     else:
                         file_path = 'temp_main_women_withproducts.json'
-                    with open(file_path, 'r', encoding='utf-8') as file:
-                        json_data = json.load(file)[:15]
-                        res.extend(json_data)
+                        with open(file_path, 'r', encoding='utf-8') as file:
+                            json_data = json.load(file)
+                            res.extend(json_data)
                     s = []
                 elif page == 1:
                     if "M" in gender:
@@ -714,11 +717,14 @@ class MainPageBlocks(APIView):
                     if page == 0:
                         if "M" in gender:
                             file_path = 'temp_main_men_withproducts.json'
+                            with open(file_path, 'r', encoding='utf-8') as file:
+                                json_data = json.load(file)[:15]
+                                res.extend(json_data)
                         else:
                             file_path = 'temp_main_women_withproducts.json'
-                        with open(file_path, 'r', encoding='utf-8') as file:
-                            json_data = json.load(file)[:15]
-                            res.extend(json_data)
+                            with open(file_path, 'r', encoding='utf-8') as file:
+                                json_data = json.load(file)
+                                res.extend(json_data)
                         s = []
                     elif page == 1:
                         if "M" in gender:

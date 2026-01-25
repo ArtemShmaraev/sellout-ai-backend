@@ -37,6 +37,7 @@ def get_product_page_header(request):
     category = request.query_params.getlist("category")
     gender = request.query_params.getlist("gender")
     collab = request.query_params.getlist("collab")
+    collection = request.query_params.getlist("collection")
     new = request.query_params.get("new")
     sale = request.query_params.get("is_sale")
     recommendations = request.query_params.get("recommendations")
@@ -82,7 +83,7 @@ def get_product_page_header(request):
     res['desktop']['photo'] = photo_desktop.photo
 
     if text_desktop.title == "sellout":
-        title_desktop = get_title_for_products_page(category, line, collab)
+        title_desktop = get_title_for_products_page(category, line, collab, collection)
         res['desktop']['title'] = title_desktop
 
         if title_desktop != "":
@@ -131,7 +132,7 @@ def get_product_page_header(request):
     res['mobile']['photo'] = photo_mobile.photo
 
     if text_mobile.title == "sellout":
-        title_mobile = get_title_for_products_page(category, line, collab)
+        title_mobile = get_title_for_products_page(category, line, collab, collection)
         res['mobile']['title'] = title_mobile
         if title_mobile != "":
             if gender == ['M']:

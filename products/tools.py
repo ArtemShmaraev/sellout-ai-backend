@@ -146,14 +146,19 @@ def get_fid_product(products):
     return xml_str
 
 
-def get_title_for_products_page(categories, lines, collabs):
+def get_title_for_products_page(categories, lines, collabs, collection):
     title = ""
+    if len(collection) == 1:
+
+        return Collection.objects.get(query_name=collection[0]).name
+
     if len(categories) == 1:
         title += Category.objects.get(eng_name=categories[0]).name + " "
     if len(lines) == 1:
         title += Line.objects.get(full_eng_name=lines[0]).view_name
     elif len(collabs) == 1:
         title += Collab.objects.get(query_name=collabs[0]).name
+
 
     return title.strip()
 

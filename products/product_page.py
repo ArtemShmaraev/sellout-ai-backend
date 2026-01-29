@@ -41,7 +41,7 @@ def get_product_page_header(request):
     new = request.query_params.get("new")
     sale = request.query_params.get("is_sale")
     recommendations = request.query_params.get("recommendations")
-    q = request.query_params.get("q")
+    q = request.query_params.get("q", "")
     header_photos = HeaderPhoto.objects.all()
     header_photos = header_photos.filter(where="product_page")
     # if category:
@@ -169,9 +169,6 @@ def get_product_page_header(request):
     res['mobile']['q'] = q
     res['mobile']['subtitle'] = ""
     res['mobile']['collection'] = collection
-
-
-
     return res
 
 

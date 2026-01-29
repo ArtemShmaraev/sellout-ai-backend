@@ -183,28 +183,29 @@ class Order(models.Model):
 
     def evenly_distribute_discount(self):
         # final_price = self.total_amount
-        discount = self.total_sale
+        discount = self.promo_sale + self.bonus_sale
         total_cost = self.total_amount
         discount_per_cost = discount / total_cost
         # print(discount_per_cost, self.total_amount)
         new_item_costs = []
         sum_unit = 0
         # Распределение скидки на позиции (кроме последней)
-        k = self.order_units.count()
-        ck = 0
-        for unit in self.order_units.all():
-            ck += 1
-            if ck == k:
-                last_item_cost = self.total_amount - sum_unit - discount
-                unit.final_price = last_item_cost
-                unit.save()
-            else:
+        if discount > 0:
+            k = self.order_units.count()
+            ck = 0
+            for unit in self.order_units.all():
+                ck += 1
+                if ck == k:
+                    last_item_cost = self.total_amount - sum_unit - discount
+                    unit.final_price = last_item_cost
+                    unit.save()
+                else:
 
-                item_discount = round(unit.start_price * discount_per_cost)
-                unit.final_price = unit.start_price - item_discount
-                unit.save()
-                # print(unit.final_price)
-                sum_unit += unit.final_price
+                    item_discount = round(unit.final_price * discount_per_cost)
+                    unit.final_price = unit.final_price - item_discount
+                    unit.save()
+                    # print(unit.final_price)
+                    sum_unit += unit.final_price
 
 
 

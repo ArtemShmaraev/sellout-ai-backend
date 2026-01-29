@@ -1252,39 +1252,39 @@
     "type": "complexMainPageBlock",
     "title": "",
     "fullWidthImage": {
-      "desktop": "https://sellout.su/sellout-photos/MainPage/Frame%209.jpg",
-      "mobile": "https://sellout.su/sellout-photos/MainPage/Group%2096.jpg",
+      "desktop": "https://sellout.su/sellout-photos/MainPage/Group%2096.jpg",
+      "mobile": "https://sellout.su/sellout-photos/MainPage/Frame%209.jpg",
       "url": "/products?collection=8march&gender=F"
     },
     "imagesInRowAmount": 4,
     "imagesInRow": [
       {
-        "imageMobile": "https://sellout.su/sellout-photos/MailPhotos/Frame%2013.jpg",
-        "imageDesktop": "https://sellout.su/sellout-photos/MailPhotos/Frame%2013.jpg",
+        "imageMobile": "https://sellout.su/sellout-photos/MainPage/Frame%2013.jpg",
+        "imageDesktop": "https://sellout.su/sellout-photos/MainPage/Frame%2013.jpg",
         "url": "/products?collection=bargainsmen&gender=M",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "imageMobile": "https://sellout.su/sellout-photos/MailPhotos/Frame%2011.jpg",
-        "imageDesktop": "https://sellout.su/sellout-photos/MailPhotos/Frame%2011.jpg",
+        "imageMobile": "https://sellout.su/sellout-photos/MainPage/Frame%2011.jpg",
+        "imageDesktop": "https://sellout.su/sellout-photos/MainPage/Frame%2011.jpg",
         "url": "/products?collection=springmen&gender=M",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "imageMobile": "https://sellout.su/sellout-photos/MailPhotos/Frame%2010.jpg",
-        "imageDesktop": "https://sellout.su/sellout-photos/MailPhotos/Frame%2010.jpg",
+        "imageMobile": "https://sellout.su/sellout-photos/MainPage/Frame%2010.jpg",
+        "imageDesktop": "https://sellout.su/sellout-photos/MainPage/Frame%2010.jpg",
         "url": "/products?collection=topshelfmen&gender=M",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "imageMobile": "https://sellout.su/sellout-photos/MailPhotos/Frame%2012.jpg",
-        "imageDesktop": "https://sellout.su/sellout-photos/MailPhotos/Frame%2012.jpg",
+        "imageMobile": "https://sellout.su/sellout-photos/MainPage/Frame%2012.jpg",
+        "imageDesktop": "https://sellout.su/sellout-photos/MainPage/Frame%2012.jpg",
         "url": "/products?collection=basketballmvpmen&gender=M",
         "title": "",
         "subTitle": "",

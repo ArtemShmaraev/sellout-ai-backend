@@ -160,6 +160,7 @@ def get_product_page_header(request):
     res['desktop']['line'] = line
     res['desktop']['q'] = q
     res['desktop']['subtitle'] = ""
+    res['desktop']['collection'] = collection
 
     res['mobile']['gender'] = gender
     res['mobile']['category'] = category
@@ -167,6 +168,7 @@ def get_product_page_header(request):
     res['mobile']['line'] = line
     res['mobile']['q'] = q
     res['mobile']['subtitle'] = ""
+    res['mobile']['collection'] = collection
 
 
 

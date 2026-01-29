@@ -129,25 +129,26 @@ def add_product_v2(data):
     # print(manufacturer_sku)
 
     product, create = Product.objects.get_or_create(spu_id=spu_id, property_id=property_id)
-    # print(product.slug)
+    print(product.slug)
     product_slug = ""
     if not create:
         print("go")
-        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        # if product.last_upd >= time_threshold or product.in_process_update:
-        #     product.available_flag = True
-        #     product.save()
-        #     return "Товар актуальный))"
+        time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        if product.last_upd >= time_threshold or product.in_process_update:
+            product.available_flag = True
+            product.save()
+            return "Товар актуальный))"
         # product.delete()
         # return 1
         product.clear_all_fields()
         product.product_units.update(availability=False)
         product_slug = product.slug if product.slug != "" else f"{spu_id}_{property_id}_{manufacturer_sku}"
     else:
-
         product_slug = f"{spu_id}_{property_id}_{manufacturer_sku}"
+
     product.slug = product_slug
     product.save()
+
 
     product.is_collab = data["is_collab"]
     if data["is_collab"] and len(data['collab_names']) > 0:
@@ -165,7 +166,6 @@ def add_product_v2(data):
     # product.category_name = data['platform_info']["poizon"].get("categoryName", "")
     # product.level1_category_id = data['platform_info']["poizon"].get("level1CategoryId", 0)
     # product.level2_category_id = data['platform_info']["poizon"].get("level2CategoryId", 0)
-
     genders = data.get('gender', [])
     product.gender.set(Gender.objects.filter(name__in=genders))
 
@@ -403,7 +403,6 @@ def add_product_v2(data):
         else:
             update_score_clothes(product)
     product.in_process_update = False
-
 
     product.save()
     return product

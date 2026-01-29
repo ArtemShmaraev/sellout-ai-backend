@@ -228,18 +228,18 @@ def get_selection(gender):
     print(gender)
     if 1 <= type < 15:
         title, queryset, url = get_brand_and_category_selection(gender)
-    elif 15 <= type < 25:
+    elif 15 <= type < 30:
         title, queryset, url = get_category_selection(gender)
-    elif 25 <= type < 40:
+    elif 30 <= type < 48:
         title, queryset, url = get_collab_selection(gender)
-    elif 40 <= type < 48:
-        title, queryset, url = get_color_and_category_selection(gender)
+    # elif 40 <= type < 48:
+    #     title, queryset, url = get_color_and_category_selection(gender)
     elif 48 <= type < 60:
         title, queryset, url = get_color_and_brand_selection(gender)
-    elif 60 <= type < 75:
+    elif 60 <= type < 85:
         title, queryset, url = get_brand_selection(gender)
-    elif 75 <= type < 85:
-        title, queryset, url = get_color_and_line_selection(gender)
+    # elif 75 <= type < 85:
+    #     title, queryset, url = get_color_and_line_selection(gender)
     else:
         title, queryset, url = get_line_selection(gender)
     if len(gender) == 1:

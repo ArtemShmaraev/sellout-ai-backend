@@ -41,6 +41,7 @@ def get_product_page_header(request):
     new = request.query_params.get("new")
     sale = request.query_params.get("is_sale")
     recommendations = request.query_params.get("recommendations")
+    q = request.query_params.get("q")
     header_photos = HeaderPhoto.objects.all()
     header_photos = header_photos.filter(where="product_page")
     # if category:
@@ -82,10 +83,10 @@ def get_product_page_header(request):
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text, "title_with_gender": title_desktop_gender}
     res['desktop']['photo'] = photo_desktop.photo
 
+
     if text_desktop.title == "sellout":
         title_desktop = get_title_for_products_page(category, line, collab, collection)
         res['desktop']['title'] = title_desktop
-
         if title_desktop != "":
             if gender == ['M']:
                 title_desktop += " для мужчин"
@@ -104,6 +105,7 @@ def get_product_page_header(request):
         res['desktop']['title_with_gender'] = title_desktop
         res['desktop']['content'] = ""
         res['desktop']['photo'] = ""
+
 
 
 
@@ -151,6 +153,21 @@ def get_product_page_header(request):
         res['mobile']['title_with_gender'] = title_mobile
         res['mobile']['content'] = ""
         res['mobile']['photo'] = ""
+
+    res['desktop']['gender'] = gender
+    res['desktop']['category'] = category
+    res['desktop']['collab'] = collab
+    res['desktop']['line'] = line
+    res['desktop']['q'] = q
+    res['desktop']['subtitle'] = ""
+
+    res['mobile']['gender'] = gender
+    res['mobile']['category'] = category
+    res['mobile']['collab'] = collab
+    res['mobile']['line'] = line
+    res['mobile']['q'] = q
+    res['mobile']['subtitle'] = ""
+
 
 
     return res

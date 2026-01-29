@@ -379,7 +379,7 @@ class CheckOutView(APIView):
                     # send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                     # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                     cart.clear()
-                send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                # send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                 send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                 order.save()
 

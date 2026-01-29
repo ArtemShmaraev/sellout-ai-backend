@@ -109,7 +109,7 @@ class Command(BaseCommand):
         for collab in collabs:
             collab_doc = SuggestDocument()
             collab_doc.name = collab.name
-            collab_doc.url = f"collab={collab.query_name}"
+            collab_doc.url = f"collab={collab.query_name.rstrip('_')}"
             collab_doc.type = "Коллаборация"
             collab_name = collab.name.split()
             for i in range(len(collab_name)):
@@ -172,7 +172,7 @@ class Command(BaseCommand):
                     cat_doc = SuggestDocument()
                     cat_doc.name = f"{category.name} {line.view_name}"
                     cat_doc.type = "Категория"
-                    cat_doc.url = f"category={category.eng_name.rstrip('_')}&line={line.full_eng_name}"
+                    cat_doc.url = f"category={category.eng_name.rstrip('_')}&line={line.full_eng_name.rstrip('_')}"
 
                     cat_doc.suggest = [{
                         'input': [f"{category.name} {line.view_name}", f"{line.view_name} {category.name}"],

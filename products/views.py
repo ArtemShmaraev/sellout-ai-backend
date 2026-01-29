@@ -631,7 +631,7 @@ class MainPageBlocks(APIView):
                     else:
                         file_path = 'temp_main_women_withproducts.json'
                     with open(file_path, 'r', encoding='utf-8') as file:
-                        json_data = json.load(file)[:16]
+                        json_data = json.load(file)[:20]
                         res.extend(json_data)
 
                     s = []
@@ -641,13 +641,13 @@ class MainPageBlocks(APIView):
                     else:
                         file_path = 'temp_main_women_withproducts.json'
                     with open(file_path, 'r', encoding='utf-8') as file:
-                        json_data = json.load(file)[16:]
+                        json_data = json.load(file)[20:]
                         res.extend(json_data)
                     s = []
 
 
                 else:
-                    s = [0, 1, 0, 1, 1, 0]
+                    s = [0, 1, 0, 1, 1]
                     # s = [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0]
 
                 t1 = time()
@@ -720,7 +720,7 @@ class MainPageBlocks(APIView):
                         else:
                             file_path = 'temp_main_women_withproducts.json'
                         with open(file_path, 'r', encoding='utf-8') as file:
-                            json_data = json.load(file)[:16]
+                            json_data = json.load(file)[:20]
                             res.extend(json_data)
                         s = []
                     elif page == 1:
@@ -729,7 +729,7 @@ class MainPageBlocks(APIView):
                         else:
                             file_path = 'temp_main_women_withproducts.json'
                         with open(file_path, 'r', encoding='utf-8') as file:
-                            json_data = json.load(file)[16:]
+                            json_data = json.load(file)[20:]
                             res.extend(json_data)
                         s = []
 

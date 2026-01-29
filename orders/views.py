@@ -2,6 +2,7 @@ import json
 import random
 import re
 
+import requests
 from django.db.models import F
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -32,6 +33,24 @@ import hashlib
 
 import base64
 import hmac
+
+class RedirectPaymentView(APIView):
+    def post(self, request):
+        print(request.data)
+        data = dict(request.data)
+        print(data)
+        url = "https://sellout.server.paykeeper.ru/create/"
+
+        # Данные формы, которые нужно отправить
+        # /
+
+        # Отправка POST-запроса
+        response = requests.post(url, data=data).json()
+        # print(response.text)
+        # print(response.json())
+        return redirect(f"https://sellout.server.paykeeper.ru/sbp/{response['qr_id']}")
+
+
 class FactOfPaymentView(APIView):
     def get(self, request):
         # Получение данных из POST-запроса

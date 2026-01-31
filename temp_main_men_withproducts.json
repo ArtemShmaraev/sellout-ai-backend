@@ -6431,30 +6431,55 @@
     "imagesInRowAmount": 0,
     "imagesInRow": [],
     "videosInRowAmount": 4,
+    "slidesInVideo": 5,
     "videosInRow": [
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/supremeset1.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20329.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20332.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20333.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20865.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20863.jpg"
+        ],
         "url": "/products?line=supreme",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/supremeset2.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20330.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20344.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20337.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20866.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%203870.jpg"
+        ],
         "url": "/products?line=supreme",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/supremeset3.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20369.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20377.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20376.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20373.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20372.jpg"
+        ],
         "url": "/products?line=supreme",
         "title": "",
         "subTitle": "",
         "text": ""
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/supremeset4.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20350.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20340.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20331.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20868.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20871.jpg"
+        ],
         "url": "/products?line=supreme",
         "title": "",
         "subTitle": "",

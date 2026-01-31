@@ -406,7 +406,7 @@ def get_product_page(request, context):
                 min_price_product_unit=Subquery(
                     Product.objects.filter(pk=OuterRef('pk'))
                     .annotate(unit_min_price=Min('product_units__final_price', filter=(
-                            Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True))))
+                            (Q(product_units__size__in=size) | Q(product_units__size__is_one_size=True)))))
                     .values('unit_min_price')[:1]
                 )
             )

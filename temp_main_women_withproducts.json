@@ -1286,6 +1286,7 @@
   {
     "type": "complexMainPageBlock",
     "title": "",
+    "noMargin": true,
     "fullWidthImage": {
       "desktop": "https://sellout.su/sellout-photos/MainPage/Group%2097.jpg",
       "mobile": "https://sellout.su/sellout-photos/MainPage/Frame%2017.jpg",

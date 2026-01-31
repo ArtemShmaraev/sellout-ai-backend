@@ -1251,6 +1251,7 @@
   {
     "type": "complexMainPageBlock",
     "title": "",
+    "noMargin": true,
     "fullWidthImage": {
       "desktop": "https://sellout.su/sellout-photos/MainPage/Group%2096.jpg",
       "mobile": "https://sellout.su/sellout-photos/MainPage/Frame%209.jpg",
@@ -3277,30 +3278,63 @@
     "imagesInRowAmount": 0,
     "imagesInRow": [],
     "videosInRowAmount": 4,
+    "slidesInVideo": 7,
     "videosInRow": [
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/noctaset.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20369.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20377.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20376.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20373.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20372.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20375.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20370.jpg"
+        ],
         "url": "/products?collab=nike_x_drake_nocta",
         "title": "",
         "subTitle": "",
         "text": "Nike x Drake Nocta"
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/Travis.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20363.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20351.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20360.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20361.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20362.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20359.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20357.jpg"
+        ],
         "url": "/products?line=cactus_jack_by_travis_scott",
         "title": "",
         "subTitle": "",
         "text": "Cactus Jack by Travis Scott"
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/FOG.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20353.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20354.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20352.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20355.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20356.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20378.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20379.jpg"
+        ],
         "url": "/products?line=fear_of_god",
         "title": "",
         "subTitle": "",
         "text": "Fear Of God"
       },
       {
-        "video": "https://sellout.su/sellout-photos/MainPage/video/Stussy.mp4",
+        "video": [
+          "https://sellout.su/sellout-photos/MainPage/image%20364.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20365.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20366.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20367.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20380.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20382.jpg",
+          "https://sellout.su/sellout-photos/MainPage/image%20383.jpg"
+        ],
         "url": "/products?line=stüssy",
         "title": "",
         "subTitle": "",

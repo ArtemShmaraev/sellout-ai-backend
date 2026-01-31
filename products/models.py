@@ -121,6 +121,7 @@ class Tag(models.Model):
 
 class Collection(models.Model):
     name = models.CharField(max_length=255)
+    subtitle = models.CharField(max_length=1024, default="")
     # is_collab = models.BooleanField(default=False)
     in_filter = models.BooleanField(default=False)
     query_name = models.CharField(max_length=255, default="")

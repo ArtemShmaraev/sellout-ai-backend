@@ -148,9 +148,11 @@ def get_fid_product(products):
 
 def get_title_for_products_page(categories, lines, collabs, collection):
     title = ""
+    subtitle = ""
     if len(collection) == 1:
-
-        return Collection.objects.get(query_name=collection[0]).name
+        collection = Collection.objects.get(query_name=collection[0])
+        # print(collection.subtitle)
+        return collection.name, collection.subtitle
 
     if len(categories) == 1:
         title += Category.objects.get(eng_name=categories[0]).name + " "
@@ -160,7 +162,7 @@ def get_title_for_products_page(categories, lines, collabs, collection):
         title += Collab.objects.get(query_name=collabs[0]).name
 
 
-    return title.strip()
+    return title.strip(), subtitle
 
 
 def update_score_sneakers(product):

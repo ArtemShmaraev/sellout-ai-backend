@@ -82,25 +82,27 @@ def get_product_page_header(request):
 
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text, "title_with_gender": title_desktop_gender}
     res['desktop']['photo'] = photo_desktop.photo
+    res['desktop']['subtitle'] = ""
 
 
     if text_desktop.title == "sellout":
-        title_desktop = get_title_for_products_page(category, line, collab, collection)
+        title_desktop, subtitle_desktop = get_title_for_products_page(category, line, collab, collection)
         res['desktop']['title'] = title_desktop
-        if title_desktop != "":
-            if gender == ['M']:
-                title_desktop += " для мужчин"
-            if gender == ["F"]:
-                title_desktop += " для женщин"
-            if gender == ["K"]:
-                title_desktop += " для детей"
-        else:
-            if gender == ['M']:
-                title_desktop += "Мужское"
-            if gender == ["F"]:
-                title_desktop += "Женское"
-            if gender == ["K"]:
-                title_desktop += "Для детей"
+        res['desktop']['subtitle'] = subtitle_desktop
+        # if title_desktop != "":
+        #     if gender == ['M']:
+        #         title_desktop += " для мужчин"
+        #     if gender == ["F"]:
+        #         title_desktop += " для женщин"
+        #     if gender == ["K"]:
+        #         title_desktop += " для детей"
+        # else:
+        #     if gender == ['M']:
+        #         title_desktop += "Мужское"
+        #     if gender == ["F"]:
+        #         title_desktop += "Женское"
+        #     if gender == ["K"]:
+        #         title_desktop += "Для детей"
         # if title_desktop != "":
         res['desktop']['title_with_gender'] = title_desktop
         res['desktop']['content'] = ""
@@ -122,34 +124,37 @@ def get_product_page_header(request):
         text_mobile = photo_mobile.header_text
 
     title_mobile_gender = text_mobile.title
-    if text_mobile.title != "sellout":
-        if gender == ['M']:
-            title_mobile_gender += " для мужчин"
-        if gender == ["F"]:
-            title_mobile_gender += " для женщин"
-        if gender == ["K"]:
-            title_mobile_gender += " для детей"
+    # if text_mobile.title != "sellout":
+    #     if gender == ['M']:
+    #         title_mobile_gender += " для мужчин"
+    #     if gender == ["F"]:
+    #         title_mobile_gender += " для женщин"
+    #     if gender == ["K"]:
+    #         title_mobile_gender += " для детей"
 
     res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text, "title_with_gender": title_mobile_gender}
     res['mobile']['photo'] = photo_mobile.photo
+    res['mobile']['subtitle'] = ""
 
     if text_mobile.title == "sellout":
-        title_mobile = get_title_for_products_page(category, line, collab, collection)
+        title_mobile, subtitle_mobile = get_title_for_products_page(category, line, collab, collection)
         res['mobile']['title'] = title_mobile
-        if title_mobile != "":
-            if gender == ['M']:
-                title_mobile += " для мужчин"
-            if gender == ["F"]:
-                title_mobile += " для женщин"
-            if gender == ["K"]:
-                title_mobile += " для детей"
-        else:
-            if gender == ['M']:
-                title_mobile += "Мужское"
-            if gender == ["F"]:
-                title_mobile += "Женское"
-            if gender == ["K"]:
-                title_mobile += "Для детей"
+        res['mobile']['subtitle'] = subtitle_mobile
+
+        # if title_mobile != "":
+        #     if gender == ['M']:
+        #         title_mobile += " для мужчин"
+        #     if gender == ["F"]:
+        #         title_mobile += " для женщин"
+        #     if gender == ["K"]:
+        #         title_mobile += " для детей"
+        # else:
+        #     if gender == ['M']:
+        #         title_mobile += "Мужское"
+        #     if gender == ["F"]:
+        #         title_mobile += "Женское"
+        #     if gender == ["K"]:
+        #         title_mobile += "Для детей"
         res['mobile']['title_with_gender'] = title_mobile
         res['mobile']['content'] = ""
         res['mobile']['photo'] = ""
@@ -159,7 +164,7 @@ def get_product_page_header(request):
     res['desktop']['collab'] = collab
     res['desktop']['line'] = line
     res['desktop']['q'] = q
-    res['desktop']['subtitle'] = ""
+
     res['desktop']['collection'] = collection
 
     res['mobile']['gender'] = gender
@@ -167,7 +172,7 @@ def get_product_page_header(request):
     res['mobile']['collab'] = collab
     res['mobile']['line'] = line
     res['mobile']['q'] = q
-    res['mobile']['subtitle'] = ""
+
     res['mobile']['collection'] = collection
     return res
 

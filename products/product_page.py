@@ -72,13 +72,13 @@ def get_product_page_header(request):
         text_desktop = photo_desktop.header_text
 
     title_desktop_gender = text_desktop.title
-    if text_desktop.title != "sellout":
-        if gender == ['M']:
-            title_desktop_gender += " для мужчин"
-        if gender == ["F"]:
-            title_desktop_gender += " для женщин"
-        if gender == ["K"]:
-            title_desktop_gender += " для детей"
+    # if text_desktop.title != "sellout":
+    #     if gender == ['M']:
+    #         title_desktop_gender += " для мужчин"
+    #     if gender == ["F"]:
+    #         title_desktop_gender += " для женщин"
+    #     if gender == ["K"]:
+    #         title_desktop_gender += " для детей"
 
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text, "title_with_gender": title_desktop_gender}
     res['desktop']['photo'] = photo_desktop.photo
@@ -87,7 +87,7 @@ def get_product_page_header(request):
 
     if text_desktop.title == "sellout":
         title_desktop, subtitle_desktop = get_title_for_products_page(category, line, collab, collection)
-        res['desktop']['title'] = title_desktop
+        res['desktop']['title'] = title_desktop.replace("Все", "").replace("Вся", "").strip().capitalize()
         res['desktop']['subtitle'] = subtitle_desktop
         # if title_desktop != "":
         #     if gender == ['M']:
@@ -138,7 +138,7 @@ def get_product_page_header(request):
 
     if text_mobile.title == "sellout":
         title_mobile, subtitle_mobile = get_title_for_products_page(category, line, collab, collection)
-        res['mobile']['title'] = title_mobile
+        res['mobile']['title'] = title_mobile.replace("Все", "").replace("Вся", "").strip().capitalize()
         res['mobile']['subtitle'] = subtitle_mobile
 
         # if title_mobile != "":

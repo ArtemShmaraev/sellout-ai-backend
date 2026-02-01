@@ -1,9 +1,35 @@
 [
   {
     "type": "firstMainBlock",
-    "leftSmallVideo": "https://sellout.su/sellout-photos/MailPhotos/videos/left.mp4",
-    "rightSmallVideo": "https://sellout.su/sellout-photos/MailPhotos/videos/right.mp4",
-    "bigVideo": "https://sellout.su/sellout-photos/MailPhotos/videos/mainPageRightVideo.mp4"
+    "leftImages": [
+      "https://sellout.su/sellout-photos/MainPage/Left.jpg",
+      "https://sellout.su/sellout-photos/MainPage/Right.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20394.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20413.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20415.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20416.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20417.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20419.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20395.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20418.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20414.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20398.jpg"
+    ],
+    "rightImages": [
+      "https://sellout.su/sellout-photos/MainPage/image%20404.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20403.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20399.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20402.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20406.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20401.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20409.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20407.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20412.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20411.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20405.jpg",
+      "https://sellout.su/sellout-photos/MainPage/image%20408.jpg"
+    ],
+    "bigImage": "https://sellout.su/sellout-photos/MainPage/Frame%205.png"
   },
   {
     "type": "photo",

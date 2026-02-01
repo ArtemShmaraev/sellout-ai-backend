@@ -78,7 +78,7 @@ def get_ps_delivery_offers(sku, data):
             "delivery_currency": "rub",
             "decimal_insurance": 1,
             "absolute_insurance": 0,
-            "maximum_price": 0,
+            "maximum_price": 1500,
             "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
             "commission_currency": "rub",
             "country_ship": "China",
@@ -96,7 +96,7 @@ def get_ps_delivery_offers(sku, data):
             "delivery_currency": "rub",
             "decimal_insurance": 1,
             "absolute_insurance": 0,
-            "maximum_price": 1500,
+            "maximum_price": 0,
             "price_currency": "cny",
             "commission": 350 if price <= 1500 else 450 if price <= 3000 else 800 if price <= 6000 else 1200,
             "commission_currency": "rub",
@@ -115,7 +115,7 @@ def add_product_v2(data):
     f = False
     for sku in data['skus']:
         price = sku["cnyPrice"]
-        f = price > 0
+        f = price > 0 and "view_name" in sku
         if f:
             break
     if not f:
@@ -133,11 +133,11 @@ def add_product_v2(data):
     product_slug = ""
     if not create:
         print("go")
-        time_threshold = timezone.now() - timezone.timedelta(hours=1)
-        if product.last_upd >= time_threshold or product.in_process_update:
-            product.available_flag = True
-            product.save()
-            return "Товар актуальный))"
+        # time_threshold = timezone.now() - timezone.timedelta(hours=1)
+        # if product.last_upd >= time_threshold or product.in_process_update:
+        #     product.available_flag = True
+        #     product.save()
+        #     return "Товар актуальный))"
         # product.delete()
         # return 1
         product.clear_all_fields()

@@ -39,8 +39,8 @@ def get_ps_delivery_offers(sku, data):
     }
     our_delivery = {  # dobropost
         "name": "our_delivery",
-        "days_min": 9,
-        "days_max": 13,
+        "days_min": 10,
+        "days_max": 15,
         "delivery_price": 750,
         "delivery_currency": "rub",
         "decimal_insurance": 1,
@@ -55,8 +55,9 @@ def get_ps_delivery_offers(sku, data):
 
     standard_delivery = {
         "name": "standard_delivery",
-        "days_min": 10,
-        "days_max": 15,
+        "currency": 12.9,
+        "days_min": 11,
+        "days_max": 16,
         "delivery_price": 800,
         "delivery_currency": "rub",
         "decimal_insurance": 1,
@@ -72,7 +73,8 @@ def get_ps_delivery_offers(sku, data):
     if price <= 1500:
         express_delivery = {
             "name": "express_delivery",
-            "days_min": 1,
+            "currency": 12.9,
+            "days_min": 2,
             "days_max": 3,
             "delivery_price": 2500,
             "delivery_currency": "rub",
@@ -90,7 +92,8 @@ def get_ps_delivery_offers(sku, data):
     else:
         express_delivery = {
             "name": "express_delivery",
-            "days_min": 1,
+            "currency": 12.9,
+            "days_min": 2,
             "days_max": 3,
             "delivery_price": 2000,
             "delivery_currency": "rub",
@@ -324,7 +327,8 @@ def add_product_v2(data):
                 # extra_charge=offer['extra_charge'] if offer['extra_charge'] else 0,
                 # poizon_abroad=offer["platform_info"].get('poizon_abroad', False),
                 commission = delivery_offer.get('comission', 0),
-                delivery_type=delivery_offer['name'])
+                delivery_type=delivery_offer['name'],
+                currency=delivery_offer['currency'])
 
             if product.product_units.filter(view_size_platform=sku['view_name'],
                                             delivery_type__delivery_type=delivery_offer['name']).exists():

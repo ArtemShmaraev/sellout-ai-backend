@@ -30,6 +30,7 @@ class DeliveryType(models.Model):
     poizon_abroad = models.BooleanField(default=False)
     delivery_type = models.CharField(max_length=64, default="standard")
     commission = models.IntegerField(default=0)
+    currency = models.FloatField(default=12.9)
 
     def __str__(self):
         return self.name

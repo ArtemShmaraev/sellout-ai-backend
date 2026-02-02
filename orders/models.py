@@ -78,7 +78,7 @@ class Order(models.Model):
         self.user.is_made_order = True
         from .serializers import OrderSerializer
         serializer = OrderSerializer(self).data
-        send_email_start_order(serializer, self.email)
+        # send_email_start_order(serializer, self.email)
         self.save()
 
     def finish_order(self):

@@ -180,7 +180,7 @@ class Command(BaseCommand):
                     }]
                     cat_doc.save()
 
-        f = False
+        f = True
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
             # product_index = ProductDocument._index
@@ -192,7 +192,7 @@ class Command(BaseCommand):
             #
             # product_index.create()
 
-            products = Product.objects.filter(available_flag=True, is_custom=False)
+            products = Product.objects.filter(is_custom=False)
             count = products.count()
             print("Товаров", count)
             k = 0

@@ -443,6 +443,8 @@ class UserOrdersView(APIView):
                     orders = Order.objects.order_by("-id")[:10]
                 else:
                     orders = Order.objects.filter(user_id=user_id, fact_of_payment=True).order_by("-id")
+                for order in orders:
+                    order.update_order_status()
                 serializer = OrderSerializer(orders, many=True)
                 return Response(serializer.data)
             else:

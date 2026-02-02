@@ -3,6 +3,7 @@ import math
 import random
 from datetime import date, timedelta
 
+import unicodedata
 from django.core.cache import cache
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case, Count
 
@@ -31,6 +32,8 @@ from django.views.decorators.cache import cache_page
 
 
 def get_product_page_header(request):
+    def is_russian_letter(char):
+        return 'CYRILLIC' in unicodedata.name(char, '')
     res = {}
 
     line = request.query_params.getlist('line')
@@ -87,7 +90,13 @@ def get_product_page_header(request):
 
     if text_desktop.title == "sellout":
         title_desktop, subtitle_desktop = get_title_for_products_page(category, line, collab, collection)
-        res['desktop']['title'] = title_desktop.replace("Все", "").replace("Вся", "").strip().capitalize()
+
+        title_desktop = title_desktop.replace("Все", "").replace("Вся", "").strip()
+
+        if title_desktop and is_russian_letter(title_desktop[0]):
+            title_desktop = title_desktop[0].upper() + title_desktop[1:]
+
+        res['desktop']['title'] = title_desktop
         res['desktop']['subtitle'] = subtitle_desktop
         # if title_desktop != "":
         #     if gender == ['M']:
@@ -138,7 +147,12 @@ def get_product_page_header(request):
 
     if text_mobile.title == "sellout":
         title_mobile, subtitle_mobile = get_title_for_products_page(category, line, collab, collection)
-        res['mobile']['title'] = title_mobile.replace("Все", "").replace("Вся", "").strip().capitalize()
+        title_mobile = title_mobile.replace("Все", "").replace("Вся", "").strip()
+
+        if title_mobile and is_russian_letter(title_mobile[0]):
+            title_mobile = title_mobile[0].upper() + title_mobile[1:]
+
+        res['mobile']['title'] = title_mobile
         res['mobile']['subtitle'] = subtitle_mobile
 
         # if title_mobile != "":

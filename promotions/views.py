@@ -29,6 +29,8 @@ class PromocodeView(APIView):
             try:
                 promo = PromoCode.objects.get(string_representation=text.upper())
             except:
+                cart.promo_code = None
+                cart.total()
                 return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False,
                                  "total_sale": cart.total_sale, 'promo_bonus': 0})
             check = promo.check_promo(cart)

@@ -52,10 +52,11 @@ def get_ps_delivery_offers(sku, data):
         "currency_rate": "our",
         "available_statuses": ['Privileged', 'Friends & Family']
     }
+    sanya = 13.15
 
     standard_delivery = {
         "name": "standard_delivery",
-        "currency": 12.9,
+        "currency": sanya,
         "days_min": 11,
         "days_max": 16,
         "delivery_price": 800,
@@ -73,7 +74,7 @@ def get_ps_delivery_offers(sku, data):
     if price <= 1500:
         express_delivery = {
             "name": "express_delivery",
-            "currency": 12.9,
+            "currency": sanya,
             "days_min": 2,
             "days_max": 3,
             "delivery_price": 2500,
@@ -92,7 +93,7 @@ def get_ps_delivery_offers(sku, data):
     else:
         express_delivery = {
             "name": "express_delivery",
-            "currency": 12.9,
+            "currency": sanya,
             "days_min": 2,
             "days_max": 3,
             "delivery_price": 2000,

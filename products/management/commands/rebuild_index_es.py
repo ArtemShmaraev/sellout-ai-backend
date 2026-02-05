@@ -96,12 +96,12 @@ class Command(BaseCommand):
                 if i == 0:
                     line_doc.suggest = [{
                         'input': [slice] + dict_brand.get(line.view_name.lower(), []),
-                        'weight': 70000 - level - dop - length + Product.objects.filter(line=line).count()
+                        'weight': 70000 - level - dop - length + Product.objects.filter(lines=line).count()
                     }]
                 else:
                     line_doc.suggest.append({
                         'input': [slice],
-                        'weight': max(0, 70000 - level - (i * 10) - dop - length) + Product.objects.filter(line=line).count()
+                        'weight': max(0, 70000 - level - (i * 10) - dop - length) + Product.objects.filter(lines=line).count()
                     })
             line_doc.save()
 
@@ -176,7 +176,7 @@ class Command(BaseCommand):
 
                     cat_doc.suggest = [{
                         'input': [f"{category.name} {line.view_name}", f"{line.view_name} {category.name}"],
-                        'weight': 40000 - len(f"{category.name} {line.view_name}") + Product.objects.filter(categories=category, line=line).count()
+                        'weight': 40000 - len(f"{category.name} {line.view_name}") + Product.objects.filter(categories=category, lines=line).count()
                     }]
                     cat_doc.save()
 

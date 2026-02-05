@@ -143,7 +143,7 @@ def formula_price(product, unit, user_status):
     delivery_decimal_insurance = delivery.decimal_insurance
     delivery_absolute_insurance = delivery.absolute_insurance
     delivery_extra_charge = delivery.extra_charge
-    delivery_comission = delivery.commission
+    delivery_commission = delivery.commission
     currency = delivery.currency
 
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
@@ -157,8 +157,8 @@ def formula_price(product, unit, user_status):
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
                                                                                        delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
-        cost_without_shipping = (converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + converted_into_rub_price
-                                 * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL) + delivery_comission
+        cost_without_shipping = (converted_into_rub_price + converted_into_rub_price
+                                 * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL) + delivery_commission
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = PRIVILEGED_MARKUP + converted_into_rub_price * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL
         total_price = total_cost + PRIVILEGED_MARKUP
@@ -172,7 +172,7 @@ def formula_price(product, unit, user_status):
                                                                                        delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
 
-        cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + delivery_comission
+        cost_without_shipping = converted_into_rub_price + delivery_commission
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
@@ -193,7 +193,7 @@ def formula_price(product, unit, user_status):
                                                                                        delivery_decimal_insurance - 1)
                 + delivery_absolute_insurance)
 
-        cost_without_shipping = converted_into_rub_price * COMMISSION_FEE_RELATIVE_DECIMAL + delivery_comission
+        cost_without_shipping = converted_into_rub_price + delivery_commission
 
         total_cost_before_cashing_out = cost_without_shipping + shipping_cost
 

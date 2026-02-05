@@ -271,7 +271,7 @@ def add_product_v2(data):
     product.save(product_slug=product_slug)
     product.product_units.update(availability=False)
     for sku in data['skus']:
-        if sku['cnyPrice'] == 0:
+        if sku['cnyPrice'] == 0 or "view_name" not in sku:
             continue
         delivery_offers = get_ps_delivery_offers(sku, data)
         sizes = []

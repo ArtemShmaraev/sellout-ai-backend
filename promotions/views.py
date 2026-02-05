@@ -30,16 +30,16 @@ class PromocodeView(APIView):
                 promo = PromoCode.objects.get(string_representation=text.upper())
             except:
                 return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False,
-                                 "total_sale": cart.total_sale})
+                                 "total_sale": cart.total_sale, 'promo_bonus': 0})
             check = promo.check_promo(cart)
 
             if check[0]:
                 cart.promo_code = promo
                 cart.total()
                 return Response({"final_amount": cart.final_amount, "message": check[1], "status": True,
-                                 "total_sale": cart.total_sale})
+                                 "total_sale": cart.total_sale, 'promo_bonus': check[3]})
             return Response({"final_amount": cart.final_amount, "message": check[1], "status": False,
-                             "total_sale": cart.total_sale})
+                             "total_sale": cart.total_sale, 'promo_bonus': 0})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, user_id):
@@ -49,7 +49,7 @@ class PromocodeView(APIView):
             cart.promo_code = None
             cart.save()
             return Response(
-                {"final_amount": cart.final_amount, "message": "", "status": False, "total_sale": cart.total_sale})
+                {"final_amount": cart.final_amount, "message": "", "status": False, "total_sale": cart.total_sale, 'promo_bonus': 0})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
 
@@ -59,29 +59,38 @@ class PromocodeAnonView(APIView):
     def post(self, request):
         data = json.loads(request.body)
         text = data['promo']
-        s_product_unit = data["product_unit_list"]
-        product_units = ProductUnit.objects.filter(id__in=s_product_unit)
-        sum = 0
-        sale = 0
-        for product_unit in product_units:
-            update_price(product_unit.product)
-            price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
-            sum += price['start_price']
-            sale += price['start_price'] - price['final_price']
+        list_unit = data["product_unit_list"]
+        if "" in list_unit:
+            list_unit.remove("")
+        s_product_unit = list_unit
+        if s_product_unit:
+            product_units = ProductUnit.objects.filter(id__in=s_product_unit)
+            sum = 0
+            sale = 0
+            for product_unit in product_units:
+                update_price(product_unit.product)
+                price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
+                sum += price['start_price']
+                sale += price['start_price'] - price['final_price']
 
-        try:
-            promo = PromoCode.objects.get(string_representation=text.upper())
-        except:
-            return Response(
-                {"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale,
-                 "promo_sale": 0})
-        check = promo.check_anon_promo(sum - sale, sum)
+            try:
+                promo = PromoCode.objects.get(string_representation=text.upper())
+            except:
+                return Response(
+                    {"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale,
+                     "promo_sale": 0, 'promo_bonus': 0})
+            check = promo.check_anon_promo(sum - sale, sum)
 
-        if check[0]:
-            final_amount = sum - check[2]
-            return Response({"final_amount": final_amount, "message": "Промокод применен", "status": True,
-                             "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale,
-                             "promo_code": promo.string_representation})
+            if check[0]:
+                final_amount = sum - check[2]
+
+                return Response({"final_amount": final_amount, "message": check[1], "status": True,
+                                 "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale,
+                                 "promo_code": promo.string_representation, "promo_bonus": check[3]})
+            else:
+                return Response({"final_amount": sum,    "message": check[1], "status": False, "total_sale": 0, "sale": sale,
+                                 "promo_sale": 0, 'promo_bonus': 0})
         else:
-            return Response({"final_amount": sum, "message": check[1], "status": False, "total_sale": 0, "sale": sale,
-                             "promo_sale": 0})
+            return Response(
+                {"final_amount": 0, "message": "Обновление", "status": True, "total_sale": 0, "sale": 0,
+                 "promo_sale": 0, 'promo_bonus': 0})

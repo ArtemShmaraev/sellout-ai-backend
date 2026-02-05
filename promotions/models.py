@@ -30,7 +30,6 @@ class PromoCode(models.Model):
         promo_bonus = 0
         if cart.user.user_status.base:
             flag_order = cart.user.orders.exists()
-
             if self.ref_promo and not flag_order:
                 ref_sale = 0
                 ref_bonus = 0
@@ -115,7 +114,10 @@ class PromoCode(models.Model):
                 return 0, "Промокод закончился"
             if (((
                         self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or self.ref_promo:
-                return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale, promo_bonus
+                if promo_bonus > 0:
+                    return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus
+                else:
+                    return 1, f"Скидка по промокоду {promo_sale}₽", promo_sale, promo_bonus
             else:
                 return 0, "Промокод не активен"
         return 1, "Для Вас уже учтены все скидки", promo_sale, promo_bonus
@@ -163,7 +165,13 @@ class PromoCode(models.Model):
             return 0, "Промокод закончился"
         if (((
                     self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or self.ref_promo:
-            return 1, f"Скидка по промокоду  {promo_sale}P", promo_sale, promo_bonus
+
+            if promo_bonus > 0:
+                return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus
+            else:
+                return 1, f"Скидка по промокоду {promo_sale}₽", promo_sale, promo_bonus
+
+
         else:
             return 0, "Промокод не активен"
 

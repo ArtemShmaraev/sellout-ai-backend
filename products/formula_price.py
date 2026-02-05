@@ -6,14 +6,8 @@ def round_by_step(value, step=50):
     return math.ceil(value / step) * step
 
 
-CURRENCY_RATE_CNY = 13.8
-
-COMMISSION_FEE_ABSOLUTE = 500
-COMMISSION_FEE_RELATIVE_DECIMAL = 1
-REGULAR_SHIPPING_KG_COST = 900
-EXPRESS_SHIPPING_KG_COST = 2700
 CASHING_OUT_COMMISSION_FEE_DECIMAL = 1.025
-PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL = 0.915
+PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL = 0.91838
 FIXED_COSTS_ABSOLUTE = 100
 PRELIMINARY_MARKUP = {
     "steps_of_order_amount": {
@@ -81,9 +75,8 @@ PRELIMINARY_MARKUP = {
 }
 
 PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL = 0.05
-PRIVILEGED_MARKUP = 1500
+PRIVILEGED_MARKUP = 1000
 
-FRIENDS_AND_FAMILY_CURRENCY_DIFFERENCE_DECIMAL = 1
 FRIENDS_AND_FAMILY_MARKUP = 500
 
 
@@ -142,12 +135,14 @@ def formula_price(product, unit, user_status):
     delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
     delivery_decimal_insurance = delivery.decimal_insurance
     delivery_absolute_insurance = delivery.absolute_insurance
+    # delivery_extra_charge на данный момент всегда 0
     delivery_extra_charge = delivery.extra_charge
     delivery_commission = delivery.commission
     currency = delivery.currency
 
     genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
     categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
+    # poizon_abroad на данный момент всегда false
     poizon_abroad = unit.delivery_type.poizon_abroad
     status_name = user_status.name  # Amethyst
 
@@ -165,8 +160,6 @@ def formula_price(product, unit, user_status):
     elif status_name == "Friends & Family":
 
         converted_into_rub_price = original_price * currency
-        # print(converted_into_rub_price)
-        # print()
         shipping_cost = (
                 delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
                                                                                        delivery_decimal_insurance - 1)
@@ -176,7 +169,6 @@ def formula_price(product, unit, user_status):
         total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
         total_profit = FRIENDS_AND_FAMILY_MARKUP
         total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
-
     else:
         if product.actual_price:
             bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
@@ -202,6 +194,7 @@ def formula_price(product, unit, user_status):
         preliminary_markup = 0
         extra_markup = 0
 
+        # poizon_abroad на данный момент всегда false
         if 60000 >= total_cost >= 30000 and poizon_abroad:
             extra_markup += 1000
         elif total_cost > 60000 and poizon_abroad:
@@ -216,12 +209,11 @@ def formula_price(product, unit, user_status):
         if genders == ["F"] and total_cost >= 80000 and "Обувь" not in categories and "Сумки" in categories:
             extra_markup += 1000
 
-        if genders == ["M"] and total_cost >= 60000 and "Обувь" not in categories and "Сумки" in categories:
+        if ["M"] in genders and total_cost >= 60000 and "Кроссовки" not in categories:
             extra_markup += 1000
 
         correlate_markup_with_price(extra_markup, delivery_extra_charge)
         for step in PRELIMINARY_MARKUP["steps_of_order_amount"]:
-            # print(PRELIMINARY_MARKUP["steps_of_order_amount"][step])
             if (PRELIMINARY_MARKUP["steps_of_order_amount"][step]["min_total_cost_including"] <= total_cost <
                     PRELIMINARY_MARKUP["steps_of_order_amount"][step]["max_total_cost_not_including"]):
                 preliminary_markup = PRELIMINARY_MARKUP["steps_of_order_amount"][step]["preliminary_markup"]

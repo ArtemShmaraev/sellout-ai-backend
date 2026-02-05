@@ -168,7 +168,7 @@ class Command(BaseCommand):
             for line in Line.objects.filter(parent_line=None):
                 kkk += 1
                 print(kkk)
-                if Product.objects.filter(categories=category, lines=line).count() > 20:
+                if Product.objects.filter(categories=category, lines=line).count() > 0:
                     cat_doc = SuggestDocument()
                     cat_doc.name = f"{category.name} {line.view_name}"
                     cat_doc.type = "Категория"

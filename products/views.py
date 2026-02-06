@@ -76,7 +76,7 @@ class ProducrSpuIdView(APIView):
 class ProductsFid(APIView):
     def get(self, request, page):
         params = request.query_params
-        products = filter_products(request).order_by("-score_product_page")
+        products = Product.objects.filter(id__in=filter_products(request)).order_by("-score_product_page")
 
         # products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
         size_page = int(params.get("size_page", 1000))

@@ -75,6 +75,7 @@ class FactOfPaymentView(APIView):
 
             send_email_confirmation_order(OrderSerializer(order).data, "markenson888inst@gmail.com")
             send_email_confirmation_order(OrderSerializer(order).data, "shmaraev18@mail.ru")
+            send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
             cart.clear()
             print("ff2")
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
@@ -342,7 +343,7 @@ class CheckOutView(APIView):
                               email=data['email'], phone=data['phone'], phone_int=phone_int,
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
-                              promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus,
+                              promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus, total_bonus=cart.bonus, total_bonus_and_promo_bonus=cart.bonus + cart.promo_bonus,
                               bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
@@ -388,17 +389,21 @@ class CheckOutView(APIView):
                 order.save()
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data
-                order.get_total_bonus()
+                # order.get_total_bonus()
 
 
                 if not user.user_status.base:
                     order.fact_of_payment = True
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
-                    # send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+
+
+                    send_email_confirmation_order(OrderSerializer(order).data, "dfeoktistov523@icloud.com")
+                    send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
                     # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
+
                     cart.clear()
-                # send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                 send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                 order.save()
 

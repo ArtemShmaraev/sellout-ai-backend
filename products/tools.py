@@ -23,6 +23,9 @@ from json2xml import json2xml
 import xml.etree.ElementTree as ET
 
 def get_fid_product(products):
+    file_path = "line_count.json"
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data_count_line = json.load(file)
     yml_catalog = ET.Element('yml_catalog', attrib={"date": str(datetime.now())})
     # Создаем элемент shop и добавляем его в корневой элемент
     shop = ET.Element('shop')
@@ -78,6 +81,8 @@ def get_fid_product(products):
             delivery_tag.append(delivery_elem)
 
         offer_name.text = product.get_full_name()
+        offer_name_to_title = ET.Element('name_to_title')
+        offer_name_to_title.text = f"Заказать {product.get_full_name()} по лучшей цене в РФ на Sellout!"
         offer_vendor = ET.Element('vendor')
         offer_vendor.text = product.brands.first().name if product.collab is None else product.collab.name
         offer_vendorCode = ET.Element('vendorCode')
@@ -102,11 +107,11 @@ def get_fid_product(products):
         offer_delivery = ET.Element('delivery')
         offer_delivery.text = "True"
         offer_description = ET.Element('description')
-        offer_description.text = f"""<![CDATA[Оригинал {product.get_full_name()} можно заказать прямо сейчас. Выгодные цены и бонусы ждут вас. Сделайте свой шаг в мир моды.]]>"""
-
+        offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}. 3-ёх этапная проверка на оригинальность"
 
         # Добавляем элементы offer в offer и добавляем его в shop
         offer.append(offer_name)
+        offer.append(offer_name_to_title)
         offer.append(offer_vendor)
         offer.append(offer_vendorCode)
         offer.append(offer_url)

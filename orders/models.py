@@ -76,9 +76,10 @@ class Order(models.Model):
         self.date_of_buy_out = timezone.now()
         self.order_in_progress = True
         self.user.is_made_order = True
+        self.accrue_bonuses()
         from .serializers import OrderSerializer
         serializer = OrderSerializer(self).data
-        # send_email_start_order(serializer, self.email)
+        send_email_start_order(serializer, self.email)
         self.save()
 
     def finish_order(self):

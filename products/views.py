@@ -37,7 +37,7 @@ from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Colla
     RansomRequest, SGInfo, Brand, Photo, Material, Gender
 from rest_framework import status
 
-from .product_page import get_product_page, get_product_page_header, count_queryset
+from .product_page import get_product_page, get_product_page_header, count_queryset, filter_products
 from .product_site_map import ProductSitemap
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
@@ -76,8 +76,10 @@ class ProducrSpuIdView(APIView):
 class ProductsFid(APIView):
     def get(self, request, page):
         params = request.query_params
-        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
-        size_page = int(params.get("size", 1000))
+        products = filter_products(request).order_by("-score_product_page")
+
+        # products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+        size_page = int(params.get("size_page", 1000))
         # count = products.count()
         products_page = products[(page - 1) * size_page:page * size_page]
         fid = get_fid_product(products_page)

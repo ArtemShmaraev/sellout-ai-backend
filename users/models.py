@@ -159,7 +159,7 @@ class User(AbstractUser):
                 self.preferred_clothes_size_row = clothes_table.get(filter_name="Международный(INT)")
 
         if self.user_status:
-            if self.user_status.is_base:
+            if self.user_status.base:
                 def default_referral_data(promo):
                     return {
                         "order_amounts": [2500, 15000, 25000, 35000, 70000, 90000],

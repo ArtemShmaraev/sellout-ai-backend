@@ -50,7 +50,7 @@ class Command(BaseCommand):
             scheme="http",  # Используйте "https", если ваш сервер настроен для безопасного соединения
             port=9200,
         )
-        connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
+        # connections.create_connection(hosts=hosts)  # Замените на адрес вашего Elasticsearch-сервера
 
         sug_index = SuggestDocument._index
         if sug_index.exists():

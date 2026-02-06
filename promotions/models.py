@@ -66,6 +66,7 @@ class PromoCode(models.Model):
                 pred = round(cart.final_amount - self.discount_absolute)
                 promo_sale = cart.final_amount - pred
 
+
         return promo_sale, promo_bonus
 
     def check_promo(self, cart):

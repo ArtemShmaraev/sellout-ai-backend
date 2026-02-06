@@ -146,45 +146,46 @@ class Order(models.Model):
                         ref_user.save()
 
     def update_order_status(self, finish=False):
-        for ou in self.order_units.all():
-            ou.update_status(finish=finish)
-        # Получаем все статусы юнитов этого заказа
-        unit_statuses = self.order_units.values_list('status__name', flat=True)
-        s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
-             "Передан в службу доставки по России", "Доставлен"]
+        if self.order_in_progress:
+            for ou in self.order_units.all():
+                ou.update_status(finish=finish)
+            # Получаем все статусы юнитов этого заказа
+            unit_statuses = self.order_units.values_list('status__name', flat=True)
+            s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
+                 "Передан в службу доставки по России", "Доставлен"]
 
-        # Проверяем условия и определяем статус заказа
+            # Проверяем условия и определяем статус заказа
 
-        if 'В пути до международного склада' in unit_statuses:
-            self.status = Status.objects.get(name='В пути до международного склада')
+            if 'В пути до международного склада' in unit_statuses:
+                self.status = Status.objects.get(name='В пути до международного склада')
 
-        if 'В пути до московского склада' in unit_statuses:
-            self.status = Status.objects.get(name='В пути до московского склада')
+            if 'В пути до московского склада' in unit_statuses:
+                self.status = Status.objects.get(name='В пути до московского склада')
 
-        if "Прибыл в Москву" in unit_statuses:
-            if all(status == 'Прибыл в Москву' for status in unit_statuses):
-                self.status = Status.objects.get(name='Прибыл в Москву')
-            else:
-                self.status = Status.objects.get(name='Частично прибыл в Москву')
+            if "Прибыл в Москву" in unit_statuses:
+                if all(status == 'Прибыл в Москву' for status in unit_statuses):
+                    self.status = Status.objects.get(name='Прибыл в Москву')
+                else:
+                    self.status = Status.objects.get(name='Частично прибыл в Москву')
 
-        if "Передан в службу доставки по России" in unit_statuses:
-            if all(status == 'Передан в службу доставки по России' for status in unit_statuses):
-                self.status = Status.objects.get(name='Передан в службу доставки по России')
-            else:
-                self.status = Status.objects.get(name='Частично передан в службу доставки по России')
+            if "Передан в службу доставки по России" in unit_statuses:
+                if all(status == 'Передан в службу доставки по России' for status in unit_statuses):
+                    self.status = Status.objects.get(name='Передан в службу доставки по России')
+                else:
+                    self.status = Status.objects.get(name='Частично передан в службу доставки по России')
 
-        if all(status == "Доставлен" for status in unit_statuses):
-            self.status = Status.objects.get(name='Доставлен')
+            if all(status == "Доставлен" for status in unit_statuses):
+                self.status = Status.objects.get(name='Доставлен')
 
-        if 'Отменён' in unit_statuses:
-            self.status = Status.objects.get(name='Отменён')
+            if 'Отменён' in unit_statuses:
+                self.status = Status.objects.get(name='Отменён')
 
         self.save()
 
     def evenly_distribute_discount(self):
         # final_price = self.total_amount
         discount = self.promo_sale + self.bonus_sale
-        total_cost = self.total_amount
+        total_cost = self.final_amount
         discount_per_cost = discount / total_cost
         # print(discount_per_cost, self.total_amount)
         new_item_costs = []
@@ -196,7 +197,7 @@ class Order(models.Model):
             for unit in self.order_units.all():
                 ck += 1
                 if ck == k:
-                    last_item_cost = self.total_amount - sum_unit - discount
+                    last_item_cost = self.final_amount - sum_unit - discount
                     unit.final_price = last_item_cost
                     unit.save()
                 else:
@@ -381,6 +382,7 @@ class ShoppingCart(models.Model):
             if promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo:
                 self.promo_sale = promo_sale
                 self.promo_bonus = promo_bonus
+                self.final_amount -= self.promo_sale
                 if self.first_order_bonus == 1000:
                     self.first_order_bonus = 0
                     sum_bonus -= 1000
@@ -393,6 +395,7 @@ class ShoppingCart(models.Model):
 
         else:
             self.promo_sale = 0
+            self.promo_bonus = 0
 
         if user_status.base:
             self.bonus = sum_bonus

@@ -408,7 +408,7 @@ class Product(models.Model):
             self.available_flag = False
             self.save()
 
-    def update_price(self):
+    def update_price(self, in_sale=True):
         if not self.actual_price:
             user_status = UserStatus.objects.get(name="Amethyst")
             min_price = 0
@@ -417,7 +417,7 @@ class Product(models.Model):
             min_price_without_sale = 0
             # print(self.product_units.all())
             for unit in self.product_units.filter(availability=True):
-                price = formula_price(self, unit, user_status)
+                price = formula_price(self, unit, user_status, in_sale=in_sale)
                 # print(price)
                 # print(price)
                 unit.start_price = price['start_price']
@@ -517,6 +517,7 @@ class Product(models.Model):
                 self.slug = slugify(
                     f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
                 print("новый слаг")
+                print(self.slug)
             else:
                 self.slug = product_slug
 

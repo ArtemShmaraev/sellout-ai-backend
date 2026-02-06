@@ -127,7 +127,7 @@ def get_bonus(total_profit, max_total_profit_for_product, status_name):
     return bonus, max_bonus_for_product
 
 
-def formula_price(product, unit, user_status):
+def formula_price(product, unit, user_status, in_sale=True):
     original_price = unit.original_price
     weight = unit.weight if unit.weight != 0 else 1
     delivery = unit.delivery_type
@@ -232,23 +232,25 @@ def formula_price(product, unit, user_status):
     if product.sale_percentage != 0:
         percentage = round(((100 - product.sale_percentage) / 100), 2)
         price_without_sale = round_by_step((unit.final_price / percentage) + 10, step=100) - 10
-    elif product.sale_absolute:
+    elif product.sale_absolute != 0:
         price_without_sale = unit.final_price + product.sale_absolute
-    elif unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
-        if unit.start_price > (round_total_price * 1.05):
-            price_without_sale = unit.start_price
-            unit.is_sale = True
-            unit.save()
-            product.is_sale = True
+    else:
+        if in_sale:
+            if unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
+                if unit.start_price > (round_total_price * 1.05):
+                    price_without_sale = unit.start_price
+                    unit.is_sale = True
+                    unit.save()
+                    product.is_sale = True
 
-    # if unit.is_sale:
-    #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
-    elif unit.final_price > (round_total_price * 1.05) and status_name not in ["Friends & Family", 'Privileged']:
-        # print("Цена дешевле")
-        price_without_sale = unit.final_price
-        unit.is_sale = True
-        unit.save()
-        product.is_sale = True
+            # if unit.is_sale:
+            #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
+            elif unit.final_price > (round_total_price * 1.1) and status_name not in ["Friends & Family", 'Privileged']:
+                # print("Цена дешевле")
+                price_without_sale = unit.final_price
+                unit.is_sale = True
+                unit.save()
+                product.is_sale = True
 
     if status_name in ["Friends & Family", 'Privileged']:
         price_without_sale = unit.start_price

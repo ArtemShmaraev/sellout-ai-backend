@@ -1032,7 +1032,7 @@ class ProductSlugView(APIView):
             is_update = self.request.query_params.get('is_update')
             product = Product.objects.get(slug=slug)
             t2 = time()
-            print("пятьдесят ", t2 - t1, product.id)
+            # print("пятьдесят ", t2 - t1, product.id)
 
             # user_agent = request.META.get('HTTP_USER_AGENT', '')
             # print(request.META.get('HTTP_USER_AGENT', ''), "блять")
@@ -1052,7 +1052,7 @@ class ProductSlugView(APIView):
                                                              "wishlist": Wishlist.objects.get(user=User(
                                                                  id=request.user.id)) if request.user.id else None})
             t3 = time()
-            print("два ", t3-t2, product.id)
+            # print("два ", t3-t2, product.id)
             return Response(serializer.data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)

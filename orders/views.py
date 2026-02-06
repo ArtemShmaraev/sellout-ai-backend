@@ -40,10 +40,10 @@ class RedirectPaymentView(APIView):
         data = dict(request.data)
         print(data)
         url = "https://sellout.server.paykeeper.ru/create/"
+        order = Order.objects.get(number=data['orderid'][0])
+        data['cart'] = order.invoice_data
 
         # Данные формы, которые нужно отправить
-        # /
-
         # Отправка POST-запроса
         response = requests.post(url, data=data).json()
         # print(response.text)
@@ -440,7 +440,7 @@ class UserOrdersView(APIView):
         try:
             if request.user.id == user_id or request.user.is_staff:
                 if request.user.id == 140:
-                    orders = Order.objects.order_by("-id")[:10]
+                    orders = Order.objects.filter(fact_of_payment=True).order_by("-id")[:10]
                 else:
                     orders = Order.objects.filter(user_id=user_id, fact_of_payment=True).order_by("-id")
                 for order in orders:

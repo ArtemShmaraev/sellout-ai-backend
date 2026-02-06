@@ -5,7 +5,6 @@ from django.db.models import Sum
 from orders.models import Order
 from promotions.models import Bonuses
 
-
 from django.utils import timezone
 
 
@@ -22,28 +21,25 @@ class UserStatus(models.Model):
     base = models.BooleanField(default=True)
     percentage_bonuses = models.IntegerField(default=10)
 
-
     def __str__(self):
         return self.name
 
 
 def get_default_status():
     default_object = \
-    UserStatus.objects.get_or_create(name="Amethyst")[0]
+        UserStatus.objects.get_or_create(name="Amethyst")[0]
     return default_object.pk
 
 
-
-def default_referral_data():
+def default_referral_data(promo):
     return {
-        "order_amounts": [3000, 35000],
-        "partner_bonus_amounts": [500, 1000],
-        "client_sale_amounts": [0, 0],
-        "client_bonus_amounts": [0, 0],
+        "order_amounts": [2500, 15000, 25000, 35000, 70000, 90000],
+        "partner_bonus_amounts": [250, 500, 750, 1000, 1250, 1500],
+        "client_sale_amounts": [0, 0, 0, 0, 0, 0],
+        "client_bonus_amounts": [1000, 1000, 1000, 1000, 1000, 1000],
         "promo_text": None,
         "promo_link": None,
     }
-
 
 class User(AbstractUser):
     # Your custom fields and methods here
@@ -108,23 +104,13 @@ class User(AbstractUser):
     wait_list = models.ManyToManyField('shipping.ConfigurationUnit', blank=True, related_name="wait_list_users")
     user_status = models.ForeignKey("UserStatus", on_delete=models.SET_NULL, null=True, blank=True)
     is_referral_partner = models.BooleanField(default=False)
-    referral_data = models.JSONField(default=default_referral_data)
+    referral_data = models.JSONField(default=dict)
     is_made_order = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
 
-
     def update_referral_promo_in_referral_data(self):
-        def default_referral_data(promo):
-            return {
-                "order_amounts": [3000, 35000],
-                "partner_bonus_amounts": [500, 1000],
-                "client_sale_amounts": None,
-                "client_bonus_amounts": [100, 1000],
-                "promo_text": None,
-                "promo_link": f"https://sellout.su?referral_id={promo}",
-            }
         promo = self.referral_promo.string_representation
         self.referral_data['promo_link'] = f"https://sellout.su?referral_id={promo}"
         self.save()
@@ -145,7 +131,6 @@ class User(AbstractUser):
         if user_total is None:
             user_total = 0
         return user_total
-
 
     def save(self, *args, **kwargs):
         from products.models import SizeRow, SizeTable
@@ -172,6 +157,34 @@ class User(AbstractUser):
 
                 clothes_table = SizeTable.objects.get(name="Clothes_Men").size_rows.all()
                 self.preferred_clothes_size_row = clothes_table.get(filter_name="Международный(INT)")
+
+        if self.user_status:
+            if self.user_status.is_base:
+                def default_referral_data(promo):
+                    return {
+                        "order_amounts": [2500, 15000, 25000, 35000, 70000, 90000],
+                        "partner_bonus_amounts": [250, 500, 750, 1000, 1250, 1500],
+                        "client_sale_amounts": [0, 0, 0, 0, 0, 0],
+                        "client_bonus_amounts": [1000, 1000, 1000, 1000, 1000, 1000],
+                        "promo_text": None,
+                        "promo_link": f"https://sellout.su?referral_id={promo}",
+                    }
+
+                self.referral_data = default_referral_data(self.referral_promo.string_representation)
+            else:
+                def priv_referral_data(promo):
+                    return {
+                        "order_amounts": [2500, 15000, 25000, 35000, 70000, 90000],
+                        "partner_bonus_amounts": [500, 750, 1000, 1250, 1500, 2000],
+                        "client_sale_amounts": [0, 0, 0, 0, 0, 0],
+                        "client_bonus_amounts": [1000, 1000, 1000, 1500, 1500, 2000],
+                        "promo_text": None,
+                        "promo_link": f"https://sellout.su?referral_id={promo}",
+                    }
+
+                self.referral_data = priv_referral_data(self.referral_promo.string_representation)
+
+
         super(User, self).save(*args, **kwargs)
 
 

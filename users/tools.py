@@ -9,6 +9,7 @@ from users.models import User, EmailConfirmation, UserStatus
 from wishlist.models import Wishlist
 from django.core import signing
 
+
 def check_adress(text):
     token = "7b8466ea8df30fc6a906c7e351e1da4160766933"
     secret = "962187b66460ed2f92c257b7bb2778d2c293cefb"
@@ -17,7 +18,6 @@ def check_adress(text):
     if len(result) > 0:
         return result[0]
     return None
-
 
 
 def hash_string(input_string):
@@ -32,11 +32,10 @@ def hash_string(input_string):
 
     return hashed_string
 
+
 def secret_password(email):
     secret_key = "fsdhjk348290fjdsklfdsfj&*(esdfnklm fjvвыаw" + email
     return hash_string(secret_key)
-
-
 
 
 def register_user(data):
@@ -45,8 +44,6 @@ def register_user(data):
     new_user = User(username=data['username'].strip().lower(), password=data['password'], first_name=data['first_name'],
                     last_name=data['last_name'],
                     is_mailing_list=data['is_mailing_list'], email=data['username'].strip().lower())
-
-
 
     genders = {'male': 1, "female": 2}
     if 'gender' in data:
@@ -104,13 +101,14 @@ def register_user(data):
 
     def default_referral_data(promo):
         return {
-            "order_amounts": [3000, 35000],
-            "partner_bonus_amounts": [500, 1000],
-            "client_sale_amounts": [0, 0],
-            "client_bonus_amounts": [0, 0],
+            "order_amounts": [2500, 15000, 25000, 35000, 70000, 90000],
+            "partner_bonus_amounts": [250, 500, 750, 1000, 1250, 1500],
+            "client_sale_amounts": [0, 0, 0, 0, 0, 0],
+            "client_bonus_amounts": [1000, 1000, 1000, 1000, 1000, 1000],
             "promo_text": None,
             "promo_link": f"https://sellout.su?referral_id={promo}",
         }
+
     new_user.referral_data = default_referral_data(promo_string)
     new_user.save()
 
@@ -119,9 +117,4 @@ def register_user(data):
     email_confirmation.save()
     # print(f"http://127.0.0.1:8000/api/v1/user")
 
-
-
 # check_adress("белгород губкина 17б")
-
-
-

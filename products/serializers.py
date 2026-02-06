@@ -29,12 +29,24 @@ class SizeRowSerializer(serializers.ModelSerializer):
 
 
 class SizeTableSerializer(serializers.ModelSerializer):
-    size_rows = SizeRowSerializer(many=True)
+    size_rows = serializers.SerializerMethodField()
+
 
     class Meta:
         model = SizeTable
         exclude = ['default_row', ]
         depth = 2
+
+    def get_size_rows(self, obj):
+        # Получаем отсортированный по id queryset связанных фотографий
+
+        size_rows = obj.size_rows.order_by('id')
+
+        # Сериализуем отсортированный список фотографий
+        serializer = SizeRowSerializer(size_rows, many=True)
+        return serializer.data
+
+
 
 
 class SizeTranslationRowsSerializer(serializers.ModelSerializer):

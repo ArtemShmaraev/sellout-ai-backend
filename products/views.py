@@ -456,7 +456,7 @@ class BrandSearchView(APIView):
         # Используем исключение try-except для обработки ошибок
         try:
             # Ищем бренды, чьи имена содержат поисковой запрос
-            brands = Brand.objects.filter(name__icontains=search_query).order_by('name')
+            brands = Brand.objects.filter(name__icontains=search_query).order_by("query_name")
             serializer = BrandSerializer(brands, many=True, context=context)  # Сериализуем найденные бренды
             return Response(serializer.data)
         except Exception as e:
@@ -1228,7 +1228,7 @@ class SizeTableForFilter(APIView):
                 size_tables = size_tables.filter(category__eng_name__in=categories)
             size_tables = size_tables.order_by("id")
             # Создайте уникальный ключ кэша на основе данных size_tables
-            cache_key = "_".join(list(map(str, size_tables.values_list("id", flat=True))))
+            cache_key = ".".join(list(map(str, size_tables.values_list("id", flat=True))))
 
             # Попробуйте получить закэшированные данные из кэша
             cached_data = cache.get(cache_key)

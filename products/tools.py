@@ -66,9 +66,10 @@ def get_fid_product_all(products):
 
 
     shop_offers = ET.Element('offers')
-    count = 100000
-    for page in range(0, count, 1000):
-        page_products = products[page:page + 1000]
+    count = 50000
+    for page in range(0, count, 100):
+        page_products = products[page:page + 100]
+        print(page)
         for product in page_products:
             # Создаем элемент offer
             offer = ET.Element('offer', attrib={"id": str(product.id)})

@@ -153,6 +153,7 @@ def get_fid_product_all(products):
     return xml_str
 
 def get_fid_product(products):
+
     file_path = "line_count.json"
     with open(file_path, 'r', encoding='utf-8') as file:
         data_count_line = json.load(file)
@@ -194,9 +195,10 @@ def get_fid_product(products):
             category_elem.set("parentId", str(category.parent_category.id))
         shop_categories.append(category_elem)
 
-
+    print(products.count())
     shop_offers = ET.Element('offers')
     for product in products:
+        print("q111")
 
         # Создаем элемент offer
         offer = ET.Element('offer', attrib={"id": str(product.id)})

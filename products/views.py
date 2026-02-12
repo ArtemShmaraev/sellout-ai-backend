@@ -93,7 +93,7 @@ class ProductsFid(APIView):
         parsed_url = urlparse(url)  # Разбираем URL
 
         # Извлекаем имя файла из пути без параметров
-        file_name = f"fids/{parsed_url.path.split('/')[-1]}"
+        file_name = f"fids/{size_page}"
 
         # Если у вас есть параметры в URL и вы хотите их учитывать в имени файла
         query_params = parse_qs(parsed_url.query)
@@ -101,11 +101,60 @@ class ProductsFid(APIView):
             params_str = '_'.join([f'{key}{value}' for key, value in query_params.items()])
             file_name = f'{file_name}_{params_str}'
         file_name = f"{file_name}.xml"
+        print(file_name)
         if not os.path.exists(file_name):
+            params = request.query_params
+            queryset = Product.objects.all()
+            price_max = params.get('price_max')
+            price_min = params.get('price_min')
+            line = params.getlist('line')
+            color = params.getlist('color')
+            is_sale = params.get("is_sale")
+            category = params.getlist("category")
+            material = params.getlist("material")
+            gender = params.getlist("gender")
+            brand = params.getlist("brand")
+            collab = params.getlist("collab")
+            collection = params.getlist('collection')
 
-            products = Product.objects.filter(id__in=filter_products(request)).order_by("-score_product_page")
+            queryset = queryset.filter(available_flag=True)
+
+            if is_sale:
+                queryset = queryset.filter(is_sale=True)
+
+            if collab:
+                if "all" in collab:
+                    queryset = queryset.filter(is_collab=True)
+                else:
+                    queryset = queryset.filter(collab__query_name__in=collab)
+
+            if material:
+                queryset = queryset.filter(materials__eng_name__in=material)
+            if collection:
+                queryset = queryset.filter(collections__query_name__in=collection)
+            if brand:
+                for brand_name in brand:
+                    queryset = queryset.filter(brands__query_name=brand_name)
+            if line:
+                queryset = queryset.filter(lines__full_eng_name__in=line)
+
+            if color:
+                queryset = queryset.filter(colors__name__in=color)
+            if category:
+                queryset = queryset.filter(categories__eng_name__in=category)
+
+            if price_min:
+                queryset = queryset.filter(min_price__gte=price_min)
+
+                # Фильтр по максимальной цене
+            if price_max:
+                queryset = queryset.filter(min_price__lte=price_max)
+
+            products = queryset
             products_page = products[(page - 1) * size_page:page * size_page]
+            print(products_page.count())
             fid = get_fid_product(products_page)
+            print("aaa")
 
             with open(file_name, 'wb') as f:
                 f.write(fid)

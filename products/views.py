@@ -9,7 +9,7 @@ import threading
 from datetime import datetime
 from urllib.parse import urlencode, quote
 import boto3
-
+from urllib.parse import urlparse, parse_qs
 import os
 import httpx
 from asgiref.sync import async_to_sync
@@ -76,21 +76,36 @@ class ProducrSpuIdView(APIView):
 class ProductsFid(APIView):
     def get(self, request, page):
         params = request.query_params
-        products = Product.objects.filter(id__in=filter_products(request)).order_by("-score_product_page")
+
 
         # products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
         size_page = int(params.get("size_page", 1000))
         # count = products.count()
-        products_page = products[(page - 1) * size_page:page * size_page]
-        fid = get_fid_product(products_page)
-        name = f'fids/size{size_page}page{page}.xml'
-        with open(name, 'wb') as f:
-            f.write(fid)
+
+        url = request.build_absolute_uri()  # Получаем URL
+        parsed_url = urlparse(url)  # Разбираем URL
+
+        # Извлекаем имя файла из пути без параметров
+        file_name = f"fids/{parsed_url.path.split('/')[-1]}"
+
+        # Если у вас есть параметры в URL и вы хотите их учитывать в имени файла
+        query_params = parse_qs(parsed_url.query)
+        if query_params:
+            params_str = '_'.join([f'{key}{value}' for key, value in query_params.items()])
+            file_name = f'{file_name}_{params_str}'
+        if not os.path.exists(file_name):
+
+            products = Product.objects.filter(id__in=filter_products(request)).order_by("-score_product_page")
+            products_page = products[(page - 1) * size_page:page * size_page]
+            fid = get_fid_product(products_page)
+
+            with open(file_name, 'wb') as f:
+                f.write(fid)
 
         # Возвращение файла XML в ответе
-        with open(name, 'rb') as f:
+        with open(file_name, 'rb') as f:
             response = HttpResponse(f, content_type='application/xml')
-            response['Content-Disposition'] = f'attachment; filename="{name}"'
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
             return response
         # return HttpResponse(fid, content_type="application/xml")
 

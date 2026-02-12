@@ -33,6 +33,7 @@
 
 
 import math
+import os
 import random
 from itertools import count
 from time import time
@@ -57,7 +58,7 @@ from products.serializers import ProductMainPageSerializer
 from promotions.models import PromoCode
 from shipping.models import ProductUnit, DeliveryType, AddressInfo
 from users.models import User, EmailConfirmation, UserStatus
-from products.tools import get_text
+from products.tools import get_text, get_fid_product_all
 from json2xml import json2xml
 import xml.etree.ElementTree as ET
 
@@ -65,22 +66,40 @@ import xml.etree.ElementTree as ET
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        token = "y0_AgAAAAAn9wHCAAryqAAAAADz-xd2E4U3tlycQPKRrTiKMAMK33VNv84"
-        headers = {
-            "Authorization": f"OAuth {token}"
-        }
-        user_id = requests.get("https://api.webmaster.yandex.net/v4/user", headers=headers).json()['user_id']
-        host_id = \
-            requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts", headers=headers).json()["hosts"][
-                0][
-                'host_id']
 
-        print(host_id)
-        print(user_id)
-        s = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/info", json={
-            "requestId": "8b1823e0-b481-11ee-b3bf-bd0e42e02359"
-        }, headers=headers)
-        print(s.text)
+        file_name = f"fids/all_products.xml"
+
+        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+
+
+        fid = get_fid_product_all(products)
+
+        with open(file_name, 'wb') as f:
+            f.write(fid)
+
+        # Возвращение файла XML в ответе
+        # with open(file_name, 'rb') as f:
+        #     response = HttpResponse(f, content_type='application/xml')
+        #     response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        #     return response
+        # return HttpResponse(fid, content_type="application/xml")
+
+        # token = "y0_AgAAAAAn9wHCAAryqAAAAADz-xd2E4U3tlycQPKRrTiKMAMK33VNv84"
+        # headers = {
+        #     "Authorization": f"OAuth {token}"
+        # }
+        # user_id = requests.get("https://api.webmaster.yandex.net/v4/user", headers=headers).json()['user_id']
+        # host_id = \
+        #     requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts", headers=headers).json()["hosts"][
+        #         0][
+        #         'host_id']
+        #
+        # print(host_id)
+        # print(user_id)
+        # s = requests.get(f"https://api.webmaster.yandex.net/v4/user/{user_id}/hosts/{host_id}/feeds/add/info", json={
+        #     "requestId": "8b1823e0-b481-11ee-b3bf-bd0e42e02359"
+        # }, headers=headers)
+        # print(s.text)
         # for i in range(50):
         #     fid = {
         #         "feed": {
@@ -107,39 +126,4 @@ class Command(BaseCommand):
         # print(get_fid_product(products[0]))
 
 
-s = """
-<?xml version="1.0" encoding="UTF-8"?>
-<yml_catalog date="2020-11-22T14:37:38+03:00">
-    <shop>
-        <name>Sellout</name>
-        <company>Sellout</company>
-        <url>https://sellout.su</url>
-        <currencies>
-            <currency id="RUR" rate="1"/>
-        </currencies>
-        <categories>
-            <category id="1">Бытовая техника</category>
-            <category id="10" parentId="1">Мелкая техника для кухни</category>
-        </categories>
-        <delivery-options>
-            <option cost="200" days="1"/>
-        </delivery-options>
-        <offers>
-            <offer id="9012">
-                <name>Мороженица Brand 3811</name>
-                <url>http://best.seller.ru/product_page.asp?pid=12345</url>
-                <price>8990</price>
-                <currencyId>RUR</currencyId>
-                <categoryId>10</categoryId>
-                <delivery>true</delivery>
-                <delivery-options>
-                    <option cost="300" days="1" order-before="18"/>
-                </delivery-options>
-                <param name="Цвет">белый</param>
-                <weight>3.6</weight>
-                <dimensions>20.1/20.551/22.5</dimensions>
-            </offer>
-        </offers>
-    </shop>
-</yml_catalog>
-"""
+

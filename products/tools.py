@@ -22,6 +22,136 @@ from users.models import UserStatus
 from json2xml import json2xml
 import xml.etree.ElementTree as ET
 
+def get_fid_product_all(products):
+    file_path = "line_count.json"
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data_count_line = json.load(file)
+    yml_catalog = ET.Element('yml_catalog', attrib={"date": str(datetime.now())})
+    # Создаем элемент shop и добавляем его в корневой элемент
+    shop = ET.Element('shop')
+    yml_catalog.append(shop)
+
+    # Создаем элементы внутри shop
+    shop_name = ET.Element('name')
+    shop_name.text = "Sellout"
+    shop_company = ET.Element('company')
+    shop_company.text = "Sellout"
+    shop_url = ET.Element('url')
+    shop_url.text = "https://sellout.su"
+    shop_categories = ET.Element('categories')
+    shop.append(shop_name)
+    shop.append(shop_company)
+    shop.append(shop_url)
+    shop.append(shop_categories)
+
+    delivery_tag = ET.Element('delivery-options')
+    shop.append(delivery_tag)
+
+    deliveries = [(5, 500)]
+    for delivery in deliveries:
+        delivery_elem = ET.Element('option', attrib={"days": str(delivery[0]),
+                                                      "cost": str(delivery[1])})
+        delivery_tag.append(delivery_elem)
+
+    # Проходимся по категориям и добавляем их в shop
+
+
+    categories = Category.objects.order_by("id")
+    for category in categories:
+        category_elem = ET.Element('category', attrib={"id": str(category.id)})
+        category_elem.text = category.name
+        if category.parent_category is not None:
+            category_elem.set("parentId", str(category.parent_category.id))
+        shop_categories.append(category_elem)
+
+
+    shop_offers = ET.Element('offers')
+    count = 100000
+    for page in range(0, count, 1000):
+        page_products = products[page:page + 1000]
+        for product in page_products:
+            # Создаем элемент offer
+            offer = ET.Element('offer', attrib={"id": str(product.id)})
+            offer_name = ET.Element('name')
+
+            delivery_tag = ET.Element('delivery-options')
+            offer.append(delivery_tag)
+
+            deliveries = [(20, 500)]
+            for delivery in deliveries:
+                delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]), "cost": str(delivery[1] if product.min_price < 35000 else 0)})
+                delivery_tag.append(delivery_elem)
+
+            offer_name.text = product.get_full_name()
+            offer_name_to_title = ET.Element('name_to_title')
+            offer_name_to_title.text = f"Заказать {product.get_full_name()} по лучшей цене в РФ на Sellout!"
+            offer_vendor = ET.Element('vendor')
+            offer_vendor.text = product.brands.first().name if product.collab is None else product.collab.name
+            offer_vendorCode = ET.Element('vendorCode')
+            offer_vendorCode.text = product.manufacturer_sku
+            offer_url = ET.Element('url')
+            offer_url.text = f"https://sellout.su/products/{product.slug}"
+            offer_price = ET.Element('price')
+            offer_price.text = str(product.min_price)
+
+            if product.min_price != product.min_price_without_sale:
+                offer_old_price = ET.Element('oldprice')
+                offer_old_price.text = str(product.min_price_without_sale)
+
+            offer_currencyId = ET.Element('currencyId')
+            offer_currencyId.text = "RUR"
+            offer_picture = ET.Element('picture')
+            offer_picture.text = product.bucket_link.order_by("id").first().url
+            offer_categoryId = ET.Element('categoryId')
+            offer_categoryId.text = str(product.categories.order_by("-id").first().id)
+            offer_category = ET.Element('category')
+            offer_category.text = product.categories.order_by("-id").first().name
+            offer_delivery = ET.Element('delivery')
+            offer_delivery.text = "True"
+            offer_description = ET.Element('description')
+            offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}."
+
+            # Добавляем элементы offer в offer и добавляем его в shop
+            offer.append(offer_name)
+            offer.append(offer_name_to_title)
+            offer.append(offer_vendor)
+            offer.append(offer_vendorCode)
+            offer.append(offer_url)
+            offer.append(offer_price)
+            offer.append(offer_currencyId)
+            offer.append(offer_picture)
+            offer.append(offer_categoryId)
+            offer.append(offer_category)
+
+
+
+            product_colors = product.colors.all()
+            for color in product_colors:
+                offer_params = ET.Element('param', attrib={"name": "Цвет"})
+                offer_params.text = color.russian_name
+                offer.append(offer_params)
+
+            product_materials = product.materials.all()
+            for material in product_materials:
+                offer_params = ET.Element('param', attrib={"name": "Материал"})
+                offer_params.text = material.name
+                offer.append(offer_params)
+
+            offer.append(offer_delivery)
+            offer.append(offer_description)
+
+            shop_offers.append(offer)
+        shop.append(shop_offers)
+
+    # Создаем XML-документ
+    # tree = ET.ElementTree(yml_catalog)
+    xml_str = ET.tostring(yml_catalog, encoding='utf8')
+
+    # Преобразуем байтовую строку в строку unicode
+    # xml = xml_str.decode('utf-8')
+
+    return xml_str
+
 def get_fid_product(products):
     file_path = "line_count.json"
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -107,7 +237,7 @@ def get_fid_product(products):
         offer_delivery = ET.Element('delivery')
         offer_delivery.text = "True"
         offer_description = ET.Element('description')
-        offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}. 3-ёх этапная проверка на оригинальность"
+        offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}."
 
         # Добавляем элементы offer в offer и добавляем его в shop
         offer.append(offer_name)

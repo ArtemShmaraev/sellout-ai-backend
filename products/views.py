@@ -76,6 +76,13 @@ class ProducrSpuIdView(APIView):
 class ProductsFid(APIView):
     def get(self, request, page):
         params = request.query_params
+        filename = params.get("file_name", False)
+        if filename:
+            filename = f"fids/{filename}.xml"
+            with open(filename, 'rb') as f:
+                response = HttpResponse(f, content_type='application/xml')
+                response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
 
 
         # products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
@@ -93,6 +100,7 @@ class ProductsFid(APIView):
         if query_params:
             params_str = '_'.join([f'{key}{value}' for key, value in query_params.items()])
             file_name = f'{file_name}_{params_str}'
+        file_name = f"{file_name}.xml"
         if not os.path.exists(file_name):
 
             products = Product.objects.filter(id__in=filter_products(request)).order_by("-score_product_page")

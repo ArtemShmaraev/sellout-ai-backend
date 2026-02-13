@@ -67,9 +67,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        file_name = f"fids/all_products2{k}.xml"
+        file_name = f"fids/all_products2.xml"
 
         products = Product.objects.filter(available_flag=True, is_custom=False, min_price__lt=20000).distinct().order_by("-score_product_page")
+        print(products.count())
         print(products.first().min_price)
 
 

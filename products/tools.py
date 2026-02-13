@@ -66,7 +66,7 @@ def get_fid_product_all(products):
 
 
     shop_offers = ET.Element('offers')
-    count = 200000
+    count = products.count()
     for page in range(0, count, 100):
         page_products = products[page:page + 100]
         print(page)
@@ -201,79 +201,82 @@ def get_fid_product(products):
     print(products.count())
     shop_offers = ET.Element('offers')
     for product in products:
-        print("q111")
+        try:
+            print("q111")
 
-        # Создаем элемент offer
-        offer = ET.Element('offer', attrib={"id": str(product.id)})
-        offer_name = ET.Element('name')
+            # Создаем элемент offer
+            offer = ET.Element('offer', attrib={"id": str(product.id)})
+            offer_name = ET.Element('name')
 
-        delivery_tag = ET.Element('delivery-options')
-        offer.append(delivery_tag)
+            delivery_tag = ET.Element('delivery-options')
+            offer.append(delivery_tag)
 
-        deliveries = [(20, 500)]
-        for delivery in deliveries:
-            delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]), "cost": str(delivery[1] if product.min_price < 35000 else 0)})
-            delivery_tag.append(delivery_elem)
+            deliveries = [(20, 500)]
+            for delivery in deliveries:
+                delivery_elem = ET.Element('options', attrib={"days": str(delivery[0]), "cost": str(delivery[1] if product.min_price < 35000 else 0)})
+                delivery_tag.append(delivery_elem)
 
-        offer_name.text = product.get_full_name()
-        offer_name_to_title = ET.Element('name_to_title')
-        offer_name_to_title.text = f"Заказать {product.get_full_name()} по лучшей цене в РФ на Sellout!"
-        offer_vendor = ET.Element('vendor')
-        offer_vendor.text = product.brands.first().name if product.collab is None else product.collab.name
-        offer_vendorCode = ET.Element('vendorCode')
-        offer_vendorCode.text = product.manufacturer_sku
-        offer_url = ET.Element('url')
-        offer_url.text = f"https://sellout.su/products/{product.slug}"
-        offer_price = ET.Element('price')
-        offer_price.text = str(product.min_price)
+            offer_name.text = product.get_full_name()
+            offer_name_to_title = ET.Element('name_to_title')
+            offer_name_to_title.text = f"Заказать {product.get_full_name()} по лучшей цене в РФ на Sellout!"
+            offer_vendor = ET.Element('vendor')
+            offer_vendor.text = product.brands.first().name if product.collab is None else product.collab.name
+            offer_vendorCode = ET.Element('vendorCode')
+            offer_vendorCode.text = product.manufacturer_sku
+            offer_url = ET.Element('url')
+            offer_url.text = f"https://sellout.su/products/{product.slug}"
+            offer_price = ET.Element('price')
+            offer_price.text = str(product.min_price)
 
-        if product.min_price != product.min_price_without_sale:
-            offer_old_price = ET.Element('oldprice')
-            offer_old_price.text = str(product.min_price_without_sale)
+            if product.min_price != product.min_price_without_sale:
+                offer_old_price = ET.Element('oldprice')
+                offer_old_price.text = str(product.min_price_without_sale)
 
-        offer_currencyId = ET.Element('currencyId')
-        offer_currencyId.text = "RUR"
-        offer_picture = ET.Element('picture')
-        offer_picture.text = product.bucket_link.order_by("id").first().url
-        offer_categoryId = ET.Element('categoryId')
-        offer_categoryId.text = str(product.categories.order_by("-id").first().id)
-        offer_category = ET.Element('category')
-        offer_category.text = product.categories.order_by("-id").first().name
-        offer_delivery = ET.Element('delivery')
-        offer_delivery.text = "True"
-        offer_description = ET.Element('description')
-        offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}."
+            offer_currencyId = ET.Element('currencyId')
+            offer_currencyId.text = "RUR"
+            offer_picture = ET.Element('picture')
+            offer_picture.text = product.bucket_link.order_by("id").first().url
+            offer_categoryId = ET.Element('categoryId')
+            offer_categoryId.text = str(product.categories.order_by("-id").first().id)
+            offer_category = ET.Element('category')
+            offer_category.text = product.categories.order_by("-id").first().name
+            offer_delivery = ET.Element('delivery')
+            offer_delivery.text = "True"
+            offer_description = ET.Element('description')
+            offer_description.text = f"Также выбирайте среди {data_count_line[product.main_line.view_name]}+ оригинальных моделей {product.main_line.view_name}."
 
-        # Добавляем элементы offer в offer и добавляем его в shop
-        offer.append(offer_name)
-        offer.append(offer_name_to_title)
-        offer.append(offer_vendor)
-        offer.append(offer_vendorCode)
-        offer.append(offer_url)
-        offer.append(offer_price)
-        offer.append(offer_currencyId)
-        offer.append(offer_picture)
-        offer.append(offer_categoryId)
-        offer.append(offer_category)
+            # Добавляем элементы offer в offer и добавляем его в shop
+            offer.append(offer_name)
+            offer.append(offer_name_to_title)
+            offer.append(offer_vendor)
+            offer.append(offer_vendorCode)
+            offer.append(offer_url)
+            offer.append(offer_price)
+            offer.append(offer_currencyId)
+            offer.append(offer_picture)
+            offer.append(offer_categoryId)
+            offer.append(offer_category)
 
 
 
-        product_colors = product.colors.all()
-        for color in product_colors:
-            offer_params = ET.Element('param', attrib={"name": "Цвет"})
-            offer_params.text = color.russian_name
-            offer.append(offer_params)
+            product_colors = product.colors.all()
+            for color in product_colors:
+                offer_params = ET.Element('param', attrib={"name": "Цвет"})
+                offer_params.text = color.russian_name
+                offer.append(offer_params)
 
-        product_materials = product.materials.all()
-        for material in product_materials:
-            offer_params = ET.Element('param', attrib={"name": "Материал"})
-            offer_params.text = material.name
-            offer.append(offer_params)
+            product_materials = product.materials.all()
+            for material in product_materials:
+                offer_params = ET.Element('param', attrib={"name": "Материал"})
+                offer_params.text = material.name
+                offer.append(offer_params)
 
-        offer.append(offer_delivery)
-        offer.append(offer_description)
+            offer.append(offer_delivery)
+            offer.append(offer_description)
 
-        shop_offers.append(offer)
+            shop_offers.append(offer)
+        except:
+            continue
     shop.append(shop_offers)
 
     # Создаем XML-документ

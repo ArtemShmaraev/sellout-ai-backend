@@ -66,10 +66,10 @@ import xml.etree.ElementTree as ET
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        k = 8
+        file_name = f"fids/all_products{k}.xml"
 
-        file_name = f"fids/all_products.xml"
-
-        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")
+        products = Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page")[(k - 1) * 10000:k * 10000]
 
 
         fid = get_fid_product_all(products)

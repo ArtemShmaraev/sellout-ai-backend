@@ -6,7 +6,7 @@ from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, FavoriteBrand
     initiate_google_auth, UserForSpamEmail, confirm_email, ReferralProgram, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo, AddMailingList,  AddPartnerList
 
 router = routers.DefaultRouter()
-router.register("", UserViewSet, 'user')
+# router.register("", UserViewSet, 'user')
 
 urlpatterns = router.urls
 urlpatterns.append(path('last_seen/<int:user_id>', UserLastSeenView.as_view()))

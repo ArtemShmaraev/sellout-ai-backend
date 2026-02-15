@@ -73,6 +73,28 @@ def send_email_start_order(order, email):
     return requests.status_codes
 
 
+def send_email_full_order_shipped(order, email): # весь передан в боксбери
+    url = "https://sellout.su/mail/send_order_shipped_mail"
+    params = {
+        "recipient_email": email,
+        "order": order
+    }
+    requests.post(url, json=params)
+    return requests.status_codes
+
+
+def send_email_part_order_partly_shipped(order, email): # частично передан в боксбери
+    url = "https://sellout.su/mail/send_order_partly_shipped_mail"
+    params = {
+        "recipient_email": email,
+        "order": order
+    }
+    requests.post(url, json=params)
+    return requests.status_codes
+
+
+
+
 
 
 def get_delivery(order, data, cart):

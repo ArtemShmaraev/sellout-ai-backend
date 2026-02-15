@@ -79,13 +79,15 @@ class Order(models.Model):
         self.accrue_bonuses()
         from .serializers import OrderSerializer
         serializer = OrderSerializer(self).data
-        send_email_start_order(serializer, self.email)
+        # send_email_start_order(serializer, self.email)
         self.save()
 
     def finish_order(self):
         self.is_finish = True
-        self.order_in_progress = False
+
         self.update_order_status(finish=True)
+        self.order_in_progress = False
+
         self.save()
 
 
@@ -152,6 +154,7 @@ class Order(models.Model):
                 ou.update_status(finish=finish)
             # Получаем все статусы юнитов этого заказа
             unit_statuses = self.order_units.values_list('status__name', flat=True)
+            print(unit_statuses)
             s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
                  "Передан в службу доставки по России", "Доставлен"]
 
@@ -453,29 +456,32 @@ class OrderUnit(models.Model):
     is_sale = models.BooleanField(default=False)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
                                related_name="order_units", default=get_default_status())
+    on_way_to_client = models.BooleanField(default=False)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
 
-    def update_status(self, cancel=False, finish=False):
+    def update_status(self, cancel=False, finish=False, on_way_to_client=False):
         new_status = self.status.name
         if not finish:
-            order_date = self.orders.first().date
+            if not self.on_way_to_client:
+                order_date = self.orders.first().date
 
-            # Приводим order_date к типу datetime.date
-            order_date = order_date.date()
+                # Приводим order_date к типу datetime.date
+                order_date = order_date.date()
 
-            # Получаем текущую дату
-            current_date = datetime.now().date()
+                # Получаем текущую дату
+                current_date = datetime.now().date()
 
-            # Вычисляем разницу в днях
-            days_passed = (current_date - order_date).days
-            if days_passed <= self.delivery_type.days_max_to_international_warehouse:
-                new_status = "В пути до международного склада"
-            if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
-                new_status = "В пути до московского склада"
-            # if days_passed > self.delivery_type.days_max:
-            #     new_status = "Прибыл в Москву"
-            self.status = Status.objects.get(name=new_status)
+                # Вычисляем разницу в днях
+                days_passed = (current_date - order_date).days
+                if days_passed <= self.delivery_type.days_max_to_international_warehouse:
+                    new_status = "В пути до международного склада"
+                if self.delivery_type.days_max_to_international_warehouse < days_passed <= self.delivery_type.days_max:
+                    new_status = "В пути до московского склада"
+
+                # if days_passed > self.delivery_type.days_max:
+                #     new_status = "Прибыл в Москву"
+                self.status = Status.objects.get(name=new_status)
 
 
 
@@ -492,6 +498,10 @@ class OrderUnit(models.Model):
             self.status = new_status
         if cancel:
             self.status = Status.objects.get(name="Отменён")
+        if on_way_to_client:
+            self.status = Status.objects.get(name="Передан в службу доставки по России")
+            self.on_way_to_client = True
+
         self.save()
 
 

@@ -4,7 +4,7 @@ from django.urls import path
 from .views import UseBonus, ShoppingCartUser, SignAPIView, RedirectPaymentView, CheckOutView, AllOrdersView, UserOrdersView, DeliveryInfo, OrderView, ListProductUnitOrderView, ChangeStatusUnit, FactOfPaymentView
 
 router = routers.DefaultRouter()
-router.register("", ShoppingCartViewSet, 'cart')
+# router.register("", ShoppingCartViewSet, 'cart')
 
 urlpatterns = router.urls
 urlpatterns.append(path('cart/<int:user_id>/<int:product_unit_id>', ShoppingCartUser.as_view()))

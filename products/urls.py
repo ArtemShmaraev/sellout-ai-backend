@@ -26,7 +26,7 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
 
 
 router_product = routers.DefaultRouter()
-router_product.register("products2", ProductViewSet, basename="product")
+# router_product.register("products2", ProductViewSet, basename="product")
 
 router_cat = routers.DefaultRouter()
 router_cat.register("categories", CategoryViewSet, basename="category")

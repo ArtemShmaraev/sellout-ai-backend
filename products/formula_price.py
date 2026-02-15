@@ -128,131 +128,142 @@ def get_bonus(total_profit, max_total_profit_for_product, status_name):
 
 
 def formula_price(product, unit, user_status, in_sale=True):
-    original_price = unit.original_price
-    weight = unit.weight if unit.weight != 0 else 1
-    delivery = unit.delivery_type
-
-    delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
-    delivery_decimal_insurance = delivery.decimal_insurance
-    delivery_absolute_insurance = delivery.absolute_insurance
-    # delivery_extra_charge на данный момент всегда 0
-    delivery_extra_charge = delivery.extra_charge
-    delivery_commission = delivery.commission
-    currency = delivery.currency
-
-    genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
-    categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
-    # poizon_abroad на данный момент всегда false
-    poizon_abroad = unit.delivery_type.poizon_abroad
     status_name = user_status.name  # Amethyst
+    try:
+        original_price = unit.original_price
+        weight = unit.weight if unit.weight != 0 else 1
+        delivery = unit.delivery_type
 
-    if status_name == "Privileged":
-        converted_into_rub_price = original_price * currency
-        shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
-                                                                                       delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
-        cost_without_shipping = (converted_into_rub_price + converted_into_rub_price
-                                 * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL) + delivery_commission
-        total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
-        total_profit = PRIVILEGED_MARKUP + converted_into_rub_price * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL
-        total_price = total_cost + PRIVILEGED_MARKUP
-    elif status_name == "Friends & Family":
+        delivery_price_per_kg_in_rub = delivery.delivery_price_per_kg_in_rub
+        delivery_decimal_insurance = delivery.decimal_insurance
+        delivery_absolute_insurance = delivery.absolute_insurance
+        # delivery_extra_charge на данный момент всегда 0
+        delivery_extra_charge = delivery.extra_charge
+        delivery_commission = delivery.commission
+        currency = delivery.currency
 
-        converted_into_rub_price = original_price * currency
-        shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
-                                                                                       delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
-
-        cost_without_shipping = converted_into_rub_price + delivery_commission
-        total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
-        total_profit = FRIENDS_AND_FAMILY_MARKUP
-        total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
-    else:
-        if product.actual_price:
-            bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
-
-            return {"final_price": unit.final_price,
-                    "start_price": unit.start_price,
-                    "total_profit": unit.total_profit,
-                    "bonus": bonus,
-                    "max_bonus": max_bonus_for_product}
-        converted_into_rub_price = original_price * currency
-
-        shipping_cost = (
-                delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
-                                                                                       delivery_decimal_insurance - 1)
-                + delivery_absolute_insurance)
-
-        cost_without_shipping = converted_into_rub_price + delivery_commission
-
-        total_cost_before_cashing_out = cost_without_shipping + shipping_cost
-
-        total_cost = total_cost_before_cashing_out * CASHING_OUT_COMMISSION_FEE_DECIMAL + FIXED_COSTS_ABSOLUTE
-
-        preliminary_markup = 0
-        extra_markup = 0
-
+        genders = list(product.gender.all().values_list("name", flat=True))  # ["M", "F", "K"]
+        categories = list(product.categories.all().values_list("name", flat=True))  # на русском ["Обувь", "Вся обувь"]
         # poizon_abroad на данный момент всегда false
-        if 60000 >= total_cost >= 30000 and poizon_abroad:
-            extra_markup += 1000
-        elif total_cost > 60000 and poizon_abroad:
-            extra_markup += 1500
+        poizon_abroad = unit.delivery_type.poizon_abroad
 
-        if genders == ["F"] and total_cost >= 15000 and "Кроссовки" not in categories:
-            extra_markup += 500
 
-        if genders == ["F"] and total_cost >= 30000 and "Обувь" not in categories and "Сумки" in categories:
-            extra_markup += 1000
+        if status_name == "Privileged":
+            converted_into_rub_price = original_price * currency
+            shipping_cost = (
+                    delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
+                                                                                           delivery_decimal_insurance - 1)
+                    + delivery_absolute_insurance)
+            cost_without_shipping = (converted_into_rub_price + converted_into_rub_price
+                                     * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL) + delivery_commission
+            total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
+            total_profit = PRIVILEGED_MARKUP + converted_into_rub_price * PRIVILEGED_CURRENCY_DIFFERENCE_DECIMAL
+            total_price = total_cost + PRIVILEGED_MARKUP
+        elif status_name == "Friends & Family":
 
-        if genders == ["F"] and total_cost >= 80000 and "Обувь" not in categories and "Сумки" in categories:
-            extra_markup += 1000
+            converted_into_rub_price = original_price * currency
+            shipping_cost = (
+                    delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
+                                                                                           delivery_decimal_insurance - 1)
+                    + delivery_absolute_insurance)
 
-        if ["M"] in genders and total_cost >= 60000 and "Кроссовки" not in categories:
-            extra_markup += 1000
+            cost_without_shipping = converted_into_rub_price + delivery_commission
+            total_cost = cost_without_shipping + shipping_cost + FIXED_COSTS_ABSOLUTE
+            total_profit = FRIENDS_AND_FAMILY_MARKUP
+            total_price = total_cost + FRIENDS_AND_FAMILY_MARKUP
+        else:
+            if product.actual_price:
+                bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
 
-        correlate_markup_with_price(extra_markup, delivery_extra_charge)
-        for step in PRELIMINARY_MARKUP["steps_of_order_amount"]:
-            if (PRELIMINARY_MARKUP["steps_of_order_amount"][step]["min_total_cost_including"] <= total_cost <
-                    PRELIMINARY_MARKUP["steps_of_order_amount"][step]["max_total_cost_not_including"]):
-                preliminary_markup = PRELIMINARY_MARKUP["steps_of_order_amount"][step]["preliminary_markup"]
+                return {"final_price": unit.final_price,
+                        "start_price": unit.start_price,
+                        "total_profit": unit.total_profit,
+                        "bonus": bonus,
+                        "max_bonus": max_bonus_for_product}
+            converted_into_rub_price = original_price * currency
 
-        total_markup = preliminary_markup + extra_markup + delivery_extra_charge
-        total_price_before_payment_and_tax_commission = total_cost + total_markup
-        total_profit = total_markup
-        total_price = total_price_before_payment_and_tax_commission / PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL
+            shipping_cost = (
+                    delivery_price_per_kg_in_rub * weight + converted_into_rub_price * max(0,
+                                                                                           delivery_decimal_insurance - 1)
+                    + delivery_absolute_insurance)
 
-    round_total_price = round_by_step(total_price + 10, step=100) - 10
-    total_round_markup = round_total_price - total_price
-    total_profit += total_round_markup
+            cost_without_shipping = converted_into_rub_price + delivery_commission
 
-    bonus, max_bonus_for_product = get_bonus(total_profit, product.max_profit, status_name)
-    price_without_sale = round_total_price
-    if product.sale_percentage != 0:
-        percentage = round(((100 - product.sale_percentage) / 100), 2)
-        price_without_sale = round_by_step((unit.final_price / percentage) + 10, step=100) - 10
-    elif product.sale_absolute != 0:
-        price_without_sale = unit.final_price + product.sale_absolute
-    else:
-        if in_sale:
-            if unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
-                if unit.start_price > (round_total_price * 1.05):
-                    price_without_sale = unit.start_price
+            total_cost_before_cashing_out = cost_without_shipping + shipping_cost
+
+            total_cost = total_cost_before_cashing_out * CASHING_OUT_COMMISSION_FEE_DECIMAL + FIXED_COSTS_ABSOLUTE
+
+            preliminary_markup = 0
+            extra_markup = 0
+
+            # poizon_abroad на данный момент всегда false
+            if 60000 >= total_cost >= 30000 and poizon_abroad:
+                extra_markup += 1000
+            elif total_cost > 60000 and poizon_abroad:
+                extra_markup += 1500
+
+            if genders == ["F"] and total_cost >= 15000 and "Кроссовки" not in categories:
+                extra_markup += 500
+
+            if genders == ["F"] and total_cost >= 30000 and "Обувь" not in categories and "Сумки" in categories:
+                extra_markup += 1000
+
+            if genders == ["F"] and total_cost >= 80000 and "Обувь" not in categories and "Сумки" in categories:
+                extra_markup += 1000
+
+            if ["M"] in genders and total_cost >= 60000 and "Кроссовки" not in categories:
+                extra_markup += 1000
+
+            correlate_markup_with_price(extra_markup, delivery_extra_charge)
+            for step in PRELIMINARY_MARKUP["steps_of_order_amount"]:
+                if (PRELIMINARY_MARKUP["steps_of_order_amount"][step]["min_total_cost_including"] <= total_cost <
+                        PRELIMINARY_MARKUP["steps_of_order_amount"][step]["max_total_cost_not_including"]):
+                    preliminary_markup = PRELIMINARY_MARKUP["steps_of_order_amount"][step]["preliminary_markup"]
+
+            total_markup = preliminary_markup + extra_markup + delivery_extra_charge
+            total_price_before_payment_and_tax_commission = total_cost + total_markup
+            total_profit = total_markup
+            total_price = total_price_before_payment_and_tax_commission / PAYMENT_AND_TAX_COMMISSION_FEE_DECIMAL
+
+        round_total_price = round_by_step(total_price + 10, step=100) - 10
+        total_round_markup = round_total_price - total_price
+        total_profit += total_round_markup
+
+        bonus, max_bonus_for_product = get_bonus(total_profit, product.max_profit, status_name)
+        price_without_sale = round_total_price
+        if product.sale_percentage != 0:
+            percentage = round(((100 - product.sale_percentage) / 100), 2)
+            price_without_sale = round_by_step((unit.final_price / percentage) + 10, step=100) - 10
+        elif product.sale_absolute != 0:
+            price_without_sale = unit.final_price + product.sale_absolute
+        else:
+            if in_sale:
+                if unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
+                    if unit.start_price > (round_total_price * 1.05):
+                        price_without_sale = unit.start_price
+                        unit.is_sale = True
+                        unit.save()
+                        product.is_sale = True
+
+                # if unit.is_sale:
+                #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
+                elif unit.final_price > (round_total_price * 1.1) and status_name not in ["Friends & Family", 'Privileged']:
+                    # print("Цена дешевле")
+                    price_without_sale = unit.final_price
                     unit.is_sale = True
                     unit.save()
                     product.is_sale = True
 
-            # if unit.is_sale:
-            #     price_without_sale = round_by_step(round_total_price * 1.33, step=100) - 10
-            elif unit.final_price > (round_total_price * 1.1) and status_name not in ["Friends & Family", 'Privileged']:
-                # print("Цена дешевле")
-                price_without_sale = unit.final_price
-                unit.is_sale = True
-                unit.save()
-                product.is_sale = True
+        if status_name in ["Friends & Family", 'Privileged']:
+            price_without_sale = unit.start_price
+        return {"final_price": round_total_price, "start_price": price_without_sale, "total_profit": round(total_profit),
+                "bonus": bonus, "max_bonus": max_bonus_for_product}
+    except:
+        bonus, max_bonus_for_product = get_bonus(unit.total_profit, product.max_profit, status_name)
 
-    if status_name in ["Friends & Family", 'Privileged']:
-        price_without_sale = unit.start_price
-    return {"final_price": round_total_price, "start_price": price_without_sale, "total_profit": round(total_profit),
-            "bonus": bonus, "max_bonus": max_bonus_for_product}
+        return {"final_price": unit.final_price,
+                "start_price": unit.start_price,
+                "total_profit": unit.total_profit,
+                "bonus": bonus,
+                "max_bonus": max_bonus_for_product}
+

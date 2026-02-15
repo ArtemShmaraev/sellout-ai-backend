@@ -12,6 +12,7 @@ import boto3
 from urllib.parse import urlparse, parse_qs
 import os
 import httpx
+import requests
 from asgiref.sync import async_to_sync
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
@@ -67,6 +68,37 @@ from rest_framework.views import APIView
 import asyncio
 
 
+class ProductSkuView(APIView):
+    def get(self, request, sku):
+        try:
+            product = Product.objects.filter(formatted_manufacturer_sku=sku)
+            if not product:
+                return Response({"message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ProductAdminSerializer(product, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ProductUpdatePriceUrlDewu(APIView):
+    def get(self, request):
+        params = request.query_params
+        url = params.get("url", False)
+        response = requests.head(url, allow_redirects=False)
+        if 'location' in response.headers:
+            redirect_url = response.headers['location']
+            parsed_url = urlparse(redirect_url)
+
+            if 'spuId' in parse_qs(parsed_url.query):
+                spu_id = int(parse_qs(parsed_url.query)['spuId'][0])
+            else:
+                return None
+        else:
+            return None
+        print(spu_id)
+        data = requests.get(f"https://sellout.su/intermediate_parser/get_processed_data?spu_id={spu_id}").json()
+        s = add_products_spu_id_api(data)
+        return Response(s)
 
 class ProducrSpuIdView(APIView):
     def get(self, request, spu_id):

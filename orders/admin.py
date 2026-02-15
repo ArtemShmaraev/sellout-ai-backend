@@ -9,7 +9,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', "fact_of_payment")
+    list_display = ('user', "fact_of_payment", 'final_amount', 'status')
 
 
 class OrderUnitAdmin(admin.ModelAdmin):

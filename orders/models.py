@@ -312,6 +312,62 @@ class Order(models.Model):
         self.order_units.add(order_unit)
 
 
+    def fz54(self):
+        import requests
+        import json
+
+        # Замените значения переменных apikey и login на свои
+        apikey = "6815c87eafdb351af8dd88155d7c3879"
+        login = "79177796873"
+
+        # Замените значения параметров запроса на свои
+        data = {
+            "apikey": apikey,
+            "login": login,
+            "test": 0,
+            "mode": "email",
+            "type": "payment",
+            'customer_phone': f"+{self.phone_int}",
+            "customer_email": "shmaraev18@mail.ru",
+            "customer_name": f"{self.name} {self.surname}",
+            "card_amount": self.final_amount,
+            "tax_system": "usn6",
+            "purchase": {'products': []}
+
+        }
+
+        purchase_items = []
+
+        # Проход по позициям в self.order_units и заполнение данных
+        for unit in self.order_units.all():
+            item = {
+                "name": unit.product.get_full_name(),
+                "price": unit.final_price,
+                "quantity": 1,
+                "tax": 'none',
+                "unit": "piece",
+                'item_type': 1
+                # Дополнительные параметры можно добавить по необходимости
+            }
+            purchase_items.append(item)
+
+        # Добавление списка позиций чека к основным данным запроса
+        data["purchase"]['products'] = purchase_items
+
+        # URL для отправки запроса
+        url = "https://sapi.life-pay.ru/cloud-print/create-receipt"
+
+        # Преобразование данных в формат JSON
+        json_data = json.dumps(data)
+
+        # Отправка POST запроса
+        response = requests.post(url, data=json_data)
+
+        # Вывод результата запроса
+        print(response.text)
+
+
+
 class ShoppingCart(models.Model):
     user = models.ForeignKey("users.User", related_name="shopping_cart", on_delete=models.CASCADE,
                              blank=False)

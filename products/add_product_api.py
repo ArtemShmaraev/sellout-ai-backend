@@ -487,6 +487,7 @@ def add_product_ps_api(data):
 
 def add_products_spu_id_api(data):
     print("321")
+    print(data)
     # property_ids = []
     # spu_id = 0
     # for product in data:
@@ -496,8 +497,14 @@ def add_products_spu_id_api(data):
     # products = Product.objects.filter(spu_id=spu_id)
     # print(list(products.values_list("slug", flat=True)))
     # products.update(available_flag=False)
+    s = []
     for product in data:
-        add_product_v2(product)
+        add = add_product_v2(product)
+        if type(add) == type(""):
+            s.append(add)
+        else:
+            s.append(add.slug)
+    return s
 
 
 def sklon_days(n):

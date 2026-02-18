@@ -405,6 +405,7 @@ class CheckOutView(APIView):
                     cart.clear()
                 send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                 send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
+                send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
                 order.save()
 
 

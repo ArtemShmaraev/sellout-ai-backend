@@ -249,15 +249,15 @@ SIMPLE_JWT = {
 
 
 #
-HOST = "127.0.0.1"
-BACKEND_HOST = "127.0.0.1:8000"
-FRONTEND_HOST = "localhost:3000"
+# HOST = "127.0.0.1"
+# BACKEND_HOST = "127.0.0.1:8000"
+# FRONTEND_HOST = "localhost:3000"
 
 ELASTIC_HOST = "51.250.91.44"
 # #
-# HOST = "sellout.su"
-# BACKEND_HOST = "sellout.su"
-# FRONTEND_HOST = "sellout.su"
+HOST = "sellout.su"
+BACKEND_HOST = "sellout.su"
+FRONTEND_HOST = "sellout.su"
 
 DATABASES = {
     'default': {
@@ -265,7 +265,7 @@ DATABASES = {
         'NAME': 'sellout_db',
         'USER': 'app',
         'PASSWORD': 'apppassword2024',
-        'HOST': 'rc1a-yl890hwdfu0rdo19.mdb.yandexcloud.net',
+        'HOST': 'rc1a-qfubmygyw6aircto.mdb.yandexcloud.net',
         'PORT': '6432',
         'OPTIONS': {
             'sslmode': 'verify-full',

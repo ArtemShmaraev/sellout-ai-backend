@@ -97,10 +97,8 @@ class Order(models.Model):
 
     def finish_order(self):
         self.is_finish = True
-
         self.update_order_status(finish=True)
         self.order_in_progress = False
-
         self.save()
 
     def get_total_bonus(self):

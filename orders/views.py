@@ -68,22 +68,13 @@ class FactOfPaymentView(APIView):
         # Проверка хеша
         if result == "success":
             order = Order.objects.get(id=id)
-            order.fact_of_payment = True
-            order.save()
-            cart = ShoppingCart.objects.get(user=order.user)
-            send_email_confirmation_order(OrderSerializer(order).data, order.email)
-
-            send_email_confirmation_order(OrderSerializer(order).data, "markenson888inst@gmail.com")
-            send_email_confirmation_order(OrderSerializer(order).data, "shmaraev18@mail.ru")
-            send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
-            cart.clear()
-            print("ff2")
+            order.success_payment()
             return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
-        else:
-            order = Order.objects.get(id=id)
-            cart = ShoppingCart.objects.get(user=order.user)
-            cart.clear()
-            return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
+        # else:
+        #     order = Order.objects.get(id=id)
+        #     cart = ShoppingCart.objects.get(user=order.user)
+        #     cart.clear()
+        #     return redirect(f"https://{FRONTEND_HOST}/order/complete?id={id}")
             # return Response({'success': False, 'error': 'Invalid check value', 'check': check, "rec": received_check}, status=status.HTTP_400_BAD_REQUEST)
 
 

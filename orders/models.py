@@ -10,7 +10,9 @@ from django.utils import timezone
 from promotions.models import AccrualBonus
 from shipping.models import AddressInfo, ProductUnit
 
-from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_start_order
+
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_start_order, \
+    send_email_confirmation_order
 from products.formula_price import formula_price
 
 
@@ -72,6 +74,17 @@ class Order(models.Model):
     is_accrue_bonuses = models.BooleanField(default=False)
     total_bonus_and_promo_bonus = models.IntegerField(default=0)
 
+    def success_payment(self):
+        from .serializers import OrderSerializer
+        self.fact_of_payment = True
+        self.save()
+        cart = ShoppingCart.objects.get(user=self.user)
+        send_email_confirmation_order(OrderSerializer(self).data, self.email)
+        send_email_confirmation_order(OrderSerializer(self).data, "markenson888inst@gmail.com")
+        send_email_confirmation_order(OrderSerializer(self).data, "shmaraev18@mail.ru")
+        send_email_confirmation_order(OrderSerializer(self).data, "wiwkw23@yandex.ru")
+        cart.clear()
+
     def start_order(self):
         self.date_of_buy_out = timezone.now()
         self.order_in_progress = True
@@ -79,7 +92,7 @@ class Order(models.Model):
         self.accrue_bonuses()
         from .serializers import OrderSerializer
         serializer = OrderSerializer(self).data
-        # send_email_start_order(serializer, self.email)
+        send_email_start_order(serializer, self.email)
         self.save()
 
     def finish_order(self):
@@ -89,7 +102,6 @@ class Order(models.Model):
         self.order_in_progress = False
 
         self.save()
-
 
     def get_total_bonus(self):
         user = self.user
@@ -149,11 +161,13 @@ class Order(models.Model):
                         ref_user.save()
 
     def update_order_status(self, finish=False):
+
+        # Получаем все статусы юнитов этого заказа
+        unit_statuses = self.order_units.values_list('status__name', flat=True)
         if self.order_in_progress:
             for ou in self.order_units.all():
                 ou.update_status(finish=finish)
-            # Получаем все статусы юнитов этого заказа
-            unit_statuses = self.order_units.values_list('status__name', flat=True)
+
             print(unit_statuses)
             s = ["Заказ принят", "В пути до международного склада", 'В пути до московского склада', "Прибыл в Москву",
                  "Передан в службу доставки по России", "Доставлен"]
@@ -180,9 +194,9 @@ class Order(models.Model):
 
             if all(status == "Доставлен" for status in unit_statuses):
                 self.status = Status.objects.get(name='Доставлен')
-
-            if 'Отменён' in unit_statuses:
-                self.status = Status.objects.get(name='Отменён')
+        print(unit_statuses)
+        if 'Отменён' in unit_statuses:
+            self.status = Status.objects.get(name='Отменён')
 
         self.save()
 
@@ -211,10 +225,6 @@ class Order(models.Model):
                     unit.save()
                     # print(unit.final_price)
                     sum_unit += unit.final_price
-
-
-
-
 
 
 
@@ -365,8 +375,6 @@ class Order(models.Model):
 
         # Вывод результата запроса
         print(response.text)
-
-
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey("users.User", related_name="shopping_cart", on_delete=models.CASCADE,

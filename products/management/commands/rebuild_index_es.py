@@ -201,82 +201,85 @@ class Command(BaseCommand):
                 page_product = products[page:page + 100]
 
                 for product in page_product:
-                    kk += 1
-                    if kk * 100 / count > k:
-                        self.stdout.write(self.style.SUCCESS(f"{k} %"))
-                        k += 1
-                    product_doc = ProductDocument(meta={'id': product.id})
+                    try:
+                        kk += 1
+                        if kk * 100 / count > k:
+                            self.stdout.write(self.style.SUCCESS(f"{k} %"))
+                            k += 1
+                        product_doc = ProductDocument(meta={'id': product.id})
 
-                    lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(
-                        parent_line=None)
-                    main_line = ""
-                    if lines.count() > 1:
-                        main_line = lines.order_by('-id').first().name
-                        product_doc.main_line = main_line
+                        lines = product.lines.exclude(name__icontains='Все').exclude(name__icontains='Другие').exclude(
+                            parent_line=None)
+                        main_line = ""
+                        if lines.count() > 1:
+                            main_line = lines.order_by('-id').first().name
+                            product_doc.main_line = main_line
 
-                    categories = product.categories.exclude(name__icontains='Все').exclude(
-                        name__contains='Другие')
-                    if categories.count() > 1:
-                        main_category = categories.order_by("-id").first()
-                        product_doc.main_category = main_category.name
-                        product_doc.main_category_eng = main_category.eng_name
+                        categories = product.categories.exclude(name__icontains='Все').exclude(
+                            name__contains='Другие')
+                        if categories.count() > 1:
+                            main_category = categories.order_by("-id").first()
+                            product_doc.main_category = main_category.name
+                            product_doc.main_category_eng = main_category.eng_name
 
-                    brands = [brand.name for brand in product.brands.all()]
-                    materials = [material.name for material in product.materials.all().exclude(name="Другой")]
-                    categories = [category.name for category in
-                                  product.categories.exclude(name__icontains='Все').exclude(
-                                      name__contains='Другие').exclude(name__icontains='Вся')]
-
-
-                    suggest_categories = [" ".join(dict_cat.get(category.name.lower(), [])) for category in
-                                          product.categories.exclude(name__icontains='Все').exclude(
-                                              name__contains='Другие').exclude(name__icontains='Вся')]
-
-                    categories_eng = [category.eng_name for category in
+                        brands = [brand.name for brand in product.brands.all()]
+                        materials = [material.name for material in product.materials.all().exclude(name="Другой")]
+                        categories = [category.name for category in
                                       product.categories.exclude(name__icontains='Все').exclude(
                                           name__contains='Другие').exclude(name__icontains='Вся')]
-                    lines = [line.name for line in
-                             product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
 
-                    suggest_brand = [" ".join(dict_brand.get(brand.name.lower(), [])) for brand in
-                             product.brands.all()]
-                    colors = [color.name for color in product.colors.all()] + [color.russian_name for color in
-                                                                               product.colors.all()]
 
-                    genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
-                                   "F": "женский", "K": "детский"}
-                    gender = [genders_rus[gender.name] for gender in product.gender.all()]
+                        suggest_categories = [" ".join(dict_cat.get(category.name.lower(), [])) for category in
+                                              product.categories.exclude(name__icontains='Все').exclude(
+                                                  name__contains='Другие').exclude(name__icontains='Вся')]
 
-                    try:
-                        title = product.platform_info["poizon"]["title"]
+                        categories_eng = [category.eng_name for category in
+                                          product.categories.exclude(name__icontains='Все').exclude(
+                                              name__contains='Другие').exclude(name__icontains='Вся')]
+                        lines = [line.name for line in
+                                 product.lines.exclude(name__icontains='Все').exclude(name__contains='Другие')]
 
+                        suggest_brand = [" ".join(dict_brand.get(brand.name.lower(), [])) for brand in
+                                 product.brands.all()]
+                        colors = [color.name for color in product.colors.all()] + [color.russian_name for color in
+                                                                                   product.colors.all()]
+
+                        genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
+                                       "F": "женский", "K": "детский"}
+                        gender = [genders_rus[gender.name] for gender in product.gender.all()]
+
+                        try:
+                            title = product.platform_info["poizon"]["title"]
+
+                        except:
+                            title = ""
+
+                        full_name = f'{" ".join(brands)} {product.collab.name if product.collab is not None else ""} {main_line} {product.model if product.model not in all_cat_name else ""} ' \
+                                    f'{product.colorway} {" ".join(categories)} {" ".join(suggest_categories)} {" ".join(suggest_brand)} {" ".join(categories_eng)} {" ".join(colors)} {" ".join(materials)} {" ".join(gender)} {title} {product.manufacturer_sku}'.lower().replace(
+                            "_", " ").replace("/", "")
+
+                        full_name = unique_words(remove_chinese_chars(full_name))
+                        product_doc.brands = brands
+                        product_doc.text_price = choose_product_by_price(product.min_price)
+                        product_doc.materials = materials
+                        product_doc.categories = categories
+                        product_doc.categories_eng = categories_eng
+                        product_doc.lines = lines
+                        product_doc.model = product.model if product.model not in all_cat_name else None
+                        product_doc.colorway = product.colorway
+                        product_doc.manufacturer_sku = product.manufacturer_sku
+                        product_doc.min_price = product.min_price
+                        product_doc.collab = product.collab.name if (
+                                    product.is_collab and product.collab is not None) else None
+                        product_doc.colors = colors
+
+                        product_doc.gender = gender
+                        product_doc.score_product_page = product.score_product_page
+                        product_doc.rel_num = product.rel_num
+                        product_doc.full_name = full_name
+                        product_doc.save()
                     except:
-                        title = ""
-
-                    full_name = f'{" ".join(brands)} {product.collab.name if product.collab is not None else ""} {main_line} {product.model if product.model not in all_cat_name else ""} ' \
-                                f'{product.colorway} {" ".join(categories)} {" ".join(suggest_categories)} {" ".join(suggest_brand)} {" ".join(categories_eng)} {" ".join(colors)} {" ".join(materials)} {" ".join(gender)} {title} {product.manufacturer_sku}'.lower().replace(
-                        "_", " ").replace("/", "")
-
-                    full_name = unique_words(remove_chinese_chars(full_name))
-                    product_doc.brands = brands
-                    product_doc.text_price = choose_product_by_price(product.min_price)
-                    product_doc.materials = materials
-                    product_doc.categories = categories
-                    product_doc.categories_eng = categories_eng
-                    product_doc.lines = lines
-                    product_doc.model = product.model if product.model not in all_cat_name else None
-                    product_doc.colorway = product.colorway
-                    product_doc.manufacturer_sku = product.manufacturer_sku
-                    product_doc.min_price = product.min_price
-                    product_doc.collab = product.collab.name if (
-                                product.is_collab and product.collab is not None) else None
-                    product_doc.colors = colors
-
-                    product_doc.gender = gender
-                    product_doc.score_product_page = product.score_product_page
-                    product_doc.rel_num = product.rel_num
-                    product_doc.full_name = full_name
-                    product_doc.save()
+                        continue
             self.stdout.write(self.style.SUCCESS(f"{k} %"))
 
         line_index = LineDocument._index

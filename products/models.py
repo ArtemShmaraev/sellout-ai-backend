@@ -7,8 +7,12 @@ from datetime import date
 from django_slugify_processor.text import slugify
 from django.db import models
 from django.dispatch import receiver
+from elasticsearch_dsl import Search
+from elasticsearch_dsl.connections import connections
 
+from products.documents import ProductDocument
 from products.formula_price import formula_price
+from sellout.settings import ELASTIC_HOST
 from users.models import UserStatus
 
 
@@ -314,6 +318,7 @@ class Product(models.Model):
     extra_score = models.IntegerField(default=0)
     up_score = models.BooleanField(default=False)
     in_process_update = models.BooleanField(default=False)
+    in_search = models.BooleanField(default=False)
 
     objects = ProductManager()
 
@@ -507,13 +512,14 @@ class Product(models.Model):
 
         self.save()
 
+
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = f"{self.spu_id}_{self.property_id}_{self.manufacturer_sku}"
+            self.slug = f"{self.spu_id}_{self.manufacturer_sku}"
 
         product_slug = kwargs.pop('product_slug', "1")
         if product_slug != "1":
-            if f"{self.spu_id}_{self.property_id}" in product_slug:
+            if f"{self.formatted_manufacturer_sku}" in product_slug:
                 self.slug = slugify(
                     f"{' '.join([x.name for x in self.brands.all()])} {self.model} {self.colorway} {self.id}")
                 print("новый слаг")

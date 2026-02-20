@@ -1,6 +1,5 @@
 from elasticsearch_dsl import Document, Text, Keyword, Float, Integer, Completion
 from elasticsearch_dsl.connections import connections
-from .models import Product, Line, Category, Color
 from elasticsearch_dsl import analyzer, token_filter
 from sellout.settings import ELASTIC_HOST
 

@@ -114,7 +114,7 @@ Anon)
    <a name="user"></a>
 8. `[POST]User order/cart_list/<user_id>` Body: ```{"product_unit_list": [2, 3]}``` Response (добавление в корзину или
    исключение)
-9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "penis"}```
+9. `[POST][User] promo/check/<user_id>` Body: ```{"promo": "denis"}```
    Response  ```{"final_amount": 49490, "message": "Промокод применен", "status": true }```
 10. `[POST][Anon] promo/check/` Body: ```{"promo": "penis", "product_unit_list": [2, 3]}```
     Response: ```{"final_amount": 115484, "message": "Промокод применен", "status": true, "promo_sale": 100}```

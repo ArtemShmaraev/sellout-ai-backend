@@ -183,16 +183,16 @@ class Command(BaseCommand):
         f = True
         all_cat_name = set(list(Category.objects.all().values_list("name", flat=True)))
         if f:
-            # product_index = ProductDocument._index
-            # if product_index.exists():
-            #     self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
-            #     product_index.delete()
-            #
-            # self.stdout.write(self.style.SUCCESS('Creating index...'))
-            #
-            # product_index.create()
+            product_index = ProductDocument._index
+            if product_index.exists():
+                self.stdout.write(self.style.SUCCESS('Deleting existing index...'))
+                product_index.delete()
 
-            products = Product.objects.filter(is_custom=False)
+            self.stdout.write(self.style.SUCCESS('Creating index...'))
+
+            product_index.create()
+
+            products = Product.objects.filter(is_custom=False, in_search=False)
             count = products.count()
             print("Товаров", count)
             k = 0
@@ -278,6 +278,8 @@ class Command(BaseCommand):
                         product_doc.rel_num = product.rel_num
                         product_doc.full_name = full_name
                         product_doc.save()
+                        product.in_search = True
+                        product.save()
                     except:
                         continue
             self.stdout.write(self.style.SUCCESS(f"{k} %"))

@@ -96,7 +96,7 @@ class ProductUpdatePriceUrlDewu(APIView):
         else:
             return None
         print(spu_id)
-        data = requests.get(f"https://sellout.su/intermediate_parser/process_spu_id?spu_id={spu_id}").json()
+        data = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}").json()
         s = add_products_spu_id_api(data)
         return Response(s)
 
@@ -1135,8 +1135,8 @@ class ProductUpdatePricePS(APIView):
 class ProductUpdatePriceHK(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        add_product_hk(data)
-        return Response("Ok")
+        p = add_product_hk(data)
+        return Response(f"https://sellout.su/products/{p.slug}")
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]

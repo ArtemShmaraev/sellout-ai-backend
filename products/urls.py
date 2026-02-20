@@ -14,7 +14,8 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
-    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView, ProductUpdatePriceUrlDewu, ProductSkuView
+    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView, \
+    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -88,7 +89,9 @@ urlpatterns = [
     path('run_command',  run_command_async), path('slug_for_spu_id/<int:spu_id>',  SlugForSpuId.as_view()), path("new_sale", NewSale.as_view()), path("del_sale", DelSale.as_view()),
     path("yml_fid/<int:page>.xml", ProductsFid.as_view()),
     path("update_price_ps", ProductUpdatePricePS.as_view()),
+    path("update_product_hk", ProductUpdatePriceHK.as_view()),
     path("update_price_url_dewu", ProductUpdatePriceUrlDewu.as_view()),
+
     path("sku/<str:sku>", ProductSkuView.as_view())
 ]
 

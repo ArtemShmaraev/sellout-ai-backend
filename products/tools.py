@@ -417,13 +417,13 @@ def update_score_clothes(product):
     product.save()
 
 def platform_update_price(product, request=False):
-    async def send_async_request(spu_id):
-        async with httpx.AsyncClient() as client:
-            print("Денис сукааааа")
-            response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
-            print("Денис сукааааа дважды")
-            # Вы можете добавить обработку ответа, если это необходимо
-            return response
+    # async def send_async_request(spu_id):
+    #     async with httpx.AsyncClient() as client:
+    #         print("Денис сукааааа")
+    #         response = await client.get(f"https://sellout.su/product_processing/process_spu_id?spu_id={spu_id}")
+    #         print("Денис сукааааа дважды")
+    #         # Вы можете добавить обработку ответа, если это необходимо
+    #         return response
     if request:
         user_identifier = request.META.get('REMOTE_ADDR')
         # Генерируем уникальный ключ для кэша

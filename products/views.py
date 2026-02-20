@@ -31,7 +31,7 @@ from django.views.decorators.cache import cache_page
 import json
 from time import time
 from django.http import JsonResponse, FileResponse, HttpResponse
-from .add_product_api import add_product_api, add_products_spu_id_api, add_product_ps_api
+from .add_product_api import add_product_api, add_products_spu_id_api, add_product_ps_api, add_product_hk
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
@@ -96,7 +96,7 @@ class ProductUpdatePriceUrlDewu(APIView):
         else:
             return None
         print(spu_id)
-        data = requests.get(f"https://sellout.su/intermediate_parser/get_processed_data?spu_id={spu_id}").json()
+        data = requests.get(f"https://sellout.su/intermediate_parser/process_spu_id?spu_id={spu_id}").json()
         s = add_products_spu_id_api(data)
         return Response(s)
 
@@ -1129,6 +1129,15 @@ class ProductUpdatePricePS(APIView):
         return Response("Ok")
 
 
+
+
+
+class ProductUpdatePriceHK(APIView):
+    def post(self, request):
+        data = json.loads(request.body)
+        add_product_hk(data)
+        return Response("Ok")
+
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -1148,6 +1157,7 @@ class ProductSlugView(APIView):
             if not is_update: # and product.categories.filter(name="Обувь").exists()
                 # print(11111)
                 platform_update_price(product, request=request)
+                print("Пошла")
 
                 product.rel_num += 1
                 product.save()

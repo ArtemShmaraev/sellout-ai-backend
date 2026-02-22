@@ -424,41 +424,60 @@ def platform_update_price(product, request=False):
     #         print("Денис сукааааа дважды")
     #         # Вы можете добавить обработку ответа, если это необходимо
     #         return response
-    if request:
-        user_identifier = request.META.get('REMOTE_ADDR')
-        # Генерируем уникальный ключ для кэша
-        cache_key = f'request_count:{user_identifier}'
-        # Получаем текущее количество запросов пользователя
-        request_count = cache.get(cache_key, default=0)
-        # Увеличиваем количество запросов на 1
-        request_count += 1
-        # Устанавливаем значение в кэше с истечением через 1 час
-        cache.set(cache_key, request_count, 3600)
-        if request_count < 5000:
-            time_threshold1 = timezone.now() - timezone.timedelta(minutes=5)
-            if not product.last_parse_price >= time_threshold1:
-                spu_id = product.spu_id
-                time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
-                if not product.last_upd >= time_threshold2:  # если цена не актуальна
-                    product.last_parse_price = timezone.now()
-                    product.save()
-                    s = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}")
-                    print("Идет обновление1")
-                    # print(s.json())
-                    # asyncio.run(send_async_request(spu_id))
-
-    else:
-        time_threshold1 = timezone.now() - timezone.timedelta(minutes=5)
-        if not product.last_parse_price >= time_threshold1:
-            spu_id = product.spu_id
-            time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
-            if not product.last_upd >= time_threshold2:  # если цена не актуальна
-                product.last_parse_price = timezone.now()
-                product.save()
-                s = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}")
-                print("Идет обновление2")
-                # print(s.json())
-                # asyncio.run(send_async_request(spu_id))
+    time_threshold1 = timezone.now() - timezone.timedelta(minutes=5)
+    if not product.last_parse_price >= time_threshold1:
+        spu_id = product.spu_id
+        print(spu_id)
+        time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+        if not product.last_upd >= time_threshold2:  # если цена не актуальна
+            product.last_parse_price = timezone.now()
+            product.save()
+            print(2)
+            s = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}")
+            print("Идет обновление2")
+    # if request:
+    #     print(11)
+    #     user_identifier = request.META.get('REMOTE_ADDR')
+    #     # Генерируем уникальный ключ для кэша
+    #     cache_key = f'request_count:{user_identifier}'
+    #     # Получаем текущее количество запросов пользователя
+    #     request_count = cache.get(cache_key, default=0)
+    #     # Увеличиваем количество запросов на 1
+    #     request_count += 1
+    #     # Устанавливаем значение в кэше с истечением через 1 час
+    #     cache.set(cache_key, request_count, 3600)
+    #     print(request_count)
+    #     if request_count < 5000:
+    #         print(111)
+    #         time_threshold1 = timezone.now() - timezone.timedelta(minutes=5)
+    #         if not product.last_parse_price >= time_threshold1:
+    #             spu_id = product.spu_id
+    #             print(spu_id)
+    #             time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+    #             if not product.last_upd >= time_threshold2:  # если цена не актуальна
+    #                 product.last_parse_price = timezone.now()
+    #                 product.save()
+    #                 print(1)
+    #                 s = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}")
+    #                 print("Идет обновление1")
+    #                 # print(s.json())
+    #                 # asyncio.run(send_async_request(spu_id))
+    #
+    # else:
+    #     print(22)
+    #     time_threshold1 = timezone.now() - timezone.timedelta(minutes=5)
+    #     if not product.last_parse_price >= time_threshold1:
+    #         spu_id = product.spu_id
+    #         print(spu_id)
+    #         time_threshold2 = timezone.now() - timezone.timedelta(hours=1)
+    #         if not product.last_upd >= time_threshold2:  # если цена не актуальна
+    #             product.last_parse_price = timezone.now()
+    #             product.save()
+    #             print(2)
+    #             s = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}")
+    #             print("Идет обновление2")
+    #             # print(s.json())
+    #             # asyncio.run(send_async_request(spu_id))
 
 
 def update_price(product):

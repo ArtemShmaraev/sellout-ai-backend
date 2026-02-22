@@ -57,7 +57,7 @@ from .search_tools import search_best_line, search_best_category, search_best_co
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
-from sellout.settings import CACHE_TIME
+from sellout.settings import CACHE_TIME, FRONTEND_HOST, PROTOCOL
 from collections import OrderedDict
 from sellout.settings import HOST
 from django.contrib.sitemaps import views as sitemaps_views
@@ -1075,6 +1075,10 @@ class ProductView(APIView):
             t7 = time()
             print("t6", t7 - t6)
             serializer = queryset
+
+        # if queryset.count() == 1:
+        #     print(f"{PROTOCOL}://{FRONTEND_HOST}/products/{queryset[0].slug}")
+        #     return redirect(f"{PROTOCOL}://{FRONTEND_HOST}/products/{queryset[0].slug}")
 
 
         res["results"] = serializer

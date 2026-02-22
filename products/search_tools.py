@@ -23,10 +23,9 @@ es = Elasticsearch(
     port=9200,
 )
 
+
 def suggest_search(request):
     query = request.query_params.get('q')
-
-
 
     index_name = 'suggest_index'
 
@@ -66,7 +65,8 @@ def suggest_search(request):
         gender = request.user.gender.name
         sp = []
         for suggestion in suggestions:
-            sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": f"{suggestion._source.url}&gender={gender}"})
+            sp.append({"name": suggestion._source.name, "type": suggestion._source.type,
+                       "url": f"{suggestion._source.url}&gender={gender}"})
             #
     else:
         sp = []
@@ -196,27 +196,37 @@ def search_product(query, pod_queryset, page_number=1):
         # search = search.query('bool', must=[
         #     {'match': {'full_name': {'query': query, 'fuzziness': 'AUTO'}}}])
 
-
         search = Search(index="product_index", using=es)
-        search = search.query(
-            'function_score',
-            query=Q('match', full_name={'query': query, 'fuzziness': 'AUTO'}),
-            # Запрос по полю full_name с учетом расплывчатости
-            functions=[
-                SF('field_value_factor', field='rel_num', modifier='log1p')  # Учет поля rel_num в функции ранжирования
-            ]
-        )
 
-        search = search.sort(
-            {'_score': {'order': 'desc'}},
-            {'rel_num': {'order': 'desc'}}
+        one_search = search.query(
+            Q('match_phrase', manufacturer_sku=query)
         )
+        response = one_search.execute()
+        total_hits = response.hits.total.value
+        print(total_hits, query)
+        if total_hits == 1:
+            product_ids = [hit.meta.id for hit in response.hits]
+        else:
 
-        search = search[:600]
-        response = search.execute()
-        # with open('results.json', 'w', encoding='utf-8') as json_file:
-        #     json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
-        product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
+            search = search.query(
+                'function_score',
+                query=Q('match', full_name={'query': query, 'fuzziness': 'AUTO'}),
+                # Запрос по полю full_name с учетом расплывчатости
+                functions=[
+                    SF('field_value_factor', field='rel_num', modifier='log1p')  # Учет поля rel_num в функции ранжирования
+                ]
+            )
+
+            search = search.sort(
+                {'_score': {'order': 'desc'}},
+                {'rel_num': {'order': 'desc'}}
+            )
+
+            search = search[:600]
+            response = search.execute()
+            # with open('results.json', 'w', encoding='utf-8') as json_file:
+            #     json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
+            product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
         cache.set(cache_key, product_ids, CACHE_TIME)
     else:
         product_ids = cached_data
@@ -238,10 +248,6 @@ def search_product(query, pod_queryset, page_number=1):
     #                       ]
     #                       )
 
-
-
-
-
     # search = search.query(
     #     'multi_match',
     #     query=query,
@@ -253,12 +259,6 @@ def search_product(query, pod_queryset, page_number=1):
     # , should=[
     #     {'match': {'manufacturer_sku': {'query': query, 'fuzziness': 'AUTO', 'boost': 1}}}
     # ])
-
-
-
-
-
-
 
     # for hit in response['hits']['hits'][:10]:
     #     print(hit['_score'], hit['_source']['rel_num'])
@@ -274,9 +274,6 @@ def search_product(query, pod_queryset, page_number=1):
     #     json.dump(response.to_dict(), f, indent=4)
     # max_score = response.hits.max_score
     # threshold = min(len(query) / 25, 0.8) * max_score
-
-
-
 
     queryset = pod_queryset.filter(id__in=product_ids)
     preserved_order = Case(

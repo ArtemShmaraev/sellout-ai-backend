@@ -239,7 +239,7 @@ def formula_price(product, unit, user_status, in_sale=True):
         else:
             if in_sale:
                 if unit.is_sale and status_name not in ["Friends & Family", 'Privileged']:
-                    if unit.start_price > (round_total_price * 1.05):
+                    if unit.start_price > (round_total_price * 1.1):
                         price_without_sale = unit.start_price
                         unit.is_sale = True
                         unit.save()

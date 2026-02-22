@@ -207,7 +207,7 @@ def add_product_hk(data):
 
     if "colors" in data["filter_parameters"]:
         for color in data["filter_parameters"]['colors']:
-            color_db, create = Color.objects.get_or_create(name=color)
+            color_db, create = Color.objects.get_or_create(russian_name=color)
             product.colors.add(color_db)
     # else:
     #     color = Color.objects.get(name="multicolour")
@@ -215,8 +215,8 @@ def add_product_hk(data):
 
     if "material" in data["filter_parameters"]:
         for material in data["filter_parameters"]['material']:
-            if Material.objects.filter(eng_name=material).exists():
-                material_db = Material.objects.get(eng_name=material)
+            if Material.objects.filter(name=material).exists():
+                material_db = Material.objects.get(name=material)
                 product.materials.add(material_db)
     # else:
     #     material = Material.objects.get(eng_name="other_material")

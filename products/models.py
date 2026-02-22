@@ -378,6 +378,7 @@ class Product(models.Model):
         self.content_sources = {}
         self.in_process_update = True
         self.sizes.clear()
+        self.colors.clear()
         self.save()
 
     def add_sale(self, absolute, percentage):

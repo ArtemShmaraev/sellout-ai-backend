@@ -384,6 +384,7 @@ def get_product_page(request, context):
 
     params = request.query_params
     queryset = filter_products(request)
+
     t3 = time()
     query = params.get('q')
     size = params.getlist('size')
@@ -414,6 +415,8 @@ def get_product_page(request, context):
 
     if ordering in ['exact_date', 'score_product_page', '-score_product_page', "-exact_date", "-normalize_rel_num", "last_upd", "-last_upd"]:
         queryset = queryset.order_by(ordering)
+        print(ordering)
+        print('sdsdsds')
     elif ordering == "min_price" or ordering == "-min_price":
         if size:
             queryset = queryset.annotate(

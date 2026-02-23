@@ -1,5 +1,6 @@
 from time import time
 
+from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from orders.models import ShoppingCart
 from products.tools import update_price, platform_update_price
+from sellout.settings import TIME_RPS, RPS
 from users.models import User, UserStatus
 from .models import ProductUnit
 from .serializers import ProductUnitSerializer, DeliveryTypeSerializer
@@ -20,7 +22,19 @@ from products.formula_price import formula_price
 class DeliveryForSizeView(APIView):
     def post(self, request, product_id):
         try:
-            product = Product.objects.get(id=product_id)
+            ip_address = request.META.get('REMOTE_ADDR')
+            cache_key = f'request_count_{ip_address}'
+            request_count = cache.get(cache_key, 0)
+            is_valid = True
+            if request_count > RPS:
+                is_valid = False
+            if is_valid:
+                product = Product.objects.get(id=product_id)
+            else:
+                product = Product.objects.first()
+            request_count += 1
+            cache.set(cache_key, request_count, timeout=TIME_RPS)  # Хранить значение в течение 10 секунд
+
             user_status = User.objects.get(id=request.user.id).user_status if request.user.id else UserStatus.objects.get(name="Amethyst")
             # update_price(product)
             view_size = json.loads(request.body)['view_size']
@@ -53,8 +67,20 @@ class DeliveryForSizeView(APIView):
 class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
+            ip_address = request.META.get('REMOTE_ADDR')
+            cache_key = f'request_count_{ip_address}'
+            request_count = cache.get(cache_key, 0)
+            is_valid = True
+            if request_count > RPS:
+                is_valid = False
+            if is_valid:
+                product = Product.objects.get(id=product_id)
+            else:
+                product = Product.objects.first()
+            request_count += 1
+            cache.set(cache_key, request_count, timeout=TIME_RPS)  # Хранить значение в течение 10 секунд
+
             t = time()
-            product = Product.objects.get(id=product_id)
             product_units = product.product_units.filter(availability=True)
             update_price(product)
             user_status = User.objects.get(id=request.user.id).user_status if self.request.user.id else UserStatus.objects.get(

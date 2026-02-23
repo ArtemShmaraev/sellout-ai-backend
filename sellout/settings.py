@@ -16,6 +16,8 @@ from datetime import timedelta
 from corsheaders.defaults import default_headers
 
 CACHE_TIME = 1500
+RPS = 200
+TIME_RPS = 3600
 #
 
 

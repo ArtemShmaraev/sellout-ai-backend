@@ -2,6 +2,7 @@ import base64
 import hashlib
 from datetime import datetime, timedelta
 
+import jwt
 from django.core import signing
 from django.contrib.auth.tokens import default_token_generator
 from django.core.cache import cache
@@ -33,7 +34,7 @@ from rest_framework_simplejwt.settings import api_settings
 from .tools import check_adress, register_user
 
 from shipping.views import ProductUnitProductMainView
-from sellout.settings import HOST, FRONTEND_HOST, CACHE_TIME
+from sellout.settings import HOST, FRONTEND_HOST, CACHE_TIME, SECRET_KEY
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -42,6 +43,68 @@ from users.tools import secret_password
 from django.shortcuts import redirect
 from sellout.settings import GOOGLE_OAUTH2_KEY, GOOGLE_OAUTH2_SECRET
 
+
+
+class ValidCaptcha(APIView):
+    def get(self, request, captcha_token):
+        def check_captcha(token):
+            resp = requests.get(
+                "https://smartcaptcha.yandexcloud.net/validate",
+                {
+                    "secret": "ysc2_Mv7mBNR4HtAUi0sNynbQbGd31CdtcsebI2OJJRUM5714b326",
+                    "token": token,
+                    "ip": ""
+                    # Способ получения IP-адреса зависит от вашего фреймворка и прокси.
+                    # Например, в Flask это может быть request.remote_addr
+                },
+                timeout=1
+            )
+            server_output = resp.content.decode()
+            if resp.status_code != 200:
+                return True
+            return json.loads(server_output)["status"] == "ok"
+
+        f = check_captcha(captcha_token)
+        if f:
+            ip_address = request.META.get('REMOTE_ADDR')
+
+            cache_key = f'request_count_{ip_address}'
+
+            # Получаем текущее количество запросов от IP-адреса
+            request_count = cache.get(cache_key, 0)
+
+            # Увеличиваем количество запросов на 1
+            request_count = 0
+            cache.set(cache_key, request_count, timeout=10)
+        return Response(str(int(f)))
+        print(f, '1212124')
+        if f:
+            secret_key = SECRET_KEY
+
+            # Пользовательские данные, которые вы хотите включить в токен
+            user_data = {
+                'user_id': 123456,
+                'username': 'example_user'
+            }
+
+            # Время сейчас
+            current_time = datetime.utcnow()
+
+            # Время истечения токена (текущее время + 10 минут)
+            expiration_time = current_time + timedelta(minutes=1)
+
+            # Создание токена
+            token = jwt.encode(
+                {'user': user_data, 'exp': expiration_time},
+                secret_key,
+                algorithm='HS256'
+            )
+            # print(token)
+            # # Преобразование байтового токена в строку (если необходимо)
+            # token_string = token.decode('utf-8')
+            print(token)
+            return Response(token)
+        return Response("False")
 
 class AddPartnerList(APIView):
     def post(self, request):

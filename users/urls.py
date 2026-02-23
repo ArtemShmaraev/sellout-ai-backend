@@ -3,7 +3,7 @@ from .api import UserViewSet
 from django.urls import path, re_path, include
 from .views import SizeTableInLK, UserSizeInfo, AddFavoriteBrands, FavoriteBrands, UserLastSeenView, UserRegister, UserInfoView, \
     UserAddressView, UserChangePassword, UserLoginView, TokenVerifyView, TokenRefreshView, GoogleAuth, \
-    initiate_google_auth, UserForSpamEmail, confirm_email, ReferralProgram, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo, AddMailingList,  AddPartnerList
+    initiate_google_auth, UserForSpamEmail, confirm_email, ReferralProgram, SendSetPassword, UserChangePasswordLK, SendVerifyEmail, WaitList, LoyaltyProgram, UserReferalPromo, AddMailingList,  AddPartnerList, ValidCaptcha
 
 router = routers.DefaultRouter()
 # router.register("", UserViewSet, 'user')
@@ -38,3 +38,4 @@ urlpatterns.append(path('waiting_list/<int:product_id>', WaitList.as_view()))
 urlpatterns.append(path('referral_promo', UserReferalPromo.as_view()))
 urlpatterns.append(path('add_mailing', AddMailingList.as_view()))
 urlpatterns.append(path('add_partner', AddPartnerList.as_view()))
+urlpatterns.append(path('valid_captcha/<str:captcha_token>', ValidCaptcha.as_view()))

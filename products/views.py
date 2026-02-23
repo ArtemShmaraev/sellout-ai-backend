@@ -2,6 +2,8 @@ import asyncio
 import copy
 import hashlib
 import math
+import jwt
+from datetime import datetime, timedelta
 import pickle
 import random
 import subprocess
@@ -57,7 +59,7 @@ from .search_tools import search_best_line, search_best_category, search_best_co
 from .documents import ProductDocument  # Импортируйте ваш документ
 from random import randint
 from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
-from sellout.settings import CACHE_TIME, FRONTEND_HOST, PROTOCOL
+from sellout.settings import CACHE_TIME, FRONTEND_HOST, PROTOCOL, SECRET_KEY, TIME_RPS, RPS
 from collections import OrderedDict
 from sellout.settings import HOST
 from django.contrib.sitemaps import views as sitemaps_views
@@ -1146,34 +1148,44 @@ class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
 
     def get(self, request, slug):
+
         try:
             t1 = time()
             is_update = self.request.query_params.get('is_update')
-            product = Product.objects.get(slug=slug)
-            t2 = time()
-            # print("пятьдесят ", t2 - t1, product.id)
+            ip_address = request.META.get('REMOTE_ADDR')
 
-            # user_agent = request.META.get('HTTP_USER_AGENT', '')
-            # print(request.META.get('HTTP_USER_AGENT', ''), "блять")
-            # # Проверяем, содержит ли User-Agent характерные строки для поисковых ботов
-            # is_search_bot = any(
-            #     keyword in user_agent.lower() for keyword in ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot'])
-            if not is_update: # and product.categories.filter(name="Обувь").exists()
-                # print(11111)
+            cache_key = f'request_count_{ip_address}'
+            request_count = cache.get(cache_key, 0)
+            is_valid = True
+            if request_count > RPS:
+                is_valid = False
+
+            if is_valid:
+                product = Product.objects.get(slug=slug)
+            else:
+                product = Product.objects.first()
+
+            if not is_update:
+                request_count += 1
+                cache.set(cache_key, request_count, timeout=TIME_RPS)  # Хранить значение в течение 10 секунд
+                print(f"request_count {request_count}")
+
                 platform_update_price(product, request=request)
                 print("Пошла")
 
                 product.rel_num += 1
                 product.save()
-            # add_product_ps_api(product.spu_id)
-            # print(product.min_price)
-            # print(Wishlist.objects.get(user=User(id=request.user.id)))
+
             serializer = ProductSerializer(product, context={"list_lines": True,
                                                              "wishlist": Wishlist.objects.get(user=User(
                                                                  id=request.user.id)) if request.user.id else None})
             t3 = time()
             # print("два ", t3-t2, product.id)
-            return Response(serializer.data)
+            data = serializer.data
+            print(is_valid, "ну вот сука", self.request.query_params.get('captcha'))
+            data['is_valid_captcha_token'] = is_valid
+
+            return Response(data)
         except Product.DoesNotExist:
             return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
 

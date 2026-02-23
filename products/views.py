@@ -1152,9 +1152,13 @@ class ProductSlugView(APIView):
         try:
             t1 = time()
             is_update = self.request.query_params.get('is_update')
-            ip_address = request.META.get('REMOTE_ADDR')
-
-            cache_key = f'request_count_{ip_address}'
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            print("мой ip", ip)
+            cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:

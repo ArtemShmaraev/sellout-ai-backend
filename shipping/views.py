@@ -22,8 +22,12 @@ from products.formula_price import formula_price
 class DeliveryForSizeView(APIView):
     def post(self, request, product_id):
         try:
-            ip_address = request.META.get('REMOTE_ADDR')
-            cache_key = f'request_count_{ip_address}'
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:
@@ -67,8 +71,12 @@ class DeliveryForSizeView(APIView):
 class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
-            ip_address = request.META.get('REMOTE_ADDR')
-            cache_key = f'request_count_{ip_address}'
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:

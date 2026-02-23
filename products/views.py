@@ -1188,6 +1188,7 @@ class ProductSlugView(APIView):
             data = serializer.data
             print(is_valid, "ну вот сука", self.request.query_params.get('captcha'))
             data['is_valid_captcha_token'] = is_valid
+            data['ip'] = ip
 
             return Response(data)
         except Product.DoesNotExist:

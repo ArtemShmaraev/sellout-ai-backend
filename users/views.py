@@ -66,7 +66,11 @@ class ValidCaptcha(APIView):
 
         f = check_captcha(captcha_token)
         if f:
-            ip = request.META.get('HTTP_X_REAL_IP')
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for
+            else:
+                ip = request.META.get('REMOTE_ADDR')
 
             cache_key = f'request_count_{ip}'
 

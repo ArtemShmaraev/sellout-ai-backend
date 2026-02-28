@@ -1157,7 +1157,7 @@ class ProductSlugView(APIView):
             #     ip = x_forwarded_for.split(',')[0]
             # else:
             #     ip = request.META.get('REMOTE_ADDR')
-            ip = request.META.get['HTTP_X_REAL_IP']
+            ip = request.META.get('HTTP_X_REAL_IP')
             print("мой ip", ip)
             cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)

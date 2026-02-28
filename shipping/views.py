@@ -23,7 +23,7 @@ class DeliveryForSizeView(APIView):
     def post(self, request, product_id):
         try:
 
-            ip = request.META.get['HTTP_X_REAL_IP']
+            ip = request.META.get('HTTP_X_REAL_IP')
             cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
@@ -68,7 +68,7 @@ class DeliveryForSizeView(APIView):
 class MinPriceForSizeView(APIView):
     def get(self, request, product_id):
         try:
-            ip = request.META.get['HTTP_X_REAL_IP']
+            ip = request.META.get('HTTP_X_REAL_IP')
             cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
             is_valid = True

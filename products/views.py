@@ -1159,7 +1159,8 @@ class ProductSlugView(APIView):
                 ip = request.META.get('REMOTE_ADDR')
 
             print("мой ip", ip)
-            cache_key = f'request_count_{ip}'
+
+            cache_key = f'request_count_{str(ip)}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:

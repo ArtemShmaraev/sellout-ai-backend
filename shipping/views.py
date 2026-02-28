@@ -28,7 +28,7 @@ class DeliveryForSizeView(APIView):
                 ip = x_forwarded_for
             else:
                 ip = request.META.get('REMOTE_ADDR')
-            cache_key = f'request_count_{ip}'
+            cache_key = f'request_count_{str(ip)}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:
@@ -77,7 +77,7 @@ class MinPriceForSizeView(APIView):
                 ip = x_forwarded_for
             else:
                 ip = request.META.get('REMOTE_ADDR')
-            cache_key = f'request_count_{ip}'
+            cache_key = f'request_count_{str(ip)}'
             request_count = cache.get(cache_key, 0)
             is_valid = True
             if request_count > RPS:

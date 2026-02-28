@@ -72,7 +72,7 @@ class ValidCaptcha(APIView):
             else:
                 ip = request.META.get('REMOTE_ADDR')
 
-            cache_key = f'request_count_{ip}'
+            cache_key = f'request_count_{str(ip)}'
 
             # Получаем текущее количество запросов от IP-адреса
             request_count = cache.get(cache_key, 0)

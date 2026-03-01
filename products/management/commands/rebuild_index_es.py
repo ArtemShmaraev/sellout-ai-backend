@@ -158,7 +158,7 @@ class Command(BaseCommand):
             product_index.delete()
 
         self.stdout.write(self.style.SUCCESS('Creating index...'))
-
+        Product.objects.all().update(in_search=False)
         product_index.create()
 
 

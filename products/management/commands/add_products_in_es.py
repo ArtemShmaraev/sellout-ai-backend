@@ -72,7 +72,7 @@ class Command(BaseCommand):
         k = 0
         kk = 0
         for page in range(0, count, 100):
-            page_product = products[page:page + 100]
+            page_product = products[:100]
 
             for product in page_product:
                 try:

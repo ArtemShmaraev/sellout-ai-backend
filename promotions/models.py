@@ -24,6 +24,7 @@ class PromoCode(models.Model):
     unlimited = models.BooleanField(default=False)
     ref_promo = models.BooleanField(default=False)
     active_until_date = models.DateField(default=date.today)
+    skip_payment = models.BooleanField(default=False)
 
     def check_promo_in_cart(self, cart):
         promo_sale = 0

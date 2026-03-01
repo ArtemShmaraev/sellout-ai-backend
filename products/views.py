@@ -98,9 +98,9 @@ class ProductUpdatePriceUrlDewu(APIView):
         else:
             return None
         print(spu_id)
-        data = requests.get(f"https://sellout.su/parser_intermediate_api/process_spu_id?spu_id={spu_id}").json()
-        s = add_products_spu_id_api(data)
-        return Response(s)
+        data = requests.get(f"https://sellout.su/parser_intermediate_api/get_data?spu_id={spu_id}").json()
+        s = add_product_hk(data)
+        return Response(s.slug)
 
 class ProducrSpuIdView(APIView):
     def get(self, request, spu_id):

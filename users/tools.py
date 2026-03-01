@@ -82,6 +82,32 @@ def register_user(data):
         # Обработка других исключений
         print(f"Произошло исключение: {e}")
 
+
+
+    try:
+        if "promoreg" in data:
+            referral_promo = PromoCode.objects.get(string_representation=data['promoreg'].upper())
+
+            ref_user = referral_promo.owner
+            # new_user.ref_user = ref_user
+            if PromoCode.objects.filter(owner=ref_user, ref_promo=True).exists():
+                promo = PromoCode.objects.filter(owner=ref_user, ref_promo=True).first()
+                cart.promo_code = promo
+                cart.save()
+
+    except ObjectDoesNotExist:
+        # Обработка исключения, когда пользователя не существует
+        new_user.info['gif_1'] = data['promoreg']
+        print("Что то не найдено")
+
+    except ValueError:
+        # Обработка исключения, когда значение не может быть преобразовано в целое число
+        print("Некорректное значение promoreg")
+
+    except Exception as e:
+        # Обработка других исключений
+        print(f"Произошло исключение: {e}")
+
     # Создайте список желаний, связанный с пользователем
     wl = Wishlist(user=new_user)
     wl.save()

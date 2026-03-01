@@ -22,7 +22,7 @@ def get_hk_delivery_offers(sku, data):
 
 
 
-    sanya = 13.3
+    sanya = 13.6
 
     standard_delivery = {
         "name": "standard_delivery",
@@ -85,6 +85,8 @@ def get_hk_delivery_offers(sku, data):
     return units
 
 def add_product_hk(data):
+    if not data.get("images", []):
+        return "Пустой товар"
     # file_path = "picture.json"
     # with open(file_path, 'r', encoding='utf-8') as file:
     #     data = json.load(file)
@@ -121,10 +123,7 @@ def add_product_hk(data):
         create = True
         product = Product.objects.create(spu_id=spu_id, formatted_manufacturer_sku=manufacturer_sku)
     product.slug = product_slug
-
     product.save()
-
-
 
     product.is_collab = data["is_collab"]
     if data["is_collab"] and len(data['collab_names']) > 0:
@@ -257,7 +256,7 @@ def add_product_hk(data):
                         rows = table.rows.all()
                         for size_row in rows:
                             # print(size_row.row)
-
+                            print(size_row.row)
                             if size_row.row[sku["filter_table_row_name"]] == size:
                                 sizes.append(size_row.id)
                                 break
@@ -302,7 +301,7 @@ def add_product_hk(data):
                                             delivery_type__delivery_type=delivery_offer['name']).exists():
                 product_unit = product.product_units.get(view_size_platform=sku['view_name'],
                                                          delivery_type__delivery_type=delivery_offer['name'])
-                product_unit.delivery_type.delete()
+                # product_unit.delivery_type.delete()
                 product_unit.delivery_type = delivery
                 product_unit.original_price = sku['zh_price']
 

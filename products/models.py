@@ -450,6 +450,10 @@ class Product(models.Model):
                 self.available_flag = True
             else:
                 self.available_flag = False
+            if self.is_sale:
+                if self.min_price == self.min_price_without_sale:
+                    self.del_sale()
+
             self.save()
 
 

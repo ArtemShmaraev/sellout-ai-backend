@@ -106,6 +106,8 @@ class User(AbstractUser):
     is_referral_partner = models.BooleanField(default=False)
     referral_data = models.JSONField(default=dict)
     is_made_order = models.BooleanField(default=False)
+    info = models.JSONField(default=dict)
+
 
     def __str__(self):
         return self.username

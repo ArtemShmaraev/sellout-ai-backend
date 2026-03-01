@@ -33,6 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         def add_new():
+            Product.objects.filter(is_new=True).update(is_new=False)
             s_category = ['canvas_shoes', 'high_top_sneakers', 'low_top_sneakers', 'basketball_sneakers']
             s_line = ['yeezy', 'adidas_campus', 'adidas_forum', 'adidas_gazelle', 'adidas_samba', 'adidas_stan_smith',
                       'adidas_superstar', 'adidas_ultraboost', 'adidas_human_race', 'adidas_nmd', 'adidas_zx',
@@ -171,4 +172,4 @@ class Command(BaseCommand):
             popular_product = Product.objects.filter(id__in=ids)
             popular_product.update(is_recommend=True)
 
-        add_rec()
+        add_new()

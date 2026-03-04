@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hr+%so83!fts7gey%sb3%#_n%e&2=v9g2mmsg(zy$q*w@g05j@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 # Application definition
@@ -280,7 +280,7 @@ DATABASES = {
         #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
         #     'target_session_attrs': 'read-write',
         # }
-        # 'HOST': '158.160.56.73',
+        # # 'HOST': '158.160.56.73',
         # 'PORT': '5432',
     }
 }
@@ -299,7 +299,7 @@ CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-
+#
 CACHES = {
     'default': {
         'BACKEND': "django.core.cache.backends.memcached.PyMemcacheCache",
@@ -316,3 +316,4 @@ ELASTICSEARCH_DSL = {
         # 'hosts': '51.250.74.115:9200',  # Адрес и порт вашего Elasticsearch
     },
 }
+

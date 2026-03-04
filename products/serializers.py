@@ -343,6 +343,13 @@ class ProductSerializer(serializers.ModelSerializer):
                 s = get_line_parents(obj.main_line)
                 if len(s) == 1:
                     s.extend(get_cat_parents(obj.categories.all().order_by("-id").first(), obj.main_line))
+                if len(s) == 2:
+                    s1 = s[1]
+                    cat = obj.categories.all().order_by("-id").first()
+                    line = obj.lines.all().exclude(name__icontains='Все').exclude(name__icontains='Другие').order_by("id").first()
+                    s[1] = {"name": f"{cat.name} {line.view_name}",
+                                        "query": f"line={line.full_eng_name.rstrip('_')}&category={cat.eng_name.rstrip('_')}"}
+                    s.append(s1)
         return s
 
     # def get_is_return(self, obj):

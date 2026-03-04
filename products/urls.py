@@ -15,7 +15,7 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
     SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView, \
-    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK
+    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -53,6 +53,9 @@ sitemaps = {
 
 urlpatterns = [
     path("products/", ProductView.as_view(), name="home"),
+    path("products_footer_text/", ProductFooterTextView.as_view(),),
+    path("products_header_text/", ProductHeaderTextView.as_view(), ),
+
     path("", include(router_collection.urls)),
     path("materials/", MaterialView.as_view()),
     path("", include(router_product.urls)), path("", include(router_cat.urls)),

@@ -37,7 +37,7 @@ from .add_product_api import add_product_api, add_products_spu_id_api, add_produ
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand, Photo, Material, Gender
+    RansomRequest, SGInfo, Brand, Photo, Material, Gender, FooterText
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header, count_queryset, filter_products
@@ -68,6 +68,39 @@ from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
+
+class ProductHeaderTextView(APIView):
+    def get(self, request):
+        url = request.build_absolute_uri()
+        url_hash = hashlib.md5(url.encode()).hexdigest()
+        cache_header_key = f"product_header:{url_hash}"  # Уникальный ключ для каждой URL
+        cached_header = cache.get(cache_header_key)
+        if cached_header is not None:
+            photos = cached_header
+        else:
+            photos = get_product_page_header(request)
+            cache.set(cache_header_key, (photos), CACHE_TIME)
+        res = {}
+        res["mobile"] = photos['mobile']
+        res["desktop"] = photos['desktop']
+        return Response(res)
+
+class ProductFooterTextView(APIView):
+    def get(self, request):
+        line = request.query_params.getlist('line')
+        category = request.query_params.getlist("category")
+        gender = request.query_params.getlist("gender")
+        collab = request.query_params.getlist("collab")
+        data = {"title": "",
+                "description": ""}
+        if len(line) == 1:
+            text = FooterText.objects.get(lines__full_eng_name=line[0])
+            data['title'] = text.title
+            data['description'] = text.text
+
+        return Response(data)
+
+
 
 
 class ProductSkuView(APIView):
@@ -1084,23 +1117,8 @@ class ProductView(APIView):
 
 
         res["results"] = serializer
-        t8 = time()
-        print("t7", t8 - t7)
-
-        cache_header_key = f"product_header:{url_hash}"  # Уникальный ключ для каждой URL
-        cached_header = cache.get(cache_header_key)
-        if cached_header is not None:
-            photos = cached_header
-        else:
-            photos = get_product_page_header(request)
-            cache.set(cache_header_key, (photos), CACHE_TIME)
-
-        res["mobile"] = photos['mobile']
-        res["desktop"] = photos['desktop']
-
         t10 = time()
-        print("t9", t10 - t8)
-        print("t", t10 - t0, request.GET.copy())
+
         res['time'] = t10 - t0
 
         return Response(res)

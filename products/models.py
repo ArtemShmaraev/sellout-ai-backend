@@ -612,6 +612,18 @@ class HeaderText(models.Model):
     type = models.CharField(max_length=64, default="")
 
 
+class FooterText(models.Model):
+    genders = models.ManyToManyField("Gender", related_name='footer_text', blank=True)
+    categories = models.ManyToManyField("Category", related_name='footer_text',
+                                        blank=True)
+    lines = models.ManyToManyField("Line", related_name='footer_text',
+                                   blank=True)
+    collabs = models.ManyToManyField("Collab", related_name='footer_text', blank=True)
+    title = models.CharField(max_length=512, default="")
+    text = models.CharField(max_length=16096, default="")
+    type = models.CharField(max_length=64, default="")
+
+
 class HeaderPage(models.Model):
     text = models.ForeignKey("HeaderText", blank=True, null=True, on_delete=models.PROTECT)
     photo = models.ForeignKey("HeaderPhoto", blank=True, null=True, on_delete=models.PROTECT)

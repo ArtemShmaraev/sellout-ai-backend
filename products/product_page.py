@@ -186,7 +186,6 @@ def get_product_page_header(request):
     res['mobile']['collab'] = collab
     res['mobile']['line'] = line
     res['mobile']['q'] = q
-
     res['mobile']['collection'] = collection
     return res
 

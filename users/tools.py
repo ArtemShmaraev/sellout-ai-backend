@@ -11,6 +11,8 @@ from django.core import signing
 
 
 
+
+
 def check_adress(text):
     token = "7b8466ea8df30fc6a906c7e351e1da4160766933"
     secret = "962187b66460ed2f92c257b7bb2778d2c293cefb"

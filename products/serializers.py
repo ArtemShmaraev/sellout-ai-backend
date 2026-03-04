@@ -11,7 +11,36 @@ from .formula_price import formula_price
 from users.models import User, UserStatus
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+import concurrent.futures
 
+
+# Функция для сериализации данных в одном потоке
+def serialize_data_chunk(data_chunk, context, serializer_class):
+    serializer = serializer_class(data_chunk, many=True, context=context)
+    return serializer.data
+
+# Функция для разделения данных на три части и запуска сериализации в потоках
+def serialize_in_threads(queryset, context, serializer_class):
+    num_threads = 3
+    chunk_size = len(queryset) // num_threads
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        serialized_data = []
+
+        # Разделение данных и запуск сериализации в потоках
+        for i in range(num_threads):
+            start_index = i * chunk_size
+            end_index = start_index + chunk_size if i < num_threads - 1 else len(queryset)
+            data_chunk = queryset[start_index:end_index]
+            future = executor.submit(serialize_data_chunk, data_chunk, context, serializer_class)
+            futures.append(future)
+
+        # Получение результатов сериализации из потоков
+        for future in concurrent.futures.as_completed(futures):
+            serialized_chunk = future.result()
+            serialized_data.extend(serialized_chunk)
+    return serialized_data
 
 class SizeRowSerializer(serializers.ModelSerializer):
     is_main = serializers.SerializerMethodField()
@@ -459,13 +488,8 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
             obj.update_price()
         return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
-
-        #
-
-
-
     def get_in_wishlist(self, product):
-        # user_id = self.context.get('user_id')
+        user_id = self.context.get('user_id')
         wishlist = self.context.get('wishlist')
         if wishlist:
             return product in wishlist.products.all()

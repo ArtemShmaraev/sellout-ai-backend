@@ -39,6 +39,7 @@ class UserWishlist(APIView):
                     product = Product.objects.get(id=product_id)
                     wishlist = Wishlist.objects.get(user=user)
                     wishlist.products.add(product)
+                    wishlist.get_wishlist_product_ids(clear=True)
 
                     return Response(
                         ProductMainPageSerializer(wishlist.products, many=True, context={"wishlist": Wishlist.objects.get(user=User(id=self.request.user.id)) if request.user.id else None}).data)
@@ -63,6 +64,7 @@ class UserWishlist(APIView):
             if product not in wishlist.products.all():
                 raise Product.DoesNotExist
             wishlist.products.remove(product)
+            wishlist.get_wishlist_product_ids(clear=True)
 
             return Response("Элемент успешно удален из списка желаний")
         except User.DoesNotExist:

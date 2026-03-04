@@ -45,7 +45,7 @@ from .product_site_map import ProductSitemap
 from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
     ProductSerializer, \
     DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
-    ProductSlugAndPhotoSerializer, ProductAdminSerializer, MaterialSerializer
+    ProductSlugAndPhotoSerializer, ProductAdminSerializer, MaterialSerializer, serialize_in_threads
 from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
     get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price, \
     get_fid_product
@@ -72,6 +72,7 @@ import asyncio
 class ProductHeaderTextView(APIView):
     def get(self, request):
         url = request.build_absolute_uri()
+
         url_hash = hashlib.md5(url.encode()).hexdigest()
         cache_header_key = f"product_header:{url_hash}"  # Уникальный ключ для каждой URL
         cached_header = cache.get(cache_header_key)
@@ -83,6 +84,7 @@ class ProductHeaderTextView(APIView):
         res = {}
         res["mobile"] = photos['mobile']
         res["desktop"] = photos['desktop']
+
         return Response(res)
 
 class ProductFooterTextView(APIView):
@@ -94,9 +96,10 @@ class ProductFooterTextView(APIView):
         data = {"title": "",
                 "description": ""}
         if len(line) == 1:
-            text = FooterText.objects.get(lines__full_eng_name=line[0])
-            data['title'] = text.title
-            data['description'] = text.text
+            if FooterText.objects.filter(lines__full_eng_name=line[0]).exists():
+                text = FooterText.objects.get(lines__full_eng_name=line[0])
+                data['title'] = text.title
+                data['description'] = text.text
 
         return Response(data)
 
@@ -1066,56 +1069,85 @@ class ProductView(APIView):
         url_hash = hashlib.md5(url.encode()).hexdigest()
         cache_product_key = f"product_page:{url_hash}_{f'{request.user.id}_{request.user.user_status.id}' if request.user.id else 0}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)
+        if cached_data is None or True:
+            queryset, res = get_product_page(request, context)
+            t_new = time()
+            if adminka:
+                queryset = ProductAdminSerializer(queryset, many=True, context=context).data
+            else:
+                tq1 = time()
+                # queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
+                queryset = serialize_in_threads(queryset, context, ProductMainPageSerializer)
+                print("t_s", time() - tq1)
+            cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+            t_old = time()
+            print(f"no cache: {t_old - t_new}")
+
+        else:
+            t_new = time()
+            queryset, res = cached_data
+            t_old = time()
+            print(f"cache: {t_old - t_new}")
+
         # url_hash = urlencode(params)
         if request.user.id:
-            if cached_data is None or like:
-                queryset, res = get_product_page(request, context)
-                t_new = time()
-                cache.set(cache_product_key, (queryset, res), CACHE_TIME)
-                t_old = time()
-                print(f"no cache: {t_old - t_new}")
+            wishlist_ids = Wishlist.objects.get(user=User(id=self.request.user.id)).get_wishlist_product_ids()
+            for product in queryset:
+                if product['id'] in wishlist_ids:
+                    product['in_wishlist'] = True
 
-            else:
-                t_new = time()
-                queryset, res = cached_data
-                t_old = time()
-                print(f"cache: {t_old - t_new}")
+
+        #     if cached_data is None:
+        #
+        #         queryset, res = get_product_page(request, context)
+        #         t_new = time()
+        #         cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+        #         t_old = time()
+        #         print(f"no cache: {t_old - t_new}")
+        #
+        #     else:
+        #         t_new = time()
+        #         queryset, res = cached_data
+        #         t_old = time()
+        #         print(f"cache: {t_old - t_new}")
+        #
+        #     t6 = time()
+        #
+        #     if adminka:
+        #         serializer = ProductAdminSerializer(queryset, many=True, context=context).data
+        #     else:
+        #         # serializer = serialize_in_threads(queryset, context, ProductMainPageSerializer)
+        #         serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
+        #     t7 = time()
+        #     print("t_serial", t7 - t6)
+        # else:
+        #     if cached_data is None:
+        #         queryset, res = get_product_page(request, context)
+        #         t_new = time()
+        #         if adminka:
+        #             queryset = ProductAdminSerializer(queryset, many=True, context=context).data
+        #         else:
+        #             queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
+        #         cache.set(cache_product_key, (queryset, res), CACHE_TIME)
+        #         t_old = time()
+        #         print(f"no cache: {t_old - t_new}")
+        #
+        #     else:
+        #         t_new = time()
+        #         queryset, res = cached_data
+        #         t_old = time()
+        #         print(f"cache: {t_old - t_new}")
 
             t6 = time()
             t7 = time()
             print("t6", t7 - t6)
-            if adminka:
-                serializer = ProductAdminSerializer(queryset, many=True, context=context).data
-            else:
-                serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
-        else:
-            if cached_data is None or like:
-                queryset, res = get_product_page(request, context)
-                t_new = time()
-                if adminka:
-                    queryset = ProductAdminSerializer(queryset, many=True, context=context).data
-                else:
-                    queryset = ProductMainPageSerializer(queryset, many=True, context=context).data
-                cache.set(cache_product_key, (queryset, res), CACHE_TIME)
-                t_old = time()
-                print(f"no cache: {t_old - t_new}")
 
-            else:
-                t_new = time()
-                queryset, res = cached_data
-                t_old = time()
-                print(f"cache: {t_old - t_new}")
-
-            t6 = time()
-            t7 = time()
-            print("t6", t7 - t6)
-            serializer = queryset
 
         # if queryset.count() == 1:
         #     print(f"{PROTOCOL}://{FRONTEND_HOST}/products/{queryset[0].slug}")
         #     return redirect(f"{PROTOCOL}://{FRONTEND_HOST}/products/{queryset[0].slug}")
 
-
+        serializer = queryset
         res["results"] = serializer
         t10 = time()
 

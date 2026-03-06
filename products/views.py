@@ -1216,6 +1216,7 @@ class ProductSlugView(APIView):
             is_valid = True
             if request_count > RPS:
                 is_valid = False
+            is_valid = False
 
             if is_valid:
                 product = Product.objects.get(slug=slug)

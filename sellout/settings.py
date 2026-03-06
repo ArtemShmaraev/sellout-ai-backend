@@ -16,7 +16,7 @@ from datetime import timedelta
 from corsheaders.defaults import default_headers
 
 CACHE_TIME = 1500
-RPS = 200
+RPS = 2000000000
 TIME_RPS = 3600
 #
 
@@ -280,7 +280,7 @@ DATABASES = {
         #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
         #     'target_session_attrs': 'read-write',
         # }
-        # # 'HOST': '158.160.56.73',
+        # 'HOST': '158.160.56.73',
         # 'PORT': '5432',
     }
 }

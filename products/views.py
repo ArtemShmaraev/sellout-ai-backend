@@ -1209,7 +1209,7 @@ class ProductSlugView(APIView):
                 ip = request.META.get('REMOTE_ADDR')
 
             print("мой ip", ip)
-            print(request.META)
+            # print(request.META)
 
             cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)
@@ -1242,6 +1242,7 @@ class ProductSlugView(APIView):
             print(is_valid, "ну вот сука", self.request.query_params.get('captcha'))
             data['is_valid_captcha_token'] = is_valid
             data['ip'] = ip
+            data['request'] = {'count': request_count, "RPS": RPS}
 
             return Response(data)
         except Product.DoesNotExist:

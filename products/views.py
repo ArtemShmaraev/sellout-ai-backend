@@ -1208,7 +1208,7 @@ class ProductSlugView(APIView):
             else:
                 ip = request.META.get('REMOTE_ADDR')
 
-            print("мой ip", ip)
+            print("мой ip", ip, slug)
             # print(request.META)
 
             cache_key = f'request_count_{ip}'

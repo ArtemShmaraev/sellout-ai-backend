@@ -1212,7 +1212,7 @@ class ProductSlugView(APIView):
                 ip = request.META.get('REMOTE_ADDR')
 
             print("мой ip", ip, request.build_absolute_uri())
-            # print(request.META)
+            print(request.META)
 
             cache_key = f'request_count_{ip}'
             request_count = cache.get(cache_key, 0)

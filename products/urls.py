@@ -94,7 +94,6 @@ urlpatterns = [
     path("update_price_ps", ProductUpdatePricePS.as_view()),
     path("update_product_hk", ProductUpdatePriceHK.as_view()),
     path("update_price_url_dewu", ProductUpdatePriceUrlDewu.as_view()),
-
     path("sku/<str:sku>", ProductSkuView.as_view())
 ]
 

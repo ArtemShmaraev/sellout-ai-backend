@@ -63,7 +63,7 @@ class SizeTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SizeTable
-        exclude = ['default_row', ]
+        exclude = ['default_row', 'category', 'gender', 'standard']
         depth = 2
 
     def get_size_rows(self, obj):

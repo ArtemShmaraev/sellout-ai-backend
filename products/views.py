@@ -1423,21 +1423,22 @@ class SizeTableForFilter(APIView):
             if categories:
                 size_tables = size_tables.filter(category__eng_name__in=categories)
             size_tables = size_tables.order_by("id")
-            # Создайте уникальный ключ кэша на основе данных size_tables
-            cache_key = ".".join(list(map(str, size_tables.values_list("id", flat=True))))
-
-            # Попробуйте получить закэшированные данные из кэша
-            cached_data = cache.get(cache_key)
-
-            if cached_data is None:
-                # Если данные не найдены в кэше, выполните сериализацию и закэшируйте результаты
-                size_tables_data = SizeTableSerializer(size_tables, many=True, context=context).data
-                cache.set(cache_key, size_tables_data, CACHE_TIME)
-            else:
-                # Если данные найдены в кэше, используйте закэшированные данные
-                size_tables_data = cached_data
-
-            return Response(size_tables_data)
+            name_size_tables = list(size_tables.values_list("name", flat=True))
+            return Response(name_size_tables)
+            # # Создайте уникальный ключ кэша на основе данных size_tables
+            # cache_key = ".".join(list(map(str, size_tables.values_list("id", flat=True))))
+            #
+            # # Попробуйте получить закэшированные данные из кэша
+            # cached_data = cache.get(cache_key)
+            # if cached_data is None:
+            #     # Если данные не найдены в кэше, выполните сериализацию и закэшируйте результаты
+            #     size_tables_data = SizeTableSerializer(size_tables, many=True, context=context).data
+            #     cache.set(cache_key, size_tables_data, CACHE_TIME)
+            # else:
+            #     # Если данные найдены в кэше, используйте закэшированные данные
+            #     size_tables_data = cached_data
+            #
+            # return Response(size_tables_data)
         except User.DoesNotExist:
             return Response("Пользователь не существует", status=status.HTTP_404_NOT_FOUND)
 

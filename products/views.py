@@ -1192,7 +1192,10 @@ class ProductUpdatePriceHK(APIView):
     def post(self, request):
         data = json.loads(request.body)
         p = add_product_hk(data)
-        return Response(f"https://sellout.su/products/{p.slug}")
+        if p is Product:
+            return Response(f"https://sellout.su/products/{p.slug}")
+        else:
+            return Response(f"Ошибка")
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
@@ -1208,7 +1211,7 @@ class ProductSlugView(APIView):
             else:
                 ip = request.META.get('REMOTE_ADDR')
 
-            print("мой ip", ip, slug)
+            print("мой ip", ip, request.build_absolute_uri())
             # print(request.META)
 
             cache_key = f'request_count_{ip}'

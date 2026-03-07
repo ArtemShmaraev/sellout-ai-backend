@@ -1204,6 +1204,7 @@ class ProductSlugView(APIView):
 
         try:
             t1 = time()
+            data_ip = self.request.query_params.get('ip')
             is_update = self.request.query_params.get('is_update')
             x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
             if x_forwarded_for:
@@ -1211,7 +1212,7 @@ class ProductSlugView(APIView):
             else:
                 ip = request.META.get('REMOTE_ADDR')
 
-            print("мой ip", ip, request.build_absolute_uri())
+            print("мой ip", ip, data_ip, request.build_absolute_uri())
             print(request.META)
 
             cache_key = f'request_count_{ip}'

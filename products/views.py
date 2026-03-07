@@ -1251,7 +1251,7 @@ class ProductSlugView(APIView):
 
             return Response(data)
         except Product.DoesNotExist:
-            return Response("Товар не найден", status=status.HTTP_404_NOT_FOUND)
+            return Response("Товар не найден")
 
 
 class ProductIdView(APIView):

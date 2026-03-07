@@ -7,7 +7,7 @@ from .models import Product
 
 class ProductSitemap(Sitemap):
     def items(self):
-        return Product.objects.filter(available_flag=True).order_by("-score_product_page").values("slug", "last_upd", "score_product_page")
+        return Product.objects.filter(available_flag=True, is_custom=False).order_by("-score_product_page").values("slug", "last_upd", "score_product_page")
 
     def lastmod(self, obj):
         date = obj['last_upd']

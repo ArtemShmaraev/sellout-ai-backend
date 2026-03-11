@@ -53,6 +53,16 @@ def round_to_nearest(value, step=50):
     return math.ceil(value / step) * step
 
 
+def send_email_new_order(order, email):
+    url = "https://sellout.su/mail/send_order_new_order_mail"
+    params = {
+        "recipient_email": email,
+        "order": order
+    }
+    requests.post(url, json=params)
+    return requests.status_codes
+
+
 def send_email_confirmation_order(order, email):
     url = "https://sellout.su/mail/send_order_accepted_mail"
     params = {

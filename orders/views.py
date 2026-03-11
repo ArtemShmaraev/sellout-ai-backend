@@ -23,7 +23,8 @@ from shipping.serializers import ProductUnitSerializer
 from rest_framework import status
 from promotions.models import PromoCode, AccrualBonus
 from users.models import User, EmailConfirmation
-from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order, get_delivery
+from .tools import get_delivery_costs, get_delivery_price, round_to_nearest, send_email_confirmation_order, \
+    get_delivery, send_email_new_order
 from .tools_for_user import update_user_status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -309,6 +310,7 @@ class UseBonus(APIView):
 
 
 
+
 class CheckOutView(APIView):
     # authentication_classes = [JWTAuthentication]
 
@@ -387,16 +389,17 @@ class CheckOutView(APIView):
                     order.fact_of_payment = True
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
-
-
                     send_email_confirmation_order(OrderSerializer(order).data, "dfeoktistov523@icloud.com")
                     send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
+                    send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                    send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                     # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
 
                     cart.clear()
-                send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
-                send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
-                send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
+                else:
+                    send_email_new_order(serializer, "markenson888inst@gmail.com")
+                    send_email_new_order(serializer, "shmaraev18@mail.ru")
+                    send_email_new_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
                 order.save()
 
 

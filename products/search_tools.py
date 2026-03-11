@@ -145,12 +145,18 @@ def similar_product(product):
         genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
                        "F": "женский", "K": "детский"}
         gender = [genders_rus[gender.name] for gender in product.gender.all()]
-        print(gender)
-        # Определяем фильтр по полю "gender" для поиска только товаров того же гендера
-        gender_filter = Q("match", gender=" ".join(gender))  # Замените product_gender на гендер заданного товара
 
+        print("djn", gender)
+        gender_filters = [Q("match", gender=gender_value) for gender_value in gender]
+
+        # Объединяем фильтры с помощью оператора OR
+        gender_filter = Q("bool", should=gender_filters, minimum_should_match=1)
+        # Определяем фильтр по полю "gender" для поиска только товаров того же гендера
+        # gender_filter = Q("term", gender=" ".join(gender))  # Замените product_gender на гендер заданного товара
+        # mlt_query["more_like_this"]["filter"] = gender_filter
         # Применяем фильтр к поисковому запросу
         search = search.query(Q("bool", must=[mlt_query], filter=[gender_filter]))
+        # search = search.query(Q("bool", must=[mlt_query]))
 
 
         # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']

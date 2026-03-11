@@ -930,6 +930,7 @@ class ProductSimilarView(APIView):
                                                                        context=context).data})
 
             similar = similar_product(product)
+            print(similar)
             if similar[1]:
                 if similar[0].exists():
                     res.append({"name": "Похожие товары",

@@ -110,18 +110,48 @@ def similar_product(product):
         search = Search(index=index_name, using=es)  # Замените на имя вашего индекса
         # print(search.count())
 
-        search = search.query(
-            MoreLikeThis(
-                like={'_id': product.id},
-                fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line^3", 'model^4', 'colorway^2',
-                        'collab', "colors^3", "text_price^3"],
-                min_term_freq=1,
-                min_doc_freq=1,
-                max_query_terms=50,
-                boost_terms=1.5,
-                boost=1.2
-            )
-        )
+        # search = search.query(
+        #     MoreLikeThis(
+        #         like={'_id': product.id},
+        #         fields=['main_category_eng^4', 'categories_eng', 'lines', "main_line", 'model', 'colorway',
+        #                 'collab', "colors", "text_price", 'gender'],
+        #         min_term_freq=1,
+        #         min_doc_freq=1,
+        #         max_query_terms=50,
+        #         boost_terms=1.5,
+        #         # boost=1.2
+        #     )
+        # )
+
+        mlt_query = {
+            "more_like_this": {
+                "fields": [
+                    "main_category_eng",
+                    "text_price",
+                    "categories_eng",
+                    "lines",
+                    "main_line^7",  # Устанавливаем вес 3 для поля main_line
+                    "colorway",
+                    "collab",
+                    "colors^6"  # Устанавливаем вес 2 для поля colors
+                ],
+                "like": {"_id": product.id},
+                "min_term_freq": 1,
+                "min_doc_freq": 1,
+                "max_query_terms": 50,
+                "boost_terms": 1.5
+            }
+        }
+        genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
+                       "F": "женский", "K": "детский"}
+        gender = [genders_rus[gender.name] for gender in product.gender.all()]
+        print(gender)
+        # Определяем фильтр по полю "gender" для поиска только товаров того же гендера
+        gender_filter = Q("match", gender=" ".join(gender))  # Замените product_gender на гендер заданного товара
+
+        # Применяем фильтр к поисковому запросу
+        search = search.query(Q("bool", must=[mlt_query], filter=[gender_filter]))
+
 
         # fields=['brands', 'categories', 'lines', 'model', 'colorway', 'collab']
 
@@ -136,10 +166,12 @@ def similar_product(product):
         #     json.dump(response.to_dict(), f, indent=4)
         # max_score = response.hits.max_score
         # threshold = 0.6 * max_score
+        print(product.gender.all())
 
         product_ids = [hit.meta.id for hit in response.hits]
         queryset = Product.objects.filter(id__in=product_ids).filter(
             available_flag=True).filter(is_custom=False).exclude(spu_id=product.spu_id)
+        print(list(queryset.values('gender__name')))
 
         # Определение порядка объектов в queryset
         preserved_order = Case(

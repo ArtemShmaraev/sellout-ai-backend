@@ -87,7 +87,7 @@ class PromocodeAnonView(APIView):
                 final_amount = sum - check[2]
 
                 return Response({"final_amount": final_amount, "message": check[1], "status": True,
-                                 "total_sale": sum - final_amount, "sale": sale, "promo_sale": sum - final_amount - sale,
+                                 "total_sale": sale + check[2], "sale": sale, "promo_sale": check[2],
                                  "promo_code": promo.string_representation, "promo_bonus": check[3]})
             else:
                 return Response({"final_amount": sum,    "message": check[1], "status": False, "total_sale": 0, "sale": sale,

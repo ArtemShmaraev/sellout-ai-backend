@@ -15,6 +15,7 @@ class PromoCode(models.Model):
     string_representation = models.CharField(max_length=100, null=False, blank=False)
     discount_percentage = models.IntegerField(default=0)
     discount_absolute = models.IntegerField(default=0)
+    promo_bonus = models.IntegerField(default=0)
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
                               related_name="promo_codes")
@@ -66,6 +67,8 @@ class PromoCode(models.Model):
             elif self.discount_absolute > 0:
                 pred = round(cart.final_amount - self.discount_absolute)
                 promo_sale = cart.final_amount - pred
+            elif self.promo_bonus > 0:
+                promo_bonus = self.promo_bonus
 
 
         return promo_sale, promo_bonus

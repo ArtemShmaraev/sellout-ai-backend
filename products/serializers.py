@@ -292,8 +292,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_price(self, obj):
         try:
-            from .tools import update_price
-            update_price(obj)
+            obj.update_price()
             wl = self.context.get('wishlist', "")
             if wl and wl.user.user_status.name != "Amethyst":
                 user_status = wl.user.user_status

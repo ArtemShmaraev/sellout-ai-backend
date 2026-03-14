@@ -104,8 +104,11 @@ def get_fid_product_all(products):
 
             offer_currencyId = ET.Element('currencyId')
             offer_currencyId.text = "RUR"
-            offer_picture = ET.Element('picture')
-            offer_picture.text = product.bucket_link.order_by("id").first().url
+            for photo in product.bucket_link.order_by("id"):
+                offer_picture = ET.Element('picture')
+                offer_picture.text = photo.url.strip()
+                offer.append(offer_picture)
+
             offer_categoryId = ET.Element('categoryId')
             offer_categoryId.text = str(product.categories.order_by("-id").first().id)
             offer_category = ET.Element('category')
@@ -123,7 +126,7 @@ def get_fid_product_all(products):
             offer.append(offer_url)
             offer.append(offer_price)
             offer.append(offer_currencyId)
-            offer.append(offer_picture)
+
             offer.append(offer_categoryId)
             offer.append(offer_category)
 

@@ -389,17 +389,17 @@ class CheckOutView(APIView):
                     order.fact_of_payment = True
                     print("ff")
                     send_email_confirmation_order(serializer, order.email)
-                    send_email_confirmation_order(OrderSerializer(order).data, "dfeoktistov523@icloud.com")
-                    send_email_confirmation_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
+                    send_email_confirmation_order(serializer, "dfeoktistov523@icloud.com")
+                    send_email_confirmation_order(serializer, "wiwkw23@yandex.ru")
                     send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
                     send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
                     # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
 
                     cart.clear()
                 else:
-                    send_email_new_order(serializer, "markenson888inst@gmail.com")
+                    # send_email_new_order(serializer, "markenson888inst@gmail.com")
                     send_email_new_order(serializer, "shmaraev18@mail.ru")
-                    send_email_new_order(OrderSerializer(order).data, "wiwkw23@yandex.ru")
+                    send_email_new_order(serializer, "wiwkw23@yandex.ru")
                 order.save()
 
 

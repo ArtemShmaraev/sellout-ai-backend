@@ -218,7 +218,7 @@ def formula_price(product, unit, user_status, in_sale=True):
             for step in PRELIMINARY_MARKUP["steps_of_order_amount"]:
                 if (PRELIMINARY_MARKUP["steps_of_order_amount"][step]["min_total_cost_including"] <= total_cost <
                         PRELIMINARY_MARKUP["steps_of_order_amount"][step]["max_total_cost_not_including"]):
-                    preliminary_markup = PRELIMINARY_MARKUP["steps_of_order_amount"][step]["preliminary_markup"]
+                    preliminary_markup = PRELIMINARY_MARKUP["steps_of_order_amount"][step]["preliminary_markup"] + 1000
 
             total_markup = preliminary_markup + extra_markup + delivery_extra_charge
             total_price_before_payment_and_tax_commission = total_cost + total_markup

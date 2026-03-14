@@ -31,7 +31,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         unit_order = instance.unit_order
-        ordered_product_units = sorted(representation['product_units'], key=lambda x: unit_order.index(x['id']))
+        ordered_product_units = sorted(
+            representation['product_units'],
+            key=lambda x: unit_order.index(x['id']) if x['id'] in unit_order else len(unit_order)
+        )
         representation['product_units'] = ordered_product_units
         return representation
 

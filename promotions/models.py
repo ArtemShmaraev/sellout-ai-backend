@@ -114,6 +114,8 @@ class PromoCode(models.Model):
             elif self.discount_absolute > 0:
                 pred = round(cart.final_amount - self.discount_absolute)
                 promo_sale = cart.final_amount - pred
+            elif self.promo_bonus > 0:
+                promo_bonus = self.promo_bonus
 
             if (self.activation_count >= self.max_activation_count) and not self.unlimited:
                 return 0, "Промокод закончился"
@@ -165,6 +167,8 @@ class PromoCode(models.Model):
         elif self.discount_absolute > 0:
             pred = round(final_amount - self.discount_absolute)
             promo_sale = final_amount - pred
+        elif self.promo_bonus > 0:
+            promo_bonus = self.promo_bonus
 
         if (self.activation_count >= self.max_activation_count) and not self.unlimited:
             return 0, "Промокод закончился"

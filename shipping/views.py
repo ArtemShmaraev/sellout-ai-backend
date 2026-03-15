@@ -320,9 +320,11 @@ class TotalPriceForListProductUnitView(APIView):
                 max_bonus = max(max_bonus, bonus)
             promo_str = json.loads(request.body).get("promo", "")
             if promo_str:
-                promo = PromoCode.objects.get(string_representation=promo_str.upper())
-                if promo.promo_bonus > 0 or promo.ref_promo:
-                    bonus -= max_bonus
+                promo = PromoCode.objects.filter(string_representation=promo_str.upper())
+                if promo.exists():
+                    promo = PromoCode.objects.get(string_representation=promo_str.upper())
+                    if promo.promo_bonus > 0 or promo.ref_promo:
+                        bonus -= max_bonus
 
 
             return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale, "bonus": bonus})

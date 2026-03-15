@@ -8,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from orders.models import ShoppingCart
 from products.tools import update_price, platform_update_price
+from promotions.models import PromoCode
 from sellout.settings import TIME_RPS, RPS
 from users.models import User, UserStatus
 from .models import ProductUnit
@@ -292,6 +293,7 @@ class TotalPriceForListProductUnitView(APIView):
     def post(self, request):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
+            promo = PromoCode.objects.get(string_representation=json.loads(request.body)["promo"].upper())
 
             s_id = [s.strip() for s in s_product_unit if s.strip()]
 
@@ -302,6 +304,7 @@ class TotalPriceForListProductUnitView(APIView):
             sum = 0
             sale = 0
             bonus = 0
+            max_bonus = 0
             for product_unit in product_units:
                 update_price(product_unit.product)
                 if user_status.base:
@@ -311,7 +314,11 @@ class TotalPriceForListProductUnitView(APIView):
                     price = formula_price(product_unit.product, product_unit, user_status)
                 sum += price['start_price']
                 sale += price['start_price'] - price['final_price']
+
                 bonus += price['bonus']
+                max_bonus = max(max_bonus, bonus)
+            if promo.promo_bonus > 0 or promo.ref_promo:
+                bonus -= max_bonus
 
 
             return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale, "bonus": bonus})

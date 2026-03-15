@@ -69,6 +69,7 @@ class PromocodeAnonView(APIView):
             product_units = ProductUnit.objects.filter(id__in=s_product_unit)
             sum = 0
             sale = 0
+
             for product_unit in product_units:
                 update_price(product_unit.product)
                 price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}

@@ -397,7 +397,7 @@ class CheckOutView(APIView):
 
                     cart.clear()
                 else:
-                    send_email_new_order(serializer, "markenson888inst@gmail.com")
+                    # send_email_new_order(serializer, "markenson888inst@gmail.com")
                     send_email_new_order(serializer, "shmaraev18@mail.ru")
                     send_email_new_order(serializer, "wiwkw23@yandex.ru")
                 order.save()

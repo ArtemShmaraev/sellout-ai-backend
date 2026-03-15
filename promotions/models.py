@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 
+
 # from orders.models import Order
 
 
@@ -70,8 +71,32 @@ class PromoCode(models.Model):
             elif self.promo_bonus > 0:
                 promo_bonus = self.promo_bonus
 
+        data = {"flag": 0,
+                "message": "Промокод закончился",
+                "promo_sale": promo_sale,
+                "promo_bonus": promo_bonus}
 
-        return promo_sale, promo_bonus
+        if (self.activation_count >= self.max_activation_count) and not self.unlimited:
+            return data
+        if (((
+                     self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
+
+            if promo_bonus > 0:
+                data['flag'] = 1
+                data['message'] = f"Будет начислено {promo_bonus}₽ бонусов по промокоду"
+                return data
+            else:
+                data['flag'] = 1
+                data['message'] = f"Скидка по промокоду {promo_sale}₽"
+                return data
+        else:
+            data['message'] = "Промокод не активен"
+            return data
+
+
+
+
+        # return promo_sale, promo_bonus
 
     def check_promo(self, cart):
         promo_sale = 0
@@ -119,22 +144,37 @@ class PromoCode(models.Model):
 
             print(promo_bonus, promo_sale)
 
-            if (self.activation_count >= self.max_activation_count) and not self.unlimited:
-                return 0, "Промокод закончился"
-            if (((
-                        self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
-                if promo_bonus > 0:
-                    return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus
-                else:
-                    return 1, f"Скидка по промокоду {promo_sale}₽", promo_sale, promo_bonus
-            else:
-                return 0, "Промокод не активен"
-        return 1, "Для Вас уже учтены все скидки", promo_sale, promo_bonus
+            data = {"status": False,
+                    "message": "Промокод закончился",
+                    "promo_sale": promo_sale,
+                    "promo_bonus": promo_bonus}
 
-    def check_anon_promo(self, final_amount, total_amount):
+            if (self.activation_count >= self.max_activation_count) and not self.unlimited:
+                return data
+            if (((
+                         self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
+
+                if promo_bonus > 0:
+                    data['status'] = True
+                    data['message'] = f"Будет начислено {promo_bonus}₽ бонусов по промокоду"
+                    return data
+                else:
+                    data['status'] = True
+                    data['message'] = f"Скидка по промокоду {promo_sale}₽"
+                    return data
+            else:
+                data['message'] = "Промокод не активен"
+                return data
+        data = {"status": True,
+                "message": "Для Вас уже учтены все скидки",
+                "promo_sale": promo_sale,
+                "promo_bonus": promo_bonus}
+        return data
+
+    def check_anon_promo(self, final_amount):
         promo_sale = 0
         promo_bonus = 0
-
+        print(final_amount)
         if self.ref_promo:
             ref_sale = 0
             ref_bonus = 0
@@ -163,6 +203,8 @@ class PromoCode(models.Model):
             promo_sale = ref_sale
             promo_bonus = ref_bonus
 
+
+
         elif self.discount_percentage > 0:
             pred = round(final_amount * (100 - self.discount_percentage) // 100)
             promo_sale = final_amount - pred
@@ -173,20 +215,26 @@ class PromoCode(models.Model):
             promo_bonus = self.promo_bonus
 
         print(promo_bonus)
+        data = {"status": False,
+                "message": "Промокод закончился",
+                "promo_sale": promo_sale,
+                "promo_bonus": promo_bonus}
 
         if (self.activation_count >= self.max_activation_count) and not self.unlimited:
-            return 0, "Промокод закончился"
-        if (((
-                    self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
+            return data
+        if (((self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
 
             if promo_bonus > 0:
-                return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus
+                data['status'] = True
+                data['message'] = f"Будет начислено {promo_bonus}₽ бонусов по промокоду"
+                return data
             else:
-                return 1, f"Скидка по промокоду {promo_sale}₽", promo_sale, promo_bonus
-
-
+                data['status'] = True
+                data['message'] = f"Скидка по промокоду {promo_sale}₽"
+                return data
         else:
-            return 0, "Промокод не активен"
+            data['message'] = "Промокод не активен"
+            return data
 
     def __str__(self):
         return self.string_representation

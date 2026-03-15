@@ -331,7 +331,7 @@ class CheckOutView(APIView):
                     return Response("Подтвердите почту", status=status.HTTP_401_UNAUTHORIZED)
                 numbers = re.findall(r'\d+\.\d+|\d+', data['phone'])
                 phone_int = (''.join(numbers))
-                order = Order(user=user, total_amount=cart.total_amount, final_amount=cart.final_amount,
+                order = Order(user=user, total_amount=cart.total_amount, final_amount=max(cart.final_amount, 1),
                               promo_code=cart.promo_code,
                               email=data['email'], phone=data['phone'], phone_int=phone_int,
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],

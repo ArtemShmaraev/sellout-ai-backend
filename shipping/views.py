@@ -315,10 +315,12 @@ class TotalPriceForListProductUnitView(APIView):
                     price = formula_price(product_unit.product, product_unit, user_status)
                 sum += price['start_price']
                 sale += price['start_price'] - price['final_price']
-
                 bonus += price['bonus']
                 max_bonus = max(max_bonus, bonus)
+
             promo_str = json.loads(request.body).get("promo", "")
+
+
             if promo_str:
                 promo = PromoCode.objects.filter(string_representation=promo_str.upper())
                 if promo.exists():

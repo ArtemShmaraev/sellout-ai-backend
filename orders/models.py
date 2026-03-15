@@ -200,9 +200,11 @@ class Order(models.Model):
 
     def evenly_distribute_discount(self):
         # final_price = self.total_amount
-        discount = self.promo_sale + self.bonus_sale
-        total_cost = self.final_amount
+        discount = min(self.promo_sale + self.bonus_sale, self.total_amount - self.sale - 1)
+        total_cost = self.total_amount - self.sale
         discount_per_cost = discount / total_cost
+        print(discount, total_cost)
+        final_amount = self.total_amount - self.sale
         # print(discount_per_cost, self.total_amount)
         new_item_costs = []
         sum_unit = 0
@@ -213,7 +215,7 @@ class Order(models.Model):
             for unit in self.order_units.all():
                 ck += 1
                 if ck == k:
-                    last_item_cost = self.final_amount - sum_unit - discount
+                    last_item_cost = final_amount - sum_unit - discount
                     unit.final_price = last_item_cost
                     unit.save()
                 else:
@@ -222,7 +224,8 @@ class Order(models.Model):
                     unit.final_price = unit.final_price - item_discount
                     unit.save()
                     # print(unit.final_price)
-                    sum_unit += unit.final_price
+                sum_unit += unit.final_price
+            print(sum_unit)
 
 
 
@@ -386,6 +389,7 @@ class ShoppingCart(models.Model):
     sale = models.IntegerField(default=0)
     bonus_sale = models.IntegerField(default=0)
     first_order_bonus = models.IntegerField(default=0)
+    # promo_message = models.CharField(default="", max_length=1024, blank=True)
     promo_sale = models.IntegerField(default=0)
     promo_bonus = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
@@ -433,7 +437,8 @@ class ShoppingCart(models.Model):
         if user_status.base:
             orders_count = Order.objects.filter(user=self.user, fact_of_payment=True).count()
             if orders_count == 0:
-                sum_bonus += max(0, 1000 - max_bonus)
+                # sum_bonus += max(0, 1000 - max_bonus)
+                sum_bonus -= max_bonus
                 self.first_order_bonus = 1000
 
         # Выполнить проверку активности промокода и его применимости
@@ -444,14 +449,17 @@ class ShoppingCart(models.Model):
         #     self.promo_code = None
         self.final_amount = self.total_amount - self.sale
         if self.promo_code:
-            promo_sale, promo_bonus = self.promo_code.check_promo_in_cart(self)
-            if promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo:
+            promo_data = self.promo_code.check_promo_in_cart(self)
+            promo_sale = promo_data['promo_sale']
+            promo_bonus = promo_data['promo_bonus']
+            # self.promo_message = promo_data['message']
+            if promo_data['flag'] and (promo_sale != 0 or promo_bonus != 0 or self.promo_code.ref_promo):
                 self.promo_sale = promo_sale
                 self.promo_bonus = promo_bonus
                 self.final_amount -= self.promo_sale
                 if self.first_order_bonus == 1000:
                     self.first_order_bonus = 0
-                    sum_bonus -= 1000
+                    # sum_bonus -= 1000
                     if promo_bonus == 0:
                         sum_bonus += max_bonus
             else:
@@ -459,12 +467,14 @@ class ShoppingCart(models.Model):
                 self.promo_sale = 0
                 self.promo_bonus = 0
 
+
         else:
+            # self.promo_message = ""
             self.promo_sale = 0
             self.promo_bonus = 0
 
         if user_status.base:
-            self.bonus = sum_bonus
+            self.bonus = max(sum_bonus, 0)
         else:
             self.bonus = 0
             self.promo_code = None
@@ -472,7 +482,9 @@ class ShoppingCart(models.Model):
             self.promo_bonus = 0
 
         self.final_amount -= self.bonus_sale
+        self.final_amount = max(self.final_amount, 1)
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
+        self.total_sale = min(self.total_amount, self.total_sale)
         print(self.promo_bonus)
 
         self.save()

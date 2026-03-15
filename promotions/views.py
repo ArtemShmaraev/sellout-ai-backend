@@ -31,17 +31,28 @@ class PromocodeView(APIView):
             except:
                 cart.promo_code = None
                 cart.total()
-                return Response({"final_amount": cart.final_amount, "message": "Промокод не найден", "status": False,
-                                 "total_sale": cart.total_sale, 'promo_bonus': 0})
+                return Response({
+                    "final_amount": cart.final_amount,
+                    "message": "Промокод не найден", "status": False,
+                    "promo_sale": 0,
+                    "promo_code": "",
+                    "promo_bonus": 0,
+                    "bonus": cart.bonus})
+
+
             check = promo.check_promo(cart)
 
-            if check[0]:
+            if check["status"]:
                 cart.promo_code = promo
                 cart.total()
-                return Response({"final_amount": cart.final_amount, "message": check[1], "status": True,
-                                 "total_sale": cart.total_sale, 'promo_bonus': check[3]})
-            return Response({"final_amount": cart.final_amount, "message": check[1], "status": False,
-                             "total_sale": cart.total_sale, 'promo_bonus': 0})
+            return Response({
+                    "final_amount": cart.final_amount,
+                    "message": check["message"], "status": True,
+                    "promo_sale": check["promo_sale"],
+                    "promo_code": promo.string_representation,
+                    "promo_bonus": check['promo_bonus'],
+                    "bonus": cart.bonus})
+
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
     def delete(self, request, user_id):
@@ -51,7 +62,8 @@ class PromocodeView(APIView):
             cart.promo_code = None
             cart.save()
             return Response(
-                {"final_amount": cart.final_amount, "message": "", "status": False, "total_sale": cart.total_sale, 'promo_bonus': 0})
+                {"final_amount": cart.final_amount, "message": "", "status": False, "total_sale": cart.total_sale,
+                 'promo_bonus': 0})
         return Response("Доступ запрещён", status=status.HTTP_403_FORBIDDEN)
 
 
@@ -65,35 +77,42 @@ class PromocodeAnonView(APIView):
         if "" in list_unit:
             list_unit.remove("")
         s_product_unit = list_unit
-        if s_product_unit:
-            product_units = ProductUnit.objects.filter(id__in=s_product_unit)
-            sum = 0
-            sale = 0
+        s_id = [s.strip() for s in s_product_unit if s.strip()]
 
-            for product_unit in product_units:
-                update_price(product_unit.product)
-                price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price}
-                sum += price['start_price']
-                sale += price['start_price'] - price['final_price']
+        product_units = ProductUnit.objects.filter(id__in=s_id)
+        sum = 0
+        sale = 0
+        bonus = 0
+        max_bonus = 0
+        for product_unit in product_units:
+            update_price(product_unit.product)
+            price = {"start_price": product_unit.start_price, "final_price": product_unit.final_price,
+                     "bonus": product_unit.bonus}
+            sum += price['start_price']
+            sale += price['start_price'] - price['final_price']
+            bonus += price['bonus']
+            max_bonus = max(max_bonus, bonus)
 
-            try:
-                promo = PromoCode.objects.get(string_representation=text.upper())
-            except:
-                return Response(
-                    {"final_amount": sum, "message": "Промокод не найден", "status": False, "total_sale": 0, "sale": sale,
-                     "promo_sale": 0, 'promo_bonus': 0})
-            check = promo.check_anon_promo(sum - sale, sum)
-
-            if check[0]:
-                final_amount = sum - check[2]
-
-                return Response({"final_amount": final_amount, "message": check[1], "status": True,
-                                 "total_sale": sale + check[2], "sale": sale, "promo_sale": check[2],
-                                 "promo_code": promo.string_representation, "promo_bonus": check[3]})
-            else:
-                return Response({"final_amount": sum,    "message": check[1], "status": False, "total_sale": 0, "sale": sale,
-                                 "promo_sale": 0, 'promo_bonus': 0})
-        else:
+        try:
+            promo = PromoCode.objects.get(string_representation=text.upper())
+        except:
             return Response(
-                {"final_amount": 0, "message": "Обновление", "status": True, "total_sale": 0, "sale": 0,
-                 "promo_sale": 0, 'promo_bonus': 0})
+                {"final_amount": sum - sale, "message": "Промокод не найден", "status": False, "sale": sale,
+                 "promo_sale": 0, 'promo_bonus': 0, "bonus": bonus})
+        check = promo.check_anon_promo(sum - sale)
+
+        if check['status']:
+            final_amount = sum - sale - check['promo_sale']
+            if check["promo_bonus"] > 0:
+                bonus -= max_bonus
+
+            return Response({
+                "final_amount": final_amount,
+                "message": check["message"], "status": True,
+                "promo_sale": check["promo_sale"],
+                "promo_code": promo.string_representation,
+                "promo_bonus": check['promo_bonus'],
+                "bonus": bonus})
+        else:
+            return Response({"final_amount": sum, "message": check[1], "status": False, "sale": sale,
+                             "promo_sale": 0, 'promo_bonus': 0, "bonus": bonus})

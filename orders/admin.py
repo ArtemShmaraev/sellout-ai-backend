@@ -81,11 +81,53 @@ class OrderUnitAdmin(admin.ModelAdmin):
             return order.fact_of_payment
         return False
 
-    def get_delivery_type_days_max(self, obj):
-        return obj.delivery_type.days_max
+    def full_name(self, obj):
+        name = f"{obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform}"
+        return name
+
+    def days_max(self, obj):
+        return f"{obj.delivery_type.days_max}"
+
+    def order_final_amount(self, obj):
+        order = obj.orders.first()
+        if order:
+            return order.final_amount
+        return False
+
+    def order_date(self, obj):
+        order = obj.orders.first()
+        if order:
+            return order.date.strftime('%d.%m.%Y')
+        return False
+
+    def t(self, obj):
+        return ""
+
+    def no(self, obj):
+        return "нет"
+
+    def client(self, obj):
+        order = obj.orders.first()
+        if order:
+            user = order.user
+            f = f"{order.name} {order.surname} {order.patronymic}\n{order.email}\n{order.phone}"
+            return f
+        return False
+
+
+    def address(self, obj):
+        order = obj.orders.first()
+        if order:
+            st = f"{order.delivery} | ({order.delivery_price}₽) | {order.address.address if order.address is not None else ''} {order.pvz} | {order.pvz_address}"
+            return st
+        return False
+
+
 
     get_fact_of_payment.boolean = True
-    list_display = ('product', "get_order_number", "original_price", "status", "get_delivery_type_days_max", "get_days_for_msk", "get_fact_of_payment")
+    list_display = ("get_order_number", 'full_name', "order_final_amount", "t", "t", "t", "t", "t", "order_date", "days_max", "t", "t",  "no", "client", "address",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
+
+
     list_filter = (FactOfPaymentFilter,)
 
     def cancel_unit(self, request, queryset):

@@ -117,10 +117,12 @@ class PromoCode(models.Model):
             elif self.promo_bonus > 0:
                 promo_bonus = self.promo_bonus
 
+            print(promo_bonus, promo_sale)
+
             if (self.activation_count >= self.max_activation_count) and not self.unlimited:
                 return 0, "Промокод закончился"
             if (((
-                        self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or self.ref_promo:
+                        self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
                 if promo_bonus > 0:
                     return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus
                 else:
@@ -170,10 +172,12 @@ class PromoCode(models.Model):
         elif self.promo_bonus > 0:
             promo_bonus = self.promo_bonus
 
+        print(promo_bonus)
+
         if (self.activation_count >= self.max_activation_count) and not self.unlimited:
             return 0, "Промокод закончился"
         if (((
-                    self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or self.ref_promo:
+                    self.active_status and self.active_until_date >= datetime.date.today()) or self.unlimited) and promo_sale > 0) or promo_bonus > 0:
 
             if promo_bonus > 0:
                 return 1, f"Будет начислено {promo_bonus}₽ бонусов по промокоду", promo_sale, promo_bonus

@@ -293,7 +293,8 @@ class TotalPriceForListProductUnitView(APIView):
     def post(self, request):
         try:
             s_product_unit = json.loads(request.body)["product_unit_list"]
-            promo = PromoCode.objects.get(string_representation=json.loads(request.body)["promo"].upper())
+
+            print(s_product_unit)
 
             s_id = [s.strip() for s in s_product_unit if s.strip()]
 
@@ -317,8 +318,11 @@ class TotalPriceForListProductUnitView(APIView):
 
                 bonus += price['bonus']
                 max_bonus = max(max_bonus, bonus)
-            if promo.promo_bonus > 0 or promo.ref_promo:
-                bonus -= max_bonus
+            promo_str = json.loads(request.body).get("promo", "")
+            if promo_str:
+                promo = PromoCode.objects.get(string_representation=promo_str.upper())
+                if promo.promo_bonus > 0 or promo.ref_promo:
+                    bonus -= max_bonus
 
 
             return Response({"total_amount": sum, "sale": sale, "final_amount": sum-sale, "bonus": bonus})
@@ -327,4 +331,5 @@ class TotalPriceForListProductUnitView(APIView):
         except ProductUnit.DoesNotExist:
             return Response("One or more product units do not exist", status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
+            print(e)
             return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)

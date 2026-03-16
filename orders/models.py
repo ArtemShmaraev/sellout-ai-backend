@@ -457,6 +457,7 @@ class ShoppingCart(models.Model):
                 self.promo_sale = promo_sale
                 self.promo_bonus = promo_bonus
                 self.final_amount -= self.promo_sale
+
                 if self.first_order_bonus == 1000:
                     self.first_order_bonus = 0
                     # sum_bonus -= 1000

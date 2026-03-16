@@ -128,7 +128,7 @@ def get_delivery(order, data, cart):
 
         if data['consolidation']:
             order.groups_delivery.append([unit.id for unit in order.order_units.all()])
-            order.delivery_price = get_delivery_price(cart.product_units.all(), "02743", target, zip)
+            order.delivery_price = int(cart.delivery_info['sum_all'])
             order.delivery = f"{name_delivery}"
 
         else:
@@ -145,30 +145,10 @@ def get_delivery(order, data, cart):
                     tec = [unit]
             order.groups_delivery.append([unit.id for unit in tec])
 
-
-
-
-
-            product_units = cart.product_units.annotate(
-                delivery_days=F('delivery_type__days_max')
-            )
-            sorted_product_units = product_units.order_by('delivery_days')
-            tec = [sorted_product_units[0]]
-            sum_part = 0
-            for unit in sorted_product_units[1:]:
-                if abs(tec[0].delivery_days - unit.delivery_days) <= 3:
-                    tec.append(unit)
-                else:
-                    print(tec, get_delivery_price(tec, "02743", target, zip))
-                    sum_part += get_delivery_price(tec, "02743", target, zip)
-                    tec = [unit]
-            print(tec, get_delivery_price(tec, "02743", target, zip))
-            sum_part += get_delivery_price(tec, "02743", target, zip)
-            order.delivery_price = sum_part
+            order.delivery_price = int(cart.delivery_info['sum_part'])
             order.delivery = f"{name_delivery} по частям"
-            print(sum_part)
 
     # print(order.delivery_price)
-    order.delivery_price = round_to_nearest(order.delivery_price)
+
     order.delivery_view_price = order.delivery_price
     order.save()

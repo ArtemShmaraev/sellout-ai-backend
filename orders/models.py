@@ -395,6 +395,7 @@ class ShoppingCart(models.Model):
     total_sale = models.IntegerField(default=0)
     bonus = models.IntegerField(default=0)
     is_update = models.BooleanField(default=False)
+    delivery_info = models.JSONField(default=dict)
     final_amount = models.IntegerField(default=0)
 
 

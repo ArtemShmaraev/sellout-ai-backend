@@ -166,12 +166,18 @@ class DeliveryInfo(APIView):
                     tec = [unit]
             print(tec, get_delivery_price(tec, "02743", target, zip))
             sum_part += get_delivery_price(tec, "02743", target, zip)
-            sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
-            res = {"sum_part": round_to_nearest(sum_part), "sum_all": round_to_nearest(sum_all), "block": False}
+            if zip != "0":
+                sum_all = get_delivery_price(cart.product_units.all(), "02743", target, zip)
+                res = {"sum_part": round_to_nearest(sum_part), "sum_all": round_to_nearest(sum_all), "block": False}
+            else:
+                sum_all = data.get("bxb_price", 0)
+                res = {"sum_part": round_to_nearest(sum_part), "sum_all": sum_all, "block": False}
             if ((str(data["delivery_type"]) == "1" or str((data["delivery_type"])) == "2") and product_units.count() != 1) and (sum_part != sum_all):
                 res["block"] = True
             print("доставка", sum_part, "все", sum_all)
-
+            print(res)
+            cart.delivery_info = res
+            cart.save()
             # Возвращаем успешный ответ
             return Response(res)
 
@@ -336,8 +342,8 @@ class CheckOutView(APIView):
                               email=data['email'], phone=data['phone'], phone_int=phone_int,
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
-                              promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus, total_bonus=cart.bonus, total_bonus_and_promo_bonus=cart.bonus + cart.promo_bonus,
-                              bonus_sale=cart.bonus_sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
+                              promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus, total_bonus=cart.bonus + cart.first_order_bonus, total_bonus_and_promo_bonus=cart.bonus + cart.promo_bonus + cart.first_order_bonus,
+                              bonus_sale=cart.bonus_sale, sale=cart.sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
@@ -356,14 +362,14 @@ class CheckOutView(APIView):
                     order.add_order_unit(unit, user.user_status)
                 max_bonus = 0
                 max_bonus_unit = 0
-                if orders_count == 0:
-                    for unit in order.order_units.all():
-                        if unit.bonus > max_bonus:
-                            max_bonus = unit.bonus
-                            max_bonus_unit = unit
-                    if max_bonus_unit != 0:
-                        max_bonus_unit.bonus = 1000
-                        max_bonus_unit.save()
+                # if orders_count == 0:
+                #     for unit in order.order_units.all():
+                #         if unit.bonus > max_bonus:
+                #             max_bonus = unit.bonus
+                #             max_bonus_unit = unit
+                #     if max_bonus_unit != 0:
+                #         max_bonus_unit.bonus = 1000
+                #         max_bonus_unit.save()
 
                 if order.bonus_sale > 0:
                     cart.user.bonuses.deduct_bonus(order.bonus_sale)

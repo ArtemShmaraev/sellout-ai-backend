@@ -137,11 +137,13 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
+            print(data)
             if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
                 return Response({
                     "sum_part": 0,
                     "sum_all": 0,
-                    "block": False
+                    "block": False,
+                    "ship_day": "1 день"
                 })
             zip = "0"
             if "address_id" in data:
@@ -176,6 +178,14 @@ class DeliveryInfo(APIView):
                 res["block"] = True
             print("доставка", sum_part, "все", sum_all)
             print(res)
+            shpip_day = get_delivery_costs(1, 1000, "02743", target, zip).get("delivery_period", 1)
+            def sklon_day(n):
+                if n in [1, 21]:
+                    return f"{n} день"
+                elif n in [2, 3, 4, 22, 23, 24]:
+                    return f"{n} дня"
+                return f"{n} дней"
+            res['ship_day'] = sklon_day(shpip_day)
             cart.delivery_info = res
             cart.save()
             # Возвращаем успешный ответ

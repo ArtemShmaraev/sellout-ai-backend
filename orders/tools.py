@@ -43,6 +43,7 @@ def get_delivery_costs(weight, ordersum, targetstart, target, zip):
 
     if response.status_code == 200:
         data = response.json()
+        print(data)
         return data
     else:
         print(f"Ошибка {response.status_code}: {response.text}")

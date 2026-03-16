@@ -438,7 +438,7 @@ class ShoppingCart(models.Model):
             orders_count = Order.objects.filter(user=self.user, fact_of_payment=True).count()
             if orders_count == 0:
                 # sum_bonus += max(0, 1000 - max_bonus)
-                sum_bonus -= max_bonus
+                # sum_bonus -= max_bonus
                 self.first_order_bonus = 1000
 
         # Выполнить проверку активности промокода и его применимости
@@ -460,8 +460,8 @@ class ShoppingCart(models.Model):
                 if self.first_order_bonus == 1000:
                     self.first_order_bonus = 0
                     # sum_bonus -= 1000
-                    if promo_bonus == 0:
-                        sum_bonus += max_bonus
+                    # if promo_bonus == 0:
+                    #     sum_bonus += max_bonus
             else:
                 self.promo_code = None
                 self.promo_sale = 0

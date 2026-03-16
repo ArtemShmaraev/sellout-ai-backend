@@ -45,6 +45,13 @@ class PromocodeView(APIView):
             if check["status"]:
                 cart.promo_code = promo
                 cart.total()
+                print({
+                    "final_amount": cart.final_amount,
+                    "message": check["message"], "status": True,
+                    "promo_sale": check["promo_sale"],
+                    "promo_code": promo.string_representation,
+                    "promo_bonus": check['promo_bonus'],
+                    "bonus": cart.bonus})
             return Response({
                     "final_amount": cart.final_amount,
                     "message": check["message"], "status": True,

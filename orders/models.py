@@ -485,7 +485,7 @@ class ShoppingCart(models.Model):
         self.final_amount = max(self.final_amount, 1)
         self.total_sale = self.bonus_sale + self.promo_sale + self.sale
         self.total_sale = min(self.total_amount, self.total_sale)
-        print(self.promo_bonus)
+        print(self.promo_bonus, self.bonus, self.first_order_bonus)
 
         self.save()
 

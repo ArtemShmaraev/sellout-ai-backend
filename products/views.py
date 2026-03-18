@@ -69,6 +69,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
 
+
+class ProductUpdatePerHour(APIView):
+    def get(self, request, hour):
+        twelve_hours_ago = datetime.now() - timedelta(hours=hour)
+        products_added = Product.objects.filter(last_upd__gt=twelve_hours_ago).count()
+        return Response(f"Количество товаров, добавленных за последние {hour} часов: {products_added}")
 class ProductHeaderTextView(APIView):
     def get(self, request):
         url = request.build_absolute_uri()

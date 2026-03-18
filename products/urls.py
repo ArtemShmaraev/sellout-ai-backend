@@ -15,7 +15,8 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
     SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView, \
-    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView
+    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView, \
+    ProductUpdatePerHour
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -53,7 +54,7 @@ sitemaps = {
 
 urlpatterns = [
     path("products/", ProductView.as_view(), name="home"),
-    path("products_footer_text/", ProductFooterTextView.as_view(),),
+    path("products_footer_text/", ProductFooterTextView.as_view(), ),
     path("products_header_text/", ProductHeaderTextView.as_view(), ),
 
     path("", include(router_collection.urls)),
@@ -61,7 +62,8 @@ urlpatterns = [
     path("", include(router_product.urls)), path("", include(router_cat.urls)),
     path("", include(router_brand.urls)), path("", include(router_line.urls)),
     path("", include(router_color.urls)),
-    path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'), path('similar/<int:product_id>', ProductSimilarView.as_view()),
+    path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'),
+    path('similar/<int:product_id>', ProductSimilarView.as_view()),
     path('spu_id_info/<int:spu_id>', ProducrSpuIdView.as_view()),
     path('slug_full/<str:slug>', ProductFullSlugView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
@@ -84,16 +86,19 @@ urlpatterns = [
     path("add_photo_black_list/<int:product_id>/<int:photo_id>", AddPhotoBlackList.as_view()),
     path("photo_white_list/<int:product_id>", PhotoWhiteList.as_view()),
     path("product_photo_and_slug", ProductSlugAndPhoto.as_view()),
-    path("add_list_spu_id_products", AddListProductsView.as_view()), path("products_count", ProductsCountView.as_view()),
+    path("add_list_spu_id_products", AddListProductsView.as_view()),
+    path("products_count", ProductsCountView.as_view()),
     path('pict', view_photo_for_rate, name='view_photo'),
     path("my_score_for_product/<int:id>", MyScoreForProduct.as_view()),
-    path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()), path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('rate_pict', rate_photo, name='rate_photo'), path("search_bu_sku", SearchBySkuView.as_view()),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('sitemap_line.xml', TemplateView.as_view(template_name="sitemap_line.xml", content_type="application/xml")),
-    path('run_command',  run_command_async), path('slug_for_spu_id/<int:spu_id>',  SlugForSpuId.as_view()), path("new_sale", NewSale.as_view()), path("del_sale", DelSale.as_view()),
+    path('run_command', run_command_async), path('slug_for_spu_id/<int:spu_id>', SlugForSpuId.as_view()),
+    path("new_sale", NewSale.as_view()), path("del_sale", DelSale.as_view()),
     path("yml_fid/<int:page>.xml", ProductsFid.as_view()),
     path("update_price_ps", ProductUpdatePricePS.as_view()),
     path("update_product_hk", ProductUpdatePriceHK.as_view()),
     path("update_price_url_dewu", ProductUpdatePriceUrlDewu.as_view()),
+    path("products_per_hour/<int:hour>", ProductUpdatePerHour.as_view()),
     path("sku/<str:sku>", ProductSkuView.as_view())
 ]
-

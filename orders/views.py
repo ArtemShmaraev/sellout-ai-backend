@@ -137,14 +137,15 @@ class DeliveryInfo(APIView):
             user = User.objects.get(id=request.user.id)
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
-            print(data)
-            if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
-                return Response({
-                    "sum_part": 0,
-                    "sum_all": 0,
-                    "block": False,
-                    "ship_day": "1 день"
-                })
+
+            def sklon_day(n):
+                if n in [1, 21]:
+                    return f"{n} день"
+                elif n in [2, 3, 4, 22, 23, 24]:
+                    return f"{n} дня"
+                return f"{n} дней"
+
+
             zip = "0"
             if "address_id" in data:
                 try:
@@ -153,6 +154,23 @@ class DeliveryInfo(APIView):
                     return Response({"error": "Адрес не найден"}, status=400)
 
             target = data.get("target", "0")
+
+            print(data)
+            if str(data['delivery_type']) == "0" or (cart.final_amount > user.user_status.free_ship_amount > 0):
+                shpip_day = get_delivery_costs(1, 1000, "02743", target, zip).get("delivery_period", 1)
+                res = {
+                    "sum_part": 0,
+                    "sum_all": 0,
+                    "block": False,
+                    "ship_day": f"{sklon_day(shpip_day)}"
+                }
+
+                cart.delivery_info = res
+                cart.save()
+                return Response(res)
+
+
+
             product_units = cart.product_units.annotate(
                 delivery_days=F('delivery_type__days_max')
             )
@@ -367,7 +385,7 @@ class CheckOutView(APIView):
                     user.phone_number = data['phone']
                 user.save()
 
-                orders_count = Order.objects.filter(user=order.user, fact_of_payment=True).count()
+                # orders_count = Order.objects.filter(user=order.user, fact_of_payment=True).count()
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit, user.user_status)
                 max_bonus = 0

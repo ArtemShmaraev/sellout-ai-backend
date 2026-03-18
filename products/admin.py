@@ -35,7 +35,7 @@ class LineAdmin(admin.ModelAdmin):
 
 
 class ColorAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'russian_name')
 
 
 class BrandAdmin(admin.ModelAdmin):

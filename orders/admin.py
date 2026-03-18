@@ -85,6 +85,14 @@ class OrderUnitAdmin(admin.ModelAdmin):
         name = f"https://sellout.su/products/{obj.product.slug} | {obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform} "
         return name
 
+    def url(self, obj):
+        name = f"https://sellout.su/products/{obj.product.slug}"
+        return name
+
+    def pict(self, obj):
+        prod = obj.product.bucket_link.first().url
+        return prod
+
     def days_max(self, obj):
         return f"{obj.delivery_type.days_max}"
 
@@ -125,7 +133,7 @@ class OrderUnitAdmin(admin.ModelAdmin):
 
 
     get_fact_of_payment.boolean = True
-    list_display = ("get_order_number", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "t", "t", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
+    list_display = ("get_order_number", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "url", "pict", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
 
 
     list_filter = (FactOfPaymentFilter,)

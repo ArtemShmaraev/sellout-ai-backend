@@ -20,15 +20,13 @@ def get_hk_delivery_offers(sku, data):
     units = []
     price = sku["zh_price"]
 
-
-
     sanya = 13.6
 
     standard_delivery = {
         "name": "standard_delivery",
         "currency": sanya,
-        "days_min": 11,
-        "days_max": 16,
+        "days_min": 15,
+        "days_max": 19,
         "delivery_price": 800,
         "delivery_currency": "rub",
         "decimal_insurance": 1,
@@ -45,8 +43,8 @@ def get_hk_delivery_offers(sku, data):
         express_delivery = {
             "name": "express_delivery",
             "currency": sanya,
-            "days_min": 2,
-            "days_max": 3,
+            "days_min": 4,
+            "days_max": 6,
             "delivery_price": 2500,
             "delivery_currency": "rub",
             "decimal_insurance": 1,
@@ -64,8 +62,8 @@ def get_hk_delivery_offers(sku, data):
         express_delivery = {
             "name": "express_delivery",
             "currency": sanya,
-            "days_min": 2,
-            "days_max": 3,
+            "days_min": 4,
+            "days_max": 6,
             "delivery_price": 2000,
             "delivery_currency": "rub",
             "decimal_insurance": 1,
@@ -259,6 +257,7 @@ def add_product_hk(data):
                             print(size_row.row)
                             if size_row.row[sku["filter_table_row_name"]] == size:
                                 sizes.append(size_row.id)
+                                product.has_many_sizes = True
                                 break
         else:
             row = SizeTranslationRows.objects.filter(is_one_size=True, table__name="Один размер").first()
@@ -374,7 +373,7 @@ def add_product_hk(data):
         else:
             update_score_clothes(product)
     product.in_process_update = False
-    print("uj")
+    print(product.slug, '111')
     product.save()
     return product
 

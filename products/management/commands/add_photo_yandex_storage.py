@@ -60,12 +60,12 @@ class Command(BaseCommand):
         # session = botocore.session.get_session()
         #
         # # Получение подписанной ссылки на объект
-        # client = session.create_client('s3', region_name=region_name, endpoint_url='https://storage.yandexcloud.net',
+        # client = session.create_client('s3', region_name=region_name, endpoint_url='https://sellout.su',
         #                                aws_access_key_id=access_id, aws_secret_access_key=access_key)
         #
         s3_client = boto3.client(
             service_name='s3',
-            endpoint_url='https://storage.yandexcloud.net',
+            endpoint_url='https://sellout.su',
             aws_access_key_id=access_id,
             aws_secret_access_key=access_key
         )
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 if os.path.isfile(full_local_path):
                     # Если это файл, отправляем его на облако
                     path = full_cloud_path.replace("\\", "/")
-                    url = f'https://storage.yandexcloud.net/sellout-photos/{path}'
+                    url = f'https://sellout.su/sellout-photos/{path}'
                     # print(url)
                     if not HeaderPhoto.objects.filter(photo=url).exists():
 

@@ -73,6 +73,36 @@ def suggest_search(request):
         for suggestion in suggestions:
             sp.append({"name": suggestion._source.name, "type": suggestion._source.type, "url": suggestion._source.url})
 
+    print(sp)
+
+    search = Search(using='default', index='product_index')
+
+    search = search.query(
+        'function_score',
+        query=Q('match', full_name={'query': query, 'fuzziness': 'AUTO'}),
+        # Запрос по полю full_name с учетом расплывчатости
+        functions=[
+            SF('field_value_factor', field='rel_num', modifier='log1p')  # Учет поля rel_num в функции ранжирования
+        ]
+    )
+
+    search = search.sort(
+        {'_score': {'order': 'desc'}},
+        {'rel_num': {'order': 'desc'}}
+    )
+
+    search = search[:5]
+    response = search.execute()
+    # with open('results.json', 'w', encoding='utf-8') as json_file:
+    #     json.dump(response.to_dict(), json_file, ensure_ascii=False, indent=4)
+    product_ids = [hit.meta.id for hit in response.hits if hit.meta.score > 0.6]
+    data = ProductMainPageSerializer(Product.objects.filter(id__in=product_ids, available_flag=True), many=True).data
+    for i in data:
+        i['type'] = "product"
+        sp.append(i)
+
+    # sp.append()
+
     return sp
 
     # # Создайте объект Search и настройте подсказки

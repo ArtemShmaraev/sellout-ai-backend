@@ -21,7 +21,7 @@ def serialize_data_chunk(data_chunk, context, serializer_class):
 
 # Функция для разделения данных на три части и запуска сериализации в потоках
 def serialize_in_threads(queryset, context, serializer_class):
-    num_threads = 3
+    num_threads = 5
     chunk_size = len(queryset) // num_threads
 
     with concurrent.futures.ThreadPoolExecutor() as executor:

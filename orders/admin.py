@@ -59,7 +59,7 @@ class FactOfPaymentFilter(admin.SimpleListFilter):
 
 
 class OrderUnitAdmin(admin.ModelAdmin):
-    def get_order_number(self, obj):
+    def order_num(self, obj):
         order = obj.orders.first()
         if order:
             return order.number
@@ -82,11 +82,11 @@ class OrderUnitAdmin(admin.ModelAdmin):
         return False
 
     def full_name(self, obj):
-        name = f"https://sellout.su/products/{obj.product.slug} | {obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform} "
+        name = f"{obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform} "
         return name
 
-    def url(self, obj):
-        name = f"https://sellout.su/products/{obj.product.slug}"
+    def link(self, obj):
+        name = f'=гиперссылка("https://sellout.su/products/{obj.product.slug}"; image("{obj.product.bucket_link.first().url}"))'
         return name
 
     def pict(self, obj):
@@ -133,7 +133,7 @@ class OrderUnitAdmin(admin.ModelAdmin):
 
 
     get_fact_of_payment.boolean = True
-    list_display = ("get_order_number", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "url", "pict", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
+    list_display = ("order_num", "link", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
 
 
     list_filter = (FactOfPaymentFilter,)

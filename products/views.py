@@ -1077,6 +1077,7 @@ class ProductView(APIView):
         cache_product_key = f"product_page:{url_hash}_{f'{request.user.id}_{request.user.user_status.id}' if request.user.id else 0}"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_product_key)
         if cached_data is None:
+
             queryset, res = get_product_page(request, context)
             t_new = time()
             if adminka:

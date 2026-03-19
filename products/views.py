@@ -818,7 +818,7 @@ class MainPageBlocks(APIView):
                         queryset = get_queryset_from_list_id(list_id)
                         if queryset.exists():
                             res.append(photo)
-                            selection = {"type": "selection", "title": photo['mobile']['title'],
+                            selection = {"type": "selection_without_title", "title": photo['mobile']['title'],
                                          "url": photo['mobile']['url'],
                                          'products': ProductMainPageSerializer(queryset, many=True, context=context).data}
                             res.append(selection)
@@ -1199,9 +1199,10 @@ class ProductUpdatePriceHK(APIView):
     def post(self, request):
         data = json.loads(request.body)
         p = add_product_hk(data)
-        if p is Product:
+        if p.slug:
             return Response(f"https://sellout.su/products/{p.slug}")
         else:
+            print(p, '1')
             return Response(f"Ошибка")
 
 class ProductSlugView(APIView):

@@ -254,7 +254,7 @@ def add_product_hk(data):
                         rows = table.rows.all()
                         for size_row in rows:
                             # print(size_row.row)
-                            print(size_row.row)
+                            # print(size_row.row)
                             if size_row.row[sku["filter_table_row_name"]] == size:
                                 sizes.append(size_row.id)
                                 product.has_many_sizes = True

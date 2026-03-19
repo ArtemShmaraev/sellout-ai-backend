@@ -298,13 +298,36 @@ def add_product_hk(data):
 
             if product.product_units.filter(view_size_platform=sku['view_name'],
                                             delivery_type__delivery_type=delivery_offer['name']).exists():
-                product_unit = product.product_units.get(view_size_platform=sku['view_name'],
-                                                         delivery_type__delivery_type=delivery_offer['name'])
-                # product_unit.delivery_type.delete()
-                product_unit.delivery_type = delivery
-                product_unit.original_price = sku['zh_price']
-
-
+                try:
+                    product_unit = product.product_units.get(view_size_platform=sku['view_name'],
+                                                             delivery_type__delivery_type=delivery_offer['name'])
+                    # product_unit.delivery_type.delete()
+                    product_unit.delivery_type = delivery
+                    product_unit.original_price = sku['zh_price']
+                except:
+                    product.product_units.filter(view_size_platform=sku['view_name'],
+                                                 delivery_type__delivery_type=delivery_offer['name']).delete()
+                    product_unit = ProductUnit.objects.create(
+                        product=product,
+                        size_platform=sku['propertyDesc'],
+                        view_size_platform=sku['view_name'],
+                        original_price=sku['zh_price'],
+                        start_price=sku['zh_price'],
+                        final_price=sku['zh_price'],
+                        delivery_type=delivery,
+                        platform=Platform.objects.get_or_create(platform='poizon',
+                                                                site="poizon")[0],
+                        # url=data['platform_info']["poizon"]['url'],
+                        availability=True,
+                        currency=
+                        Currency.objects.get_or_create(name="CNY")[0],
+                        # platform_info=platform_info,
+                        weight_kg=data['weight'],
+                        # dimensions={"length": unit['length'],
+                        #             "height": unit['height'],
+                        #             "width": unit['width']}
+                        # commission=delivery_offer['commission']
+                    )
             else:
                 product_unit = ProductUnit.objects.create(
                     product=product,

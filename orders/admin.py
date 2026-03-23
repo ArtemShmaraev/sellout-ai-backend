@@ -138,7 +138,7 @@ class OrderUnitAdmin(admin.ModelAdmin):
 
 
     get_fact_of_payment.boolean = True
-    list_display = ("order_num", "link", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "get_fact_of_payment")
+    list_display = ("order_num", "link", 'full_name', "t", "order_date", "days_max", "t",  "no", "client", "address", "order_final_amount", "t", "t", "t",  "get_days_for_msk", "original_price", "status",  "track_number", "get_fact_of_payment")
 
 
     list_filter = (FactOfPaymentFilter,)

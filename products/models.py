@@ -241,7 +241,8 @@ class Product(models.Model):
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True)
     black_bucket_link = models.ManyToManyField("Photo", related_name='black_product', blank=True)
 
-    is_custom = models.BooleanField(default=False, db_index=True)
+    # is_custom = models.BooleanField(default=False, db_index=True)
+    is_custom = models.BooleanField(default=False)
     is_collab = models.BooleanField(default=False)
     collab = models.ForeignKey("Collab", on_delete=models.SET_NULL, blank=True, null=True, related_name="products", db_index=True)
 
@@ -266,7 +267,8 @@ class Product(models.Model):
     # sizes are initialized in Size model by ForeignKey
     # product units are initialized in UnitBundle model by ForeignKey
 
-    available_flag = models.BooleanField(default=False, db_index=True)
+    # available_flag = models.BooleanField(default=False, db_index=True)
+    available_flag = models.BooleanField(default=False)
 
     has_many_sizes = models.BooleanField(default=False)
     has_many_colors = models.BooleanField(default=False)

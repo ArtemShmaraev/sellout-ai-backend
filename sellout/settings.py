@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hr+%so83!fts7gey%sb3%#_n%e&2=v9g2mmsg(zy$q*w@g05j@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 # Application definition
@@ -256,7 +256,7 @@ SIMPLE_JWT = {
 # FRONTEND_HOST = "localhost:3000"
 PROTOCOL = "https"
 
-ELASTIC_HOST = "51.250.91.44"
+ELASTIC_HOST = "51.250.83.217"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"

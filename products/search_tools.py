@@ -205,9 +205,8 @@ def similar_product(product):
         print(product.gender.all())
 
         product_ids = [hit.meta.id for hit in response.hits]
+        product_ids = product_ids[:len(product_ids) // 2 * 2]
 
-        if len(product_ids) % 2 != 0:  # Если длина нечетная
-            del product_ids[-1]  # Удаляем последний элемент списка
         queryset = Product.objects.filter(id__in=product_ids).filter(
             available_flag=True).filter(is_custom=False).exclude(spu_id=product.spu_id)
         print(list(queryset.values('gender__name')))

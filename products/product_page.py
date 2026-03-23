@@ -370,8 +370,9 @@ def filter_products(request):
     t32 = time()
     print("t2.1", t32-t31)
     queryset = queryset.values_list("id", flat=True).distinct()
+
     # print(list(queryset))
-    # print(queryset.query)
+    print(queryset.query)
 
     # print(queryset.query)
     # print(queryset.count())

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from django.db import models
 from django.conf import settings
@@ -72,6 +72,7 @@ class Order(models.Model):
     invoice_data = models.JSONField(default=dict)
     is_finish = models.BooleanField(default=False)
     is_accrue_bonuses = models.BooleanField(default=False)
+    ship_day_to_client = models.IntegerField(default=5)
     total_bonus_and_promo_bonus = models.IntegerField(default=0)
 
     def success_payment(self):
@@ -295,7 +296,7 @@ class Order(models.Model):
         # self.invoice_data = invoice_data
         # self.save()
 
-    def add_order_unit(self, product_unit, user_status):
+    def add_order_unit(self, product_unit, user_status, ship_days):
         if user_status.base:
             product_unit.product.update_price()
             price = formula_price(product_unit.product, product_unit, user_status)
@@ -319,6 +320,38 @@ class Order(models.Model):
             original_price=product_unit.original_price,
             total_profit=product_unit.total_profit
         )
+
+
+        mx = product_unit.delivery_type.days_max
+        mn = product_unit.delivery_type.days_min
+
+        today = date.today()
+        new_date_1 = today + timedelta(days=mn + ship_days)
+        new_date_2 = today + timedelta(days=mx + ship_days)
+        day_1 = new_date_1.day
+        day_2 = new_date_2.day
+        month_num_1 = new_date_1.month
+        month_num_2 = new_date_2.month
+        months = {
+            1: "января",
+            2: "февраля",
+            3: "марта",
+            4: "апреля",
+            5: "мая",
+            6: "июня",
+            7: "июля",
+            8: "августа",
+            9: "сентября",
+            10: "октября",
+            11: "ноября",
+            12: "декабря"
+        }
+        month_1 = months[month_num_1]
+        month_2 = months[month_num_2]
+        new_date_str = f"{day_1} {month_1} - {day_2} {month_2}"
+        order_unit.delivery_date_str = new_date_str
+
+
         order_unit.save()
         self.order_units.add(order_unit)
 
@@ -535,6 +568,7 @@ class OrderUnit(models.Model):
     on_way_to_client = models.BooleanField(default=False)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)
+    delivery_date_str = models.CharField(default="", max_length=127)
 
     def update_status(self, cancel=False, finish=False, on_way_to_client=False):
         new_status = self.status.name

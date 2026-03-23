@@ -1,6 +1,7 @@
 import json
 import random
 import re
+import datetime
 
 import requests
 from django.db.models import F
@@ -138,12 +139,43 @@ class DeliveryInfo(APIView):
             cart = ShoppingCart.objects.get(user=user)
             data = json.loads(request.body)
 
+
             def sklon_day(n):
-                if n in [1, 21]:
-                    return f"{n} день"
-                elif n in [2, 3, 4, 22, 23, 24]:
-                    return f"{n} дня"
-                return f"{n} дней"
+                first_item = cart.product_units.order_by('delivery_type__days_max').first()
+                mx = first_item.delivery_type.days_max
+                mn = first_item.delivery_type.days_min
+
+                today = datetime.date.today()
+                new_date_1 = today + datetime.timedelta(days=mn + n)
+                new_date_2 = today + datetime.timedelta(days=mx + n)
+                day_1 = new_date_1.day
+                day_2 = new_date_2.day
+                month_num_1 = new_date_1.month
+                month_num_2 = new_date_2.month
+                months = {
+                    1: "января",
+                    2: "февраля",
+                    3: "марта",
+                    4: "апреля",
+                    5: "мая",
+                    6: "июня",
+                    7: "июля",
+                    8: "августа",
+                    9: "сентября",
+                    10: "октября",
+                    11: "ноября",
+                    12: "декабря"
+                }
+                month_1 = months[month_num_1]
+                month_2 = months[month_num_2]
+                new_date_str = f"{day_1} {month_1} - {day_2} {month_2}"
+                return new_date_str
+                # days = mx+ n
+                # if n in [1, 21]:
+                #     return f"{n} день"
+                # elif n in [2, 3, 4, 22, 23, 24]:
+                #     return f"{n} дня"
+                # return f"{n} дней"
 
 
             zip = "0"
@@ -162,6 +194,7 @@ class DeliveryInfo(APIView):
                     "sum_part": 0,
                     "sum_all": 0,
                     "block": False,
+                    "days_to_client": shpip_day,
                     "ship_day": f"{sklon_day(shpip_day)}"
                 }
 
@@ -197,12 +230,7 @@ class DeliveryInfo(APIView):
             print("доставка", sum_part, "все", sum_all)
             print(res)
             shpip_day = get_delivery_costs(1, 1000, "02743", target, zip).get("delivery_period", 1)
-            def sklon_day(n):
-                if n in [1, 21]:
-                    return f"{n} день"
-                elif n in [2, 3, 4, 22, 23, 24]:
-                    return f"{n} дня"
-                return f"{n} дней"
+            res["days_to_client"] = shpip_day
             res['ship_day'] = sklon_day(shpip_day)
             cart.delivery_info = res
             cart.save()
@@ -371,7 +399,7 @@ class CheckOutView(APIView):
                               name=data['name'], surname=data['surname'], patronymic=data['patronymic'],
                               status=Status.objects.get(name="Заказ принят"), fact_of_payment=False,
                               promo_sale=cart.promo_sale, promo_bonus=cart.promo_bonus, total_bonus=cart.bonus + cart.first_order_bonus, total_bonus_and_promo_bonus=cart.bonus + cart.promo_bonus + cart.first_order_bonus,
-                              bonus_sale=cart.bonus_sale, sale=cart.sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount)
+                              bonus_sale=cart.bonus_sale, sale=cart.sale, total_sale=cart.total_sale, comment=data.get('comment', ""), final_amount_without_shipping=cart.final_amount, ship_day_to_client=cart.delivery_info.get('days_to_client', 3))
                 if "address_id" in data:
                     order.address = get_object_or_404(AddressInfo, id=data['address_id'])
                 else:
@@ -387,7 +415,7 @@ class CheckOutView(APIView):
 
                 # orders_count = Order.objects.filter(user=order.user, fact_of_payment=True).count()
                 for unit in cart.product_units.all():
-                    order.add_order_unit(unit, user.user_status)
+                    order.add_order_unit(unit, user.user_status, cart.delivery_info.get('days_to_client', 3))
                 max_bonus = 0
                 max_bonus_unit = 0
                 # if orders_count == 0:

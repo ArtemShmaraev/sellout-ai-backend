@@ -41,6 +41,8 @@ class ProductDocument(Document):
     text_price = Text(analyzer="standard")
     materials = Keyword()
     full_name = Text(analyzer='standard')
+    # picture = Text()
+    # slug = Text()
     suggest = Completion()
 
     # colors = Keyword(multi=True)

@@ -1245,7 +1245,7 @@ class ProductSlugView(APIView):
                 cache.set(cache_key, request_count, timeout=TIME_RPS)  # Хранить значение в течение 10 секунд
                 print(f"request_count {request_count}")
 
-                platform_update_price(product, request=request)
+                # platform_update_price(product, request=request)
                 print("Пошла")
 
                 product.rel_num += 1

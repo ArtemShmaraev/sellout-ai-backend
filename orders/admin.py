@@ -86,12 +86,17 @@ class OrderUnitAdmin(admin.ModelAdmin):
         return name
 
     def link(self, obj):
-        name = f'=гиперссылка("https://sellout.su/products/{obj.product.slug}"; image("{obj.product.bucket_link.first().url}"))'
+        if obj.product.bucket_link.first():
+            name = f'=гиперссылка("https://sellout.su/products/{obj.product.slug}"; image("{obj.product.bucket_link.first().url}"))'
+        else:
+            name = f'=гиперссылка("https://sellout.su/products/{obj.product.slug}"; image)'
         return name
 
-    def pict(self, obj):
-        prod = obj.product.bucket_link.first().url
-        return prod
+    # def pict(self, obj):
+    #     if obj.product.bucket_link.first():
+    #         prod = obj.product.bucket_link.first().url
+    #     else:
+    #     return prod
 
     def days_max(self, obj):
         return f"{obj.delivery_type.days_max}"

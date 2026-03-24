@@ -256,7 +256,7 @@ SIMPLE_JWT = {
 # FRONTEND_HOST = "localhost:3000"
 PROTOCOL = "https"
 
-ELASTIC_HOST = "51.250.83.217"
+ELASTIC_HOST = "158.160.32.229"
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"

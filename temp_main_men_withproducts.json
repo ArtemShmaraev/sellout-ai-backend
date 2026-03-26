@@ -2793,11 +2793,7 @@
         "type": "complexMainPageBlock",
         "title": "",
         "noMargin": true,
-        "fullWidthImage": {
-            "desktop": "https://sellout.su/sellout-bucket/MainPage/Group 96.jpg",
-            "mobile": "https://sellout.su/sellout-bucket/MainPage/Frame 9.jpg",
-            "url": "/products?collection=8march&gender=F"
-        },
+        "fullWidthImage": {},
         "imagesInRowAmount": 4,
         "imagesInRow": [
             {

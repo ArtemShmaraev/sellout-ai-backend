@@ -14,7 +14,7 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
     PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
-    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProducrSpuIdView, \
+    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProductSpuIdView, \
     ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView, \
     ProductUpdatePerHour
 
@@ -64,7 +64,7 @@ urlpatterns = [
     path("", include(router_color.urls)),
     path('slug/<str:slug>', ProductSlugView.as_view(), name='product_detail'),
     path('similar/<int:product_id>', ProductSimilarView.as_view()),
-    path('spu_id_info/<int:spu_id>', ProducrSpuIdView.as_view()),
+    path('spu_id_info/<int:spu_id>', ProductSpuIdView.as_view()),
     path('slug_full/<str:slug>', ProductFullSlugView.as_view()),
     path("tree_cat", CategoryTreeView.as_view()), path("tree_line", LineTreeView.as_view()),
     path("cat_no_child", CategoryNoChildView.as_view()), path("line_no_child", LineNoChildView.as_view()),
@@ -100,5 +100,6 @@ urlpatterns = [
     path("update_product_hk", ProductUpdatePriceHK.as_view()),
     path("update_price_url_dewu", ProductUpdatePriceUrlDewu.as_view()),
     path("products_per_hour/<int:hour>", ProductUpdatePerHour.as_view()),
-    path("sku/<str:sku>", ProductSkuView.as_view())
+    path("sku/<str:sku>", ProductSkuView.as_view()),
+    # path("product_db_data/<int:id>", ProductDataBase.as_view()),
 ]

@@ -236,7 +236,7 @@ class Product(models.Model):
     colorway = models.CharField(max_length=255, null=False, blank=True)
     russian_name = models.CharField(max_length=255, null=False, blank=True, default="")
     slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
-    manufacturer_sku = models.CharField(max_length=255, default="")  # Артем, это артикул по-английски, не пугайся
+    manufacturer_sku = models.CharField(max_length=255, default="", db_index=True)  # Артем, это артикул по-английски, не пугайся
     description = models.TextField(default="", blank=True)
     bucket_link = models.ManyToManyField("Photo", related_name='product', blank=True)
     black_bucket_link = models.ManyToManyField("Photo", related_name='black_product', blank=True)
@@ -311,7 +311,7 @@ class Product(models.Model):
     category_name = models.CharField(max_length=128, default="")
     level1_category_id = models.IntegerField(default=0)
     level2_category_id = models.IntegerField(default=0)
-    formatted_manufacturer_sku = models.CharField(default="", max_length=128)
+    formatted_manufacturer_sku = models.CharField(default="", max_length=128, db_index=True)
     score_product_page = models.IntegerField(default=0, db_index=True)
     likes_month = models.IntegerField(default=0)
     likes_week = models.IntegerField(default=0)

@@ -115,11 +115,15 @@ class ProductFooterTextView(APIView):
 class ProductSkuView(APIView):
     def get(self, request, sku):
         try:
-            product = Product.objects.filter(formatted_manufacturer_sku=sku)
+            params = request.query_params
+            if params.get("formatted"):
+                product = Product.objects.filter(formatted_manufacturer_sku=sku).values_list("id", flat=True)
+            else:
+                product = Product.objects.filter(manufacturer_sku=sku).values_list("id", flat=True)
             if not product:
                 return Response({"message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = ProductAdminSerializer(product, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            # serializer = ProductAdminSerializer(product, many=True)
+            return Response(product, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -144,7 +148,7 @@ class ProductUpdatePriceUrlDewu(APIView):
         s = add_product_hk(data)
         return Response(s.slug)
 
-class ProducrSpuIdView(APIView):
+class ProductSpuIdView(APIView):
     def get(self, request, spu_id):
         product = Product.objects.filter(spu_id=spu_id).first()
         return Response(ProductAdminSerializer(product).data)

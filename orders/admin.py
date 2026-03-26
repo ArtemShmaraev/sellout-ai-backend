@@ -82,7 +82,10 @@ class OrderUnitAdmin(admin.ModelAdmin):
         return False
 
     def full_name(self, obj):
-        name = f"{obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform} "
+        try:
+            name = f"{obj.product.get_full_name()} | {obj.product.manufacturer_sku} | {obj.view_size_platform} "
+        except:
+            name = "-"
         return name
 
     def link(self, obj):

@@ -70,6 +70,65 @@ from rest_framework.views import APIView
 import asyncio
 
 
+class MainPageBlocks2(APIView):
+
+    def get(self, request):
+        # Шаг 1: Получить cookies из запроса
+        cookies = dict(request.COOKIES) # это словарь, где ключ - имя куки, а значение - ее содержимое
+        gender = request.query_params.get('gender')
+
+
+        # Шаг 2: Прочитать JSON из запроса
+        # Предположим, что JSON передается в теле запроса, например:
+        if gender == "F":
+            with open("main_women_desktop_2.json", "r", encoding="utf-8") as file:
+                json_data = json.load(file)
+        else:
+            with open("main_men_desktop_2.json", "r", encoding="utf-8") as file:
+                json_data = json.load(file)
+
+
+        # Шаг 3: Пройтись по элементам JSON и извлечь id
+        filtered_data = []
+        for block in json_data:
+            if block['type'] in ['popularBrands', 'multiSectionCircles', 'multiSectionRecs', 'multiSectionImages']:
+                print("len", len(block['products']))
+                block_id = block.get("blockId")
+                if block_id:
+                    # Шаг 4: Получить куку по id блока
+                    # print(block_id)
+                    cookie_value = cookies.get(f"multiSectionedBlock-{block_id}-SelectedSection")
+
+                    # print(cookie_value)
+
+                    if not (cookie_value and cookie_value.isdigit()):
+                        cookie_value = 0
+                        # Преобразуем куку в индекс (целое число)
+
+
+                    product_index = int(cookie_value)
+                    # print("index", product_index)
+
+                    # Сохраняем только нужный продукт, остальные делаем пустыми
+                    filtered_products = [
+                        block["products"][i] if i == product_index else []
+                        for i in range(len(block["products"]))
+                    ]
+                    # print(len(block["products"]))
+
+                    # Обновляем блок с фильтрованными продуктами
+                    block["products"] = filtered_products
+                    # filtered_data.append(block)
+            filtered_data.append(block)
+
+        # Шаг 6: Возвращаем отфильтрованный JSON
+        # print(filtered_data)
+        # file_path="data_men.json"
+        # with open(file_path, 'w') as json_file:
+        #     # Сохраняем словарь в файл в формате JSON
+        #     json.dump(filtered_data, json_file, indent=4)
+        return Response(filtered_data, status=status.HTTP_200_OK)
+
 class ProductUpdatePerHour(APIView):
     def get(self, request, hour):
         twelve_hours_ago = datetime.now() - timedelta(hours=hour)

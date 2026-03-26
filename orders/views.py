@@ -141,7 +141,7 @@ class DeliveryInfo(APIView):
 
 
             def sklon_day(n):
-                first_item = cart.product_units.order_by('delivery_type__days_max').first()
+                first_item = cart.product_units.order_by('-delivery_type__days_max').first()
                 mx = first_item.delivery_type.days_max
                 mn = first_item.delivery_type.days_min
 
@@ -387,6 +387,7 @@ class CheckOutView(APIView):
                 #         print("Отмена лох")
                 #         return Response("Рано", status=status.HTTP_403_FORBIDDEN)
                 data = json.loads(request.body)
+                print(1)
                 # print(data)
                 user = get_object_or_404(User, id=user_id)
                 if not user.verify_email:
@@ -406,6 +407,7 @@ class CheckOutView(APIView):
                     order.pvz_address = str(data.get('pvz_address', ""))
                     order.pvz = str(data.get('target', 0))
                 order.save()
+                print(2)
 
                 if user.first_name.lower() == data['name'].lower() and user.last_name.lower() == data['surname'].lower():
                     user.patronymic = data['patronymic']
@@ -416,6 +418,7 @@ class CheckOutView(APIView):
                 # orders_count = Order.objects.filter(user=order.user, fact_of_payment=True).count()
                 for unit in cart.product_units.all():
                     order.add_order_unit(unit, user.user_status, cart.delivery_info.get('days_to_client', 3))
+                print(3)
                 max_bonus = 0
                 max_bonus_unit = 0
                 # if orders_count == 0:
@@ -442,27 +445,30 @@ class CheckOutView(APIView):
                 # order.final_amount = 10
                 order.get_invoice_data()
                 order.save()
+                print(4)
                 # print(order.invoice_data)
                 serializer = OrderSerializer(order).data
+                print(5)
                 # order.get_total_bonus()
 
 
-                if not user.user_status.base:
-                    order.fact_of_payment = True
-                    print("ff")
-                    send_email_confirmation_order(serializer, order.email)
-                    send_email_confirmation_order(serializer, "dfeoktistov523@icloud.com")
-                    send_email_confirmation_order(serializer, "wiwkw23@yandex.ru")
-                    send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
-                    send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
-                    # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
-
-                    cart.clear()
-                else:
-                    # send_email_new_order(serializer, "markenson888inst@gmail.com")
-                    send_email_new_order(serializer, "shmaraev18@mail.ru")
-                    send_email_new_order(serializer, "wiwkw23@yandex.ru")
+                # if not user.user_status.base:
+                #     order.fact_of_payment = True
+                #     print("ff")
+                #     send_email_confirmation_order(serializer, order.email)
+                #     send_email_confirmation_order(serializer, "dfeoktistov523@icloud.com")
+                #     send_email_confirmation_order(serializer, "wiwkw23@yandex.ru")
+                #     send_email_confirmation_order(serializer, "markenson888inst@gmail.com")
+                #     send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
+                #     # send_email_confirmation_order(serializer, "shmaraev18@mail.ru")
+                #
+                #     cart.clear()
+                # else:
+                #     # send_email_new_order(serializer, "markenson888inst@gmail.com")
+                #     send_email_new_order(serializer, "shmaraev18@mail.ru")
+                #     send_email_new_order(serializer, "wiwkw23@yandex.ru")
                 order.save()
+                print(6)
 
 
                 # order.accrue_bonuses()

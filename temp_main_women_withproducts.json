@@ -2300,50 +2300,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20858.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20858.png",
-                "url": "/products?line=jacquemus&category=bags&gender=F",
-                "title": "",
-                "subTitle": "Jacquemus",
-                "text": "От 11'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20856.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20856.png",
-                "url": "/products?line=diesel&category=bags&gender=F",
-                "title": "",
-                "subTitle": "Diesel",
-                "text": "От 9'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20857.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20857.png",
-                "url": "/products?category=bags&line=saint_laurent&gender=F",
-                "title": "",
-                "subTitle": "Saint Laurent",
-                "text": "От 15'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20859.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20859.png",
-                "url": "/products?line=dior&category=bags&gender=F",
-                "title": "",
-                "subTitle": "Dior",
-                "text": "От 30'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
-    },
-    {
         "type": "selection",
         "title": "Jacquemus, Diesel, Saint Laurent, Dior",
         "url": "category=bags&line=jacquemus&line=saint_laurent&line=diesel&gender=F",
@@ -7012,50 +6968,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20884.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20884.png",
-                "url": "/products?category=bags&line=coach&gender=F",
-                "title": "",
-                "subTitle": "Coach",
-                "text": "От 6'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20885.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20885.png",
-                "url": "/products?category=bags&line=pinko&gender=F",
-                "title": "",
-                "subTitle": "Pinko",
-                "text": "От 16'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20886.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20886.png",
-                "url": "/products?category=bags&line=charles&keith&gender=F",
-                "title": "",
-                "subTitle": "Charles&Keith",
-                "text": "От 5'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20887.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20887.png",
-                "url": "/products?category=bags&line=tory_burch&gender=F",
-                "title": "",
-                "subTitle": "Tory Burch",
-                "text": "От 9'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
-    },
-    {
         "type": "selection",
         "title": "Coach, Pinko, Charles&Keith, Tory Burch",
         "url": "category=bags&line=tory_burch&line=pinko&line=charles&keith&line=coach&gender=F",
@@ -9770,50 +9682,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20875.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20875.png",
-                "url": "/products?category=bags&line=marc_jacobs&gender=F",
-                "title": "",
-                "subTitle": "Marc Jacobs",
-                "text": "От 11'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20877.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20877.png",
-                "url": "/products?category=bags&line=a.p.c.&gender=F",
-                "title": "",
-                "subTitle": "A.P.C.",
-                "text": "От 16'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20878.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20878.png",
-                "url": "/products?category=bags&line=coperni&gender=F",
-                "title": "",
-                "subTitle": "Coperni",
-                "text": "От 39'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20879.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20879.png",
-                "url": "/products?category=bags&line=by_far&gender=F",
-                "title": "",
-                "subTitle": "By Far",
-                "text": "От 14'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
     },
     {
         "type": "selection",
@@ -14673,50 +14541,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20834.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20834.png",
-                "url": "/products?category=shoes&line=manolo_blahnik&gender=F",
-                "title": "",
-                "subTitle": "Manolo Blahnik",
-                "text": "От 34'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20831.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20831.png",
-                "url": "/products?category=shoes&line=saint_laurent&gender=F",
-                "title": "",
-                "subTitle": "Saint Laurent",
-                "text": "От 30'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20833.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20833.png",
-                "url": "/products?category=shoes&line=jimmy_choo&gender=F",
-                "title": "",
-                "subTitle": "Jimmy Choo",
-                "text": "От 30'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20832.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20832.png",
-                "url": "/products?category=shoes&line=christian_louboutin&gender=F",
-                "title": "",
-                "subTitle": "Christian Louboutin",
-                "text": "От 40'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
-    },
-    {
         "type": "selection",
         "title": "Туфли",
         "url": "category=shoes&gender=F",
@@ -18985,50 +18809,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20880.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20880.png",
-                "url": "/products?category=bags&line=staud&gender=F",
-                "title": "",
-                "subTitle": "Staud",
-                "text": "От 20'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20882.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20882.png",
-                "url": "/products?category=bags&line=manu_atelier&gender=F",
-                "title": "",
-                "subTitle": "Manu Atelier",
-                "text": "От 16'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20888.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20888.png",
-                "url": "/products?category=bags&line=proenza_schouler&gender=F",
-                "title": "",
-                "subTitle": "Proenza Schouler",
-                "text": "От 35'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20883.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20883.png",
-                "url": "/products?category=bags&line=jw_anderson&gender=F",
-                "title": "",
-                "subTitle": "JW Anderson",
-                "text": "От 20'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
-    },
-    {
         "type": "selection",
         "title": "Staud, Manu Atelier, Proenza Schouler, JW Anderson",
         "url": "line=staud&line=manu_atelier&line=proenza_schouler&category=bags&line=jw_anderson&gender=F",
@@ -21923,50 +21703,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20855.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20855.png",
-                "url": "/products?category=bags&line=miu_miu&gender=F",
-                "title": "",
-                "subTitle": "Miu Miu",
-                "text": "От 20'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20853.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20853.png",
-                "url": "/products?category=bags&line=prada&gender=F",
-                "title": "",
-                "subTitle": "Prada",
-                "text": "От 16'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20852.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20852.png",
-                "url": "/products?category=bags&line=loewe&gender=F",
-                "title": "",
-                "subTitle": "Loewe",
-                "text": "От 35'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20854.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20854.png",
-                "url": "/products?category=bags&line=bottega_veneta&gender=F",
-                "title": "",
-                "subTitle": "Bottega Veneta",
-                "text": "От 20'000₽"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {},
-        "videosInRowAmount": 0,
-        "videosInRow": []
     },
     {
         "type": "selection",

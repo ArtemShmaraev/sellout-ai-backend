@@ -4,32 +4,32 @@
         "leftImages": [
             "https://sellout.su/sellout-bucket/MainPage/Left.jpg",
             "https://sellout.su/sellout-bucket/MainPage/Right.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20394.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20413.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20415.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20416.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20417.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20419.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20395.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20418.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20414.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20398.jpg"
+            "https://sellout.su/sellout-bucket/MainPage/image 394.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 413.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 415.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 416.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 417.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 419.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 395.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 418.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 414.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 398.jpg"
         ],
         "rightImages": [
-            "https://sellout.su/sellout-bucket/MainPage/image%20404.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20403.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20399.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20402.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20406.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20401.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20409.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20407.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20412.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20411.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20405.jpg",
-            "https://sellout.su/sellout-bucket/MainPage/image%20408.jpg"
+            "https://sellout.su/sellout-bucket/MainPage/image 404.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 403.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 399.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 402.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 406.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 401.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 409.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 407.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 412.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 411.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 405.jpg",
+            "https://sellout.su/sellout-bucket/MainPage/image 408.jpg"
         ],
-        "bigImage": "https://sellout.su/sellout-bucket/MainPage/Frame%205.png"
+        "bigImage": "https://sellout.su/sellout-bucket/MainPage/Frame 5.png"
     },
     {
         "type": "photo",
@@ -1438,8 +1438,8 @@
         "type": "complexMainPageBlock",
         "title": "",
         "fullWidthImage": {
-            "desktop": "https://sellout.su/sellout-bucket/MainPage/Group%2055desk.jpg",
-            "mobile": "https://sellout.su/sellout-bucket/MainPage/Group%2055.jpg",
+            "desktop": "https://sellout.su/sellout-bucket/MainPage/Group 55desk.jpg",
+            "mobile": "https://sellout.su/sellout-bucket/MainPage/Group 55.jpg",
             "url": "/products?is_sale=is_sale&gender=M"
         },
         "imagesInRowAmount": 0,
@@ -2794,39 +2794,39 @@
         "title": "",
         "noMargin": true,
         "fullWidthImage": {
-            "desktop": "https://sellout.su/sellout-bucket/MainPage/Group%2096.jpg",
-            "mobile": "https://sellout.su/sellout-bucket/MainPage/Frame%209.jpg",
+            "desktop": "https://sellout.su/sellout-bucket/MainPage/Group 96.jpg",
+            "mobile": "https://sellout.su/sellout-bucket/MainPage/Frame 9.jpg",
             "url": "/products?collection=8march&gender=F"
         },
         "imagesInRowAmount": 4,
         "imagesInRow": [
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame%2013.jpg",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame%2013.jpg",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame 13.jpg",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame 13.jpg",
                 "url": "/products?collection=bargainsmen&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": ""
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame%2011.jpg",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame%2011.jpg",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame 11.jpg",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame 11.jpg",
                 "url": "/products?collection=springmen&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": ""
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame%2010.jpg",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame%2010.jpg",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame 10.jpg",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame 10.jpg",
                 "url": "/products?collection=topshelfmen&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": ""
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame%2012.jpg",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame%2012.jpg",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Frame 12.jpg",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Frame 12.jpg",
                 "url": "/products?collection=basketballmvpmen&gender=M",
                 "title": "",
                 "subTitle": "",
@@ -5511,32 +5511,32 @@
         "imagesInRowAmount": 4,
         "imagesInRow": [
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20291.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20291.png",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image 291.png",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image 291.png",
                 "url": "/products?category=outerwear&line=palm_angels&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": "Palm Angels"
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20289.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20289.png",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image 289.png",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image 289.png",
                 "url": "/products?category=outerwear&line=stone_island&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": "Stone Island"
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20288.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20288.png",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image 288.png",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image 288.png",
                 "url": "/products?category=outerwear&line=stüssy&gender=M",
                 "title": "",
                 "subTitle": "",
                 "text": "Stüssy"
             },
             {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20290.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20290.png",
+                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image 290.png",
+                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image 290.png",
                 "url": "/products?category=outerwear&line=the_north_face&gender=M",
                 "title": "",
                 "subTitle": "",
@@ -5549,31 +5549,31 @@
             "blocksAmount": 5,
             "blocks": [
                 {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20292.png",
+                    "image": "https://sellout.su/sellout-bucket/MainPage/image 292.png",
                     "url": "/products?category=windbreakers",
                     "title": "Ветровки",
                     "text": "1’000 моделей"
                 },
                 {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20294.png",
+                    "image": "https://sellout.su/sellout-bucket/MainPage/image 294.png",
                     "url": "/products?category=down_jackets",
                     "title": "Пуховики",
                     "text": "4’000 моделей"
                 },
                 {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20293.png",
+                    "image": "https://sellout.su/sellout-bucket/MainPage/image 293.png",
                     "url": "/products?category=coats_jackets",
                     "title": "Куртки",
                     "text": "17’000 моделей"
                 },
                 {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20296.png",
+                    "image": "https://sellout.su/sellout-bucket/MainPage/image 296.png",
                     "url": "/products?category=vests",
                     "title": "Жилетки",
                     "text": "1’500 моделей"
                 },
                 {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20295.png",
+                    "image": "https://sellout.su/sellout-bucket/MainPage/image 295.png",
                     "url": "/products?category=leather_jackets",
                     "title": "Кожаные куртки",
                     "text": "200 моделей"
@@ -5587,7 +5587,7 @@
         "random_generated_photos": true,
         "desktop": {
             "type": "right_photo",
-            "photo": "https://sellout.su/sellout-bucket/Desktop/Страница%20товаров%20коллаборации/Nike%20x%20Travis%20Scott/Group%201046.png",
+            "photo": "https://sellout.su/sellout-bucket/Desktop/Страница товаров коллаборации/Nike x Travis Scott/Group 1046.png",
             "title": "Nike x Travis Scott",
             "content": "Nike x Travis Scott - это символ симбиоза музыки и моды. Уникальное сотрудничество рэпера Трэвиса Скотта и бренда Nike привело к созданию коллекций, в которых звездный стиль соединился с креативностью спортивных трендов. Знаковые модели, такие как Air Jordan 1 и Nike SB Dunk, обрели новое измерение благодаря дизайну, вдохновленному музыкальными корнями Скотта и его индивидуальностью. Лимитированные выпуски сразу становятся объектами желания и коллекционными сокровищами, что делает каждую коллаборацию несравненной и запоминающейся.",
             "url": "collab=nike_x_travis_scott&gender=M",
@@ -6396,79 +6396,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Streetwear",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 0,
-        "imagesInRow": [],
-        "videosInRowAmount": 4,
-        "slidesInVideo": 7,
-        "videosInRow": [
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20369.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20377.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20376.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20373.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20372.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20375.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20370.jpg"
-                ],
-                "url": "/products?collab=nike_x_drake_nocta",
-                "title": "",
-                "subTitle": "",
-                "text": "Nike x Drake Nocta"
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20363.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20351.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20360.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20361.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20362.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20359.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20357.jpg"
-                ],
-                "url": "/products?line=cactus_jack_by_travis_scott",
-                "title": "",
-                "subTitle": "",
-                "text": "Cactus Jack by Travis Scott"
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20353.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20354.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20352.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20355.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20356.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20378.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20379.jpg"
-                ],
-                "url": "/products?line=fear_of_god",
-                "title": "",
-                "subTitle": "",
-                "text": "Fear Of God"
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20364.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20365.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20366.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20367.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20380.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20382.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20383.jpg"
-                ],
-                "url": "/products?line=stüssy",
-                "title": "",
-                "subTitle": "",
-                "text": "Stüssy"
-            }
-        ],
-        "productsBlocks": {},
-        "productsSelection": {}
     },
     {
         "type": "selection",
@@ -8270,50 +8197,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20388.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20388.png",
-                "url": "/products?line=off-white&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Off-White"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20389.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20389.png",
-                "url": "/products?line=dior&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Dior"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20386.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20386.png",
-                "url": "/products?line=louis_vuitton&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Louis Vuitton"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Group%2043.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Group%2043.png",
-                "url": "/products?line=prada&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Prada"
-            }
-        ],
-        "videosInRowAmount": 0,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
     },
     {
         "type": "selection",
@@ -11060,50 +10943,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "Оставайся MVP",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Group%2080.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Group%2080.png",
-                "url": "/products?line=nike_kobe_bryant&gender=M",
-                "title": "Nike Kobe Bryant",
-                "subTitle": "500 моделей",
-                "text": "От 16'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Group%2079.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Group%2079.png",
-                "url": "/products?line=nike_kd_(kevin_durant)&gender=M",
-                "title": "Nike Kevin Durant",
-                "subTitle": "500 моделей",
-                "text": "От 8'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Group%2078.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Group%2078.png",
-                "url": "/products?line=nike_kyrie_irving&gender=M",
-                "title": "Nike Kyrie Irving",
-                "subTitle": "500 моделей",
-                "text": "От 8'000₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/Group%2077.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/Group%2077.png",
-                "url": "/products?line=nike_lebron_james&gender=M",
-                "title": "Nike LeBron James",
-                "subTitle": "800 моделей",
-                "text": "От 7'000₽"
-            }
-        ],
-        "videosInRowAmount": 0,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
-    },
-    {
         "type": "selection",
         "title": "Баскетбольные кроссовки",
         "url": "category=basketball_sneakers&gender=M",
@@ -12379,156 +12218,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Классика",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 0,
-        "imagesInRow": [],
-        "videosInRowAmount": 0,
-        "videosInRow": [],
-        "productsBlocks": {
-            "blocksAmount": 5,
-            "blocks": [
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20285.jpg",
-                    "url": "/products?category=shirts",
-                    "title": "Рубашки",
-                    "text": "6’000 моделей"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20286.jpg",
-                    "url": "/products?category=trousers",
-                    "title": "Брюки",
-                    "text": "3’000 моделей"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/IMG_6218%201.jpg",
-                    "url": "/products?category=loafers",
-                    "title": "Лоферы",
-                    "text": "700 моделей"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/IMG_6223%201.jpg",
-                    "url": "/products?category=shoes",
-                    "title": "Туфли",
-                    "text": "2’000 моделей"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/Group%2076.jpg",
-                    "url": "/products?category=clutches",
-                    "title": "Клатчи",
-                    "text": "1’200 моделей"
-                }
-            ]
-        },
-        "productsSelection": {}
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Феномен streetwear культуры",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 0,
-        "imagesInRow": [],
-        "videosInRowAmount": 4,
-        "slidesInVideo": 5,
-        "videosInRow": [
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20329.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20332.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20333.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20865.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20863.jpg"
-                ],
-                "url": "/products?line=supreme",
-                "title": "",
-                "subTitle": "",
-                "text": ""
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20330.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20344.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20337.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20866.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20870.jpg"
-                ],
-                "url": "/products?line=supreme",
-                "title": "",
-                "subTitle": "",
-                "text": ""
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20350.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20340.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20331.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20868.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20871.jpg"
-                ],
-                "url": "/products?line=supreme",
-                "title": "",
-                "subTitle": "",
-                "text": ""
-            },
-            {
-                "video": [
-                    "https://sellout.su/sellout-bucket/MainPage/image%20864.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20341.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20339.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20867.jpg",
-                    "https://sellout.su/sellout-bucket/MainPage/image%20334.jpg"
-                ],
-                "url": "/products?line=supreme",
-                "title": "",
-                "subTitle": "",
-                "text": ""
-            }
-        ],
-        "productsBlocks": {
-            "blocksAmount": 6,
-            "blocks": [
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20346.jpg",
-                    "url": "/products?category=outerwear&line=supreme",
-                    "title": "Куртки",
-                    "text": "От 20’000₽"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20345.jpg",
-                    "url": "/products?category=hoodie_sweatshirts&line=supreme",
-                    "title": "Худи",
-                    "text": "От 12’000₽"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20338.jpg",
-                    "url": "/products?category=tshirts&line=supreme",
-                    "title": "Футболки",
-                    "text": "От 7’000₽"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20347.jpg",
-                    "url": "/products?category=shoes_category&line=supreme",
-                    "title": "Обувь",
-                    "text": "От 13’000₽"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20348.jpg",
-                    "url": "/products?category=bags&line=supreme",
-                    "title": "Сумки",
-                    "text": "От 8’000₽"
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/image%20349.jpg",
-                    "url": "/products?category=accessories&line=supreme",
-                    "title": "Аксессуары",
-                    "text": "От 5’000₽"
-                }
-            ]
-        },
-        "productsSelection": {}
     },
     {
         "type": "selection",
@@ -15525,78 +15214,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "Ботинки",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20873.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20873.png",
-                "url": "/products?line=nike&category=boots&category=winter_sneakers_and_shoes&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Nike"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20308.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20308.png",
-                "url": "/products?line=yeezy&line=adidas_yeezy&category=boots&category=winter_sneakers_and_shoes&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Yeezy"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20307.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20307.png",
-                "url": "/products?line=timberland&category=boots&category=winter_sneakers_and_shoes&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Timberland"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20301.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20301.png",
-                "url": "/products?line=dr.martens&category=boots&category=winter_sneakers_and_shoes&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Dr. Martens"
-            }
-        ],
-        "videosInRowAmount": 0,
-        "videosInRow": [],
-        "productsBlocks": {
-            "blocksAmount": 4,
-            "blocks": [
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/Group%2084.jpg",
-                    "url": "/products?line=nike&category=boots&category=winter_sneakers_and_shoes",
-                    "title": "От 19’000₽",
-                    "text": ""
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/Group%2083.jpg",
-                    "url": "/products?line=yeezy&line=adidas_yeezy&category=boots&category=winter_sneakers_and_shoes",
-                    "title": "От 6’000₽",
-                    "text": ""
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/Group%2081.jpg",
-                    "url": "/products?line=timberland&category=boots&category=winter_sneakers_and_shoes",
-                    "title": "От 9’000₽",
-                    "text": ""
-                },
-                {
-                    "image": "https://sellout.su/sellout-bucket/MainPage/Group%2082.jpg",
-                    "url": "/products?line=dr.martens&category=boots&category=winter_sneakers_and_shoes",
-                    "title": "От 9’000₽",
-                    "text": ""
-                }
-            ]
-        },
-        "productsSelection": {}
-    },
-    {
         "type": "photo",
         "random_generated_photos": true,
         "desktop": {
@@ -17793,50 +17410,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Готовимся к лету",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20315.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20315.png",
-                "url": "/products?line=adidas_yeezy_slide&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Yeezy Slide"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20314.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20314.png",
-                "url": "/products?line=adidas_yeezy_foam_runner&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Yeezy Foam Runner"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20312.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20312.png",
-                "url": "/products?q=birkenstock+stussy&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Birkenstock x Stüssy"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20313.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20313.png",
-                "url": "/products?collab=crocs_x_salehe_bembury&gender=M",
-                "title": "",
-                "subTitle": "",
-                "text": "Crocs x Salehe Bembury"
-            }
-        ],
-        "videosInRowAmount": 4,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
     },
     {
         "type": "selection",
@@ -20971,50 +20544,6 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Больше кроссовок",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203281.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20324.png",
-                "url": "/products?line=adidas&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "adidas",
-                "subTitle": "15’000 моделей",
-                "text": "От 5’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203271.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20323.png",
-                "url": "/products?line=asics&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "Asics",
-                "subTitle": "2’500 моделей",
-                "text": "От 7’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203251.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20321.png",
-                "url": "/products?line=puma&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "PUMA",
-                "subTitle": "4’000 моделей",
-                "text": "От 5’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203261.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20322.png",
-                "url": "/products?line=converse&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "Converse",
-                "subTitle": "3’000 моделей",
-                "text": "От 4'000 ₽"
-            }
-        ],
-        "videosInRowAmount": 4,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
     },
     {
         "type": "selection",
@@ -25045,50 +24574,6 @@
         ]
     },
     {
-        "type": "complexMainPageBlock",
-        "title": "Больше кроссовок",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203291.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20325.png",
-                "url": "/products?line=new_balance&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "New Balance",
-                "subTitle": "30’000 моделей",
-                "text": "От 6’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203321.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20328.png",
-                "url": "/products?line=nike&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "Nike",
-                "subTitle": "4’000 моделей",
-                "text": "От 6’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203301.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20326.png",
-                "url": "/products?line=reebok&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "Reebok",
-                "subTitle": "2’000 моделей",
-                "text": "От 5’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%203311.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20327.png",
-                "url": "/products?line=vans&category=sneakers&category=canvas_shoes&gender=M",
-                "title": "Vans",
-                "subTitle": "5’500 моделей",
-                "text": "От 6'000 ₽"
-            }
-        ],
-        "videosInRowAmount": 4,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
-    },
-    {
         "type": "selection",
         "title": "New Balance, Nike, Reebok, Vans",
         "url": "line=new_balance&line=reebok&line=nike&line=vans&gender=M",
@@ -27501,49 +26986,5 @@
                 }
             }
         ]
-    },
-    {
-        "type": "complexMainPageBlock",
-        "title": "Спортивные товары",
-        "fullWidthImage": {},
-        "imagesInRowAmount": 4,
-        "imagesInRow": [
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20282.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20282.png",
-                "url": "/products?category=football_boots&gender=M",
-                "title": "Футбольные бутсы",
-                "subTitle": "2’500 моделей",
-                "text": "От 5’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20281.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20281.png",
-                "url": "/products?category=basketballs&category=footballs&category=volleyballs&gender=M",
-                "title": "Мячи",
-                "subTitle": "5’000 моделей",
-                "text": "От 3’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20283.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20283.png",
-                "url": "/products?category=sports_equipment&category=sports_gloves&category=other_sport_goods&category=sport_bags&gender=M",
-                "title": "Экипировка",
-                "subTitle": "10’000 моделей",
-                "text": "От 4’000 ₽"
-            },
-            {
-                "imageMobile": "https://sellout.su/sellout-bucket/MainPage/image%20284.png",
-                "imageDesktop": "https://sellout.su/sellout-bucket/MainPage/image%20284.png",
-                "url": "/products?category=sport_bags&category=sport_goods&category=sport_clothes&category=basketball_sneakers&category=football_boots&category=other_sport_shoes&gender=M",
-                "title": "Спортивные товары",
-                "subTitle": "35’000 моделей",
-                "text": "От 3'000 ₽"
-            }
-        ],
-        "videosInRowAmount": 4,
-        "videosInRow": [],
-        "productsBlocks": {},
-        "productsSelection": {}
     }
 ]

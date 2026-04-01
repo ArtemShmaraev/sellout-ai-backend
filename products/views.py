@@ -107,7 +107,7 @@ class UpdateProductTagsView(APIView):
 class MainPageBlocks2GetBlock(APIView):
     def get(self, request, block_id):
         gender = request.query_params.get('gender')
-        n = request.query_params.get("n")
+        n = int(request.query_params.get("n"))
         if gender == "F":
             with open("main_women_desktop_2.json", "r", encoding="utf-8") as file:
                 json_data = json.load(file)
@@ -117,7 +117,7 @@ class MainPageBlocks2GetBlock(APIView):
 
         filtered_data = []
         for block in json_data:
-            if block['blockId'] == block_id:
+            if block.get('blockId') == block_id:
                 filtered_data = block['products'][n]
                 break
         return Response(filtered_data, status=status.HTTP_200_OK)

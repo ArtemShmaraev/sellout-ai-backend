@@ -37,7 +37,7 @@ from .add_product_api import add_product_api, add_products_spu_id_api, add_produ
 from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand, Photo, Material, Gender, FooterText
+    RansomRequest, SGInfo, Brand, Photo, Material, Gender, FooterText, Tag
 from rest_framework import status
 
 from .product_page import get_product_page, get_product_page_header, count_queryset, filter_products
@@ -68,6 +68,62 @@ from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import asyncio
+
+
+class UpdateProductTagsView(APIView):
+    def post(self, request, slug):
+        """
+        Обновление тегов продукта.
+        Добавляет новые теги из списка или удаляет все теги, если указан флаг `delete`.
+        """
+        try:
+            product_id = int(slug.split("-")[-1])
+            # Получаем продукт по ID
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Получаем данные из запроса
+        data = request.data
+        delete = data.get('delete', False)  # Флаг удаления тегов (по умолчанию False)
+        tags = data.get('tags', [])  # Список новых тегов для добавления
+
+        if delete:
+            # Если установлен флаг `delete`, очищаем все теги
+            product.tags.clear()
+
+        if tags:
+            # Добавляем теги из списка
+            for tag_name in tags:
+                tag, _ = Tag.objects.get_or_create(name=tag_name)  # Создаем тег, если его нет
+                product.tags.add(tag)
+
+            return Response({"message": "Tags updated successfully."}, status=status.HTTP_200_OK)
+
+        # Если запрос некорректный
+        return Response({"error": "Invalid request. Provide 'tags' or 'delete'."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MainPageBlocks2GetBlock(APIView):
+    def get(self, request, block_id):
+        gender = request.query_params.get('gender')
+        n = request.query_params.get("n")
+        if gender == "F":
+            with open("main_women_desktop_2.json", "r", encoding="utf-8") as file:
+                json_data = json.load(file)
+        else:
+            with open("main_men_desktop_2.json", "r", encoding="utf-8") as file:
+                json_data = json.load(file)
+
+        filtered_data = []
+        for block in json_data:
+            if block['blockId'] == block_id:
+                filtered_data = block['products'][n]
+                break
+        return Response(filtered_data, status=status.HTTP_200_OK)
+
+
+
 
 
 class MainPageBlocks2(APIView):
@@ -1421,6 +1477,8 @@ class CollabView(APIView):
             cache.set(cache_key, collabs, CACHE_TIME)
 
         return Response(collabs)
+
+
 
 
 class ProductUpdateView(APIView):

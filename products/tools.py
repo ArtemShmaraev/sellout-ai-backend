@@ -809,6 +809,7 @@ def build_line_tree():
         return data
 
     root_lines = sort_children(root_lines)
+    all = sorted(root_lines, key=lambda x: x['view_name'].lower())
     with_children = [x for x in root_lines if x.get('children')]
 
     without_children = [x for x in root_lines if not x.get('children')]
@@ -819,7 +820,7 @@ def build_line_tree():
     sorted_data_without_children = sorted(without_children, key=lambda x: x['view_name'].lower())
     # Объединяем отсортированные части
     sorted_data = sorted_data_with_children + sorted_data_without_children
-    return sorted_data
+    return all
 
 
 

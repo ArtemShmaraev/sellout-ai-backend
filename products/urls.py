@@ -16,7 +16,7 @@ from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoL
     run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
     SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProductSpuIdView, \
     ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView, \
-    ProductUpdatePerHour, MainPageBlocks2
+    ProductUpdatePerHour, MainPageBlocks2, UpdateProductTagsView, MainPageBlocks2GetBlock
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')
@@ -76,6 +76,7 @@ urlpatterns = [
     path("dewu_info_list", DewuInfoListSpuIdView.as_view()), path("suggest_search", SuggestSearch.as_view()),
     path("main_page", MainPageBlocks.as_view()), path("header_photo", GetHeaderPhoto.as_view()),
     path("main_page2", MainPageBlocks2.as_view()),
+    path("main_page2_get_block/<str:block_id>", MainPageBlocks2GetBlock.as_view()),
     path("ransom_request", MakeRansomRequest.as_view()), path("sg_info_list", SGInfoListSkuView.as_view()),
     path("sg_info", SGInfoListView.as_view()), path("sg_info/<str:sku>", SGInfoView.as_view()),
     path("search_brands", BrandSearchView.as_view()), path("add_filter_search", AddFilterSearch.as_view()),
@@ -102,5 +103,6 @@ urlpatterns = [
     path("update_price_url_dewu", ProductUpdatePriceUrlDewu.as_view()),
     path("products_per_hour/<int:hour>", ProductUpdatePerHour.as_view()),
     path("sku/<str:sku>", ProductSkuView.as_view()),
+    path("add_tags/<str:slug>", UpdateProductTagsView.as_view()),
     # path("product_db_data/<int:id>", ProductDataBase.as_view()),
 ]

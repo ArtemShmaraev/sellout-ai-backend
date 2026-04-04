@@ -153,7 +153,7 @@ class MainPageBlocks2(APIView):
                 if block_id:
                     # Шаг 4: Получить куку по id блока
                     # print(block_id)
-                    cookie_value = cookies.get(f"multiSectionedBlock-{block_id}-SelectedSection")
+                    cookie_value = cookies.get(f"{block_id}-Ind")
 
                     # print(cookie_value)
 

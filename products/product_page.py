@@ -294,7 +294,7 @@ def filter_products(request):
     if material:
         queryset = queryset.filter(materials__eng_name__in=material)
     if tag:
-        queryset = queryset.filter(tag__name__in=tag)
+        queryset = queryset.filter(tags__name__in=tag)
     if collection:
         queryset = queryset.filter(collections__query_name__in=collection)
     if brand:

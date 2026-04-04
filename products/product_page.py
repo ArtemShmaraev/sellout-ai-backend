@@ -243,6 +243,7 @@ def filter_products(request):
     gender = params.getlist("gender")
     brand = params.getlist("brand")
     collab = params.getlist("collab")
+    tag = params.getlist("tag")
     available = params.get("available")
     custom = params.get("custom")
     collection = params.getlist('collection')
@@ -292,6 +293,8 @@ def filter_products(request):
             
     if material:
         queryset = queryset.filter(materials__eng_name__in=material)
+    if tag:
+        queryset = queryset.filter(tag__name__in=tag)
     if collection:
         queryset = queryset.filter(collections__query_name__in=collection)
     if brand:

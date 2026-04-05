@@ -1,5 +1,6 @@
 import math
 import random
+import urllib
 from datetime import datetime, timedelta
 from itertools import count
 from time import time, sleep
@@ -34,20 +35,142 @@ from products.tools import get_text
 from utils.models import Currency
 
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        twelve_hours_ago = datetime.now() - timedelta(hours=4.5)
+
+        def check_image_exists_urllib(image_url):
+            try:
+                # Попробуем выполнить запрос и получить статус
+                response = requests.get(image_url)
+
+                # Проверим, если код ответа - 200 (OK), то изображение существует
+                if response.status_code == 200:
+
+                        return True
+                return False
+            except Exception as e:
+                # В случае ошибки (например, ссылка не существует или не изображение), возвращаем False
+                print(f"Error: {e}")
+                return False
+
+        hs = HeaderPhoto.objects.all()
+        for h in hs:
+            if not check_image_exists_urllib(h.photo):
+                print(h.photo)
+                h.delete()
+
+        a = input()
+
+        prod = Product.objects.filter(available_flag=True, lines=Line.objects.get(full_eng_name="palm_angels"))
+        print(prod.count())
+        a = input()
+        photos = HeaderPhoto.objects.all()
+        for p in photos:
+            url = p.photo.replace("sellout-photos", "sellout-bucket")
+            p.photo = url
+            p.save()
+            print(url)
+
+        a = input("Готово")
+        ps = Product.objects.all().order_by("-exact_date")[:10]
+        print(ps.count())
+        for p in ps:
+            print(p.size_table_platform)
+
+        ps = Product.objects.all().order_by("exact_date")[:10]
+        print(ps.count())
+
+        # Создаем словарь для хранения данных
+        product_data = {}
+
+        for p in ps:
+            product_data[p.id] = {
+                "name": p.get_full_name(),
+                "size_table_platform": p.size_table_platform,
+                # Добавьте сюда другие атрибуты товара, которые вы хотите сохранить
+
+
+            }
+
+        # Сохраняем словарь в JSON-файл
+        with open("products.json", "w", encoding="utf-8") as f:
+            json.dump(product_data, f, indent=4, ensure_ascii=False)
+
+        a = input()
+
+        order = Order.objects.get(number="113332")
+        user = User.objects.get(email="kumaripria@icloud.com")
+        order.user = user
+        order.save()
+
+        pu = order.order_units.all()
+        for u in pu:
+            print(u.product.slug)
+        print(OrderSerializer(order).data)
+        s = input("Готов")
+        # # users = User.objects.all()
+        # # for u in users:
+        # #     try:
+        # #         cart = ShoppingCart.objects.get(user=u)
+        # #         cart.clear()
+        # #         print(u)
+        # #     except:
+        # #         print("cerf", u)
+        # p = Product.objects.filter(product_units=None)
+        # print(p.count())
+        #
+        # s = input("готово")
+        # # p = Product.objects.filter(lines=Line.objects.get(name="PINKO"))
+        # # p.delete()
+        # # p = Product.objects.filter(lines=Line.objects.get(name="PINKO"))
+        # # print(p.count())
+        # # sa = input("a")
+        s = ["103440", "107641"]
+        traks = [" AIA321794187", "AIA321794634"]
+        for i in range(len(s)):
+            order = Order.objects.get(number=s[i])
+            order.status = Status.objects.get(name="Передан в службу доставки по России")
+            order.save()
+            ou = order.order_units.all()
+            send_email_full_order_shipped(OrderSerializer(order).data, order.email)
+            send_email_full_order_shipped(OrderSerializer(order).data, "shmaraev18@mail.ru")
+            for u in ou:
+                print(u.product.get_full_name())
+                u.update_status(on_way_to_client=True)
+                u.add_track_number(traks[i])
+        s = input("a")
+        t = time()
+        s = Product.objects.filter(lines=Line.objects.get(view_name="Dior")).count()
+        print(s, time() - t)
+        a = input("1")
+        hour = 75
+        twelve_hours_ago = datetime.now() - timedelta(hours=hour)
         products_added = Product.objects.filter(last_upd__gt=twelve_hours_ago).count()
 
-        print(f"Количество товаров, добавленных за последние 12 часов: {products_added}")
+        print(f"Количество товаров, добавленных за последние {hour} часов: {products_added}")
 
+        collab = Collab.objects.all()
+        data = dict()
+        for c in collab:
+            try:
+                product = Product.objects.filter(available_flag=True, collab=c).order_by("-score_product_page")[0]
+                count = Product.objects.filter(available_flag=True, collab=c).count()
+                data[c.name] = {'count': f"Более {round(count, -2)} товаров", "photo": product.bucket_link.order_by("id")[0].url}
+                print(c)
+            except:
+                continue
+
+        with open("most_pop2.json", 'w', encoding='utf-8') as output_file:
+            json.dump(data, output_file, ensure_ascii=False, indent=2)
         a = input('d')
+
         def round_number(num):
             n = 2 - len(str(num))
             return round(num, n)
-        def get_s(line):
 
+        def get_s(line):
             products = Product.objects.filter(lines=line, available_flag=True, is_custom=False, categories__name="Кроссовки").order_by("-score_product_page")
             url = f"https://sellout.su/products?line={line.full_eng_name}"
             if line.parent_line is None:
@@ -65,8 +188,6 @@ class Command(BaseCommand):
             s = [url, title, description, min_price, "RUB"]
             s.extend(imgs)
             return s
-
-
         lines = Line.objects.exclude(score=0)
         s = []
         cats = Category.objects.exclude(score=0)

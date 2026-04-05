@@ -152,6 +152,9 @@ def similar_product(product):
         #         # boost=1.2
         #     )
         # )
+        genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
+                       "F": "женский", "K": "детский"}
+        gender = [genders_rus[gender.name] for gender in product.gender.all()]
 
         mlt_query = {
             "more_like_this": {
@@ -172,9 +175,7 @@ def similar_product(product):
                 "boost_terms": 1.5
             }
         }
-        genders_rus = {"Male": "мужской", "Female": "женский", "Kids": "детский", "M": "мужской",
-                       "F": "женский", "K": "детский"}
-        gender = [genders_rus[gender.name] for gender in product.gender.all()]
+
 
         print("djn", gender)
         gender_filters = [Q("match", gender=gender_value) for gender_value in gender]
@@ -196,12 +197,7 @@ def similar_product(product):
         # Выполните запрос
         response = search.execute()
 
-        # print(response)
-        # output_file = 'similar_results.json'
-        # with open(output_file, 'w', encoding="utf-8") as f:
-        #     json.dump(response.to_dict(), f, indent=4)
-        # max_score = response.hits.max_score
-        # threshold = 0.6 * max_score
+
         print(product.gender.all())
 
         product_ids = [hit.meta.id for hit in response.hits]

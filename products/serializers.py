@@ -78,10 +78,7 @@ class SizeTableSerializer(serializers.ModelSerializer):
 
 
 
-class SizeTranslationRowsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SizeTranslationRows
-        fields = '__all__'
+
 
 
 class CollabSerializer(serializers.ModelSerializer):
@@ -94,6 +91,11 @@ class CollabSerializer(serializers.ModelSerializer):
     def get_is_show(self, row):
         return True
 
+
+class SizeTranslationRowsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SizeTranslationRows
+        fields = '__all__'
 
 class DewuInfoSerializer(serializers.ModelSerializer):
     class Meta:

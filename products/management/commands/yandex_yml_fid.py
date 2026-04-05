@@ -66,11 +66,14 @@ import xml.etree.ElementTree as ET
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        k = 1
-        page = 10000
-        file_name = f"fids/all_products2{k}.xml"
+        k = 8
+        page = 1000
+        file_name = f"fids/Кроссовки_до_20000_1{k}.xml"
 
-        products = Product.objects.filter(available_flag=True, is_custom=False, min_price__lt=40000).distinct().order_by("-score_product_page")[(k-1)*page:k*page]
+        lines = list(Line.objects.exclude(score=0).values_list("view_name", flat=True))
+        products_id = Product.objects.filter(available_flag=True, is_custom=False, min_price__lt=20000, categories__name="Кроссовки", lines__view_name__in=lines).values_list("id", flat=True).distinct()
+
+        products = Product.objects.filter(id__in=products_id).order_by("-score_product_page")[(k-1)*page:k*page]
         print(products.count())
         print(products.first().min_price)
 

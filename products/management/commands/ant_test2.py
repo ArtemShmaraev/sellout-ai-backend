@@ -29,21 +29,30 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # Измеряем время выполнения запроса к базе данных
-        products = Product.objects.filter(up_score=False).order_by("id")
-        count = products.count()
-        print(count)
-        k = 0
-        for page in range(0, count, 100):
-            pus_page = Product.objects.filter(up_score=False)[:100]
-            for p in pus_page:
-                sizes = [size for pu in p.product_units.filter(availability=True) for size in pu.size.all()]
-                p.sizes.add(*sizes)
-                p.up_score = True
-                p.save()
-            k += 100
-            if k % 100 == 0:
-                print(k, count)
+        import json
+
+        # Открываем файл JSON
+        file_path = "temp_main_men_withproducts.json"
+        with open(file_path, "r", encoding="utf-8") as json_file:
+            # Загружаем данные из файла в словарь
+            data = json.load(json_file)
+
+        # Теперь переменная data содержит данные из JSON-файла в виде словаря
+        for block in data:
+            if block['type'] == 'selection':
+                products = []
+                for p in block['products']:
+                    id_p = p['slug']
+                    if Product.objects.filter(slug=id_p).exists():
+                        prod = Product.objects.get(slug=id_p)
+                        if prod.min_price != 0 and prod.available_flag:
+                            products.append(ProductMainPageSerializer(prod).data)
+                block['products'] = products
+
+
+        # Запись списка в JSON-файл
+        with open(file_path, "w", encoding="utf-8") as json_file:
+            json.dump(data, json_file, ensure_ascii=False)
 
 # # Обработка результатов запроса
 # for row in results:

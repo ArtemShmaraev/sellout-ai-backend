@@ -52,9 +52,8 @@ class Command(BaseCommand):
 
         import os
 
-        access_id = 'YCAJE0F2sIDFNPfcTqknCFtoY'
-        access_key = 'YCNRvyqXPhlTbZ8vdAhDA6wAhxZCZ8KlRKjTPIDV'
-        bucket_name = 'sellout-photos'  # Укажите название бакета
+
+        # bucket_name = 'sellout-bucket'  # Укажите название бакета
 
         # Создание сессии
         # session = botocore.session.get_session()
@@ -85,53 +84,54 @@ class Command(BaseCommand):
                 if os.path.isfile(full_local_path):
                     # Если это файл, отправляем его на облако
                     path = full_cloud_path.replace("\\", "/")
-                    url = f'https://sellout.su/sellout-photos/{path}'
+                    url = f'https://sellout.su/sellout-bucket/{path}'
+                    content_type = 'image/jpeg'
+                    s3_client.upload_file(
+                        full_local_path,
+                        bucket_name,
+                        path,
+                        ExtraArgs={'ContentType': content_type}
+                    )
+                    print(url)
                     # print(url)
-                    if not HeaderPhoto.objects.filter(photo=url).exists():
+                    # if not HeaderPhoto.objects.filter(photo=url).exists():
 
 
-                        try:
-                            if "Mobile" in path:
-                                type = "mobile"
-                            else:
-                                type = "desktop"
-
-                            if "коллаборации" in path:
-                                where = "product_page"
-                                paths = path.split("/")
-                                collab_name = paths[-2]
-                                # print(collab_name)
-                                # add_photo(url, type, where, collab_name=collab_name, category_name="Обувь")
-
-                            elif "линейки" in path:
-                                where = "product_page"
-                                paths = path.split("/")
-                                line_name = paths[-2]
-                                if "new" in line_name.lower():
-                                    line_name = line_name.replace("-", "/")
-                                # print(line_name)
-                                # add_photo(url, type, where, line_name=line_name, category_name="Обувь")
-                            else:
-                                content_type = 'image/jpeg'
-                                s3_client.upload_file(
-                                    full_local_path,
-                                    bucket_name,
-                                    path,
-                                    ExtraArgs={'ContentType': content_type}
-                                )
-                                print(url)
-
-
-                                where = "header"
-                                paths = path.split("/")
-                                category_name = paths[-2]
-                                if category_name == "Аксессуары":
-                                    type = "any"
-                                    add_photo(url, type, where, category_name=category_name)
-                        except Exception as e:
-                            print(e)
-                            print(path)
-                            print("ERRRRRRRROOORRR")
+                        # try:
+                        #     if "Mobile" in path:
+                        #         type = "mobile"
+                        #     else:
+                        #         type = "desktop"
+                        #
+                        #     if "коллаборации" in path:
+                        #         where = "product_page"
+                        #         paths = path.split("/")
+                        #         collab_name = paths[-2]
+                        #         # print(collab_name)
+                        #         # add_photo(url, type, where, collab_name=collab_name, category_name="Обувь")
+                        #
+                        #     elif "линейки" in path:
+                        #         where = "product_page"
+                        #         paths = path.split("/")
+                        #         line_name = paths[-2]
+                        #         if "new" in line_name.lower():
+                        #             line_name = line_name.replace("-", "/")
+                        #         # print(line_name)
+                        #         # add_photo(url, type, where, line_name=line_name, category_name="Обувь")
+                        #     else:
+                        #
+                        #
+                        #
+                        #         # where = "header"
+                        #         # paths = path.split("/")
+                        #         # category_name = paths[-2]
+                        #         # if category_name == "Аксессуары":
+                        #         #     type = "any"
+                        #         #     add_photo(url, type, where, category_name=category_name)
+                        # except Exception as e:
+                        #     print(e)
+                        #     print(path)
+                        #     print("ERRRRRRRROOORRR")
 
                     # Формирование подписи
                     # print(f'Uploaded {full_local_path}')
@@ -140,8 +140,8 @@ class Command(BaseCommand):
 
 
         # Запускаем загрузку из корневой локальной папки в корневую папку на облаке
-        hp = HeaderPhoto.objects.filter(categories__name="Аксессуары", where="header")
-        hp.delete()
+        # hp = HeaderPhoto.objects.filter(categories__name="Аксессуары", where="header")
+        # hp.delete()
         local_folder = r'C:\Users\artem\OneDrive\Рабочий стол\Desktop'  # Путь до вашей локальной папки в файловой системе
         cloud_folder = 'Desktop'  # Подпапка в облаке
         upload_files_to_cloud(local_folder, cloud_folder)

@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'orders',
     'products',
     'promotions',
+    'drf_yasg',
+    'drf_spectacular',
     'shipping',
     'users',
     'utils',
@@ -183,6 +185,8 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ],
+
+    'DEFAULT_SCHEMA_CLASS': 'sellout.schema.CustomTagSchema'
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 60,  # Укажите, сколько элементов на странице вы хотите отображать
 
@@ -231,6 +235,8 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
+
+
 # PASSWORD_HASHERS = [
 #     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 #     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
@@ -275,11 +281,11 @@ DATABASES = {
             'sslrootcert': '/root/.postgresql/root.crt',
             'target_session_attrs': 'read-write',
         }
-        # 'OPTIONS': {
-        #     'sslmode': 'verify-full',
-        #     'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
-        #     'target_session_attrs': 'read-write',
-        # }
+        #'OPTIONS': {
+        #    'sslmode': 'verify-full',
+         #   'sslrootcert': 'C:\\Users\\artem\\.postgresql\\root.crt',
+          #  'target_session_attrs': 'read-write',
+        #}
         # 'HOST': '158.160.56.73',
         # 'PORT': '5432',
     }

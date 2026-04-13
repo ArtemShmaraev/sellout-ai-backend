@@ -1,13 +1,14 @@
 import functools
 import math
 import random
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 import unicodedata
 from django.core.cache import cache
 from django.db.models import Q, Subquery, OuterRef, Min, When, Case, Count
 
 from sellout.settings import CACHE_TIME
+from shipping.models import ProductUnit
 from .tools import get_queryset_from_list_id, get_title_for_products_page
 from time import time
 from django.http import JsonResponse, FileResponse
@@ -476,3 +477,74 @@ def get_product_page(request, context):
 
     # print(queryset)
     return queryset, res
+
+
+
+def filter_products(request):
+    params = request.query_params
+    queryset = Product.objects.filter(available_flag=True, is_custom=False)
+
+    # Базовые фильтры
+    if params.get('is_sale'):
+        queryset = queryset.filter(is_sale=True)
+
+    # Фильтры по категориям
+    category_filters = Q()
+    if params.getlist('category_id'):
+        category_filters |= Q(category_id__in=params.getlist('category_id'))
+    if params.getlist('category_name'):
+        for name in params.getlist('category_name'):
+            category_filters |= Q(category_name__icontains=name)
+    if category_filters:
+        queryset = queryset.filter(category_filters)
+
+    # Фильтры по характеристикам
+    if params.getlist('gender'):
+        queryset = queryset.filter(gender__name__in=params.getlist('gender'))
+
+    if params.getlist('collab'):
+        if "all" in params.getlist('collab'):
+            queryset = queryset.filter(is_collab=True)
+        else:
+            queryset = queryset.filter(collab__query_name__in=params.getlist('collab'))
+
+    # Фильтры по цене
+    price_filters = Q()
+    if params.get('price_min'):
+        price_filters &= Q(min_price__gte=params.get('price_min'))
+    if params.get('price_max'):
+        price_filters &= Q(min_price__lte=params.get('price_max'))
+    if price_filters:
+        queryset = queryset.filter(price_filters)
+
+    # Фильтр по размерам
+    if params.getlist('size'):
+        size_ids = [s.split("_")[1] for s in params.getlist('size')]
+        queryset = queryset.filter(sizes__in=size_ids)
+
+    # Фильтр для рекомендаций
+    if params.get("recommendations") and not params.get('q'):
+        # Оптимизированный запрос для рекомендаций:
+        # 1. Товары с флагом is_recommend
+        # 2. Сортировка по релевантности (rel_num) и новизне
+        # 3. Ограничение по дате (например, последние 3 месяца)
+        three_months_ago = datetime.now() - timedelta(days=90)
+        queryset = (queryset.filter(is_recommend=True, last_upd__gte=three_months_ago)
+                    .order_by('-rel_num', '-last_upd'))
+
+    # Фильтр для новых товаров
+    elif params.get("new") and not params.get('q'):
+        # Товары добавленные за последние 30 дней
+        one_month_ago = datetime.now() - timedelta(days=30)
+        queryset = queryset.filter(is_new=True, created_at__gte=one_month_ago)
+
+    # Поиск по запросу
+    if params.get('q'):
+        if request.user.id:
+            queryset = queryset.filter(gender__name=request.user.gender.name)
+        search_result = search_product(params.get('q'), queryset)
+        queryset = search_result['queryset']
+
+    #
+
+    return queryset.values_list('id', flat=True)

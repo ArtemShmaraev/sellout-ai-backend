@@ -92,13 +92,13 @@ SYSTEM_PROMPT = f"""Ты помощник для поиска товаров в 
 
 def query_to_filters(user_query: str) -> dict:
     response = httpx.post(
-        "https://api.deepseek.com/chat/completions",
+        "https://openrouter.ai/api/v1/chat/completions",
         headers={
-            "Authorization": f"Bearer {settings.DEEPSEEK_KEY}",
+            "Authorization": f"Bearer {settings.OPENROUTER_KEY}",
             "Content-Type": "application/json",
         },
         json={
-            "model": "deepseek-chat",
+            "model": "meta-llama/llama-3.3-70b-instruct:free",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_query},

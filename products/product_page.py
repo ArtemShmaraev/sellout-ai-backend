@@ -134,13 +134,7 @@ def get_product_page_header(request):
         text_mobile = photo_mobile.header_text
 
     title_mobile_gender = text_mobile.title
-    # if text_mobile.title != "sellout":
-    #     if gender == ['M']:
-    #         title_mobile_gender += " для мужчин"
-    #     if gender == ["F"]:
-    #         title_mobile_gender += " для женщин"
-    #     if gender == ["K"]:
-    #         title_mobile_gender += " для детей"
+
 
     res["mobile"] = {"title": text_mobile.title, "content": text_mobile.text, "title_with_gender": title_mobile_gender}
     res['mobile']['photo'] = photo_mobile.photo
@@ -156,20 +150,6 @@ def get_product_page_header(request):
         res['mobile']['title'] = title_mobile
         res['mobile']['subtitle'] = subtitle_mobile
 
-        # if title_mobile != "":
-        #     if gender == ['M']:
-        #         title_mobile += " для мужчин"
-        #     if gender == ["F"]:
-        #         title_mobile += " для женщин"
-        #     if gender == ["K"]:
-        #         title_mobile += " для детей"
-        # else:
-        #     if gender == ['M']:
-        #         title_mobile += "Мужское"
-        #     if gender == ["F"]:
-        #         title_mobile += "Женское"
-        #     if gender == ["K"]:
-        #         title_mobile += "Для детей"
         res['mobile']['title_with_gender'] = title_mobile
         res['mobile']['content'] = ""
         res['mobile']['photo'] = ""
@@ -339,23 +319,6 @@ def filter_products(request):
 
     # Фильтр по наличию скидки
 
-    # if is_return:
-    #     filters &= Q(product_units__is_return=(is_return == "is_return"))
-    # if is_fast_ship:
-    #     filters &= Q(product_units__fast_shipping=(is_fast_ship == "is_fast_ship"))
-
-    # if filters:
-    #
-    #     # Выполняем фильтрацию
-    #     # filter_id = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
-    #     queryset = queryset.filter()
-    #     # queryset = queryset.filter(filters).values_list("id", flat=True)
-    #     # subquery = Product.objects.filter(filters).distinct().values_list('id', flat=True)
-    #     # queryset_size = Product.objects.select_related('product_units').filter(filters).values_list("id", flat=True)
-    #     # queryset = queryset.values_list("id", flat=True)
-    #     # queryset = queryset.intersection(queryset_size).values_list("id", flat=True)
-    #     # queryset = Product.objects.filter(id__in=queryset)
-    #     # queryset = queryset.select_related('product_units').filter(filters).values_list("id", flat=True).distinct()
     t2 = time()
     print("t1", t2 - t1)
     if query:
@@ -375,11 +338,8 @@ def filter_products(request):
     print("t2.1", t32-t31)
     queryset = queryset.values_list("id", flat=True).distinct()
 
-    # print(list(queryset))
     print(queryset.query)
 
-    # print(queryset.query)
-    # print(queryset.count())
     return queryset
 
 
@@ -445,12 +405,6 @@ def get_product_page(request, context):
     # print(queryset.query)
 
 
-    # paginator = CustomPagination()
-    # Применяем пагинацию к списку объектов Product
-    # paginated_products = paginator.paginate_queryset(queryset, request)
-    # serializer = ProductMainPageSerializer(queryset, many=True, context=context).data
-    # res = paginator.get_paginated_response(serializer)
-
     t5 = time()
     print("t4", t5 - t4)
 
@@ -471,11 +425,7 @@ def get_product_page(request, context):
     print("t5", t6 - t51)
     t7 = time()
     print("t6", t7 - t6)
-    # t7 = time()
-    # print("t6", t7 - t6)
-    # queryset = list(serializer.data)
 
-    # print(queryset)
     return queryset, res
 
 

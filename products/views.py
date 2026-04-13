@@ -1670,3 +1670,32 @@ class ListProductView(APIView):
 #         ans = {"page number": page_number,
 #                'items': list_products}
 #         return Response(ans, status=status.HTTP_200_OK)
+
+
+class AiSearchView(APIView):
+    def post(self, request):
+        from .ai_search import query_to_filters, filter_products_from_dict
+
+        user_query = request.data.get("query", "").strip()
+        if not user_query:
+            return Response({"error": "query is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            llm_result = query_to_filters(user_query)
+        except Exception as e:
+            return Response({"error": f"LLM error: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+
+        filters = llm_result.get("filters", {})
+        explanation = llm_result.get("explanation", "")
+
+        products = filter_products_from_dict(filters)
+
+        context = {"wishlist": None}
+        serializer = ProductMainPageSerializer(products, many=True, context=context)
+
+        return Response({
+            "explanation": explanation,
+            "filters_used": filters,
+            "count": len(serializer.data),
+            "products": serializer.data,
+        }, status=status.HTTP_200_OK)

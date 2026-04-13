@@ -64,3 +64,64 @@ class YourAPITests(APITestCase):
         url = reverse("product-list")
         response = self.client.get(url, format='json')
         self.assertEquals(response.json().get("count"), 1)
+
+    def test_product_detail_view(self):
+        """Тест детальной страницы продукта"""
+        url = reverse("product-detail", kwargs={'pk': self.product.id})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['model'], "Air Force 1")
+        self.assertEqual(response.data['colorway'], "White")
+        self.assertEqual(len(response.data['product_units']), 1)
+
+    def test_product_filter_by_category(self):
+        """Тест фильтрации продуктов по категории"""
+        url = reverse("product-list")
+        response = self.client.get(url, {'category': self.category.id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['id'], self.product.id)
+
+    def test_product_filter_by_brand(self):
+        """Тест фильтрации продуктов по бренду"""
+        url = reverse("product-list")
+        response = self.client.get(url, {'brand': self.brand.id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['brands'][0]['name'], "Nike")
+
+    def test_product_unit_creation(self):
+        """Тест создания продуктивной единицы"""
+        client = APIClient()
+        client.force_authenticate(user=self.new_user)
+
+        url = reverse("productunit-list")
+        data = {
+            'product': self.product.id,
+            'delivery_type': self.delivery.id,
+            'platform': self.platform.id,
+            'final_price': 150
+        }
+        response = client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ProductUnit.objects.count(), 2)
+
+    def test_add_product_to_cart(self):
+        """Тест добавления продукта в корзину"""
+        client = APIClient()
+        client.force_authenticate(user=self.new_user)
+
+        url = reverse("shoppingcart-add-item")
+        data = {
+            'product_unit': self.product_unit.id,
+            'quantity': 1
+        }
+        response = client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.cart.items.count(), 1)
+        self.assertEqual(self.cart.items.first().product_unit.id, self.product_unit.id)

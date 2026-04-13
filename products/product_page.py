@@ -76,13 +76,6 @@ def get_product_page_header(request):
         text_desktop = photo_desktop.header_text
 
     title_desktop_gender = text_desktop.title
-    # if text_desktop.title != "sellout":
-    #     if gender == ['M']:
-    #         title_desktop_gender += " для мужчин"
-    #     if gender == ["F"]:
-    #         title_desktop_gender += " для женщин"
-    #     if gender == ["K"]:
-    #         title_desktop_gender += " для детей"
 
     res["desktop"] = {"title": text_desktop.title, "content": text_desktop.text, "title_with_gender": title_desktop_gender}
     res['desktop']['photo'] = photo_desktop.photo
@@ -99,21 +92,6 @@ def get_product_page_header(request):
 
         res['desktop']['title'] = title_desktop
         res['desktop']['subtitle'] = subtitle_desktop
-        # if title_desktop != "":
-        #     if gender == ['M']:
-        #         title_desktop += " для мужчин"
-        #     if gender == ["F"]:
-        #         title_desktop += " для женщин"
-        #     if gender == ["K"]:
-        #         title_desktop += " для детей"
-        # else:
-        #     if gender == ['M']:
-        #         title_desktop += "Мужское"
-        #     if gender == ["F"]:
-        #         title_desktop += "Женское"
-        #     if gender == ["K"]:
-        #         title_desktop += "Для детей"
-        # if title_desktop != "":
         res['desktop']['title_with_gender'] = title_desktop
         res['desktop']['content'] = ""
         res['desktop']['photo'] = ""

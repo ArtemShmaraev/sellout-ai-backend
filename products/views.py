@@ -1676,6 +1676,18 @@ class AiSearchView(APIView):
     SESSION_TTL = 30 * 60  # 30 минут
     MAX_HISTORY = 10       # последние 10 сообщений (5 диалоговых пар)
 
+    from drf_spectacular.utils import extend_schema, OpenApiExample
+    from drf_spectacular.openapi import AutoSchema
+    from rest_framework import serializers as _s
+
+    class _RequestSchema(_s.Serializer):
+        query = _s.CharField(help_text="Запрос пользователя в свободной форме")
+        session_id = _s.CharField(required=False, allow_blank=True, help_text="ID сессии для продолжения диалога (необязательно)")
+
+    @extend_schema(
+        request=_RequestSchema,
+        summary="AI-ассистент по подбору товаров",
+    )
     def post(self, request):
         import uuid
         import json as _json

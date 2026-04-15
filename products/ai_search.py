@@ -98,7 +98,7 @@ def query_to_filters(user_query: str) -> dict:
             "Content-Type": "application/json",
         },
         json={
-            "model": "meta-llama/llama-3.3-70b-instruct:free",
+            "model": "nvidia/nemotron-3-super-120b-a12b:free",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_query},

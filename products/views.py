@@ -38,7 +38,8 @@ from users.models import User, UserStatus
 from wishlist.models import Wishlist
 from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
     RansomRequest, SGInfo, Brand, Photo, Material, Gender, FooterText, Tag
-from rest_framework import status
+from rest_framework import status, serializers
+from drf_spectacular.utils import extend_schema
 
 from .product_page import get_product_page, get_product_page_header, count_queryset, filter_products
 from .product_site_map import ProductSitemap
@@ -1672,22 +1673,16 @@ class ListProductView(APIView):
 #         return Response(ans, status=status.HTTP_200_OK)
 
 
+class _AiSearchRequestSerializer(serializers.Serializer):
+    query = serializers.CharField(help_text="Запрос пользователя в свободной форме")
+    session_id = serializers.CharField(required=False, allow_blank=True, help_text="ID сессии для продолжения диалога (необязательно)")
+
+
 class AiSearchView(APIView):
     SESSION_TTL = 30 * 60  # 30 минут
     MAX_HISTORY = 10       # последние 10 сообщений (5 диалоговых пар)
 
-    from drf_spectacular.utils import extend_schema, OpenApiExample
-    from drf_spectacular.openapi import AutoSchema
-    from rest_framework import serializers as _s
-
-    class _RequestSchema(_s.Serializer):
-        query = _s.CharField(help_text="Запрос пользователя в свободной форме")
-        session_id = _s.CharField(required=False, allow_blank=True, help_text="ID сессии для продолжения диалога (необязательно)")
-
-    @extend_schema(
-        request=_RequestSchema,
-        summary="AI-ассистент по подбору товаров",
-    )
+    @extend_schema(request=_AiSearchRequestSerializer, summary="AI-ассистент по подбору товаров")
     def post(self, request):
         import uuid
         import json as _json

@@ -90,7 +90,12 @@ SYSTEM_PROMPT = f"""Ты помощник для поиска товаров в 
 }}"""
 
 
-def query_to_filters(user_query: str) -> dict:
+def query_to_filters(user_query: str, history: list[dict] | None = None) -> dict:
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        *(history or []),
+        {"role": "user", "content": user_query},
+    ]
     response = httpx.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -99,10 +104,7 @@ def query_to_filters(user_query: str) -> dict:
         },
         json={
             "model": "nvidia/nemotron-3-super-120b-a12b:free",
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_query},
-            ],
+            "messages": messages,
             "response_format": {"type": "json_object"},
             "temperature": 0.1,
         },

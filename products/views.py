@@ -1673,17 +1673,31 @@ class ListProductView(APIView):
 
 
 class AiSearchView(APIView):
+    SESSION_TTL = 30 * 60  # 30 минут
+    MAX_HISTORY = 10       # последние 10 сообщений (5 диалоговых пар)
+
     def post(self, request):
+        import uuid
+        import json as _json
+        from django.core.cache import cache
         from .ai_search import query_to_filters, filter_products_from_dict
 
         user_query = request.data.get("query", "").strip()
         if not user_query:
             return Response({"error": "query is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        session_id = request.data.get("session_id") or str(uuid.uuid4())
+        cache_key = f"ai_search:{session_id}"
+        history = cache.get(cache_key) or []
+
         try:
-            llm_result = query_to_filters(user_query)
+            llm_result = query_to_filters(user_query, history)
         except Exception as e:
             return Response({"error": f"LLM error: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+
+        history.append({"role": "user", "content": user_query})
+        history.append({"role": "assistant", "content": _json.dumps(llm_result, ensure_ascii=False)})
+        cache.set(cache_key, history[-self.MAX_HISTORY:], self.SESSION_TTL)
 
         filters = llm_result.get("filters", {})
         explanation = llm_result.get("explanation", "")
@@ -1694,6 +1708,7 @@ class AiSearchView(APIView):
         serializer = ProductMainPageSerializer(products, many=True, context=context)
 
         return Response({
+            "session_id": session_id,
             "explanation": explanation,
             "filters_used": filters,
             "count": len(serializer.data),

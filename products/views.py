@@ -91,13 +91,13 @@ class UpdateProductTagsView(APIView):
 
         if delete:
             # Если установлен флаг `delete`, очищаем все теги
-            product.tags.clear()
+            # product.tags.clear()
 
         if tags:
             # Добавляем теги из списка
             for tag_name in tags:
                 tag, _ = Tag.objects.get_or_create(name=tag_name)  # Создаем тег, если его нет
-                product.tags.add(tag)
+                # product.tags.add(tag)
 
             return Response({"message": "Tags updated successfully."}, status=status.HTTP_200_OK)
 
@@ -261,8 +261,8 @@ class ProductUpdatePriceUrlDewu(APIView):
             return None
         print(spu_id)
         data = requests.get(f"https://sellout.su/parser_intermediate_api/get_data?spu_id={spu_id}").json()
-        s = add_product_hk(data)
-        return Response(s.slug)
+        # s = add_product_hk(data)
+        # return Response(s.slug)
 
 class ProductSpuIdView(APIView):
     def get(self, request, spu_id):
@@ -367,7 +367,7 @@ class NewSale(APIView):
         data = json.loads(request.body)
         slug = data['slug'].replace("https://sellout.su/products/", "")
         product = Product.objects.get(slug=slug)
-        product.add_sale(data['sale_absolute'], data['sale_percentage'])
+        # product.add_sale(data['sale_absolute'], data['sale_percentage'])
         return Response("Готово")
 
 
@@ -376,7 +376,7 @@ class DelSale(APIView):
         data = json.loads(request.body)
         slug = data['slug'].replace("https://sellout.su/products/", "")
         product = Product.objects.get(slug=slug)
-        product.del_sale()
+        # product.del_sale()
         return Response("Готово")
 
 
@@ -660,7 +660,8 @@ class UpdatePrice(APIView):
             for product_id in products[start:end]:
                 product = Product.objects.get(id=product_id)
                 with transaction.atomic():
-                    product.update_price()
+                    # product.update_price()
+                    pass
 
         # Получите все продукты, которые вы хотите обновить
         products = Product.objects.filter(available_flag=True).filter(actual_price=False).values_list("id", flat=True)
@@ -775,7 +776,7 @@ class SGInfoView(APIView):
             sg_info.relevant_number = int(data['relevant_number'])
         if "novelty_number" in data:
             sg_info.novelty_number = int(data["novelty_number"])
-        sg_info.save()
+        # sg_info.save()
         return Response(SGInfoSerializer(sg_info).data)
 
     def delete(self, request, sku):
@@ -1309,7 +1310,7 @@ class ProductFullSlugView(APIView):
 class ProductUpdatePricePS(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        add_product_ps_api(data)
+        # add_product_ps_api(data)
         return Response("Ok")
 
 
@@ -1319,12 +1320,13 @@ class ProductUpdatePricePS(APIView):
 class ProductUpdatePriceHK(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        p = add_product_hk(data)
-        if p.slug:
-            return Response(f"https://sellout.su/products/{p.slug}")
-        else:
-            print(p, '1')
-            return Response(f"Ошибка")
+        # p = add_product_hk(data)
+        # if p.slug:
+        #     return Response(f"https://sellout.su/products/{p.slug}")
+        # else:
+        #     print(p, '1')
+        #     return Response(f"Ошибка")
+        return Response("Ok")
 
 class ProductSlugView(APIView):
     # authentication_classes = [JWTAuthentication]
@@ -1533,7 +1535,7 @@ class ProductUpdateView(APIView):
         if 'main_color' in data:
             product.main_color_id = data.get('main_color', product.main_color_id)
         product.slug = ""
-        product.save()
+        # product.save()
 
         return Response(ProductSerializer(product).data, status=status.HTTP_200_OK)
 
@@ -1590,14 +1592,15 @@ class ProductSizeView(APIView):
 class AddProductView(APIView):
     def post(self, request):
         data = json.loads(request.body)
-        product = add_product_api(data)
-        return Response(ProductSerializer(product).data)
+        # product = add_product_api(data)
+        # return Response(ProductSerializer(product).data)
+        return Response("Ok")
 
 
 class AddListProductsView(APIView):  # список товаров одного spu_id
     def post(self, request):
         data = json.loads(request.body)
-        add_products_spu_id_api(data)
+        # add_products_spu_id_api(data)
         return Response("Готово")
 
 

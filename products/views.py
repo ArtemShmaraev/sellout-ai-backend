@@ -92,6 +92,7 @@ class UpdateProductTagsView(APIView):
         if delete:
             # Если установлен флаг `delete`, очищаем все теги
             # product.tags.clear()
+            return Response({"message": "Tags cleared successfully."}, status=status.HTTP_200_OK)
 
         if tags:
             # Добавляем теги из списка
@@ -260,7 +261,7 @@ class ProductUpdatePriceUrlDewu(APIView):
         else:
             return None
         print(spu_id)
-        data = requests.get(f"https://sellout.su/parser_intermediate_api/get_data?spu_id={spu_id}").json()
+        data = requests.get(f"https://sellout.su/sellout-ai-parser-manager/get_data?spu_id={spu_id}").json()
         # s = add_product_hk(data)
         # return Response(s.slug)
 

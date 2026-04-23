@@ -92,6 +92,7 @@ class UpdateProductTagsView(APIView):
         if delete:
             # Если установлен флаг `delete`, очищаем все теги
             # product.tags.clear()
+            return Response({"message": "Tags cleared successfully."}, status=status.HTTP_200_OK)
 
         if tags:
             # Добавляем теги из списка

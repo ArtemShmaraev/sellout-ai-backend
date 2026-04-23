@@ -430,6 +430,28 @@ def filter_products(request):
     if params.getlist('gender'):
         queryset = queryset.filter(gender__name__in=params.getlist('gender'))
 
+    if params.getlist('line'):
+        queryset = queryset.filter(lines__full_eng_name__in=params.getlist('line'))
+
+    if params.getlist('category'):
+        queryset = queryset.filter(categories__eng_name__in=params.getlist('category'))
+
+    if params.getlist('color'):
+        queryset = queryset.filter(colors__name__in=params.getlist('color'))
+
+    if params.getlist('brand'):
+        for brand_name in params.getlist('brand'):
+            queryset = queryset.filter(brands__query_name=brand_name)
+
+    if params.getlist('material'):
+        queryset = queryset.filter(materials__eng_name__in=params.getlist('material'))
+
+    if params.getlist('tag'):
+        queryset = queryset.filter(tags__name__in=params.getlist('tag'))
+
+    if params.getlist('collection'):
+        queryset = queryset.filter(collections__query_name__in=params.getlist('collection'))
+
     if params.getlist('collab'):
         if "all" in params.getlist('collab'):
             queryset = queryset.filter(is_collab=True)

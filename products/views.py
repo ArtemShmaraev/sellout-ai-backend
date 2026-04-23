@@ -1712,6 +1712,7 @@ class AiSearchView(APIView):
 
         filters = llm_result.get("filters", {})
         explanation = llm_result.get("explanation", "")
+        suggestions = llm_result.get("suggestions", [])
 
         products = filter_products_from_dict(filters)
 
@@ -1721,6 +1722,7 @@ class AiSearchView(APIView):
         return Response({
             "session_id": session_id,
             "explanation": explanation,
+            "suggestions": suggestions,
             "filters_used": filters,
             "count": len(serializer.data),
             "products": serializer.data,

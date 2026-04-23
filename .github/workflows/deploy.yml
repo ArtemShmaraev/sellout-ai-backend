@@ -52,6 +52,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-            "docker service update --with-registry-auth \
-               --image ${{ env.REGISTRY }}/${{ env.REGISTRY_ID }}/${{ env.IMAGE_NAME }}:${{ steps.sha.outputs.sha }} \
-               ${{ env.STACK_NAME }}_${{ env.SERVICE_NAME }}"
+            "service=${{ env.STACK_NAME }}_${{ env.SERVICE_NAME }}; \
+             image=${{ env.REGISTRY }}/${{ env.REGISTRY_ID }}/${{ env.IMAGE_NAME }}:${{ steps.sha.outputs.sha }}; \
+             if docker service inspect \"\$service\" >/dev/null 2>&1; then \
+               docker service update --with-registry-auth --image \"\$image\" \"\$service\"; \
+             else \
+               echo \"Service \$service not found; image \$image was pushed and will be used on the next stack deploy.\"; \
+             fi"

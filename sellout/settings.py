@@ -263,6 +263,8 @@ SIMPLE_JWT = {
 PROTOCOL = "https"
 
 ELASTIC_HOST = "158.160.32.229"
+
+OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", "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")
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"

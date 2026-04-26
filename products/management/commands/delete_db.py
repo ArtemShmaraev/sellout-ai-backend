@@ -1,21 +1,23 @@
-from itertools import count
 
-from django.core import signing
 from django.core.management.base import BaseCommand
-import json
 
-from orders.models import ShoppingCart
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, Material, SizeTable, SizeTranslationRows
-from django.core.exceptions import ObjectDoesNotExist
-
-from promotions.models import Bonuses, AccrualBonus, PromoCode
-from shipping.models import ProductUnit
-from users.models import User, EmailConfirmation
-from products.tools import get_text
-
-
-
+from products.models import (
+    Brand,
+    Category,
+    Collab,
+    Color,
+    HeaderPhoto,
+    HeaderText,
+    Line,
+    Material,
+    Photo,
+    Product,
+    SizeRow,
+    SizeTable,
+    SizeTranslationRows,
+)
+from promotions.models import AccrualBonus, Bonuses, PromoCode
+from users.models import User
 
 
 class Command(BaseCommand):

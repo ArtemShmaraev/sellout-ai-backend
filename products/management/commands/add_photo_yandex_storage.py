@@ -1,16 +1,13 @@
-import shutil
-from itertools import count
 
-import botocore
-from PIL import Image
-from django.core import signing
 from django.core.management.base import BaseCommand
-import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo
-from django.core.exceptions import ObjectDoesNotExist
-from shipping.models import ProductUnit
-from users.models import User, EmailConfirmation
+
+from products.models import (
+    Category,
+    Collab,
+    Gender,
+    HeaderPhoto,
+    Line,
+)
 
 
 class Command(BaseCommand):
@@ -48,9 +45,9 @@ class Command(BaseCommand):
                     header_photo.collabs.add(collab)
             header_photo.save()
 
-        import boto3
-
         import os
+
+        import boto3
 
 
         # bucket_name = 'sellout-bucket'  # Укажите название бакета

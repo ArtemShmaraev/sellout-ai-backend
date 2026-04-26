@@ -1,8 +1,9 @@
 from random import randint
+
 from django.core.management.base import BaseCommand
-from products.models import Product, SizeTranslationRows, SizeTable
-from shipping.models import Platform, ProductUnit, DeliveryType
-from utils.models import Currency
+
+from products.models import Product, SizeTable
+from shipping.models import DeliveryType, Platform, ProductUnit
 
 
 class Command(BaseCommand):

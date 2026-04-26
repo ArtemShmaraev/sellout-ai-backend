@@ -1,32 +1,11 @@
-import math
-import random
 from datetime import date, timedelta
-from itertools import count
-from time import time
 
-import requests
-from django.core import signing
 from django.core.management.base import BaseCommand
-import json
+from django.db.models import Q
 
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min
-
-from orders.models import ShoppingCart, Status, OrderUnit, Order
-from orders.serializers import OrderSerializer
-
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo
-from django.core.exceptions import ObjectDoesNotExist
-
-from products.serializers import ProductMainPageSerializer
-from promotions.models import PromoCode
-from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus
-from products.tools import get_text
-import matplotlib.pyplot as plt
-from collections import Counter
+from products.models import (
+    Product,
+)
 
 
 class Command(BaseCommand):

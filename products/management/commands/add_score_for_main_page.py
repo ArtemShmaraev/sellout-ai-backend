@@ -1,9 +1,8 @@
-from itertools import count
-from django.core.management.base import BaseCommand
 import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
-from django.core.exceptions import ObjectDoesNotExist
-import users.models
+
+from django.core.management.base import BaseCommand
+
+from products.models import Collab
 
 
 class Command(BaseCommand):
@@ -11,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         def update_model_scores(model_class, file_name):
 
-            with open(file_name, 'r', encoding="utf-8") as file:
+            with open(file_name, encoding="utf-8") as file:
                 data = json.load(file)
 
             for item in data:

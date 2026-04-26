@@ -1,9 +1,8 @@
-import math
-import datetime
 
-from django.urls import reverse
 from django.contrib.sitemaps import Sitemap
+
 from .models import Product
+
 
 class ProductSitemap(Sitemap):
     def items(self):

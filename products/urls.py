@@ -1,22 +1,78 @@
 from django.contrib.sitemaps.views import sitemap
+from django.urls import include, path
 from django.views.generic import TemplateView
 from rest_framework import routers
-from .api import ProductViewSet, CategoryViewSet, LinesViewSet, ColorViewSet, BrandViewSet, CollectionViewSet, \
-    CollabViewSet, MaterialViewSet
-from django.urls import include, path
+
+from .api import (
+    BrandViewSet,
+    CategoryViewSet,
+    CollectionViewSet,
+    ColorViewSet,
+    LinesViewSet,
+)
 from .product_site_map import ProductSitemap
-from .views import SizeTableForFilter, SlugForSpuId, NewSale, DelSale, DewuInfoListView, DewuInfoView, \
-    ProductSearchView, ProductSlugView, \
-    ProductIdView, CategoryTreeView, \
-    LineTreeView, ProductUpdateView, LineNoChildView, \
-    CategoryNoChildView, ProductSizeView, AddProductView, ListProductView, ProductView, CollabView, ProductsFid, \
-    DewuInfoListSpuIdView, SuggestSearch, ProductSimilarView, MainPageBlocks, GetHeaderPhoto, MakeRansomRequest, \
-    SGInfoListSkuView, SGInfoListView, SGInfoView, BrandSearchView, AddFilterSearch, AvailableSize, UpdatePrice, \
-    PopularSpuIdView, HideProductView, DewuInfoCount, HideProductSpiIdView, AddPhotoBlackList, ProductSlugAndPhoto, \
-    run_command_async, PhotoWhiteList, AddListProductsView, ProductsCountView, view_photo_for_rate, rate_photo, \
-    SearchBySkuView, MaterialView, MyScoreForProduct, ProductFullSlugView, ProductUpdatePricePS, ProductSpuIdView, \
-    ProductUpdatePriceUrlDewu, ProductSkuView, ProductUpdatePriceHK, ProductFooterTextView, ProductHeaderTextView, \
-    ProductUpdatePerHour, MainPageBlocks2, UpdateProductTagsView, MainPageBlocks2GetBlock, AiSearchView
+from .views import (
+    AddFilterSearch,
+    AddListProductsView,
+    AddPhotoBlackList,
+    AddProductView,
+    AiSearchView,
+    AvailableSize,
+    BrandSearchView,
+    CategoryNoChildView,
+    CategoryTreeView,
+    CollabView,
+    DelSale,
+    DewuInfoCount,
+    DewuInfoListSpuIdView,
+    DewuInfoListView,
+    DewuInfoView,
+    GetHeaderPhoto,
+    HideProductSpiIdView,
+    HideProductView,
+    LineNoChildView,
+    LineTreeView,
+    ListProductView,
+    MainPageBlocks,
+    MainPageBlocks2,
+    MainPageBlocks2GetBlock,
+    MakeRansomRequest,
+    MaterialView,
+    MyScoreForProduct,
+    NewSale,
+    PhotoWhiteList,
+    PopularSpuIdView,
+    ProductFooterTextView,
+    ProductFullSlugView,
+    ProductHeaderTextView,
+    ProductsCountView,
+    ProductSearchView,
+    ProductsFid,
+    ProductSimilarView,
+    ProductSizeView,
+    ProductSkuView,
+    ProductSlugAndPhoto,
+    ProductSlugView,
+    ProductSpuIdView,
+    ProductUpdatePerHour,
+    ProductUpdatePriceHK,
+    ProductUpdatePricePS,
+    ProductUpdatePriceUrlDewu,
+    ProductUpdateView,
+    ProductView,
+    SearchBySkuView,
+    SGInfoListSkuView,
+    SGInfoListView,
+    SGInfoView,
+    SizeTableForFilter,
+    SlugForSpuId,
+    SuggestSearch,
+    UpdatePrice,
+    UpdateProductTagsView,
+    rate_photo,
+    run_command_async,
+    view_photo_for_rate,
+)
 
 # router = routers.DefaultRouter()
 # router.register("", ProductViewSet, 'product')

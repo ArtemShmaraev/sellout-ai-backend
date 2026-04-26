@@ -1,10 +1,7 @@
-from itertools import count
-from django.core.management.base import BaseCommand
-import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, HeaderText
-from django.core.exceptions import ObjectDoesNotExist
 
-from users.models import User
+from django.core.management.base import BaseCommand
+
+from products.models import Category, Gender, HeaderText, Line
 
 
 class Command(BaseCommand):
@@ -122,7 +119,7 @@ class Command(BaseCommand):
         #     header_text.categories.add(cat)
         #     header_text.save()
 
-        with open("текст для страниц/sellout_mobile.txt", 'r', encoding='utf-8') as file:
+        with open("текст для страниц/sellout_mobile.txt", encoding='utf-8') as file:
             texts = file.read().split('\n\n\n')  # Разделение текстов по пустой строке
         add_sellout(texts, "sellout")
 

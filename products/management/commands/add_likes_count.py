@@ -1,19 +1,13 @@
-import math
-import random
-from itertools import count
 from time import time
 
-import requests
 from django.core.management.base import BaseCommand
-import json
+import requests
 
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min, Sum
+from products.models import (
+    Product,
+)
 
 
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo
 class Command(BaseCommand):
 
     def handle(self, *args, **options):

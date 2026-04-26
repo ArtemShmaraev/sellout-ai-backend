@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl import Search
 
+
 class Command(BaseCommand):
     help = 'Get all suggestions from Line, Category, and Product indexes'
 

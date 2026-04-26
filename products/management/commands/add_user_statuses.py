@@ -1,7 +1,7 @@
-import json
+
 from django.core.management.base import BaseCommand
-from products.models import Color
-from users.models import User, UserStatus
+
+from users.models import UserStatus
 
 
 class Command(BaseCommand):

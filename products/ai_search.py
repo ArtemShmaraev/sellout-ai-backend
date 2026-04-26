@@ -1,7 +1,7 @@
 import json
-import httpx
+
 from django.conf import settings
-from django.db.models import Q
+import httpx
 
 from .models import Product
 from .search_tools import search_product

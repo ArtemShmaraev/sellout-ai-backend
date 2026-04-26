@@ -1,21 +1,31 @@
 from django.core.cache import cache
-from django.db.models import IntegerField
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.db.models import (
+    Case,
+    IntegerField,
+    Max,
+    Min,
+    OuterRef,
+    Q,
+    Subquery,
+    Value,
+    When,
+)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import pagination, viewsets
 
 from sellout.settings import CACHE_TIME
-from .models import Product, Category, Line, Brand, Color, Collection, Collab, Material
-from rest_framework import viewsets, permissions, generics, pagination
-from .serializers import ProductMainPageSerializer, ProductSerializer, CategorySerializer, LineSerializer, \
-    BrandSerializer, ColorSerializer, CollectionSerializer, MaterialSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
-from shipping.models import ProductUnit
-from django.db.models import ExpressionWrapper, F, Subquery, Min, OuterRef, Max
-from django.db.models import Q, Case, When, Value, BooleanField
-from .tools import build_line_tree, build_category_tree
-from rest_framework.response import Response
 
-from rest_framework.filters import OrderingFilter
+from .models import Brand, Category, Collab, Collection, Color, Line, Material, Product
+from .serializers import (
+    BrandSerializer,
+    CategorySerializer,
+    CollectionSerializer,
+    ColorSerializer,
+    LineSerializer,
+    MaterialSerializer,
+    ProductMainPageSerializer,
+)
+from .tools import build_category_tree, build_line_tree
 
 
 class LinesViewSet(viewsets.ModelViewSet):

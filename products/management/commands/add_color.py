@@ -1,5 +1,7 @@
 import json
+
 from django.core.management.base import BaseCommand
+
 from products.models import Color
 
 
@@ -8,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        with open('colors.json', 'r', encoding="utf-8") as file:
+        with open('colors.json', encoding="utf-8") as file:
             colors_data = json.load(file)
         # colors = Color.objects.all()
         # k = 0

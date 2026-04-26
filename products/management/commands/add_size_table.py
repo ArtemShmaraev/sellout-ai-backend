@@ -1,14 +1,8 @@
-from django.core.management.base import BaseCommand
-from promotions.models import Bonuses
 import json
-from products.models import Product, Category, Brand, SizeTable, SizeTranslationRows, Gender
-from django.core.exceptions import ObjectDoesNotExist
 
-
-
-import json
 from django.core.management.base import BaseCommand
-from products.models import SizeTable, Category, Gender, SizeTranslationRows, SizeRow
+
+from products.models import Category, Gender, SizeRow, SizeTable, SizeTranslationRows
 
 data = {
     # Вставьте предоставленную структуру данных здесь
@@ -20,11 +14,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         file_path = 'my_size_dict2.json'  # Замените на путь к вашему JSON файлу
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, encoding='utf-8') as file:
             data = json.load(file)
 
         file_path = 'my_size_dict1.json'  # Замените на путь к вашему JSON файлу
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, encoding='utf-8') as file:
             data2 = json.load(file)
 
 

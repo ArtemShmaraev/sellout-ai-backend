@@ -1,12 +1,11 @@
-import random
-from itertools import count
-from django.core.management.base import BaseCommand
+from datetime import datetime
 import json
 import os
-import json
-from datetime import datetime, date
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo
+
+from django.core.management.base import BaseCommand
+
 from products.tools import add_product
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -14,7 +13,7 @@ class Command(BaseCommand):
 
         for count in range(1, 2):
             # folder_path = f'dewu/{count}m'
-            folder_path = f'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
+            folder_path = 'processed_for_db'  # Укажите путь к папке, содержащей JSON-файлы
             k = 37900
             k = 26000
             ek = 0
@@ -29,7 +28,7 @@ class Command(BaseCommand):
                         print(f"{k}: эта сотка за {(t1 - t0).seconds} сек")
                         t0 = t1
                     # Открытие файла и чтение его содержимого
-                    with open(file_path, 'r') as file:
+                    with open(file_path) as file:
                         json_content = file.read()
 
                     # data = json.loads(json_content)

@@ -1,13 +1,9 @@
-import json
-from concurrent.futures import ThreadPoolExecutor
+
 from django.core.management.base import BaseCommand
-from time import time
-import requests
-from django.db.models import Sum, Min
-import math
 from django.db.models import Count
+
 from products.models import Product  # Замените products.models на ваш путь к модели Product
-from products.tools import update_score_sneakers, update_score_clothes
+from products.tools import update_score_clothes, update_score_sneakers
 
 
 class Command(BaseCommand):

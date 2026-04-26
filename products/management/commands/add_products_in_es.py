@@ -1,13 +1,14 @@
+from collections import OrderedDict
 import re
-import time
 
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
-from products.documents import ProductDocument, LineDocument, CategoryDocument, ColorDocument, CollabDocument, \
-    SuggestDocument  # Замените на путь к вашему документу
-from products.models import Product, Line, Category, Color, Collab, Brand  # Замените на путь к вашей модели Product
+
+from products.documents import (
+    ProductDocument,  # Замените на путь к вашему документу
+)
+from products.models import Category, Product  # Замените на путь к вашей модели Product
 from sellout.settings import ELASTIC_HOST
-from collections import OrderedDict
 
 
 class Command(BaseCommand):

@@ -1,30 +1,35 @@
-import asyncio
+from datetime import datetime
+from functools import lru_cache
+import json
 import math
 import random
-import json
-from functools import lru_cache
-from datetime import datetime, date
-from time import time
+import xml.etree.ElementTree as ET
 
-import httpx
+from django.db.models import Case, IntegerField, Q, Sum, Value, When
 import requests
-from django.core.cache import cache
-from django.db.models import Q, Case, When, Value, IntegerField, Sum
-from django.utils import timezone
 
 from products.formula_price import formula_price
-# from products.main_page import get_random
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
-    HeaderPhoto
 
+# from products.main_page import get_random
+from products.models import (
+    Brand,
+    Category,
+    Collab,
+    Collection,
+    Color,
+    Gender,
+    HeaderPhoto,
+    HeaderText,
+    Line,
+    Photo,
+    Product,
+)
 from users.models import UserStatus
 
-from json2xml import json2xml
-import xml.etree.ElementTree as ET
 
 def get_fid_product_all(products):
     file_path = "line_count.json"
-    with open(file_path, 'r', encoding='utf-8') as file:
+    with open(file_path, encoding='utf-8') as file:
         data_count_line = json.load(file)
     yml_catalog = ET.Element('yml_catalog', attrib={"date": str(datetime.now())})
     # Создаем элемент shop и добавляем его в корневой элемент
@@ -169,7 +174,7 @@ def get_fid_product_all(products):
 def get_fid_product(products):
 
     file_path = "line_count.json"
-    with open(file_path, 'r', encoding='utf-8') as file:
+    with open(file_path, encoding='utf-8') as file:
         data_count_line = json.load(file)
     yml_catalog = ET.Element('yml_catalog', attrib={"date": str(datetime.now())})
     # Создаем элемент shop и добавляем его в корневой элемент
@@ -365,7 +370,7 @@ def update_score_sneakers(product):
     print(product.score_product_page)
 
 def update_score_clothes(product):
-    with open('edit_brand+category_score.json', 'r', encoding='utf-8') as json_file:
+    with open('edit_brand+category_score.json', encoding='utf-8') as json_file:
         data = json.load(json_file)
     old = product.score_product_page
     try:

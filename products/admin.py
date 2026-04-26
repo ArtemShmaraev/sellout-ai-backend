@@ -1,7 +1,22 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Product, Category, Tag, Brand, Gender, Collection, Color, Line, SizeTable, SizeTranslationRows, SizeRow, Collab, HeaderPhoto, HeaderText
+from .models import (
+    Brand,
+    Category,
+    Collab,
+    Collection,
+    Color,
+    Gender,
+    HeaderPhoto,
+    HeaderText,
+    Line,
+    Product,
+    SizeRow,
+    SizeTable,
+    SizeTranslationRows,
+    Tag,
+)
 
 
 class ProductAdmin(admin.ModelAdmin):

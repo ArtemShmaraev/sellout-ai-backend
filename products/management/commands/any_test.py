@@ -1,39 +1,23 @@
-import math
-import random
-import urllib
 from datetime import datetime, timedelta
-from itertools import count
-from time import time, sleep
-
-import requests
-from django.core import signing
-from django.core.cache import cache
-from django.core.management.base import BaseCommand
 import json
+from time import time
 import xml.etree.ElementTree as ET
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min, Sum
-from elasticsearch_dsl.connections import connections
 
-from orders.models import ShoppingCart, Status, OrderUnit, Order
+from django.core.management.base import BaseCommand
+from django.db.models import F, Min
+import requests
+
+from orders.models import Order, Status
 from orders.serializers import OrderSerializer
-from orders.tools import send_email_confirmation_order, send_email_full_order_shipped
-from products.add_product_api import add_product_v2, add_product_api, add_products_spu_id_api, add_product_hk
-from products.documents import ProductDocument
-
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo, RansomRequest, FooterText
-from django.core.exceptions import ObjectDoesNotExist
-
-from products.serializers import ProductMainPageSerializer, ProductSerializer
-from promotions.models import PromoCode
-from sellout.settings import ELASTIC_HOST
-from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus, Partner, SpamEmail
-from products.tools import get_text
-from utils.models import Currency
-
+from orders.tools import send_email_full_order_shipped
+from products.models import (
+    Category,
+    Collab,
+    HeaderPhoto,
+    Line,
+    Product,
+)
+from users.models import User
 
 
 class Command(BaseCommand):

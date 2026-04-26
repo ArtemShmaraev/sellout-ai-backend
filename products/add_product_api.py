@@ -1,18 +1,24 @@
-import random
-import json
-from functools import lru_cache
-from datetime import datetime, date
+from datetime import datetime
 from time import time
+
 from django.utils import timezone
-from django.db.models import Q
 
 from orders.models import ShoppingCart
-from products.main_page import get_random
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab, Photo, HeaderText, \
-    HeaderPhoto, Material, SizeTable, SizeTranslationRows
-from products.serializers import LineSerializer, ProductSerializer
-from products.tools import update_score_sneakers, update_score_clothes
-from shipping.models import DeliveryType, ProductUnit, Platform
+from products.models import (
+    Brand,
+    Category,
+    Collab,
+    Color,
+    Gender,
+    Line,
+    Material,
+    Photo,
+    Product,
+    SizeTable,
+    SizeTranslationRows,
+)
+from products.tools import update_score_clothes, update_score_sneakers
+from shipping.models import DeliveryType, Platform, ProductUnit
 from utils.models import Currency
 
 
@@ -894,7 +900,7 @@ def add_products_spu_id_api(data):
     s = []
     for product in data:
         add = add_product_v2(product)
-        if type(add) == type(""):
+        if type(add) == str:
             s.append(add)
         else:
             s.append(add.slug)

@@ -1,20 +1,16 @@
-import json
 import re
 from time import time
 
 from django.core.cache import cache
-from django.shortcuts import render
+from django.db.models import Case, IntegerField, Value, When
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl.query import Match, MoreLikeThis
+from elasticsearch_dsl import SF, Search
+from elasticsearch_dsl.search import Q, Search
 
-from sellout.settings import ELASTIC_HOST, CACHE_TIME
-from .models import Line, Category, Color, Collab, Product
+from sellout.settings import CACHE_TIME, ELASTIC_HOST
+
+from .models import Category, Collab, Color, Line, Product
 from .serializers import ProductMainPageSerializer
-from elasticsearch_dsl import Search, SF
-from django.db.models import Case, When, Value, IntegerField
-from elasticsearch_dsl.search import Search, Q
-
-from .documents import LineDocument
 
 es = Elasticsearch(
     [ELASTIC_HOST],

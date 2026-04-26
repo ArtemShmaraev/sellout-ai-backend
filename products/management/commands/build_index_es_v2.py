@@ -1,11 +1,17 @@
 import re
+
 from django.core.management.base import BaseCommand
 from elasticsearch_dsl.connections import connections
+
 from products.documents import (
-    ProductDocument, LineDocument, CategoryDocument,
-    ColorDocument, CollabDocument, SuggestDocument
+    CategoryDocument,
+    CollabDocument,
+    ColorDocument,
+    LineDocument,
+    ProductDocument,
+    SuggestDocument,
 )
-from products.models import Product, Line, Category, Color, Collab
+from products.models import Category, Collab, Color, Line, Product
 from sellout.settings import ELASTIC_HOST
 
 

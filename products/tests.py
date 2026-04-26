@@ -1,13 +1,12 @@
-from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from rest_framework.reverse import reverse
-from products.models import Product, Category, Brand
-from shipping.models import ProductUnit, Platform, DeliveryType
-from shipping.serializers import ProductUnitSerializer
-from users.models import User, Gender
+from rest_framework.test import APIClient, APITestCase
+
 from orders.models import ShoppingCart
+from products.models import Brand, Category, Product
+from shipping.models import DeliveryType, Platform, ProductUnit
+from users.models import Gender, User
 from wishlist.models import Wishlist
-from products.serializers import ProductSerializer
 
 
 class YourAPITests(APITestCase):
@@ -63,7 +62,7 @@ class YourAPITests(APITestCase):
     def test_view_product_unit_for_product_id(self):
         url = reverse("product-list")
         response = self.client.get(url, format='json')
-        self.assertEquals(response.json().get("count"), 1)
+        self.assertEqual(response.json().get("count"), 1)
 
     def test_product_detail_view(self):
         """Тест детальной страницы продукта"""

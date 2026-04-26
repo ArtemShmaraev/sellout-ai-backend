@@ -1,10 +1,8 @@
 import json
-from concurrent.futures import ThreadPoolExecutor
-from django.core.management.base import BaseCommand
 from time import time
-import requests
-from django.db.models import Sum
-import math
+
+from django.core.management.base import BaseCommand
+
 from products.models import Product  # Замените products.models на ваш путь к модели Product
 from products.tools import update_score_clothes, update_score_sneakers
 
@@ -39,7 +37,7 @@ class Command(BaseCommand):
         k = 0
         t = time()
 
-        with open('edit_brand+category_score.json', 'r', encoding='utf-8') as json_file:
+        with open('edit_brand+category_score.json', encoding='utf-8') as json_file:
             data = json.load(json_file)
 
         for page_num in range(0, ck, 100):

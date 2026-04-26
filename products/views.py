@@ -1,74 +1,84 @@
-import asyncio
+from collections import OrderedDict
 import copy
-import hashlib
-import math
-import jwt
 from datetime import datetime, timedelta
-import pickle
-import random
+import hashlib
+import json
+import math
+import os
 import subprocess
 import threading
-from datetime import datetime
-from urllib.parse import urlencode, quote
+from time import time
+from urllib.parse import parse_qs, urlparse
+
 import boto3
-from urllib.parse import urlparse, parse_qs
-import os
-import httpx
-import requests
-from asgiref.sync import async_to_sync
+from django.contrib.sitemaps import views as sitemaps_views
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management import call_command
-from django.utils import timezone
-from django.utils.functional import cached_property
 from django.db import models, transaction
-import rest_framework.generics
-from django.db.models import Case, When, Value, IntegerField
-from django.db.models import Q, Subquery, OuterRef, Min, When, Case
-# from haystack.query import SearchQuerySet
-from rest_framework.decorators import api_view, action
-from django.shortcuts import render
+from django.db.models import Q
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-import json
-from time import time
-from django.http import JsonResponse, FileResponse, HttpResponse
-from .add_product_api import add_product_api, add_products_spu_id_api, add_product_ps_api, add_product_hk
-from users.models import User, UserStatus
-from wishlist.models import Wishlist
-from .models import Product, Category, Line, DewuInfo, SizeRow, SizeTable, Collab, HeaderPhoto, HeaderText, \
-    RansomRequest, SGInfo, Brand, Photo, Material, Gender, FooterText, Tag
-from rest_framework import status, serializers
 from drf_spectacular.utils import extend_schema
+import requests
+from rest_framework import serializers, status
 
-from .product_page import get_product_page, get_product_page_header, count_queryset, filter_products
+# from haystack.query import SearchQuerySet
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from products.main_page import get_header_photo, get_photo_text, get_selection, get_sellout_photo_text
+from sellout.settings import CACHE_TIME, HOST, RPS, TIME_RPS
+from users.models import User
+from wishlist.models import Wishlist
+
+from .models import (
+    Brand,
+    Category,
+    Collab,
+    DewuInfo,
+    FooterText,
+    Gender,
+    HeaderPhoto,
+    Line,
+    Material,
+    Photo,
+    Product,
+    RansomRequest,
+    SGInfo,
+    SizeTable,
+    Tag,
+)
+from .product_page import count_queryset, get_product_page, get_product_page_header
 from .product_site_map import ProductSitemap
-from .serializers import SizeTableSerializer, ProductMainPageSerializer, CategorySerializer, LineSerializer, \
-    ProductSerializer, \
-    DewuInfoSerializer, CollabSerializer, SGInfoSerializer, BrandSerializer, update_product_serializer, \
-    ProductSlugAndPhotoSerializer, ProductAdminSerializer, MaterialSerializer, serialize_in_threads
-from .tools import build_line_tree, build_category_tree, category_no_child, line_no_child, add_product, get_text, \
-    get_product_page_photo, RandomGenerator, get_product_text, get_queryset_from_list_id, platform_update_price, \
-    get_fid_product
-
-from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from .search_tools import search_best_line, search_best_category, search_best_color, search_best_collab, search_product, \
-    similar_product, suggest_search, add_filter_search
-from .documents import ProductDocument  # Импортируйте ваш документ
-from random import randint
-from products.main_page import get_selection, get_photo_text, get_sellout_photo_text, get_header_photo
-from sellout.settings import CACHE_TIME, FRONTEND_HOST, PROTOCOL, SECRET_KEY, TIME_RPS, RPS
-from collections import OrderedDict
-from sellout.settings import HOST
-from django.contrib.sitemaps import views as sitemaps_views
-from django.shortcuts import render, redirect
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
-import asyncio
+from .search_tools import (
+    add_filter_search,
+    similar_product,
+    suggest_search,
+)
+from .serializers import (
+    BrandSerializer,
+    CategorySerializer,
+    CollabSerializer,
+    DewuInfoSerializer,
+    LineSerializer,
+    MaterialSerializer,
+    ProductAdminSerializer,
+    ProductMainPageSerializer,
+    ProductSerializer,
+    ProductSlugAndPhotoSerializer,
+    SGInfoSerializer,
+    serialize_in_threads,
+)
+from .tools import (
+    build_category_tree,
+    build_line_tree,
+    category_no_child,
+    get_fid_product,
+    get_queryset_from_list_id,
+    line_no_child,
+)
 
 
 class UpdateProductTagsView(APIView):
@@ -111,10 +121,10 @@ class MainPageBlocks2GetBlock(APIView):
         gender = request.query_params.get('gender')
         n = int(request.query_params.get("n"))
         if gender == "F":
-            with open("main_women_desktop_2.json", "r", encoding="utf-8") as file:
+            with open("main_women_desktop_2.json", encoding="utf-8") as file:
                 json_data = json.load(file)
         else:
-            with open("main_men_desktop_2.json", "r", encoding="utf-8") as file:
+            with open("main_men_desktop_2.json", encoding="utf-8") as file:
                 json_data = json.load(file)
 
         filtered_data = []
@@ -139,10 +149,10 @@ class MainPageBlocks2(APIView):
         # Шаг 2: Прочитать JSON из запроса
         # Предположим, что JSON передается в теле запроса, например:
         if gender == "F":
-            with open("main_women_desktop_2.json", "r", encoding="utf-8") as file:
+            with open("main_women_desktop_2.json", encoding="utf-8") as file:
                 json_data = json.load(file)
         else:
-            with open("main_men_desktop_2.json", "r", encoding="utf-8") as file:
+            with open("main_men_desktop_2.json", encoding="utf-8") as file:
                 json_data = json.load(file)
 
 
@@ -461,7 +471,7 @@ class MyScoreForProduct(APIView):
 
 class MaterialView(APIView):
     def get(self, request):
-        cache_material = f"materials"  # Уникальный ключ для каждой URL
+        cache_material = "materials"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_material)
 
         if cached_data is not None:
@@ -860,7 +870,7 @@ class MakeRansomRequest(APIView):
 class GetHeaderPhoto(APIView):
 
     def get(self, request):
-        cache_photo_key = f"header_photo"  # Уникальный ключ для каждой URL
+        cache_photo_key = "header_photo"  # Уникальный ключ для каждой URL
         cached_data = cache.get(cache_photo_key)
 
         if cached_data is not None:
@@ -902,7 +912,7 @@ class MainPageBlocks(APIView):
 
                     else:
                         file_path = 'temp_main_women_withproducts.json'
-                    with open(file_path, 'r', encoding='utf-8') as file:
+                    with open(file_path, encoding='utf-8') as file:
                         json_data = json.load(file)[:20]
                         res.extend(json_data)
 
@@ -912,7 +922,7 @@ class MainPageBlocks(APIView):
                         file_path = 'temp_main_men_withproducts.json'
                     else:
                         file_path = 'temp_main_women_withproducts.json'
-                    with open(file_path, 'r', encoding='utf-8') as file:
+                    with open(file_path, encoding='utf-8') as file:
                         json_data = json.load(file)[20:]
                         res.extend(json_data)
                     s = []
@@ -991,7 +1001,7 @@ class MainPageBlocks(APIView):
 
                         else:
                             file_path = 'temp_main_women_withproducts.json'
-                        with open(file_path, 'r', encoding='utf-8') as file:
+                        with open(file_path, encoding='utf-8') as file:
                             json_data = json.load(file)[:20]
                             res.extend(json_data)
                         s = []
@@ -1000,7 +1010,7 @@ class MainPageBlocks(APIView):
                             file_path = 'temp_main_men_withproducts.json'
                         else:
                             file_path = 'temp_main_women_withproducts.json'
-                        with open(file_path, 'r', encoding='utf-8') as file:
+                        with open(file_path, encoding='utf-8') as file:
                             json_data = json.load(file)[20:]
                             res.extend(json_data)
                         s = []
@@ -1583,7 +1593,7 @@ class SizeTableForFilter(APIView):
 
 class ProductSizeView(APIView):
     def get(self, request):
-        with open('size_table_2.json', 'r', encoding='utf-8') as file:
+        with open('size_table_2.json', encoding='utf-8') as file:
             product_sizes_data = json.load(file)
 
         # Верните JSON-данные в ответе
@@ -1688,10 +1698,12 @@ class AiSearchView(APIView):
 
     @extend_schema(request=_AiSearchRequestSerializer, summary="AI-ассистент по подбору товаров")
     def post(self, request):
-        import uuid
         import json as _json
+        import uuid
+
         from django.core.cache import cache
-        from .ai_search import query_to_filters, filter_products_from_dict
+
+        from .ai_search import filter_products_from_dict, query_to_filters
 
         user_query = request.data.get("query", "").strip()
         if not user_query:

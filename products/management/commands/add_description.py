@@ -1,5 +1,6 @@
 from django.db import transaction
 
+
 @transaction.atomic
 def fill_missing_descriptions_line(line):
     description = Description.objects.filter(line=line).first()

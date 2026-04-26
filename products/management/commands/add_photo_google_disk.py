@@ -1,17 +1,14 @@
-from itertools import count
+
 from django.core.management.base import BaseCommand
-import json
-from django.core.exceptions import ObjectDoesNotExist
-from products.models import Collab, Line, Category, Gender, HeaderPhoto, HeaderText, Photo
-from products.serializers import CollabSerializer
-from users.models import User
+
+from products.models import Category, Collab, Gender, HeaderPhoto, Line, Photo
 
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        from googleapiclient.discovery import build
         from google.oauth2.credentials import Credentials
+        from googleapiclient.discovery import build
 
         # ID папки, из которой вы хотите начать перебор
 

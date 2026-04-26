@@ -1,6 +1,6 @@
-from elasticsearch_dsl import Document, Text, Keyword, Float, Integer, Completion
+from elasticsearch_dsl import Completion, Document, Integer, Keyword, Text, analyzer, token_filter
 from elasticsearch_dsl.connections import connections
-from elasticsearch_dsl import analyzer, token_filter
+
 from sellout.settings import ELASTIC_HOST
 
 # connections.create_connection(hosts=['51.250.74.115'])  # Укажите адрес вашего Elasticsearch-сервера

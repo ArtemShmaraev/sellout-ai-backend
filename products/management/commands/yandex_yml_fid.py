@@ -32,35 +32,14 @@
 # {"requestId":"8b1823e0-b481-11ee-b3bf-bd0e42e02359"}
 
 
-import math
-import os
-import random
-from itertools import count
-from time import time
 
-import requests
-from django.core import signing
 from django.core.management.base import BaseCommand
-import json
 
-from django.core.paginator import Paginator
-from django.db import transaction, connection
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max
-from json2xml.utils import readfromstring
-
-from orders.models import ShoppingCart, Status, OrderUnit, Order
-
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows
-from django.core.exceptions import ObjectDoesNotExist
-
-from products.serializers import ProductMainPageSerializer
-from promotions.models import PromoCode
-from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus
-from products.tools import get_text, get_fid_product_all
-from json2xml import json2xml
-import xml.etree.ElementTree as ET
+from products.models import (
+    Line,
+    Product,
+)
+from products.tools import get_fid_product_all
 
 
 class Command(BaseCommand):

@@ -1,33 +1,12 @@
-import math
-import random
-from itertools import count
-from time import time, sleep
 
-import requests
-from django.core import signing
-from django.core.cache import cache
 from django.core.management.base import BaseCommand
-import json
-import xml.etree.ElementTree as ET
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import OuterRef, Subquery, F, BooleanField, Case, When, Count, Max, Q, Min, Sum
 
-from orders.models import ShoppingCart, Status, OrderUnit, Order
-from orders.serializers import OrderSerializer
-from orders.tools import send_email_confirmation_order
-from products.add_product_api import add_product_v2, add_product_api, add_products_spu_id_api
-
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, SizeRow, Collab, \
-    HeaderPhoto, HeaderText, Photo, DewuInfo, SizeTable, SizeTranslationRows, SGInfo, RansomRequest
-from django.core.exceptions import ObjectDoesNotExist
-
-from products.serializers import ProductMainPageSerializer, ProductSerializer
-from promotions.models import PromoCode
-from shipping.models import ProductUnit, DeliveryType, AddressInfo
-from users.models import User, EmailConfirmation, UserStatus, Partner, SpamEmail
-from products.tools import get_text
-from utils.models import Currency
+from products.models import (
+    Category,
+    Gender,
+    Product,
+    SizeTranslationRows,
+)
 
 
 class Command(BaseCommand):

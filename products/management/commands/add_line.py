@@ -1,9 +1,8 @@
-from itertools import count
-from django.core.management.base import BaseCommand
 import json
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
-from django.core.exceptions import ObjectDoesNotExist
-import users.models
+
+from django.core.management.base import BaseCommand
+
+from products.models import Brand, Line
 
 
 class Command(BaseCommand):

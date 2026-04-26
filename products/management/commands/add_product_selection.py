@@ -1,11 +1,9 @@
 import random
-from random import randint
 from urllib.parse import parse_qs
 
 from django.core.management.base import BaseCommand
-from products.models import Product, SizeTranslationRows, SizeTable
-from shipping.models import Platform, ProductUnit, DeliveryType
-from utils.models import Currency
+
+from products.models import Product
 
 
 class Command(BaseCommand):
@@ -13,7 +11,7 @@ class Command(BaseCommand):
         import csv
 
         # Открываем CSV файл для чтения
-        with open('Ассортимент.csv', 'r', newline='') as file:
+        with open('Ассортимент.csv', newline='') as file:
             # Создаем объект для чтения CSV файла как словаря
             reader = csv.DictReader(file, delimiter=";")
             # Читаем данные из файла по строкам

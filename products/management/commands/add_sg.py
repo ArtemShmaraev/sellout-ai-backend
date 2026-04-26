@@ -1,9 +1,9 @@
-import random
-from itertools import count
-from django.core.management.base import BaseCommand
-import json
 from datetime import datetime
-from products.models import Product, Category, Line, Gender, Brand, Tag, Collection, Color, Collab
+import json
+
+from django.core.management.base import BaseCommand
+
+from products.models import Brand, Category, Color, Gender, Product, Tag
 
 
 class Command(BaseCommand):

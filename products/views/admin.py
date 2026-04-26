@@ -1,17 +1,17 @@
-import json
-import subprocess
-import threading
 from collections import OrderedDict
 from datetime import datetime, timedelta
+import json
+import threading
 
 from django.db import transaction
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from products.models import (
-    Photo, Product, Tag,
+    Photo,
+    Product,
+    Tag,
 )
 
 
@@ -213,8 +213,9 @@ class DelSale(APIView):
 
 class ProductUpdatePriceUrlDewu(APIView):
     def get(self, request):
-        import requests
         from urllib.parse import parse_qs, urlparse
+
+        import requests
         params = request.query_params
         url = params.get("url", False)
         response = requests.head(url, allow_redirects=False)
@@ -267,20 +268,6 @@ class AddListProductsView(APIView):  # список товаров одного 
         # add_products_spu_id_api(data)
         return Response("Готово")
 
-
-def run_command_async(request):
-    def run_command(command):
-        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, text=True)
-        # здесь вы можете обработать результат, сохранить его или передать куда-то еще
-        print(result)
-    if request.method == 'GET':
-        command = request.GET.get('command', '')
-        # Запускаем команду в отдельном потоке
-        threading.Thread(target=run_command, args=(command,)).start()
-        # Немедленный ответ клиенту
-        return JsonResponse({'message': 'Command is running in the background.'})
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
 # class RunCommand(APIView):
 #     def get(self, request):
 #         params = request.query_params

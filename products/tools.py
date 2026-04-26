@@ -5,7 +5,7 @@ import math
 import random
 import xml.etree.ElementTree as ET
 
-from django.db.models import Case, IntegerField, Q, Sum, Value, When
+from django.db.models import Case, IntegerField, Prefetch, Q, Sum, Value, When
 import requests
 
 from products.formula_price import formula_price
@@ -291,7 +291,7 @@ def get_fid_product(products):
             offer.append(offer_description)
 
             shop_offers.append(offer)
-        except:
+        except Exception:
             continue
     shop.append(shop_offers)
 
@@ -351,7 +351,7 @@ def update_score_sneakers(product):
                     'data']["favoriteCount"]['count']
             likes_month = new_likes - old_likes
             product.likes_month = likes_month
-        except:
+        except Exception:
             product.likes_month = 0
     likes_week = product.likes_month // 10
     product.likes_week = likes_week
@@ -379,7 +379,7 @@ def update_score_clothes(product):
 
         brand_and_category_score = data[f"{brand}_{category}"]
 
-    except:
+    except Exception:
         brand_and_category_score = 1000
 
     normalize_rel_num = 0
@@ -406,7 +406,7 @@ def update_score_clothes(product):
                     'data']["favoriteCount"]['count']
             likes_month = new_likes - old_likes
             product.likes_month = likes_month
-        except:
+        except Exception:
             product.likes_month = 0
     likes_week = product.likes_month // 10
     product.likes_week = likes_week
@@ -508,22 +508,34 @@ def update_price(product):
 
 
 def get_queryset_from_list_id(product_ids):
-    # print(len(product_ids), "cerf")
-    # print(product_ids)
-    queryset = Product.objects.filter(id__in=list(product_ids))
-    # print(queryset.count())
+    from shipping.models import ProductUnit
 
-    # Определение порядка объектов в queryset
     preserved_order = Case(
-        *[
-            When(id=pk, then=pos) for pos, pk in enumerate(product_ids)
-        ],
+        *[When(id=pk, then=pos) for pos, pk in enumerate(product_ids)],
         default=Value(len(product_ids)),
         output_field=IntegerField()
     )
-    queryset = queryset.annotate(order=preserved_order).order_by('order')
-
-    return queryset
+    return (
+        Product.objects
+        .filter(id__in=list(product_ids))
+        .select_related('collab', 'main_color', 'main_line')
+        .prefetch_related(
+            Prefetch(
+                'product_units',
+                queryset=ProductUnit.objects.filter(availability=True)
+                    .order_by('final_price', '-start_price'),
+                to_attr='prefetched_units',
+            ),
+            Prefetch(
+                'bucket_link',
+                queryset=Photo.objects.order_by('id'),
+                to_attr='prefetched_photos',
+            ),
+            'brands',
+        )
+        .annotate(order=preserved_order)
+        .order_by('order')
+    )
 
 
 

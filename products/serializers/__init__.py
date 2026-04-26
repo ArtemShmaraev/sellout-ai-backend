@@ -18,8 +18,6 @@ from .product import (
     ProductSerializer,
     ProductSlugAndPhotoSerializer,
     ProductUnitPriceSerializer,
-    serialize_data_chunk,
-    serialize_in_threads,
     update_product_serializer,
 )
 from .sizes import SizeRowSerializer, SizeTableSerializer, SizeTranslationRowsSerializer
@@ -44,8 +42,6 @@ __all__ = [
     "ProductSerializer",
     "ProductSlugAndPhotoSerializer",
     "ProductUnitPriceSerializer",
-    "serialize_data_chunk",
-    "serialize_in_threads",
     "update_product_serializer",
     # sizes
     "SizeRowSerializer",

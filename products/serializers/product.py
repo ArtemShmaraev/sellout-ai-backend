@@ -1,5 +1,3 @@
-import concurrent.futures
-
 from django.db.models import Min, Q
 from django.utils import timezone
 from rest_framework import serializers
@@ -7,32 +5,6 @@ from rest_framework import serializers
 from products.formula_price import formula_price
 from products.models import Photo, Product
 from shipping.models import ProductUnit
-
-
-def serialize_data_chunk(data_chunk, context, serializer_class):
-    serializer = serializer_class(data_chunk, many=True, context=context)
-    return serializer.data
-
-
-def serialize_in_threads(queryset, context, serializer_class):
-    num_threads = 6
-    chunk_size = len(queryset) // num_threads
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = []
-        serialized_data = []
-
-        for i in range(num_threads):
-            start_index = i * chunk_size
-            end_index = start_index + chunk_size if i < num_threads - 1 else len(queryset)
-            data_chunk = queryset[start_index:end_index]
-            future = executor.submit(serialize_data_chunk, data_chunk, context, serializer_class)
-            futures.append(future)
-
-        for future in concurrent.futures.as_completed(futures):
-            serialized_chunk = future.result()
-            serialized_data.extend(serialized_chunk)
-    return serialized_data
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -60,9 +32,10 @@ class ProductAdminSerializer(serializers.ModelSerializer):
         try:
             from products.tools import update_price
             update_price(obj)
-            wl = self.context.get('wishlist', "")
-            if wl and wl.user.user_status.name != "Amethyst":
-                user_status = wl.user.user_status
+            # поддерживаем оба способа передачи статуса: через wishlist и напрямую
+            wl = self.context.get('wishlist')
+            user_status = (wl.user.user_status if wl else None) or self.context.get('user_status')
+            if user_status and user_status.name != "Amethyst":
                 unit = obj.product_units.filter(availability=True).order_by("final_price", "-start_price").first()
                 return formula_price(obj, unit, user_status)
         except:  # noqa: E722
@@ -197,6 +170,10 @@ class ProductSerializer(serializers.ModelSerializer):
         return s
 
     def get_in_wishlist(self, product):
+        wishlist_ids = self.context.get('wishlist_ids')
+        if wishlist_ids is not None:
+            return product.id in wishlist_ids
+        # обратная совместимость для мест где всё ещё передаётся объект wishlist
         wishlist = self.context.get('wishlist')
         if wishlist:
             return product in wishlist.products.all()
@@ -249,45 +226,57 @@ class ProductMainPageSerializer(serializers.ModelSerializer):
         depth = 2
 
     def get_bucket_link(self, obj):
-        photos = obj.bucket_link.order_by('id')
-        photo_serializer = PhotoSerializer(photos, many=True, context=self.context)
-        return photo_serializer.data
+        photos = getattr(obj, 'prefetched_photos', None)
+        if photos is None:
+            photos = obj.bucket_link.order_by('id')
+        return PhotoSerializer(photos, many=True, context=self.context).data
 
     def get_price(self, obj):
         try:
             size = self.context.get('size')
-            filters = Q()
+            # user_status передаётся из view одним объектом вместо wishlist
+            user_status = self.context.get('user_status')
 
-            if size:
-                filters &= (Q(size__in=size) & Q(availability=True))
-
-            wl = self.context.get('wishlist')
-            if wl and not wl.user.user_status.base:
-                user_status = wl.user.user_status
-                if filters:
-                    unit = obj.product_units.filter(filters).order_by("final_price", "-start_price").first()
-                else:
-                    unit = obj.product_units.filter(availability=True).order_by("final_price", "-start_price").first()
+            if user_status and not user_status.base:
+                unit = self._get_unit(obj, size)
                 if unit is None:
                     return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
                 return formula_price(obj, unit, user_status)
-
             else:
-                if filters:
-                    unit = obj.product_units.filter(filters).order_by("final_price", "-start_price").first()
-                    min_final_price = unit.final_price
-                    corresponding_start_price = unit.start_price
-                    return {"final_price": min_final_price, "start_price": corresponding_start_price}
-
-                else:
-                    return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
+                if size:
+                    unit = self._get_unit(obj, size)
+                    if unit is None:
+                        return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
+                    return {"final_price": unit.final_price, "start_price": unit.start_price}
+                return {"start_price": obj.min_price_without_sale, "final_price": obj.min_price}
         except:  # noqa: E722
             obj.actual_price = False
             obj.save()
             obj.update_price()
         return {"final_price": obj.min_price, "start_price": obj.min_price_without_sale}
 
+    def _get_unit(self, obj, size=None):
+        """Возвращает первый подходящий ProductUnit, предпочитая prefetched данные.
+
+        ProductUnit.size — M2M, поэтому Python-фильтрация по размеру потребует
+        дополнительных запросов. При наличии фильтра по размеру откатываемся на SQL.
+        """
+        if not size:
+            # Нет фильтра по размеру — берём из prefetch (0 SQL)
+            units = getattr(obj, 'prefetched_units', None)
+            if units is not None:
+                return units[0] if units else None
+        # Фильтр по размеру или prefetch не применялся — прямой SQL запрос
+        filters = Q(availability=True)
+        if size:
+            filters &= (Q(size__in=size) | Q(size__is_one_size=True))
+        return obj.product_units.filter(filters).order_by("final_price", "-start_price").first()
+
     def get_in_wishlist(self, product):
+        wishlist_ids = self.context.get('wishlist_ids')
+        if wishlist_ids is not None:
+            return product.id in wishlist_ids
+        # обратная совместимость
         wishlist = self.context.get('wishlist')
         if wishlist:
             return product in wishlist.products.all()

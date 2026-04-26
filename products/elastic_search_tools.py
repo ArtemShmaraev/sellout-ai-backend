@@ -215,7 +215,7 @@ def similar_product(product):
         # Применение порядка к queryset
         queryset = queryset.annotate(order=preserved_order).order_by('order')
         return queryset, True
-    except:
+    except Exception:
         print(",kznm", time() - t)
         return [], False
 

@@ -8,14 +8,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from products.main_page import get_header_photo, get_photo_text, get_selection, get_sellout_photo_text
+from products.models import FooterText
+from products.product_page import get_product_page_header
+from products.serializers import ProductMainPageSerializer
+from products.tools import get_queryset_from_list_id
 from sellout.settings import CACHE_TIME
 from users.models import User
 from wishlist.models import Wishlist
-
-from products.models import FooterText
-from products.product_page import count_queryset, get_product_page_header
-from products.serializers import ProductMainPageSerializer
-from products.tools import get_queryset_from_list_id
 
 
 class MainPageBlocks2GetBlock(APIView):
@@ -315,9 +314,3 @@ class ProductFooterTextView(APIView):
                 data['description'] = text.text
 
         return Response(data)
-
-
-class ProductsCountView(APIView):
-    def get(self, request):
-        count = count_queryset(request)
-        return Response({"count": count})

@@ -296,7 +296,7 @@ def add_product_hk(data):
                     # product_unit.delivery_type.delete()
                     product_unit.delivery_type = delivery
                     product_unit.original_price = sku['zh_price']
-                except:
+                except Exception:
                     product.product_units.filter(view_size_platform=sku['view_name'],
                                                  delivery_type__delivery_type=delivery_offer['name']).delete()
                     product_unit = ProductUnit.objects.create(
@@ -862,7 +862,7 @@ def add_product_ps_api(data):
         product.available_sizes = sizes_info
         product.one_update = True
         product.last_upd = timezone.now()
-        if product.bucket_link == None:
+        if product.bucket_link is None:
             product.available_flag = False
         product.in_process_update = False
         if product.is_sale:
@@ -1186,7 +1186,7 @@ def add_product_api(data):
     product.available_sizes = sizes_info
     product.one_update = True
     product.last_upd = timezone.now()
-    if product.bucket_link == None:
+    if product.bucket_link is None:
         product.available_flag = False
 
     if create:
@@ -1221,10 +1221,7 @@ def add_product_api(data):
     # self.stdout.write(self.style.SUCCESS(product))
 
 
-from datetime import datetime
-from time import time
 
-from django.utils import timezone
 
 
 def add_product_v3(data):

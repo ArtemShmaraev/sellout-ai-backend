@@ -1,7 +1,7 @@
+from datetime import datetime
 import json
 import math
 import os
-from datetime import datetime
 
 import boto3
 from rest_framework import status
@@ -9,10 +9,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from products.models import (
-    DewuInfo, RansomRequest, SGInfo,
+    DewuInfo,
+    RansomRequest,
+    SGInfo,
 )
 from products.serializers import (
-    DewuInfoSerializer, SGInfoSerializer,
+    DewuInfoSerializer,
+    SGInfoSerializer,
 )
 
 

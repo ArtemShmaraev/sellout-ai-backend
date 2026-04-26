@@ -100,7 +100,7 @@ class Command(BaseCommand):
         # #         cart = ShoppingCart.objects.get(user=u)
         # #         cart.clear()
         # #         print(u)
-        # #     except:
+        # #     except Exception:
         # #         print("cerf", u)
         # p = Product.objects.filter(product_units=None)
         # print(p.count())
@@ -143,7 +143,7 @@ class Command(BaseCommand):
                 count = Product.objects.filter(available_flag=True, collab=c).count()
                 data[c.name] = {'count': f"Более {round(count, -2)} товаров", "photo": product.bucket_link.order_by("id")[0].url}
                 print(c)
-            except:
+            except Exception:
                 continue
 
         with open("most_pop2.json", 'w', encoding='utf-8') as output_file:
@@ -1385,7 +1385,7 @@ class Command(BaseCommand):
         #         print(p.replace("https://sellout.su/products/", ""))
         #         product = Product.objects.get(slug=p.replace("https://sellout.su/products/", ""))
         #         product.collections.add(col)
-        #     except:
+        #     except Exception:
         #         pass
 
         # if block['type'] == 'complexMainPageBlock':
@@ -1411,7 +1411,7 @@ class Command(BaseCommand):
         #     print(block['url'])
         #     try:
         #         count = requests.get(f"https://sellout.su/api/v1/product/products_count?{block['url']}").json()['count']
-        #     except:
+        #     except Exception:
         #         count = 60
 
         # print(count)
@@ -2381,7 +2381,7 @@ class Command(BaseCommand):
         #
         #         # print(";f")
         #         # print(add_product.json())
-        #     except:
+        #     except Exception:
         #         continue
 
         # user = User.objects.all()

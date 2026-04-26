@@ -74,7 +74,7 @@ class Command(BaseCommand):
                         # header_text.genders.add(gender_k)
                         # header_text.categories.add(cat)
                         # header_text.save()
-                except:
+                except Exception:
                     print(text)
 
         # h = HeaderText.objects.all()

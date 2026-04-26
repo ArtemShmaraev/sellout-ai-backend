@@ -78,7 +78,7 @@ class Command(BaseCommand):
                             header_photo.categories.add(category)
                             header_photo.save()
                             print(url)
-                    except:
+                    except Exception:
                         print(name, "EERRRROOOORRR")
                         continue
 
@@ -116,7 +116,7 @@ class Command(BaseCommand):
                             header_photo.categories.add(category)
                             header_photo.save()
                             print(url)
-                    except:
+                    except Exception:
                         print(name, "EERRRROOOORRR")
                         continue
 

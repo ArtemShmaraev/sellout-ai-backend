@@ -125,7 +125,7 @@ class Command(BaseCommand):
                     try:
                         title = product.platform_info["poizon"]["title"]
 
-                    except:
+                    except Exception:
                         title = ""
 
                     full_name = f'{" ".join(brands)} {product.collab.name if product.collab is not None else ""} {main_line} {product.model if product.model not in all_cat_name else ""} ' \
@@ -154,7 +154,7 @@ class Command(BaseCommand):
                     product_doc.save()
                     product.in_search = True
                     product.save()
-                except:
+                except Exception:
                     continue
         self.stdout.write(self.style.SUCCESS(f"{k} %"))
         self.stdout.write(self.style.SUCCESS('Indexing complete.'))

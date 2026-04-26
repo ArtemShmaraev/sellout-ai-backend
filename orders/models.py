@@ -59,7 +59,7 @@ class Order(models.Model):
     promo_bonus = models.IntegerField(default=0)
     total_sale = models.IntegerField(default=0)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
-                               related_name="orders", default=get_default_status())
+                               related_name="orders", default=get_default_status)
     payment = models.CharField(max_length=100, default="", blank=True)
     fact_of_payment = models.BooleanField(default=False)
     comment = models.CharField(default="", max_length=4048, blank=True)
@@ -564,7 +564,7 @@ class OrderUnit(models.Model):
     is_fast_shipping = models.BooleanField(default=False)
     is_sale = models.BooleanField(default=False)
     status = models.ForeignKey("Status", on_delete=models.SET_DEFAULT, null=False, blank=False,
-                               related_name="order_units", default=get_default_status())
+                               related_name="order_units", default=get_default_status)
     on_way_to_client = models.BooleanField(default=False)
     cancel = models.BooleanField(default=False)
     cancel_reason = models.CharField(default="", max_length=1024)

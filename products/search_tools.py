@@ -71,7 +71,7 @@ def suggest_search(request):
 
     print(sp)
 
-    search = Search(using='default', index='product_index')
+    search = Search(using=es, index='product_index')
 
     search = search.query(
         'function_score',

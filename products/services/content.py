@@ -235,11 +235,11 @@ def filter_products(request):
         queryset = queryset.filter(sizes__in=size_ids)
 
     if params.get("recommendations") and not params.get('q'):
-        three_months_ago = datetime.now() - timedelta(days=90)
+        three_months_ago = datetime.now() - timedelta(days=1000)
         queryset = (queryset.filter(is_recommend=True, last_upd__gte=three_months_ago)
                     .order_by('-rel_num', '-last_upd'))
     elif params.get("new") and not params.get('q'):
-        one_month_ago = datetime.now() - timedelta(days=30)
+        one_month_ago = datetime.now() - timedelta(days=1000)
         queryset = queryset.filter(is_new=True, add_date__gte=one_month_ago)
 
     if params.get('q'):

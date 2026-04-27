@@ -533,8 +533,8 @@ def get_queryset_from_list_id(product_ids):
             ),
             'brands',
         )
-        .annotate(order=preserved_order)
-        .order_by('order')
+        .annotate(_preserve_order=preserved_order)
+        .order_by('_preserve_order')
     )
 
 

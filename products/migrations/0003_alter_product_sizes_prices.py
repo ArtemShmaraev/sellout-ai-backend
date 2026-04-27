@@ -15,4 +15,3 @@ class Migration(migrations.Migration):
             field=models.JSONField(blank=True, default=[], null=True),
         ),
     ]
-git reset --soft HEAD~1

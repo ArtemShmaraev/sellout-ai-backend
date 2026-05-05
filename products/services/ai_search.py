@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.conf import settings
 import httpx
@@ -61,6 +62,12 @@ COLLABS = [
     "Nike x Parra", "Nike x Peaceminusone", "Nike x ACRONYM",
 ]
 
+TOP_BRANDS = [
+    "Nike", "Adidas", "New Balance", "Jordan", "Converse", "Vans", "Puma",
+    "Salomon", "ASICS", "Reebok", "Balenciaga", "Gucci", "Stone Island",
+    "The North Face", "Arc'teryx",
+]
+
 SYSTEM_PROMPT = f"""Ты стильный и увлечённый ассистент-стилист интернет-магазина кроссовок и одежды sellout.su.
 
 На основе запроса пользователя верни JSON с фильтрами и живым, атмосферным описанием подборки.
@@ -89,7 +96,7 @@ SYSTEM_PROMPT = f"""Ты стильный и увлечённый ассисте
 {{
   "filters": {{}},
   "explanation": "живое и атмосферное описание подборки на русском, 1–2 предложения",
-  "suggestions": ["уточняющий вопрос 1", "уточняющий вопрос 2"]
+  "suggestions": ["подсказка 1", "подсказка 2", "подсказка 3"]
 }}
 
 Правила для explanation:
@@ -101,18 +108,94 @@ SYSTEM_PROMPT = f"""Ты стильный и увлечённый ассисте
 - Пример хорошего тона: "Классика, которая никогда не устаревает. Air Force 1 в белом — это база любого городского гардероба..."
 
 Правила для suggestions:
-- Ровно 2 коротких подсказки (до 5 слов каждая) для продолжения диалога
-- Предлагай логичные уточнения к текущему поиску: по цвету, цене, полу, скидке, новинкам, материалу или коллаборации
-- Пиши от первого лица как будто это пишет пользователь, например: "До 10 000 ₽", "Только со скидкой", "Мужские", "Новинки"
+- Ровно 3 коротких подсказки (до 6 слов каждая) для продолжения диалога
+- Если запрос широкий (только категория, без конкретного бренда/модели/цвета) — первая подсказка должна предлагать бренд из списка: {TOP_BRANDS}. Например: "Nike или New Balance?", "Хочу Adidas", "Salomon или ASICS?"
+- Предлагай логичные уточнения к текущему поиску: по бренду, цвету, цене, полу, скидке, новинкам, материалу или коллаборации
+- Пиши от первого лица как будто это пишет пользователь, например: "До 10 000 ₽", "Только со скидкой", "Мужские", "Новинки", "Nike или New Balance?"
 - Не повторяй фильтры, которые уже применены"""
 
+# Few-shot пример: модель всегда видит образец правильного формата,
+# даже когда реальная история диалога пустая (первый запрос без сессии).
+_FEW_SHOT_MESSAGES = [
+    {"role": "user", "content": "..."},
+    {"role": "assistant", "content": json.dumps({
+        "filters": {"q": "...", "color": ["..."], "category": ["..."], "price_max": 0},
+        "explanation": "...",
+        "suggestions": ["...", "...", "..."],
+    }, ensure_ascii=False)},
+]
 
-def query_to_filters(user_query: str, history: list[dict] | None = None) -> dict:
+# Ключи фильтров верхнего уровня — используются для fallback-парсинга
+_FILTER_KEYS = {"q", "color", "category", "material", "collab", "gender", "price_min", "price_max", "is_sale", "new"}
+
+# Lazy-singleton клиент Langfuse
+_langfuse_client = None
+
+
+def _get_langfuse():
+    global _langfuse_client
+    if _langfuse_client is not None:
+        return _langfuse_client
+    try:
+        from langfuse import Langfuse
+        secret_key = getattr(settings, "LANGFUSE_SECRET_KEY", "")
+        public_key = getattr(settings, "LANGFUSE_PUBLIC_KEY", "")
+        if secret_key and public_key:
+            _langfuse_client = Langfuse(
+                secret_key=secret_key,
+                public_key=public_key,
+                host=getattr(settings, "LANGFUSE_BASE_URL", "https://cloud.langfuse.com"),
+            )
+    except Exception:
+        pass
+    return _langfuse_client
+
+
+def _normalize_llm_result(data: dict) -> dict:
+    """Нормализует ответ LLM к структуре {filters, explanation, suggestions}.
+
+    Бесплатные модели иногда возвращают фильтры на верхнем уровне (плоский JSON)
+    вместо вложенного ключа "filters". Этот fallback исправляет оба варианта.
+    """
+    if "filters" in data and isinstance(data["filters"], dict):
+        return data
+    # Модель вернула плоский JSON — собираем filters из известных ключей
+    filters = {k: v for k, v in data.items() if k in _FILTER_KEYS}
+    return {
+        "filters": filters,
+        "explanation": data.get("explanation", ""),
+        "suggestions": data.get("suggestions", []),
+    }
+
+
+def query_to_filters(user_query: str, history: list[dict] | None = None, session_id: str | None = None) -> dict:
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
+        *_FEW_SHOT_MESSAGES,
         *(history or []),
         {"role": "user", "content": user_query},
     ]
+
+    lf = _get_langfuse()
+    trace = None
+    generation = None
+    if lf:
+        try:
+            trace = lf.trace(
+                name="ai_search",
+                session_id=session_id,
+                input={"query": user_query},
+            )
+            generation = trace.generation(
+                name="query_to_filters",
+                model="nvidia/nemotron-3-super-120b-a12b:free",
+                model_parameters={"temperature": 0.1},
+                input=messages,
+            )
+        except Exception:
+            pass
+
+    t0 = time.perf_counter()
     response = httpx.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -128,8 +211,26 @@ def query_to_filters(user_query: str, history: list[dict] | None = None) -> dict
         timeout=30,
     )
     response.raise_for_status()
-    content = response.json()["choices"][0]["message"]["content"]
-    return json.loads(content)
+    response_data = response.json()
+    content = response_data["choices"][0]["message"]["content"]
+    result = _normalize_llm_result(json.loads(content))
+
+    if generation:
+        try:
+            usage = response_data.get("usage", {})
+            generation.end(
+                output=result,
+                usage={
+                    "input": usage.get("prompt_tokens"),
+                    "output": usage.get("completion_tokens"),
+                },
+            )
+            if trace:
+                trace.update(output=result)
+        except Exception:
+            pass
+
+    return result
 
 
 def filter_products_from_dict(filters: dict):

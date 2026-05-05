@@ -91,7 +91,7 @@ class AiSearchView(APIView):
         history = cache.get(cache_key) or []
 
         try:
-            llm_result = query_to_filters(user_query, history)
+            llm_result = query_to_filters(user_query, history, session_id=session_id)
         except Exception as e:
             return Response({"error": f"LLM error: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
 

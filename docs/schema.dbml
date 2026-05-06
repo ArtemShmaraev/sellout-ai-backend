@@ -1,0 +1,168 @@
+Table Product {
+  id int [pk]
+  model varchar
+  colorway varchar
+  slug varchar [unique]
+  manufacturer_sku varchar
+  description text
+  collab_id int [ref: > Collab.id]
+  main_line_id int [ref: > Line.id]
+  main_color_id int [ref: > Color.id]
+  size_table_id int [ref: > SizeTable.id]
+  min_price int
+  min_price_without_sale int
+  max_bonus int
+  is_sale bool
+  is_collab bool
+  available_flag bool
+  is_new bool
+  is_recommend bool
+  score_product_page int
+  rel_num int
+  available_sizes json
+  add_date date
+  last_upd datetime
+}
+
+Table ProductUnit {
+  id int [pk]
+  product_id int [ref: > Product.id]
+  size_platform varchar
+  original_price int
+  start_price int
+  final_price int
+  bonus int
+  availability bool
+  is_sale bool
+}
+
+Table Brand {
+  id int [pk]
+  name varchar
+  query_name varchar
+  score int
+}
+
+Table Category {
+  id int [pk]
+  name varchar
+  eng_name varchar
+  parent_category_id int [ref: > Category.id]
+  score_product_page int
+}
+
+Table Line {
+  id int [pk]
+  name varchar
+  view_name varchar
+  full_eng_name varchar
+  parent_line_id int [ref: > Line.id]
+  score_product_page int
+}
+
+Table Collab {
+  id int [pk]
+  name varchar
+  query_name varchar
+  score_product_page int
+}
+
+Table Color {
+  id int [pk]
+  name varchar
+  russian_name varchar
+  hex varchar
+  is_main_color bool
+}
+
+Table Material {
+  id int [pk]
+  name varchar
+  eng_name varchar
+}
+
+Table Gender {
+  id int [pk]
+  name varchar
+}
+
+Table Tag {
+  id int [pk]
+  name varchar
+}
+
+Table Collection {
+  id int [pk]
+  name varchar
+  query_name varchar
+  subtitle varchar
+}
+
+Table Photo {
+  id int [pk]
+  url varchar
+}
+
+Table SizeTable {
+  id int [pk]
+  name varchar
+  default_row_id int [ref: > SizeRow.id]
+  standard bool
+}
+
+Table SizeRow {
+  id int [pk]
+  filter_name varchar
+  filter_logo varchar
+}
+
+Table SizeTranslationRows {
+  id int [pk]
+  table_id int [ref: > SizeTable.id]
+  is_one_size bool
+}
+
+Table product_brands {
+  product_id int [ref: > Product.id]
+  brand_id int [ref: > Brand.id]
+}
+
+Table product_categories {
+  product_id int [ref: > Product.id]
+  category_id int [ref: > Category.id]
+}
+
+Table product_lines {
+  product_id int [ref: > Product.id]
+  line_id int [ref: > Line.id]
+}
+
+Table product_colors {
+  product_id int [ref: > Product.id]
+  color_id int [ref: > Color.id]
+}
+
+Table product_materials {
+  product_id int [ref: > Product.id]
+  material_id int [ref: > Material.id]
+}
+
+Table product_genders {
+  product_id int [ref: > Product.id]
+  gender_id int [ref: > Gender.id]
+}
+
+Table product_photos {
+  product_id int [ref: > Product.id]
+  photo_id int [ref: > Photo.id]
+}
+
+Table product_sizes {
+  product_id int [ref: > Product.id]
+  size_id int [ref: > SizeTranslationRows.id]
+}
+
+Table unit_sizes {
+  unit_id int [ref: > ProductUnit.id]
+  size_id int [ref: > SizeTranslationRows.id]
+}

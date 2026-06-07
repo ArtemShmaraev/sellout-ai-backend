@@ -2,7 +2,6 @@ import json
 
 from django.conf import settings
 import httpx
-from langfuse import get_client, observe, propagate_attributes
 
 from products.models import Product
 from products.search_tools import search_product
@@ -135,28 +134,6 @@ _FEW_SHOT_MESSAGES = [
 # Ключи фильтров верхнего уровня — используются для fallback-парсинга
 _FILTER_KEYS = {"q", "color", "category", "material", "collab", "gender", "price_min", "price_max", "is_sale", "new"}
 
-# Langfuse v4: инициализация клиента из Django settings (один раз при первом вызове)
-_langfuse_initialized = False
-
-
-def _ensure_langfuse():
-    global _langfuse_initialized
-    if _langfuse_initialized:
-        return
-    try:
-        from langfuse import Langfuse
-        secret_key = getattr(settings, "LANGFUSE_SECRET_KEY", "")
-        public_key = getattr(settings, "LANGFUSE_PUBLIC_KEY", "")
-        if secret_key and public_key:
-            Langfuse(
-                public_key=public_key,
-                secret_key=secret_key,
-                base_url=getattr(settings, "LANGFUSE_BASE_URL", "https://cloud.langfuse.com"),
-            )
-            _langfuse_initialized = True
-    except Exception:
-        pass
-
 
 def _normalize_llm_result(data: dict) -> dict:
     """Нормализует ответ LLM к структуре {filters, explanation, suggestions}.
@@ -175,30 +152,17 @@ def _normalize_llm_result(data: dict) -> dict:
     }
 
 
-@observe(name="ai_search", capture_input=False, capture_output=False)
 def query_to_filters(user_query: str, history: list[dict] | None = None, session_id: str | None = None) -> dict:
-    _ensure_langfuse()
-    get_client().update_current_span(input={"query": user_query})
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         *_FEW_SHOT_MESSAGES,
         *(history or []),
         {"role": "user", "content": user_query},
     ]
-    with propagate_attributes(session_id=session_id):
-        result = _llm_generation(messages)
-    get_client().update_current_span(output=result)
-    return result
+    return _llm_generation(messages)
 
 
-@observe(name="query_to_filters", as_type="generation", capture_input=False, capture_output=False)
 def _llm_generation(messages: list) -> dict:
-    client = get_client()
-    client.update_current_generation(
-        model="nvidia/nemotron-3-super-120b-a12b:free",
-        model_parameters={"temperature": 0.1},
-        input=messages,
-    )
     response = httpx.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -216,17 +180,7 @@ def _llm_generation(messages: list) -> dict:
     response.raise_for_status()
     response_data = response.json()
     content = response_data["choices"][0]["message"]["content"]
-    result = _normalize_llm_result(json.loads(content))
-
-    usage = response_data.get("usage", {})
-    client.update_current_generation(
-        output=result,
-        usage_details={
-            "input": usage.get("prompt_tokens"),
-            "output": usage.get("completion_tokens"),
-        },
-    )
-    return result
+    return _normalize_llm_result(json.loads(content))
 
 
 def filter_products_from_dict(filters: dict):

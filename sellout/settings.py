@@ -266,9 +266,6 @@ ELASTIC_HOST = "158.160.32.229"
 key = "sk-or-v1-" + "dbaf72d6c7bd0904054341e1d" + "8fcedeb031a2e4cca26b319f76434ee71061f40".replace("8fc", "7fc")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_KEY", key)
 
-LANGFUSE_SECRET_KEY = os.environ.get("LANGFUSE_SECRET_KEY", "sk"+"-lf-dbe09ec9-c450-4caa-97dc-3eea92362ddb")
-LANGFUSE_PUBLIC_KEY = os.environ.get("LANGFUSE_PUBLIC_KEY", "pk"+"-lf-d7b6bb8e-de4e-4176-85f2-b0842d06feaa")
-LANGFUSE_BASE_URL = os.environ.get("LANGFUSE_BASE_URL", "https://cloud.langfuse.com")
 # #
 HOST = "sellout.su"
 BACKEND_HOST = "sellout.su"

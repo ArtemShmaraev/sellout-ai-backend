@@ -1,8 +1,8 @@
 import json
-import time
 
 from django.conf import settings
 import httpx
+from langfuse import get_client, observe, propagate_attributes
 
 from products.models import Product
 from products.search_tools import search_product
@@ -114,41 +114,48 @@ SYSTEM_PROMPT = f"""Ты стильный и увлечённый ассисте
 - Пиши от первого лица как будто это пишет пользователь, например: "До 10 000 ₽", "Только со скидкой", "Мужские", "Новинки", "Nike или New Balance?"
 - Не повторяй фильтры, которые уже применены"""
 
-# Few-shot пример: модель всегда видит образец правильного формата,
+# Few-shot примеры: модель всегда видит образцы правильного формата,
 # даже когда реальная история диалога пустая (первый запрос без сессии).
+# Реалистичные примеры критичны — placeholder-ы ("...") не работают с бесплатными моделями.
 _FEW_SHOT_MESSAGES = [
-    {"role": "user", "content": "..."},
+    {"role": "user", "content": "белые кроссовки найк"},
     {"role": "assistant", "content": json.dumps({
-        "filters": {"q": "...", "color": ["..."], "category": ["..."], "price_max": 0},
-        "explanation": "...",
-        "suggestions": ["...", "...", "..."],
+        "filters": {"q": "Nike", "color": ["white"], "category": ["sneakers"]},
+        "explanation": "Белые найки — вечная база. Air Force 1, Dunk, Air Max — любая из этих моделей добавит чистоту и стиль в повседневный образ.",
+        "suggestions": ["Air Force 1", "Только со скидкой", "До 15 000 ₽"],
+    }, ensure_ascii=False)},
+    {"role": "user", "content": "хочу что-то на лето недорого"},
+    {"role": "assistant", "content": json.dumps({
+        "filters": {"category": ["sandals", "sneakers", "canvas_shoes"], "price_max": 10000},
+        "explanation": "Лёгкие варианты на лето без удара по бюджету — сандалии, кеды и кроссовки до 10К. Идеально для города и отдыха.",
+        "suggestions": ["Nike или Adidas?", "Только мужские", "Хочу слипоны"],
     }, ensure_ascii=False)},
 ]
 
 # Ключи фильтров верхнего уровня — используются для fallback-парсинга
 _FILTER_KEYS = {"q", "color", "category", "material", "collab", "gender", "price_min", "price_max", "is_sale", "new"}
 
-# Lazy-singleton клиент Langfuse
-_langfuse_client = None
+# Langfuse v4: инициализация клиента из Django settings (один раз при первом вызове)
+_langfuse_initialized = False
 
 
-def _get_langfuse():
-    global _langfuse_client
-    if _langfuse_client is not None:
-        return _langfuse_client
+def _ensure_langfuse():
+    global _langfuse_initialized
+    if _langfuse_initialized:
+        return
     try:
         from langfuse import Langfuse
         secret_key = getattr(settings, "LANGFUSE_SECRET_KEY", "")
         public_key = getattr(settings, "LANGFUSE_PUBLIC_KEY", "")
         if secret_key and public_key:
-            _langfuse_client = Langfuse(
-                secret_key=secret_key,
+            Langfuse(
                 public_key=public_key,
-                host=getattr(settings, "LANGFUSE_BASE_URL", "https://cloud.langfuse.com"),
+                secret_key=secret_key,
+                base_url=getattr(settings, "LANGFUSE_BASE_URL", "https://cloud.langfuse.com"),
             )
+            _langfuse_initialized = True
     except Exception:
         pass
-    return _langfuse_client
 
 
 def _normalize_llm_result(data: dict) -> dict:
@@ -168,34 +175,30 @@ def _normalize_llm_result(data: dict) -> dict:
     }
 
 
+@observe(name="ai_search", capture_input=False, capture_output=False)
 def query_to_filters(user_query: str, history: list[dict] | None = None, session_id: str | None = None) -> dict:
+    _ensure_langfuse()
+    get_client().update_current_span(input={"query": user_query})
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         *_FEW_SHOT_MESSAGES,
         *(history or []),
         {"role": "user", "content": user_query},
     ]
+    with propagate_attributes(session_id=session_id):
+        result = _llm_generation(messages)
+    get_client().update_current_span(output=result)
+    return result
 
-    lf = _get_langfuse()
-    trace = None
-    generation = None
-    if lf:
-        try:
-            trace = lf.trace(
-                name="ai_search",
-                session_id=session_id,
-                input={"query": user_query},
-            )
-            generation = trace.generation(
-                name="query_to_filters",
-                model="nvidia/nemotron-3-super-120b-a12b:free",
-                model_parameters={"temperature": 0.1},
-                input=messages,
-            )
-        except Exception:
-            pass
 
-    t0 = time.perf_counter()
+@observe(name="query_to_filters", as_type="generation", capture_input=False, capture_output=False)
+def _llm_generation(messages: list) -> dict:
+    client = get_client()
+    client.update_current_generation(
+        model="nvidia/nemotron-3-super-120b-a12b:free",
+        model_parameters={"temperature": 0.1},
+        input=messages,
+    )
     response = httpx.post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -215,21 +218,14 @@ def query_to_filters(user_query: str, history: list[dict] | None = None, session
     content = response_data["choices"][0]["message"]["content"]
     result = _normalize_llm_result(json.loads(content))
 
-    if generation:
-        try:
-            usage = response_data.get("usage", {})
-            generation.end(
-                output=result,
-                usage={
-                    "input": usage.get("prompt_tokens"),
-                    "output": usage.get("completion_tokens"),
-                },
-            )
-            if trace:
-                trace.update(output=result)
-        except Exception:
-            pass
-
+    usage = response_data.get("usage", {})
+    client.update_current_generation(
+        output=result,
+        usage_details={
+            "input": usage.get("prompt_tokens"),
+            "output": usage.get("completion_tokens"),
+        },
+    )
     return result
 
 
